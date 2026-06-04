@@ -1,0 +1,227 @@
+/* ─── FlipCard.css ───────────────────────────────────────────────
+   Animation values:
+     Flip   : X-axis, 450ms, cubic-bezier(0.4, 0, 0.2, 1)  [material standard]
+     Wiggle : rotateZ, 200ms, triggered on hover enter
+     Persp  : 1000px
+────────────────────────────────────────────────────────────────── */
+
+/* ── Outer wrapper ───────────────────────────────────────────────
+   Owns the hover lift. Both card and shadow move together — this
+   keeps preserve-3d to a single level (fc-inner only), which is
+   required for Safari's backface-visibility to work correctly.
+──────────────────────────────────────────────────────────────── */
+.fc-wrapper {
+  position: relative;
+  cursor: pointer;
+  transition: transform 140ms ease-in;
+}
+
+.fc-wrapper:hover {
+  transform: translateY(-5px);
+  transition: transform 100ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── Shadow ──────────────────────────────────────────────────────
+   A real element outside the 3D context — always flat, always
+   visible, unaffected by the flip. Slightly smaller than the card,
+   offset behind it.
+──────────────────────────────────────────────────────────────── */
+.fc-shadow {
+  position: absolute;
+  inset: 3px;
+  background: rgba(0,0,0,0.3);
+  transform: translateY(8px);
+  transition: transform 140ms ease-in;
+}
+
+.fc-wrapper:hover .fc-shadow {
+  /* Counter the wrapper's translateY(-5px) so the shadow stays visually below the card */
+  transform: translateY(14px);
+  transition: transform 100ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── Perspective container ───────────────────────────────────────
+   Fills the wrapper exactly; owns the 3D context.
+──────────────────────────────────────────────────────────────── */
+.fc-container {
+  position: absolute;
+  inset: 0;
+  perspective: 1000px;
+}
+
+/* ── Click target ────────────────────────────────────────────────
+   No transform, no preserve-3d — keeps fc-inner as the sole
+   preserve-3d owner so Safari honours backface-visibility.
+──────────────────────────────────────────────────────────────── */
+.fc-hover {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.fc-hover:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.4);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* Flip card action label — visible only on keyboard focus */
+.fc-focus-hint {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.55);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 100ms;
+  z-index: 2;
+}
+
+.fc-hover:focus-visible .fc-focus-hint {
+  opacity: 1;
+}
+
+/* ── Flip layer ──────────────────────────────────────────────────
+   Only ever sets rotateX. Never touches position.
+──────────────────────────────────────────────────────────────── */
+.fc-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  transition: transform 450ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fc-inner--flipped {
+  transform: rotateX(180deg);
+}
+
+/* ── Faces ───────────────────────────────────────────────────────
+   backface-visibility hides each face when it's pointing away.
+──────────────────────────────────────────────────────────────── */
+.fc-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0.1px);
+}
+
+.fc-face--back {
+  transform: rotateX(180deg) translateZ(0.1px);
+}
+
+/* ── Verdict transition animations ───────────────────────────── */
+
+@keyframes stagePulse {
+  0%   { opacity: 0; }
+  8%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes cardExitUp {
+  to { transform: translateY(-150px); opacity: 0; }
+}
+
+@keyframes cardExitDown {
+  to { transform: translateY(150px); opacity: 0; }
+}
+
+@keyframes cardEnter {
+  from { transform: scale(0.88); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+@keyframes cardExitUndo {
+  to { transform: translateY(80px); opacity: 0; }
+}
+
+@keyframes cardEnterUndo {
+  from { transform: translateY(-140px); opacity: 0; }
+  to   { transform: translateY(0);      opacity: 1; }
+}
+
+.stage-pulse-correct {
+  background: rgba(39, 174, 96, 0.20);
+  animation: stagePulse 700ms ease-out forwards;
+}
+
+.stage-pulse-wrong {
+  background: rgba(192, 57, 43, 0.20);
+  animation: stagePulse 700ms ease-out forwards;
+}
+
+.card-exit-up {
+  animation: cardExitUp 280ms ease-in forwards;
+}
+
+.card-exit-down {
+  animation: cardExitDown 280ms ease-in forwards;
+}
+
+.card-entering {
+  animation: cardEnter 300ms ease-out forwards;
+}
+
+.card-exit-undo {
+  animation: cardExitUndo 200ms ease-in forwards;
+}
+
+.card-entering-undo {
+  animation: cardEnterUndo 350ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ── Verdict buttons ─────────────────────────────────────────── */
+
+.verdict-btn {
+  transition: transform 80ms ease-out, filter 120ms ease;
+}
+
+.verdict-btn:hover:not(:disabled) {
+  filter: brightness(1.18);
+}
+
+.verdict-btn:active:not(:disabled) {
+  transform: scale(0.93);
+  transition: transform 40ms ease-in;
+}
+
+/* ── Marching ants border (answering state) ───────────────────── */
+
+@keyframes march {
+  to { stroke-dashoffset: -12; }
+}
+
+@keyframes marchIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.mc-overlay {
+  animation: marchIn 150ms ease-out 150ms both;
+}
+
+.mc-ants {
+  animation: march 400ms linear infinite;
+}
+
+.mc-ants--offset {
+  animation: march 400ms linear -200ms infinite;
+}
+
+/* ── Undo button ──────────────────────────────────────────────── */
+
+.undo-btn {
+  transition: background 150ms ease;
+}
+
+.undo-btn:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+}

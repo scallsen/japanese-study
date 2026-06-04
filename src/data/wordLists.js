@@ -1,0 +1,40 @@
+// Each source is either flat (lists: null — the source id is the listKey)
+// or hierarchical (lists: array — each sublist id is a listKey).
+export const WORD_SOURCES = [
+  {
+    id: 'nsm-n3',
+    label: 'Nihongo So-Matome N3 (I-3)',
+    lists: [
+      { id: 'nsm-n3-w1d1', label: 'Week 1, Day 1' },
+      { id: 'nsm-n3-w1d2', label: 'Week 1, Day 2' },
+      { id: 'nsm-n3-w1d3', label: 'Week 1, Day 3' },
+      { id: 'nsm-n3-w2d1', label: 'Week 2, Day 1' },
+      { id: 'nsm-n3-w2d2', label: 'Week 2, Day 2' },
+      { id: 'nsm-n3-w2d3', label: 'Week 2, Day 3' },
+      { id: 'nsm-n3-w3d1', label: 'Week 3, Day 1' },
+      { id: 'nsm-n3-w3d2', label: 'Week 3, Day 2' },
+      { id: 'nsm-n3-w3d3', label: 'Week 3, Day 3' },
+      { id: 'nsm-n3-w4d1', label: 'Week 4, Day 1' },
+      { id: 'nsm-n3-w4d2', label: 'Week 4, Day 2' },
+      { id: 'nsm-n3-w4d3', label: 'Week 4, Day 3' },
+    ],
+  },
+  {
+    id: 'nsm-n3-i4',
+    label: 'Nihongo So-Matome N3 (I-4)',
+    lists: [
+      { id: 'nsm-n3-i4-w1d1', label: 'Week 1, Day 1' },
+      { id: 'nsm-n3-i4-w1d2', label: 'Week 1, Day 2' },
+      { id: 'nsm-n3-i4-w1d3', label: 'Week 1, Day 3' },
+      { id: 'nsm-n3-i4-w2d1', label: 'Week 2, Day 1' },
+      { id: 'nsm-n3-i4-w2d2', label: 'Week 2, Day 2' },
+      { id: 'nsm-n3-i4-w2d3', label: 'Week 2, Day 3' },
+      { id: 'nsm-n3-i4-w3d1', label: 'Week 3, Day 1' },
+      { id: 'nsm-n3-i4-w3d2', label: 'Week 3, Day 2' },
+      { id: 'nsm-n3-i4-w3d3', label: 'Week 3, Day 3' },
+      { id: 'nsm-n3-i4-w4d1', label: 'Week 4, Day 1' },
+      { id: 'nsm-n3-i4-w4d2', label: 'Week 4, Day 2' },
+      { id: 'nsm-n3-i4-w4d3', label: 'Week 4, Day 3' },
+    ],
+  },
+]
