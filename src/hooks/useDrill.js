@@ -1,11 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import * as SimpleQueue from '../engines/simpleQueue.js'
 
-// Registry of available engines — add new engines here to make them selectable.
-export const ENGINES = {
-  simpleQueue: SimpleQueue,
-}
-
 export function useDrill(pool, { engine = SimpleQueue, floatSize = 7, seekCardId = null } = {}) {
   const [state, setState] = useState(() => engine.init(pool, floatSize))
 
