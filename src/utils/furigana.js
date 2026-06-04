@@ -23,16 +23,3 @@ export function buildFurigana(kanjiStr, kanaStr) {
 
   return { prefix, kanjiPart, furigana, okurigana }
 }
-
-// 来る stem alternation: okurigana first-char → correct reading of 来
-const KURU_READINGS = { る: 'く', れ: 'く', た: 'き', て: 'き', ま: 'き', な: 'こ', よ: 'こ', ら: 'こ', さ: 'こ', い: 'こ' }
-
-export function buildFuriganaForConjugation(conjugation, wordKanji, wordKana) {
-  const base = buildFurigana(wordKanji, wordKana)
-  if (!base) return null
-  const fullBase = base.prefix + base.kanjiPart
-  if (!conjugation.startsWith(fullBase)) return null
-  const okurigana = conjugation.slice(fullBase.length)
-  const furigana = base.kanjiPart === '来' ? (KURU_READINGS[okurigana[0]] ?? base.furigana) : base.furigana
-  return { prefix: base.prefix, kanjiPart: base.kanjiPart, furigana, okurigana }
-}
