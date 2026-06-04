@@ -144,6 +144,31 @@ Each word object in a `src/data/words/*.json` file:
 ### Settings persistence
 All VocabPage settings are stored in localStorage with `vocab-` prefix (e.g. `vocab-show-furigana`) to avoid colliding with katsuyou-drill's keys.
 
+## Auth
+
+GitHub OAuth via Supabase. The auth layer is intentionally thin — no login page, no modal. The sign-in button in the dashboard header triggers the OAuth redirect directly.
+
+| File | Purpose |
+|---|---|
+| `src/lib/supabase.js` | Supabase client (reads `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`) |
+| `src/context/AuthContext.jsx` | `AuthProvider` + `useAuth()` — exposes `{ user, signIn, signOut, loading }` |
+| `src/hooks/useProgress.js` | `useProgress(namespace)` — storage-agnostic progress hook (see below) |
+
+`AuthProvider` wraps the entire app in `main.jsx`. `loading` is true until the initial session resolves; the header auth slot renders nothing during this window to avoid a flash.
+
+### useProgress hook
+
+```js
+const { data, save, loading } = useProgress('my-module-namespace')
+```
+
+- **Logged in**: reads and writes to the Supabase `progress` table, one row per `(user_id, namespace)`.
+- **Logged out**: reads and writes to `localStorage` under the key `progress-{namespace}`.
+- `data` is the stored payload (any JSON-serialisable value), or `null` if nothing saved yet.
+- `save(payload)` upserts the full payload and optimistically updates local state.
+
+Supabase table: `progress(id uuid pk, user_id uuid → auth.users, namespace text, payload jsonb, updated_at timestamp)` with a unique constraint on `(user_id, namespace)` and RLS limiting each user to their own rows.
+
 ### Layout
 Identical to katsuyou-drill DrillPage:
 - Desktop: main content area + chevron toggle + collapsible sidebar (420px wide)
