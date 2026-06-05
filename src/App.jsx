@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import DashboardPage from './pages/DashboardPage.jsx'
 import VocabPage from './pages/VocabPage.jsx'
+import VocabSrsModule from './modules/vocab-srs/VocabSrsModule.jsx'
 
 function getRoute() {
   return window.location.hash.slice(1) || '/'
@@ -25,5 +26,6 @@ export default function App() {
 
   if (route === '/') return <DashboardPage />
   if (route === '/vocab') return <VocabPage />
+  if (route === '/vocab-srs') return <VocabSrsModule />
   return <DashboardPage />
 }
