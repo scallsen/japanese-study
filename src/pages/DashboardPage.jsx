@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import ModuleCard from '../components/ModuleCard.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
-import { FONT, TRACKING, BORDER, TEXT, TEXT_MUTED } from '../data/theme.js'
+import { FONT, TRACKING, BORDER, TEXT } from '../data/theme.js'
 import { MODULES } from '../data/modules.js'
 
 function useIsMobile(breakpoint = 768) {
@@ -35,24 +35,6 @@ function AddModuleCard() {
   )
 }
 
-function SignInBanner() {
-  return (
-    <div style={{
-      background: 'rgba(37, 99, 235, 0.1)',
-      border: '1px solid rgba(59, 130, 246, 0.25)',
-      borderRadius: 6,
-      padding: '10px 16px',
-      fontSize: 13,
-      color: '#93C5FD',
-      fontFamily: FONT,
-      letterSpacing: TRACKING,
-      marginBottom: 20,
-    }}>
-      Sign in to unlock all features
-    </div>
-  )
-}
-
 export default function DashboardPage() {
   const isMobile = useIsMobile()
   const { user, loading } = useAuth()
@@ -69,13 +51,25 @@ export default function DashboardPage() {
     }}>
       <header style={{
         display: 'flex',
-        alignItems: 'center',
-        padding: '20px 24px',
+        flexDirection: 'column',
         borderBottom: `1px solid ${BORDER}`,
         flexShrink: 0,
       }}>
-        <span style={{ fontSize: 16 }}>Japanese Study</span>
-        <div style={{ marginLeft: 'auto' }}><AuthSlot /></div>
+        <div style={{ display: 'flex', alignItems: 'center', padding: '20px 24px' }}>
+          <span style={{ fontSize: 16 }}>Japanese Study</span>
+          <div style={{ marginLeft: 'auto' }}><AuthSlot /></div>
+        </div>
+        {signedOut && (
+          <div style={{
+            background: 'rgba(37, 99, 235, 0.1)',
+            borderTop: '1px solid rgba(59, 130, 246, 0.2)',
+            padding: '8px 24px',
+            fontSize: 13,
+            color: '#93C5FD',
+          }}>
+            Sign in to unlock all features
+          </div>
+        )}
       </header>
 
       <main style={{
@@ -83,7 +77,6 @@ export default function DashboardPage() {
         overflowY: 'auto',
         padding: isMobile ? '20px 16px' : '28px 28px',
       }}>
-        {signedOut && <SignInBanner />}
 
         <div style={{
           display: 'grid',
