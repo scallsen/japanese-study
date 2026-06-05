@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import ModuleCard from '../components/ModuleCard.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
-import { FONT, TRACKING, BORDER, TEXT } from '../data/theme.js'
+import { FONT, TRACKING, BORDER, TEXT, TEXT_MUTED } from '../data/theme.js'
 import { MODULES } from '../data/modules.js'
 
 function useIsMobile(breakpoint = 768) {
@@ -37,6 +37,8 @@ function AddModuleCard() {
 
 export default function DashboardPage() {
   const isMobile = useIsMobile()
+  const liveModules = MODULES.filter(m => !m.external)
+  const externalModules = MODULES.filter(m => m.external)
 
   return (
     <div style={{
@@ -69,11 +71,34 @@ export default function DashboardPage() {
           gap: 10,
           maxWidth: 900,
         }}>
-          {MODULES.map(mod => (
+          {liveModules.map(mod => (
             <ModuleCard key={mod.id} module={mod} />
           ))}
           <AddModuleCard />
         </div>
+
+        {externalModules.length > 0 && (
+          <div style={{ maxWidth: 900, marginTop: 28 }}>
+            <div style={{
+              fontSize: 11,
+              color: TEXT_MUTED,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              marginBottom: 10,
+            }}>
+              External
+            </div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+              gap: 10,
+            }}>
+              {externalModules.map(mod => (
+                <ModuleCard key={mod.id} module={mod} secondary />
+              ))}
+            </div>
+          </div>
+        )}
       </main>
     </div>
   )
