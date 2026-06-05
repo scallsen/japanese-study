@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import ModuleCard from '../components/ModuleCard.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
+import { useAuth } from '../context/AuthContext.jsx'
 import { FONT, TRACKING, BORDER, TEXT } from '../data/theme.js'
 import { MODULES } from '../data/modules.js'
 
@@ -34,9 +35,10 @@ function AddModuleCard() {
   )
 }
 
-
 export default function DashboardPage() {
   const isMobile = useIsMobile()
+  const { user, loading } = useAuth()
+  const signedOut = !loading && !user
 
   return (
     <div style={{
@@ -49,13 +51,25 @@ export default function DashboardPage() {
     }}>
       <header style={{
         display: 'flex',
-        alignItems: 'center',
-        padding: '20px 24px',
+        flexDirection: 'column',
         borderBottom: `1px solid ${BORDER}`,
         flexShrink: 0,
       }}>
-        <span style={{ fontSize: 16 }}>Japanese Study</span>
-        <div style={{ marginLeft: 'auto' }}><AuthSlot /></div>
+        <div style={{ display: 'flex', alignItems: 'center', padding: '20px 24px' }}>
+          <span style={{ fontSize: 16 }}>Japanese Study</span>
+          <div style={{ marginLeft: 'auto' }}><AuthSlot /></div>
+        </div>
+        {signedOut && (
+          <div style={{
+            background: 'rgba(37, 99, 235, 0.1)',
+            borderTop: '1px solid rgba(59, 130, 246, 0.2)',
+            padding: '8px 24px',
+            fontSize: 13,
+            color: '#93C5FD',
+          }}>
+            Sign in to unlock all features
+          </div>
+        )}
       </header>
 
       <main style={{
@@ -63,6 +77,7 @@ export default function DashboardPage() {
         overflowY: 'auto',
         padding: isMobile ? '20px 16px' : '28px 28px',
       }}>
+
         <div style={{
           display: 'grid',
           gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
@@ -70,7 +85,11 @@ export default function DashboardPage() {
           maxWidth: 900,
         }}>
           {MODULES.map(mod => (
-            <ModuleCard key={mod.id} module={mod} />
+            <ModuleCard
+              key={mod.id}
+              module={mod}
+              disabled={signedOut && mod.requiresAuth}
+            />
           ))}
           <AddModuleCard />
         </div>
