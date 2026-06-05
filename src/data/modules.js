@@ -17,4 +17,13 @@ export const MODULES = [
     external: true,
     accent: '#E8962E',
   },
+  {
+    id: 'vocab-srs',
+    label: 'SRS',
+    sublabel: 'Spaced Repetition',
+    stats: null,
+    href: '#/vocab-srs',
+    external: false,
+    accent: '#3ABDA4',
+  },
 ]

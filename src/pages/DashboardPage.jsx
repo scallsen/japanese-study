@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import ModuleCard from '../components/ModuleCard.jsx'
-import { FONT, TRACKING, BORDER, TEXT, TEXT_MUTED } from '../data/theme.js'
+import AuthSlot from '../components/AuthSlot.jsx'
+import { FONT, TRACKING, BORDER, TEXT } from '../data/theme.js'
 import { MODULES } from '../data/modules.js'
-import { useAuth } from '../context/AuthContext.jsx'
 
 function useIsMobile(breakpoint = 768) {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= breakpoint)
@@ -34,52 +34,6 @@ function AddModuleCard() {
   )
 }
 
-function AuthSlot() {
-  const { user, signIn, signOut, loading } = useAuth()
-  if (loading) return null
-  if (!user) {
-    return (
-      <button
-        onClick={signIn}
-        style={{
-          marginLeft: 'auto',
-          background: 'none',
-          border: 'none',
-          padding: 0,
-          cursor: 'pointer',
-          fontFamily: FONT,
-          fontSize: 13,
-          letterSpacing: TRACKING,
-          color: TEXT_MUTED,
-        }}
-      >
-        Sign in
-      </button>
-    )
-  }
-  const initials = (user.user_metadata?.full_name || user.email || '?')
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map(s => s[0].toUpperCase())
-    .join('')
-  const linkStyle = {
-    background: 'none',
-    border: 'none',
-    padding: 0,
-    cursor: 'pointer',
-    fontFamily: FONT,
-    fontSize: 13,
-    letterSpacing: TRACKING,
-    color: TEXT_MUTED,
-  }
-  return (
-    <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 16 }}>
-      <span style={{ fontSize: 13, color: TEXT_MUTED }}>{initials}</span>
-      <button onClick={signOut} style={linkStyle}>Sign out</button>
-    </div>
-  )
-}
 
 export default function DashboardPage() {
   const isMobile = useIsMobile()
@@ -101,7 +55,7 @@ export default function DashboardPage() {
         flexShrink: 0,
       }}>
         <span style={{ fontSize: 16 }}>Japanese Study</span>
-        <AuthSlot />
+        <div style={{ marginLeft: 'auto' }}><AuthSlot /></div>
       </header>
 
       <main style={{
