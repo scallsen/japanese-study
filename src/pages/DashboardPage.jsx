@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import ModuleCard from '../components/ModuleCard.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
+import { useAuth } from '../context/AuthContext.jsx'
 import { FONT, TRACKING, BORDER, TEXT, TEXT_MUTED } from '../data/theme.js'
 import { MODULES } from '../data/modules.js'
 
@@ -34,11 +35,28 @@ function AddModuleCard() {
   )
 }
 
+function SignInBanner() {
+  return (
+    <div style={{
+      background: 'rgba(37, 99, 235, 0.1)',
+      border: '1px solid rgba(59, 130, 246, 0.25)',
+      borderRadius: 6,
+      padding: '10px 16px',
+      fontSize: 13,
+      color: '#93C5FD',
+      fontFamily: FONT,
+      letterSpacing: TRACKING,
+      marginBottom: 20,
+    }}>
+      Sign in to unlock all features
+    </div>
+  )
+}
 
 export default function DashboardPage() {
   const isMobile = useIsMobile()
-  const liveModules = MODULES.filter(m => !m.external)
-  const externalModules = MODULES.filter(m => m.external)
+  const { user, loading } = useAuth()
+  const signedOut = !loading && !user
 
   return (
     <div style={{
@@ -65,40 +83,23 @@ export default function DashboardPage() {
         overflowY: 'auto',
         padding: isMobile ? '20px 16px' : '28px 28px',
       }}>
+        {signedOut && <SignInBanner />}
+
         <div style={{
           display: 'grid',
           gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
           gap: 10,
           maxWidth: 900,
         }}>
-          {liveModules.map(mod => (
-            <ModuleCard key={mod.id} module={mod} />
+          {MODULES.map(mod => (
+            <ModuleCard
+              key={mod.id}
+              module={mod}
+              disabled={signedOut && mod.requiresAuth}
+            />
           ))}
           <AddModuleCard />
         </div>
-
-        {externalModules.length > 0 && (
-          <div style={{ maxWidth: 900, marginTop: 28 }}>
-            <div style={{
-              fontSize: 11,
-              color: TEXT_MUTED,
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              marginBottom: 10,
-            }}>
-              External
-            </div>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-              gap: 10,
-            }}>
-              {externalModules.map(mod => (
-                <ModuleCard key={mod.id} module={mod} secondary />
-              ))}
-            </div>
-          </div>
-        )}
       </main>
     </div>
   )

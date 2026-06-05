@@ -7,6 +7,7 @@ export const MODULES = [
     href: '#/vocab',
     external: false,
     accent: '#3A7FEF',
+    requiresAuth: false,
   },
   {
     id: 'katsuyou',
@@ -16,6 +17,7 @@ export const MODULES = [
     href: 'https://scallsen.ca/katsuyou-drill/',
     external: true,
     accent: '#E8962E',
+    requiresAuth: false,
   },
   {
     id: 'vocab-srs',
@@ -25,5 +27,6 @@ export const MODULES = [
     href: '#/vocab-srs',
     external: false,
     accent: '#3ABDA4',
+    requiresAuth: true,
   },
 ]
