@@ -14,6 +14,7 @@ export default function AuthSlot() {
     fontSize: 13,
     letterSpacing: TRACKING,
     color: TEXT_MUTED,
+    height: 34,
   }
 
   if (!user) {

@@ -14,7 +14,8 @@ export default function PageHeader({ crumbs = [], rightSlot, noBorder, children 
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        padding: '20px 24px',
+        height: 64,
+        padding: '0 24px',
         fontFamily: FONT,
         letterSpacing: TRACKING,
       }}>
