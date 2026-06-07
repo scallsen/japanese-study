@@ -251,6 +251,15 @@ export default function VocabSrsDrill({
     return () => window.removeEventListener('keydown', onKey)
   }, [showHardEasy])
 
+  // Must be before the isComplete early return — hooks cannot be called conditionally.
+  // previewIntervals uses enable_fuzz so re-calling every tick re-rolls the fuzz; memoize per card ID.
+  const currentCardForMemo = getCurrentCard(session)
+  const intervals = useMemo(
+    () => currentCardForMemo ? previewIntervals(currentCardForMemo) : null,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [currentCardForMemo?.id]
+  )
+
   const headerContent = (rightSlot) => (
     <header style={{
       display: 'flex',
@@ -325,12 +334,6 @@ export default function VocabSrsDrill({
   const isWaiting = !currentCard && stats.remaining > 0
   const waitMs = isWaiting ? getWaitMs(session) : 0
 
-  // Memoize per card ID — previewIntervals uses enable_fuzz so re-calling every tick re-rolls the fuzz.
-  const intervals = useMemo(
-    () => currentCard ? previewIntervals(currentCard) : null,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentCard?.id]
-  )
   const againInterval = currentCard && currentCard.state !== State.New ? RELEARN_STEP_LABEL : null
 
   const rightSlot = (
@@ -401,7 +404,7 @@ export default function VocabSrsDrill({
           color: '#fbbf24',
           flexShrink: 0,
         }}>
-          Leech — "{leechNotice}" suspended after too many failed reviews
+          Leech — &quot;{leechNotice}&quot; suspended after too many failed reviews
         </div>
       )}
 
