@@ -19,7 +19,13 @@ export function AuthProvider({ children }) {
     })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
+      // Use functional update to preserve reference on token refresh (same user ID).
+      // Without this, every TOKEN_REFRESHED event re-runs useProgress's effect → loading flash.
+      setUser(prev => {
+        const next = session?.user ?? null
+        if (prev?.id === next?.id) return prev
+        return next
+      })
     })
 
     return () => subscription.unsubscribe()

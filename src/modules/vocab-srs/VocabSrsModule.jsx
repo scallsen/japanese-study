@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useProgress } from '../../hooks/useProgress.js'
-import { getDeckStats, getGlobalStats, getTodaysQueue, resolveCard, resetCardProgress } from './srs.js'
+import { getDeckStats, getGlobalStats, getCardStateCounts, getTodaysQueue, resolveCard, resetCardProgress } from './srs.js'
 import { parseAnkiExport } from './import.js'
 import { initSession } from './session.js'
 import { migrateProgress, initializeDeckCards } from './migrate.js'
@@ -165,6 +165,12 @@ export default function VocabSrsModule() {
   const [dailyNewCards, setDailyNewCards] = useState(() => {
     const s = safeLocalStorageGet('srs-daily-new-cards'); return s ? parseInt(s, 10) : 10
   })
+  const [showHardEasy, setShowHardEasy] = useState(() => {
+    const s = safeLocalStorageGet('srs-show-hard-easy'); return s === null ? true : s === 'true'
+  })
+  const [leechThreshold, setLeechThreshold] = useState(() => {
+    const s = safeLocalStorageGet('srs-leech-threshold'); return s ? parseInt(s, 10) : 8
+  })
 
   useEffect(() => { safeLocalStorageSet('srs-visual-effects', showVisualEffects) }, [showVisualEffects])
   useEffect(() => { safeLocalStorageSet('srs-pixel-font', pixelFont) }, [pixelFont])
@@ -174,6 +180,8 @@ export default function VocabSrsModule() {
   useEffect(() => { safeLocalStorageSet('srs-sfx-enabled', sfxEnabled) }, [sfxEnabled])
   useEffect(() => { safeLocalStorageSet('srs-tts-voice', ttsVoice) }, [ttsVoice])
   useEffect(() => { safeLocalStorageSet('srs-daily-new-cards', dailyNewCards) }, [dailyNewCards])
+  useEffect(() => { safeLocalStorageSet('srs-show-hard-easy', showHardEasy) }, [showHardEasy])
+  useEffect(() => { safeLocalStorageSet('srs-leech-threshold', leechThreshold) }, [leechThreshold])
 
   // Apply migration and auto-initialize active bundled decks on first load.
   useEffect(() => {
@@ -200,7 +208,7 @@ export default function VocabSrsModule() {
   const isMobile = useIsMobile()
   const jaVoices = useJaVoices()
 
-  if (loading) return null
+  if (loading && !progress) return null
 
   if (!user) {
     return (
@@ -232,6 +240,7 @@ export default function VocabSrsModule() {
   const cardsObj = progress.cards ?? {}
   const deckList = Object.values(decks).sort((a, b) => (a.addedAt ?? 0) - (b.addedAt ?? 0))
   const globalStats = getGlobalStats(cardsObj, decks)
+  const cardStateCounts = getCardStateCounts(cardsObj, decks)
   const todayStr = new Date().toISOString().split('T')[0]
   const newCardDay = progress.newCardDay ?? { date: '', count: 0 }
   const newCardsIntroducedToday = newCardDay.date === todayStr ? newCardDay.count : 0
@@ -359,11 +368,10 @@ export default function VocabSrsModule() {
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <StatRow label="Due today" value={due.length + rescheduled.length} accent={(due.length + rescheduled.length) > 0 ? ACCENT : undefined} />
-            <StatRow label="New today" value={newCards.length} />
-            <StatRow label="Learned" value={globalStats.learned} />
-            <StatRow label="Total cards" value={globalStats.totalCards} />
-            <StatRow label="Est. time" value={canStart ? `~${Math.ceil((due.length + rescheduled.length + newCards.length) * 0.25) || '<1'} min` : '—'} />
+            {cardStateCounts.unlearned > 0 && <StatRow label="Unlearned" value={cardStateCounts.unlearned} />}
+            {cardStateCounts.learning > 0 && <StatRow label="Learning" value={cardStateCounts.learning} />}
+            {cardStateCounts.graduated > 0 && <StatRow label="Graduated" value={cardStateCounts.graduated} />}
+            {cardStateCounts.relearning > 0 && <StatRow label="Relearning" value={cardStateCounts.relearning} />}
           </div>
         )}
 
@@ -386,25 +394,56 @@ export default function VocabSrsModule() {
 
         {/* ── SRS Settings ── */}
         <DrawerSectionHeader title="SRS Settings" />
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0' }}>
-          <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Daily new cards</span>
-          <input
-            type="number"
-            value={dailyNewCards}
-            min={1}
-            onChange={e => setDailyNewCards(Math.max(1, parseInt(e.target.value) || 1))}
-            style={{
-              width: 60,
-              padding: '4px 8px',
-              background: 'rgba(255,255,255,0.05)',
-              border: '1px solid rgba(255,255,255,0.15)',
-              borderRadius: 4,
-              color: TEXT,
-              fontFamily: 'inherit',
-              fontSize: 13,
-              letterSpacing: TRACKING,
-              textAlign: 'center',
-            }}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Daily new cards</span>
+            <input
+              type="number"
+              value={dailyNewCards}
+              min={1}
+              onChange={e => setDailyNewCards(Math.max(1, parseInt(e.target.value) || 1))}
+              style={{
+                width: 60,
+                padding: '4px 8px',
+                background: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,255,255,0.15)',
+                borderRadius: 4,
+                color: TEXT,
+                fontFamily: 'inherit',
+                fontSize: 13,
+                letterSpacing: TRACKING,
+                textAlign: 'center',
+              }}
+            />
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>
+              Leech threshold
+              <span style={{ fontSize: 11, color: TEXT_MUTED, marginLeft: 6 }}>lapses (0 = off)</span>
+            </span>
+            <input
+              type="number"
+              value={leechThreshold}
+              min={0}
+              onChange={e => setLeechThreshold(Math.max(0, parseInt(e.target.value) || 0))}
+              style={{
+                width: 60,
+                padding: '4px 8px',
+                background: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,255,255,0.15)',
+                borderRadius: 4,
+                color: TEXT,
+                fontFamily: 'inherit',
+                fontSize: 13,
+                letterSpacing: TRACKING,
+                textAlign: 'center',
+              }}
+            />
+          </div>
+          <DrawerCheckbox
+            checked={showHardEasy}
+            onChange={() => setShowHardEasy(v => !v)}
+            label="Show Hard / Easy buttons"
           />
         </div>
 
@@ -511,7 +550,7 @@ export default function VocabSrsModule() {
                   for (const [id, card] of Object.entries(cardsObj)) {
                     newCardsObj[id] = activeDeckIds.has(card.deckId) ? resetCardProgress(card) : card
                   }
-                  const newProgress = { ...progress, cards: newCardsObj }
+                  const newProgress = { ...progress, cards: newCardsObj, newCardDay: { date: '', count: 0 } }
                   setProgress(newProgress)
                   save(newProgress)
                 }}
@@ -563,6 +602,8 @@ export default function VocabSrsModule() {
             ttsEnabled={audioEnabled && ttsEnabled}
             sfxEnabled={audioEnabled && sfxEnabled}
             ttsVoice={ttsVoice}
+            showHardEasy={showHardEasy}
+            leechThreshold={leechThreshold}
             isMobile={isMobile}
             onShowOptions={() => setShowOptions(v => !v)}
           />

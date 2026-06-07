@@ -45,6 +45,19 @@ export function reviewCard(card, rating, now = new Date()) {
   return updated
 }
 
+// Returns the FSRS-projected due date for each rating, used for button interval hints.
+export function previewIntervals(card, now = new Date()) {
+  const result = {}
+  for (const rating of [Rating.Again, Rating.Hard, Rating.Good, Rating.Easy]) {
+    try {
+      result[rating] = new Date(f.next(card, now, rating).card.due)
+    } catch {
+      result[rating] = now
+    }
+  }
+  return result
+}
+
 // Resolves a card state to include front/back content.
 // Bundled cards look up content from the static JSON; imported cards carry it inline.
 export function resolveCard(cardState, deckFiles = DECK_FILES) {
@@ -69,6 +82,7 @@ export function getTodaysQueue(cardsObj, decks, { newPerDay = Infinity, maxOverd
 
   for (const card of Object.values(cardsObj)) {
     if (!activeDeckIds.has(card.deckId)) continue
+    if (card.suspended) continue
 
     if (card.state === State.New) {
       newCards.push(card)
@@ -135,6 +149,22 @@ export function getGlobalStats(cardsObj, decks) {
   const activeDecks = Object.values(decks).filter(d => d.active).length
 
   return { totalCards, dueToday, newAvailable, learned, estimatedMinutes, activeDecks }
+}
+
+// Counts of cards in each FSRS state, scoped to active decks.
+export function getCardStateCounts(cardsObj, decks) {
+  const activeDeckIds = new Set(
+    Object.values(decks).filter(d => d.active).map(d => d.id)
+  )
+  let unlearned = 0, learning = 0, graduated = 0, relearning = 0
+  for (const card of Object.values(cardsObj)) {
+    if (!activeDeckIds.has(card.deckId)) continue
+    if (card.state === State.New) unlearned++
+    else if (card.state === State.Learning) learning++
+    else if (card.state === State.Review) graduated++
+    else if (card.state === State.Relearning) relearning++
+  }
+  return { unlearned, learning, graduated, relearning }
 }
 
 // Backward-compat: takes a plain card array (old storage shape).
