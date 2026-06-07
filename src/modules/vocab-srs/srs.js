@@ -1,5 +1,5 @@
 import { createEmptyCard, fsrs, generatorParameters, Rating, State } from 'ts-fsrs'
-import CORE3K from './decks/core3k.json'
+import CORE2000 from './decks/core2000.json'
 import KEIGO from './decks/keigo.json'
 
 const f = fsrs(generatorParameters({ enable_fuzz: true }))
@@ -8,7 +8,7 @@ export { Rating, State }
 
 // Maps deckId → (cardId → word object) for bundled decks
 const DECK_FILES = {
-  'core3k': new Map(CORE3K.map(w => [w.id, w])),
+  'core2000': new Map(CORE2000.map(w => [w.id, w])),
   'keigo': new Map(KEIGO.map(w => [w.id, w])),
 }
 
@@ -17,21 +17,21 @@ export function createBundledCardState(id, deckId) {
   return { ...createEmptyCard(), id, deckId }
 }
 
+const IMPORTED_CONTENT_FIELDS = ['front', 'back', 'source', 'addedAt', 'kana', 'wordAudio', 'sentenceAudio', 'sentence', 'sentenceEnglish']
+
 // Resets a card's FSRS scheduling state to initial, preserving its identity and content fields.
 export function resetCardProgress(card) {
   const reset = { ...createEmptyCard(), id: card.id, deckId: card.deckId }
-  if ('front' in card) {
-    reset.front = card.front
-    reset.back = card.back
-    if (card.source !== undefined) reset.source = card.source
-    if (card.addedAt !== undefined) reset.addedAt = card.addedAt
+  for (const field of IMPORTED_CONTENT_FIELDS) {
+    if (field in card) reset[field] = card[field]
   }
   return reset
 }
 
 // Creates a full card for imported decks (content stored inline).
-export function createCard(front, back, id, deckId = 'imported') {
-  return { ...createEmptyCard(), id, deckId, front, back, source: 'imported', addedAt: Date.now() }
+// extras: optional fields — kana, wordAudio, sentenceAudio, sentence
+export function createCard(front, back, id, deckId = 'imported', extras = {}) {
+  return { ...createEmptyCard(), id, deckId, front, back, source: 'imported', addedAt: Date.now(), ...extras }
 }
 
 export function reviewCard(card, rating, now = new Date()) {
@@ -58,13 +58,16 @@ export function previewIntervals(card, now = new Date()) {
   return result
 }
 
-// Resolves a card state to include front/back content.
-// Bundled cards look up content from the static JSON; imported cards carry it inline.
+// Resolves a card state to include content fields.
+// Bundled cards look up content from the static JSON; imported cards already carry it inline.
 export function resolveCard(cardState, deckFiles = DECK_FILES) {
   if ('front' in cardState) return cardState
   const wordMap = deckFiles[cardState.deckId]
   const word = wordMap?.get(cardState.id)
-  return { ...cardState, front: word?.front ?? '', back: word?.back ?? '' }
+  if (!word) return { ...cardState, front: '', back: '' }
+  // eslint-disable-next-line no-unused-vars
+  const { id: _id, ...content } = word
+  return { ...cardState, ...content }
 }
 
 // cardsObj: { [cardId]: cardState }
