@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import FlipCard from '../../FlipCard.jsx'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, BORDER } from '../../data/theme.js'
+import PageHeader from '../../components/PageHeader.jsx'
+import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../../data/theme.js'
 import { Rating, State, previewIntervals } from './srs.js'
 import { answerCard, undoLastAnswer, isComplete, getSessionStats, getCurrentCard, getWaitMs } from './session.js'
 import { useTTS } from '../../hooks/useTTS.js'
@@ -229,11 +230,11 @@ export default function VocabSrsDrill({
   ttsEnabled = false, sfxEnabled = true, ttsVoice = '',
   showHardEasy = true, leechThreshold = 8,
   isMobile = false, onShowOptions,
+  crumbs = [{ label: 'Japanese Study', href: '#/' }],
 }) {
   const [session, setSession] = useState(initialSession)
   const [localCards, setLocalCards] = useState(initialCards)
   const [flipped, setFlipped] = useState(false)
-  const [backHovered, setBackHovered] = useState(false)
   const [optionsHovered, setOptionsHovered] = useState(false)
   const [leechNotice, setLeechNotice] = useState(null)
 
@@ -419,32 +420,7 @@ export default function VocabSrsDrill({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentCardForMemo?.id])
 
-  const headerContent = (rightSlot) => (
-    <header style={{
-      display: 'flex',
-      alignItems: 'center',
-      padding: '20px 24px',
-      borderBottom: `1px solid ${BORDER}`,
-      flexShrink: 0,
-    }}>
-      <span
-        onMouseEnter={() => setBackHovered(true)}
-        onMouseLeave={() => setBackHovered(false)}
-        style={{
-          color: backHovered ? 'rgba(255,255,255,0.65)' : 'rgba(255,255,255,0.35)',
-          fontSize: 16,
-          cursor: 'pointer',
-          letterSpacing: TRACKING,
-          transition: 'color 130ms',
-        }}
-      >
-        Japanese Study
-      </span>
-      <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 16, margin: '0 6px' }}>/</span>
-      <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: 16 }}>SRS</span>
-      {rightSlot}
-    </header>
-  )
+  const drillCrumbs = [...crumbs, { label: 'Review' }]
 
   if (isComplete(session)) {
     const stats = getSessionStats(session)
@@ -458,28 +434,27 @@ export default function VocabSrsDrill({
         letterSpacing: TRACKING,
         color: TEXT,
       }}>
-        {headerContent(
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
-            {isMobile && onShowOptions && (
-              <button
-                onClick={onShowOptions}
-                onMouseEnter={() => setOptionsHovered(true)}
-                onMouseLeave={() => setOptionsHovered(false)}
-                style={{
-                  height: 34, padding: '0 12px', fontSize: 13,
-                  fontFamily: 'inherit',
-                  background: optionsHovered ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)',
-                  color: 'rgba(255,255,255,0.7)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: 8, cursor: 'pointer',
-                  transition: 'background 130ms',
-                }}
-              >
-                Options
-              </button>
-            )}
-          </div>
-        )}
+        <PageHeader
+          crumbs={drillCrumbs}
+          rightSlot={isMobile && onShowOptions && (
+            <button
+              onClick={onShowOptions}
+              onMouseEnter={() => setOptionsHovered(true)}
+              onMouseLeave={() => setOptionsHovered(false)}
+              style={{
+                height: 34, padding: '0 12px', fontSize: 13,
+                fontFamily: 'inherit',
+                background: optionsHovered ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)',
+                color: 'rgba(255,255,255,0.7)',
+                border: '1px solid rgba(255,255,255,0.2)',
+                borderRadius: 8, cursor: 'pointer',
+                transition: 'background 130ms',
+              }}
+            >
+              Options
+            </button>
+          )}
+        />
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <DoneScreen stats={stats} onDone={() => onDone(localCards, stats.goodCount)} />
         </div>
@@ -496,7 +471,7 @@ export default function VocabSrsDrill({
   const againInterval = currentCard && currentCard.state !== State.New ? RELEARN_STEP_LABEL : null
 
   const rightSlot = (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginLeft: 'auto' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
       <span style={{ fontSize: 13, color: TEXT_MUTED }}>
         {stats.goodCount} / {stats.total}
         {stats.waitingCount > 0 && <span style={{ marginLeft: 6, color: '#fbbf24' }}>{stats.waitingCount} waiting</span>}
@@ -541,7 +516,7 @@ export default function VocabSrsDrill({
       letterSpacing: TRACKING,
       color: TEXT,
     }}>
-      {headerContent(rightSlot)}
+      <PageHeader crumbs={drillCrumbs} rightSlot={rightSlot} />
 
       <div style={{ height: 3, background: 'rgba(255,255,255,0.08)', flexShrink: 0 }}>
         <div style={{
