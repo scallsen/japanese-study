@@ -6,6 +6,7 @@ import DrawerSectionHeader from '../components/DrawerSectionHeader.jsx'
 import DrawerCheckbox from '../components/DrawerCheckbox.jsx'
 import DrawerSelect from '../components/DrawerSelect.jsx'
 import SpeedModeControls from '../components/SpeedModeControls.jsx'
+import PageHeader from '../components/PageHeader.jsx'
 import { FONT, TRACKING } from '../data/theme.js'
 import { WORD_SOURCES } from '../data/wordLists.js'
 import { useDrill } from '../hooks/useDrill.js'
@@ -311,7 +312,6 @@ export default function VocabPage() {
   const [pulseColor,       setPulseColor]       = useState(null)
   const [headerHeight,     setHeaderHeight]     = useState(72)
   const headerRef   = useRef(null)
-  const [backHovered,    setBackHovered]    = useState(false)
   const [audioHovered,   setAudioHovered]   = useState(false)
   const [optionsHovered, setOptionsHovered] = useState(false)
   const [chevronHovered, setChevronHovered] = useState(false)
@@ -519,27 +519,10 @@ export default function VocabPage() {
 
         {/* Header */}
         <div ref={headerRef} style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 }}>
-          <div style={{
-            display: 'flex', alignItems: 'center',
-            padding: '20px 24px', gap: '8px 0',
-          }}>
-            <a
-              href="#/"
-              onMouseEnter={() => setBackHovered(true)}
-              onMouseLeave={() => setBackHovered(false)}
-              style={{
-                color: backHovered ? 'rgba(255,255,255,0.65)' : 'rgba(255,255,255,0.35)',
-                fontSize: 16,
-                textDecoration: 'none',
-                letterSpacing: TRACKING,
-                transition: 'color 130ms',
-              }}
-            >
-              Japanese Study
-            </a>
-            <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 16, margin: '0 6px' }}>/</span>
-            <div style={{ color: 'rgba(255,255,255,0.85)', fontSize: 16 }}>Vocabulary Training</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
+          <PageHeader
+            crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary Training' }]}
+            noBorder
+            rightSlot={<div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <button
                 onClick={() => setAudioEnabled(v => !v)}
                 onMouseEnter={() => setAudioHovered(true)}
@@ -575,8 +558,8 @@ export default function VocabPage() {
               >
                 {showOptions ? 'Hide options' : 'Show options'}
               </button>
-            </div>
-          </div>
+            </div>}
+          />
         </div>
 
         {/* Center content */}

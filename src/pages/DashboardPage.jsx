@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import ModuleCard from '../components/ModuleCard.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
+import PageHeader from '../components/PageHeader.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
-import { FONT, TRACKING, BORDER, TEXT } from '../data/theme.js'
+import { FONT, TRACKING, TEXT } from '../data/theme.js'
 import { MODULES } from '../data/modules.js'
 
 function useIsMobile(breakpoint = 768) {
@@ -49,16 +50,7 @@ export default function DashboardPage() {
       letterSpacing: TRACKING,
       color: TEXT,
     }}>
-      <header style={{
-        display: 'flex',
-        flexDirection: 'column',
-        borderBottom: `1px solid ${BORDER}`,
-        flexShrink: 0,
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', padding: '20px 24px' }}>
-          <span style={{ fontSize: 16 }}>Japanese Study</span>
-          <div style={{ marginLeft: 'auto' }}><AuthSlot /></div>
-        </div>
+      <PageHeader crumbs={[{ label: 'Japanese Study' }]} rightSlot={<AuthSlot />}>
         {signedOut && (
           <div style={{
             background: 'rgba(37, 99, 235, 0.1)',
@@ -70,7 +62,7 @@ export default function DashboardPage() {
             Sign in to unlock all features
           </div>
         )}
-      </header>
+      </PageHeader>
 
       <main style={{
         flex: 1,

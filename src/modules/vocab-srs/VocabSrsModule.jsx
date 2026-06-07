@@ -6,7 +6,8 @@ import { parseAnkiExport } from './import.js'
 import { initSession } from './session.js'
 import { migrateProgress, initializeDeckCards } from './migrate.js'
 import VocabSrsDrill from './VocabSrsDrill.jsx'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, BORDER } from '../../data/theme.js'
+import PageHeader from '../../components/PageHeader.jsx'
+import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../../data/theme.js'
 import DrawerSectionHeader from '../../components/DrawerSectionHeader.jsx'
 import DrawerCheckbox from '../../components/DrawerCheckbox.jsx'
 import DrawerSelect from '../../components/DrawerSelect.jsx'
@@ -138,7 +139,6 @@ export default function VocabSrsModule() {
   const [advanceDays, setAdvanceDays] = useState(3)
   const [showOptions, setShowOptions] = useState(() => window.innerWidth > 768)
   const [chevronHovered, setChevronHovered] = useState(false)
-  const [backHovered, setBackHovered] = useState(false)
   const [startHovered, setStartHovered] = useState(false)
   const [audioHovered, setAudioHovered] = useState(false)
   const [optionsHovered, setOptionsHovered] = useState(false)
@@ -233,13 +233,7 @@ export default function VocabSrsModule() {
   if (!user) {
     return (
       <div style={{ width: '100vw', height: '100dvh', background: '#1E1E1E', fontFamily: FONT, letterSpacing: TRACKING, display: 'flex', flexDirection: 'column', color: TEXT }}>
-        <header style={{ display: 'flex', alignItems: 'center', padding: '20px 24px', borderBottom: `1px solid ${BORDER}`, flexShrink: 0 }}>
-          <a href="#/" style={{ color: 'rgba(255,255,255,0.35)', fontSize: 16, textDecoration: 'none', letterSpacing: TRACKING }}>
-            Japanese Study
-          </a>
-          <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 16, margin: '0 6px' }}>/</span>
-          <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: 16 }}>SRS</span>
-        </header>
+        <PageHeader crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'SRS' }]} />
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
           <div style={{ fontSize: 15, color: TEXT }}>Sign in to use Vocab SRS</div>
           <div style={{ fontSize: 13, color: TEXT_MUTED, marginBottom: 8 }}>Progress syncs to your account across devices</div>
@@ -655,33 +649,13 @@ export default function VocabSrsModule() {
             leechThreshold={leechThreshold}
             isMobile={isMobile}
             onShowOptions={() => setShowOptions(v => !v)}
+            crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'SRS', onClick: () => setSession(null) }]}
           />
         ) : (
           <div style={{ height: '100%', display: 'flex', flexDirection: 'column', color: TEXT }}>
-            <header style={{
-              display: 'flex',
-              alignItems: 'center',
-              padding: '20px 24px',
-              borderBottom: `1px solid ${BORDER}`,
-              flexShrink: 0,
-            }}>
-              <a
-                href="#/"
-                onMouseEnter={() => setBackHovered(true)}
-                onMouseLeave={() => setBackHovered(false)}
-                style={{
-                  color: backHovered ? 'rgba(255,255,255,0.65)' : 'rgba(255,255,255,0.35)',
-                  fontSize: 16,
-                  textDecoration: 'none',
-                  letterSpacing: TRACKING,
-                  transition: 'color 130ms',
-                }}
-              >
-                Japanese Study
-              </a>
-              <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 16, margin: '0 6px' }}>/</span>
-              <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: 16 }}>SRS</span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
+            <PageHeader
+              crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'SRS' }]}
+              rightSlot={<div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <AuthSlot />
                 <button
                   onClick={() => setAudioEnabled(v => !v)}
@@ -718,8 +692,8 @@ export default function VocabSrsModule() {
                 >
                   {showOptions ? 'Hide options' : 'Show options'}
                 </button>
-              </div>
-            </header>
+              </div>}
+            />
 
             <main style={{ flex: 1, overflowY: 'auto', padding: '28px 24px' }}>
               <div style={{ maxWidth: 480, margin: '0 auto' }}>
