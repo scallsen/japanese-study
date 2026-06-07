@@ -17,21 +17,21 @@ export function createBundledCardState(id, deckId) {
   return { ...createEmptyCard(), id, deckId }
 }
 
+const IMPORTED_CONTENT_FIELDS = ['front', 'back', 'source', 'addedAt', 'kana', 'wordAudio', 'sentenceAudio', 'sentence']
+
 // Resets a card's FSRS scheduling state to initial, preserving its identity and content fields.
 export function resetCardProgress(card) {
   const reset = { ...createEmptyCard(), id: card.id, deckId: card.deckId }
-  if ('front' in card) {
-    reset.front = card.front
-    reset.back = card.back
-    if (card.source !== undefined) reset.source = card.source
-    if (card.addedAt !== undefined) reset.addedAt = card.addedAt
+  for (const field of IMPORTED_CONTENT_FIELDS) {
+    if (field in card) reset[field] = card[field]
   }
   return reset
 }
 
 // Creates a full card for imported decks (content stored inline).
-export function createCard(front, back, id, deckId = 'imported') {
-  return { ...createEmptyCard(), id, deckId, front, back, source: 'imported', addedAt: Date.now() }
+// extras: optional fields — kana, wordAudio, sentenceAudio, sentence
+export function createCard(front, back, id, deckId = 'imported', extras = {}) {
+  return { ...createEmptyCard(), id, deckId, front, back, source: 'imported', addedAt: Date.now(), ...extras }
 }
 
 export function reviewCard(card, rating, now = new Date()) {

@@ -9,6 +9,14 @@ import { useSFX } from '../../hooks/useSFX.js'
 const CARD_BG = '#E8E4DE'
 const RELEARN_STEP_LABEL = '10m'
 
+const AUDIO_BASE = import.meta.env.VITE_SUPABASE_URL
+  ? `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/audio/imported`
+  : null
+
+function getAudioUrl(filename) {
+  return filename && AUDIO_BASE ? `${AUDIO_BASE}/${filename}` : null
+}
+
 function formatInterval(dueDate, now = new Date()) {
   const ms = dueDate - now
   if (ms < 60000) return '< 1m'
@@ -73,6 +81,31 @@ function SrsCardFace({ text, isBack, backText, showTranslation, pixelFont }) {
         </div>
       )}
     </div>
+  )
+}
+
+function AudioButton({ label, onClick }) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        padding: '4px 10px',
+        fontSize: 12,
+        fontFamily: 'inherit',
+        letterSpacing: TRACKING,
+        background: hovered ? 'rgba(255,255,255,0.1)' : 'transparent',
+        color: 'rgba(255,255,255,0.45)',
+        border: '1px solid rgba(255,255,255,0.12)',
+        borderRadius: 5,
+        cursor: 'pointer',
+        transition: 'background 130ms, color 130ms',
+      }}
+    >
+      ▶ {label}
+    </button>
   )
 }
 
@@ -180,6 +213,31 @@ export default function VocabSrsDrill({
   const flippedRef = useRef(false)
   flippedRef.current = flipped
 
+  const audioCurrentRef = useRef(null)
+  const audioPreloadRef = useRef({ audio: null, filename: null })
+
+  const playAudioRef = useRef()
+  playAudioRef.current = (filename) => {
+    const url = getAudioUrl(filename)
+    if (!url) return
+    if (audioCurrentRef.current) audioCurrentRef.current.pause()
+    if (audioPreloadRef.current.filename === filename && audioPreloadRef.current.audio) {
+      audioCurrentRef.current = audioPreloadRef.current.audio
+      audioPreloadRef.current = { audio: null, filename: null }
+    } else {
+      audioCurrentRef.current = new Audio(url)
+    }
+    audioCurrentRef.current.play().catch(() => {})
+  }
+
+  const stopAudioRef = useRef()
+  stopAudioRef.current = () => {
+    if (audioCurrentRef.current) {
+      audioCurrentRef.current.pause()
+      audioCurrentRef.current = null
+    }
+  }
+
   const sessionRef = useRef(session)
   sessionRef.current = session
   const localCardsRef = useRef(localCards)
@@ -191,6 +249,7 @@ export default function VocabSrsDrill({
     if (!currentCard) return
     if (sfxEnabled) sfx.play(rating === Rating.Again ? 'flip_card_wrong' : 'flip_card_correct')
     tts.cancel()
+    stopAudioRef.current()
     seenRef.current.add(currentCard.id)
     const { session: newSession, updatedCard, isLeech } = answerCard(
       sessionRef.current, currentCard, rating, { leechThreshold }
@@ -210,7 +269,11 @@ export default function VocabSrsDrill({
   handleFlipRef.current = () => {
     if (sfxEnabled) sfx.play('flip_card')
     const currentCard = getCurrentCard(sessionRef.current)
-    if (ttsEnabled && currentCard) tts.speak(currentCard.front ?? '')
+    if (currentCard?.wordAudio) {
+      playAudioRef.current(currentCard.wordAudio)
+    } else if (ttsEnabled && currentCard) {
+      tts.speak(currentCard.front ?? '')
+    }
     setFlipped(true)
   }
 
@@ -218,6 +281,7 @@ export default function VocabSrsDrill({
   handleUndoRef.current = () => {
     const { session: prevSession, revertedCard } = undoLastAnswer(sessionRef.current)
     if (prevSession === sessionRef.current) return
+    stopAudioRef.current()
     if (revertedCard) {
       seenRef.current.delete(revertedCard.id)
       const revertedCards = localCardsRef.current.map(c => c.id === revertedCard.id ? revertedCard : c)
@@ -250,6 +314,16 @@ export default function VocabSrsDrill({
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [showHardEasy])
+
+  // Preload the current card's word audio as soon as the card appears.
+  useEffect(() => {
+    const filename = currentCardForMemo?.wordAudio
+    if (!filename || audioPreloadRef.current.filename === filename) return
+    const audio = new Audio(getAudioUrl(filename))
+    audio.preload = 'auto'
+    audioPreloadRef.current = { audio, filename }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentCardForMemo?.id])
 
   // Must be before the isComplete early return — hooks cannot be called conditionally.
   // previewIntervals uses enable_fuzz so re-calling every tick re-rolls the fuzz; memoize per card ID.
@@ -447,7 +521,11 @@ export default function VocabSrsDrill({
                     setFlipped(next)
                     if (next) {
                       if (sfxEnabled) sfx.play('flip_card')
-                      if (ttsEnabled && currentCard) tts.speak(currentCard.front)
+                      if (currentCard?.wordAudio) {
+                        playAudioRef.current(currentCard.wordAudio)
+                      } else if (ttsEnabled && currentCard) {
+                        tts.speak(currentCard.front)
+                      }
                     }
                   }}
                   animate={showVisualEffects}
@@ -465,6 +543,17 @@ export default function VocabSrsDrill({
                 }} />
               )}
             </div>
+
+            {currentCard && (currentCard.wordAudio || currentCard.sentenceAudio) && flipped && (
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+                {currentCard.wordAudio && (
+                  <AudioButton label="Word" onClick={() => playAudioRef.current(currentCard.wordAudio)} />
+                )}
+                {currentCard.sentenceAudio && (
+                  <AudioButton label="Sentence" onClick={() => playAudioRef.current(currentCard.sentenceAudio)} />
+                )}
+              </div>
+            )}
 
             {!flipped ? (
               <div style={{
