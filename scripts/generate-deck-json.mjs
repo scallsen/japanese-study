@@ -32,9 +32,10 @@ for (const line of tsv.split('\n')) {
   const front    = stripHtml(cols[1])
   const kana     = stripHtml(cols[3])
   const back     = stripHtml(cols[4])
-  const wordAudio     = extractSound(cols[5])
-  const sentence      = stripHtml(cols[11])
-  const sentenceAudio = extractSound(cols[13])
+  const wordAudio        = extractSound(cols[5])
+  const sentence         = stripHtml(cols[8])
+  const sentenceEnglish  = stripHtml(cols[11])
+  const sentenceAudio    = extractSound(cols[13])
 
   if (!front || !back) continue
 
@@ -43,6 +44,7 @@ for (const line of tsv.split('\n')) {
   if (wordAudio) card.wordAudio = wordAudio
   if (sentenceAudio) card.sentenceAudio = sentenceAudio
   if (sentence) card.sentence = sentence
+  if (sentenceEnglish) card.sentenceEnglish = sentenceEnglish
 
   cards.push(card)
 }

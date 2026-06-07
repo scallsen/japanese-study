@@ -152,8 +152,23 @@ export default function VocabSrsModule() {
   const [showTranslation, setShowTranslation] = useState(() => {
     const s = safeLocalStorageGet('srs-show-translation'); return s === null ? true : s === 'true'
   })
+  const [showFurigana, setShowFurigana] = useState(() => {
+    const s = safeLocalStorageGet('srs-show-furigana'); return s === null ? true : s === 'true'
+  })
+  const [showSentence, setShowSentence] = useState(() => {
+    const s = safeLocalStorageGet('srs-show-sentence'); return s === null ? true : s === 'true'
+  })
   const [audioEnabled, setAudioEnabled] = useState(() => {
     const s = safeLocalStorageGet('srs-audio-enabled'); return s === null ? true : s === 'true'
+  })
+  const [autoplayAudio, setAutoplayAudio] = useState(() => {
+    const s = safeLocalStorageGet('srs-autoplay-audio'); return s === null ? true : s === 'true'
+  })
+  const [autoplayFront, setAutoplayFront] = useState(() => {
+    const s = safeLocalStorageGet('srs-autoplay-front'); return s === null ? true : s === 'true'
+  })
+  const [autoplayBack, setAutoplayBack] = useState(() => {
+    const s = safeLocalStorageGet('srs-autoplay-back'); return s === null ? true : s === 'true'
   })
   const [ttsEnabled, setTtsEnabled] = useState(() => {
     const s = safeLocalStorageGet('srs-tts-enabled'); return s === null ? false : s === 'true'
@@ -175,7 +190,12 @@ export default function VocabSrsModule() {
   useEffect(() => { safeLocalStorageSet('srs-visual-effects', showVisualEffects) }, [showVisualEffects])
   useEffect(() => { safeLocalStorageSet('srs-pixel-font', pixelFont) }, [pixelFont])
   useEffect(() => { safeLocalStorageSet('srs-show-translation', showTranslation) }, [showTranslation])
+  useEffect(() => { safeLocalStorageSet('srs-show-furigana', showFurigana) }, [showFurigana])
+  useEffect(() => { safeLocalStorageSet('srs-show-sentence', showSentence) }, [showSentence])
   useEffect(() => { safeLocalStorageSet('srs-audio-enabled', audioEnabled) }, [audioEnabled])
+  useEffect(() => { safeLocalStorageSet('srs-autoplay-audio', autoplayAudio) }, [autoplayAudio])
+  useEffect(() => { safeLocalStorageSet('srs-autoplay-front', autoplayFront) }, [autoplayFront])
+  useEffect(() => { safeLocalStorageSet('srs-autoplay-back', autoplayBack) }, [autoplayBack])
   useEffect(() => { safeLocalStorageSet('srs-tts-enabled', ttsEnabled) }, [ttsEnabled])
   useEffect(() => { safeLocalStorageSet('srs-sfx-enabled', sfxEnabled) }, [sfxEnabled])
   useEffect(() => { safeLocalStorageSet('srs-tts-voice', ttsVoice) }, [ttsVoice])
@@ -455,6 +475,8 @@ export default function VocabSrsModule() {
           <DrawerCheckbox checked={showVisualEffects} onChange={() => setShowVisualEffects(v => !v)} label="Show visual effects" />
           <DrawerCheckbox checked={pixelFont} onChange={() => setPixelFont(v => !v)} label="Use pixel font" />
           <DrawerCheckbox checked={showTranslation} onChange={() => setShowTranslation(v => !v)} label="Show translation" />
+          <DrawerCheckbox checked={showFurigana} onChange={() => setShowFurigana(v => !v)} label="Show furigana on front" />
+          <DrawerCheckbox checked={showSentence} onChange={() => setShowSentence(v => !v)} label="Show sentence" />
           <DrawerCheckbox
             checked={audioEnabled}
             onChange={() => setAudioEnabled(v => !v)}
@@ -462,6 +484,28 @@ export default function VocabSrsModule() {
           />
           {audioEnabled && (
             <>
+              <DrawerCheckbox
+                checked={autoplayAudio}
+                onChange={() => setAutoplayAudio(v => !v)}
+                label="Auto-play"
+                indent={1}
+              />
+              {autoplayAudio && (
+                <>
+                  <DrawerCheckbox
+                    checked={autoplayFront}
+                    onChange={() => setAutoplayFront(v => !v)}
+                    label="On front"
+                    indent={2}
+                  />
+                  <DrawerCheckbox
+                    checked={autoplayBack}
+                    onChange={() => setAutoplayBack(v => !v)}
+                    label="On back (word then sentence)"
+                    indent={2}
+                  />
+                </>
+              )}
               <DrawerCheckbox
                 checked={ttsEnabled}
                 onChange={() => setTtsEnabled(v => !v)}
@@ -597,8 +641,13 @@ export default function VocabSrsModule() {
             onCardSave={handleCardSave}
             onDone={handleDrillDone}
             showTranslation={showTranslation}
+            showFurigana={showFurigana}
+            showSentence={showSentence}
             pixelFont={pixelFont}
             showVisualEffects={showVisualEffects}
+            audioEnabled={audioEnabled}
+            autoplayFront={audioEnabled && autoplayAudio && autoplayFront}
+            autoplayBack={audioEnabled && autoplayAudio && autoplayBack}
             ttsEnabled={audioEnabled && ttsEnabled}
             sfxEnabled={audioEnabled && sfxEnabled}
             ttsVoice={ttsVoice}

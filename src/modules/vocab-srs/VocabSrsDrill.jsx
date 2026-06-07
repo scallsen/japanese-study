@@ -44,8 +44,9 @@ function formatTime(secs) {
   return m > 0 ? `${m}m ${s}s` : `${s}s`
 }
 
-function SrsCardFace({ text, isBack, backText, showTranslation, pixelFont }) {
+function SrsCardFace({ text, kana, isBack, backText, sentence, sentenceEnglish, showFurigana, showTranslation, showSentence, pixelFont }) {
   const cardFont = pixelFont ? FONT : 'system-ui, sans-serif'
+  const showReading = kana && kana !== text && (isBack || showFurigana)
   return (
     <div style={{
       backgroundColor: CARD_BG,
@@ -58,16 +59,27 @@ function SrsCardFace({ text, isBack, backText, showTranslation, pixelFont }) {
       gap: 10,
       padding: '0 20px',
     }}>
-      <div style={{
-        fontFamily: cardFont,
-        fontSize: isBack ? '10cqw' : '12.63cqw',
-        color: '#222',
-        letterSpacing: 'normal',
-        lineHeight: 1.3,
-        textShadow: '2px 2px 0 rgba(0,0,0,0.25)',
-        textAlign: 'center',
-      }}>
-        {text}
+      <div style={{ textAlign: 'center' }}>
+        <div style={{
+          fontFamily: cardFont,
+          fontSize: isBack ? '10cqw' : '12.63cqw',
+          color: '#222',
+          letterSpacing: 'normal',
+          lineHeight: 1.3,
+          textShadow: '2px 2px 0 rgba(0,0,0,0.25)',
+        }}>
+          {text}
+        </div>
+        {showReading && (
+          <div style={{
+            fontFamily: cardFont,
+            fontSize: '5.26cqw',
+            color: '#666',
+            marginTop: 4,
+          }}>
+            {kana}
+          </div>
+        )}
       </div>
       {isBack && backText && showTranslation && (
         <div style={{
@@ -78,6 +90,30 @@ function SrsCardFace({ text, isBack, backText, showTranslation, pixelFont }) {
           lineHeight: 1.5,
         }}>
           {backText}
+        </div>
+      )}
+      {isBack && sentence && showSentence && (
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            fontFamily: cardFont,
+            fontSize: '4.2cqw',
+            color: '#666',
+            lineHeight: 1.5,
+          }}>
+            {sentence}
+          </div>
+          {sentenceEnglish && (
+            <div style={{
+              fontFamily: cardFont,
+              fontSize: '3.5cqw',
+              color: '#888',
+              lineHeight: 1.5,
+              fontStyle: 'italic',
+              marginTop: 2,
+            }}>
+              {sentenceEnglish}
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -187,7 +223,9 @@ function DoneScreen({ stats, onDone }) {
 
 export default function VocabSrsDrill({
   initialCards, initialSession, onCardSave, onDone,
-  showTranslation = true, pixelFont = true, showVisualEffects = true,
+  showTranslation = true, showFurigana = true, showSentence = true,
+  pixelFont = true, showVisualEffects = true,
+  audioEnabled = true, autoplayFront = true, autoplayBack = true,
   ttsEnabled = false, sfxEnabled = true, ttsVoice = '',
   showHardEasy = true, leechThreshold = 8,
   isMobile = false, onShowOptions,
@@ -220,7 +258,10 @@ export default function VocabSrsDrill({
   playAudioRef.current = (filename) => {
     const url = getAudioUrl(filename)
     if (!url) return
-    if (audioCurrentRef.current) audioCurrentRef.current.pause()
+    if (audioCurrentRef.current) {
+      audioCurrentRef.current.onended = null
+      audioCurrentRef.current.pause()
+    }
     if (audioPreloadRef.current.filename === filename && audioPreloadRef.current.audio) {
       audioCurrentRef.current = audioPreloadRef.current.audio
       audioPreloadRef.current = { audio: null, filename: null }
@@ -230,9 +271,38 @@ export default function VocabSrsDrill({
     audioCurrentRef.current.play().catch(() => {})
   }
 
+  // Plays wordFilename, then sentenceFilename when word finishes.
+  const playSequenceRef = useRef()
+  playSequenceRef.current = (wordFilename, sentenceFilename) => {
+    const wordUrl = getAudioUrl(wordFilename)
+    if (!wordUrl) return
+    if (audioCurrentRef.current) {
+      audioCurrentRef.current.onended = null
+      audioCurrentRef.current.pause()
+    }
+    let wordAudio
+    if (audioPreloadRef.current.filename === wordFilename && audioPreloadRef.current.audio) {
+      wordAudio = audioPreloadRef.current.audio
+      audioPreloadRef.current = { audio: null, filename: null }
+    } else {
+      wordAudio = new Audio(wordUrl)
+    }
+    audioCurrentRef.current = wordAudio
+    const sentUrl = getAudioUrl(sentenceFilename)
+    if (sentUrl) {
+      wordAudio.onended = () => {
+        const sentAudio = new Audio(sentUrl)
+        audioCurrentRef.current = sentAudio
+        sentAudio.play().catch(() => {})
+      }
+    }
+    wordAudio.play().catch(() => {})
+  }
+
   const stopAudioRef = useRef()
   stopAudioRef.current = () => {
     if (audioCurrentRef.current) {
+      audioCurrentRef.current.onended = null
       audioCurrentRef.current.pause()
       audioCurrentRef.current = null
     }
@@ -269,10 +339,12 @@ export default function VocabSrsDrill({
   handleFlipRef.current = () => {
     if (sfxEnabled) sfx.play('flip_card')
     const currentCard = getCurrentCard(sessionRef.current)
-    if (currentCard?.wordAudio) {
-      playAudioRef.current(currentCard.wordAudio)
-    } else if (ttsEnabled && currentCard) {
-      tts.speak(currentCard.front ?? '')
+    if (audioEnabled && autoplayBack && currentCard) {
+      if (currentCard.wordAudio) {
+        playSequenceRef.current(currentCard.wordAudio, currentCard.sentenceAudio)
+      } else if (ttsEnabled) {
+        tts.speak(currentCard.front ?? '')
+      }
     }
     setFlipped(true)
   }
@@ -315,6 +387,15 @@ export default function VocabSrsDrill({
     return () => window.removeEventListener('keydown', onKey)
   }, [showHardEasy])
 
+  // Must be before the isComplete early return — hooks cannot be called conditionally.
+  // previewIntervals uses enable_fuzz so re-calling every tick re-rolls the fuzz; memoize per card ID.
+  const currentCardForMemo = getCurrentCard(session)
+  const intervals = useMemo(
+    () => currentCardForMemo ? previewIntervals(currentCardForMemo) : null,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [currentCardForMemo?.id]
+  )
+
   // Preload the current card's word audio as soon as the card appears.
   useEffect(() => {
     const filename = currentCardForMemo?.wordAudio
@@ -325,14 +406,18 @@ export default function VocabSrsDrill({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentCardForMemo?.id])
 
-  // Must be before the isComplete early return — hooks cannot be called conditionally.
-  // previewIntervals uses enable_fuzz so re-calling every tick re-rolls the fuzz; memoize per card ID.
-  const currentCardForMemo = getCurrentCard(session)
-  const intervals = useMemo(
-    () => currentCardForMemo ? previewIntervals(currentCardForMemo) : null,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentCardForMemo?.id]
-  )
+  // Auto-play word audio on the front when a new card appears.
+  useEffect(() => {
+    if (!audioEnabled || !autoplayFront) return
+    const filename = currentCardForMemo?.wordAudio
+    if (!filename) return
+    stopAudioRef.current()
+    const t = setTimeout(() => {
+      if (!flippedRef.current) playAudioRef.current(filename)
+    }, 50)
+    return () => clearTimeout(t)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentCardForMemo?.id])
 
   const headerContent = (rightSlot) => (
     <header style={{
@@ -440,10 +525,10 @@ export default function VocabSrsDrill({
   const isRequeue = currentCard && seenRef.current.has(currentCard.id)
 
   const front = currentCard
-    ? <SrsCardFace text={currentCard.front} isBack={false} showTranslation={showTranslation} pixelFont={pixelFont} />
+    ? <SrsCardFace text={currentCard.front} kana={currentCard.kana} isBack={false} showFurigana={showFurigana} backText={currentCard.back} sentence={currentCard.sentence} sentenceEnglish={currentCard.sentenceEnglish} showTranslation={showTranslation} showSentence={showSentence} pixelFont={pixelFont} />
     : null
   const back = currentCard
-    ? <SrsCardFace text={currentCard.front} isBack={true} backText={currentCard.back} showTranslation={showTranslation} pixelFont={pixelFont} />
+    ? <SrsCardFace text={currentCard.front} kana={currentCard.kana} isBack={true} showFurigana={showFurigana} backText={currentCard.back} sentence={currentCard.sentence} sentenceEnglish={currentCard.sentenceEnglish} showTranslation={showTranslation} showSentence={showSentence} pixelFont={pixelFont} />
     : null
 
   return (
@@ -521,10 +606,12 @@ export default function VocabSrsDrill({
                     setFlipped(next)
                     if (next) {
                       if (sfxEnabled) sfx.play('flip_card')
-                      if (currentCard?.wordAudio) {
-                        playAudioRef.current(currentCard.wordAudio)
-                      } else if (ttsEnabled && currentCard) {
-                        tts.speak(currentCard.front)
+                      if (audioEnabled && autoplayBack && currentCard) {
+                        if (currentCard.wordAudio) {
+                          playSequenceRef.current(currentCard.wordAudio, currentCard.sentenceAudio)
+                        } else if (ttsEnabled) {
+                          tts.speak(currentCard.front)
+                        }
                       }
                     }
                   }}
@@ -544,7 +631,7 @@ export default function VocabSrsDrill({
               )}
             </div>
 
-            {currentCard && (currentCard.wordAudio || currentCard.sentenceAudio) && flipped && (
+            {audioEnabled && currentCard && (currentCard.wordAudio || currentCard.sentenceAudio) && flipped && (
               <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
                 {currentCard.wordAudio && (
                   <AudioButton label="Word" onClick={() => playAudioRef.current(currentCard.wordAudio)} />
