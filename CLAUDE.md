@@ -10,16 +10,39 @@ Japanese study dashboard. Vite + React, no TypeScript. Houses multiple learning 
 - **No Japanese text in the UI** — labels, buttons, headings, and all other UI strings must be in English. Japanese text belongs only in word/card data (e.g. `kanji`, `kana`, `front` fields).
 - Hash-based routing — `window.location.hash` read in `App.jsx`. No third-party router.
 
+## App architecture
+
+Two patterns for internal modules. Pick the right one before looking for code:
+
+**Page-based** (`src/pages/`) — for simpler modules. The page component lives in `src/pages/`, pulls from shared components in `src/components/` and `src/hooks/`. Example: `VocabPage`.
+
+**Self-contained module** (`src/modules/<name>/`) — for complex modules with their own logic, data, and UI. Everything lives under the module directory; the only cross-module imports are from `src/components/`, `src/hooks/`, `src/data/theme.js`, `src/FlipCard.jsx`, and `src/lib/supabase.js`. Example: `vocab-srs`.
+
+**Quick lookup — where to look for a given task:**
+
+| Task area | Files to look at |
+|---|---|
+| Dashboard layout / module cards | `src/pages/DashboardPage.jsx`, `src/data/modules.js`, `src/components/ModuleCard.jsx` |
+| Vocabulary drill (`#/vocab`) | `src/pages/VocabPage.jsx` + its components listed below |
+| Vocab SRS (`#/vocab-srs`) | `src/modules/vocab-srs/` only |
+| Auth / sign-in flow | `src/context/AuthContext.jsx`, `src/components/AuthSlot.jsx` |
+| Progress sync (Supabase / localStorage) | `src/hooks/useProgress.js` |
+| Shared UI components | `src/components/` |
+| Design tokens | `src/data/theme.js` |
+
+**Database:** The only Supabase table used by this app is `progress` (schema in the Auth section below). All word/card content lives in static JSON files in the repo — never in the database.
+
 ## Routing
 
 `App.jsx` reads `window.location.hash` and renders the matching page component. Current routes:
 
-| Hash | Page |
-|---|---|
-| `#/` (or empty) | `DashboardPage` |
-| `#/vocab` | `VocabPage` — vocabulary flashcard drill |
+| Hash | Component | File |
+|---|---|---|
+| `#/` (or empty) | `DashboardPage` | `src/pages/DashboardPage.jsx` |
+| `#/vocab` | `VocabPage` | `src/pages/VocabPage.jsx` |
+| `#/vocab-srs` | `VocabSrsModule` | `src/modules/vocab-srs/VocabSrsModule.jsx` |
 
-To add a route: add a branch in `App.jsx` and create the page under `src/pages/`.
+To add a route: add a branch in `App.jsx`. Page-based → create `src/pages/YourPage.jsx`. Self-contained → create `src/modules/<name>/` and import the root component in `App.jsx`.
 
 ## Module config shape
 
@@ -27,19 +50,21 @@ Each entry in `src/data/modules.js`:
 
 ```js
 {
-  id: string,        // unique stable key
-  label: string,     // display name shown on card
-  sublabel: string,  // subtitle shown below label
-  stats: null,       // reserved, currently unused
-  href: string,      // hash path ('#/vocab') or full URL for external modules
-  external: boolean, // true → opens in new tab; false → hash navigation
-  accent: string,    // CSS color string (currently unused in card design)
+  id: string,           // unique stable key
+  label: string,        // display name shown on card
+  sublabel: string,     // subtitle shown below label
+  stats: null,          // reserved, currently unused
+  href: string,         // hash path ('#/vocab') or full URL for external modules
+  external: boolean,    // true → opens in new tab; false → hash navigation
+  accent: string,       // CSS color string (currently unused in card design)
+  requiresAuth: boolean,// true → dashboard card shows auth-gated state
 }
 ```
 
 ## Adding a module
 1. Add an entry to `src/data/modules.js`.
-2. If the module is a new internal page, add the route to `App.jsx` and create `src/pages/YourPage.jsx`.
+2. **Page-based:** add a branch in `App.jsx` and create `src/pages/YourPage.jsx`.
+3. **Self-contained:** create `src/modules/<name>/`, add a branch in `App.jsx` importing your root component from `src/modules/<name>/`.
 
 ## Design tokens (`src/data/theme.js`)
 
@@ -53,6 +78,40 @@ Each entry in `src/data/modules.js`:
 | `BORDER` | `#2E2E2E` | Header bottom separator |
 | `TEXT` | `#E8E8E8` | Primary text |
 | `TEXT_MUTED` | `#888888` | Secondary / label text |
+
+## Shared components (`src/components/`)
+
+Used by multiple modules/pages:
+
+| Component | Usage |
+|---|---|
+| `PageHeader.jsx` | Breadcrumb header — all pages |
+| `AuthSlot.jsx` | Sign in / sign out control — dashboard header and module headers |
+| `DrawerSectionHeader.jsx` | Section label in settings panels |
+| `DrawerCheckbox.jsx` | Checkbox setting row |
+| `DrawerSelect.jsx` | Dropdown setting row |
+| `ModuleCard.jsx` | Dashboard module card |
+
+### PageHeader
+
+Used by every page and module. Always renders a 64 px tall header row.
+
+```js
+<PageHeader
+  crumbs={[
+    { label: 'Japanese Study', href: '#/' },    // href → <a> link
+    { label: 'SRS', onClick: () => ... },        // onClick → clickable span (for non-hash nav)
+    { label: 'Review' },                          // no href/onClick → current page (dimmer style)
+  ]}
+  rightSlot={<AuthSlot />}   // optional — floated right
+/>
+```
+
+A crumb with `href` navigates via hash change. Use `onClick` when you need to exit a drill that's already at the right hash (e.g. SRS Review → SRS home). A crumb with neither is rendered as the current page label.
+
+### FlipCard
+
+`src/FlipCard.jsx` + `src/FlipCard.css` — low-level 3D flip animation. Shared between `VocabCard` (vocab drill) and `VocabSrsDrill` (SRS). Click, Space, or Enter flips; `isFlipped` prop controls state from parent.
 
 ## Key files — Dashboard
 
@@ -73,17 +132,19 @@ Mirrors katsuyou-drill's UI exactly. Speed-mode only (no text input). Card front
 | File | Purpose |
 |---|---|
 | `src/pages/VocabPage.jsx` | Main drill page — layout, settings drawer, state |
-| `src/components/VocabCard.jsx` | Flip card — front (kanji) / back (kanji + furigana + English + optional sentence) |
+| `src/components/VocabCard.jsx` | Flip card — front (kanji) / back (kanji + furigana + English + optional sentence); wraps `FlipCard` |
 | `src/FlipCard.jsx` + `src/FlipCard.css` | 3D flip animation (ported from katsuyou-drill) |
-| `src/components/DrillHUD.jsx` | Streak display + undo + score |
-| `src/components/SpeedModeControls.jsx` | Incorrect [Z] / Correct [X] verdict buttons |
+| `src/components/DrillHUD.jsx` | Streak display + undo + score (VocabPage-only) |
+| `src/components/SpeedModeControls.jsx` | Incorrect [Z] / Correct [X] verdict buttons (VocabPage-only) |
+| `src/components/PageHeader.jsx` | Breadcrumb header |
 | `src/components/SelectButton.jsx` | Toggle button used in settings (word list selection) |
 | `src/components/DrawerSectionHeader.jsx` | Section label in settings panel |
 | `src/components/DrawerCheckbox.jsx` | Checkbox setting row |
 | `src/components/DrawerSelect.jsx` | Dropdown setting row (TTS voice) |
-| `src/hooks/useDrill.js` | Drill state machine hook |
+| `src/hooks/useDrill.js` | Drill state machine hook (VocabPage-only) |
 | `src/hooks/useTTS.js` | Browser Speech Synthesis TTS |
 | `src/hooks/useSFX.js` | Web Audio API sound effects (no asset files) |
+| `src/hooks/useGamepad.js` | Gamepad controller support (VocabPage-only) |
 | `src/engines/simpleQueue.js` | Card queue engine — wrong cards reinsert after 3 |
 | `src/utils/furigana.js` | `buildFurigana(kanji, kana)` → decomposed furigana parts |
 | `src/utils/storage.js` | Safe localStorage get/set wrappers |
@@ -145,6 +206,11 @@ Each word object in a `src/data/words/*.json` file:
 ### Settings persistence
 All VocabPage settings are stored in localStorage with `vocab-` prefix (e.g. `vocab-show-furigana`) to avoid colliding with katsuyou-drill's keys.
 
+### Layout
+- Desktop: main content area + chevron toggle + collapsible sidebar (420px wide)
+- Mobile: full-screen overlay triggered by "Show options" button in header
+- `useIsMobile(768)` and `useIsShort(680)` hooks defined inline in `VocabPage.jsx`
+
 ## Auth
 
 GitHub OAuth via Supabase. The auth layer is intentionally thin — no login page, no modal. The sign-in button in the dashboard header triggers the OAuth redirect directly.
@@ -173,6 +239,8 @@ const { data, save, loading } = useProgress('my-module-namespace')
 
 ### Supabase schema
 
+The only table in the database. All card/word content lives in static JSON in the repo.
+
 ```sql
 create table if not exists progress (
   id uuid primary key default gen_random_uuid(),
@@ -198,52 +266,146 @@ create policy "update own rows" on progress for update
 grant select, insert, update on progress to authenticated;
 ```
 
-### Layout
-Identical to katsuyou-drill DrillPage:
-- Desktop: main content area + chevron toggle + collapsible sidebar (420px wide)
-- Mobile: full-screen overlay triggered by "Show options" button in header
-- `useIsMobile(768)` and `useIsShort(680)` hooks for responsive breakpoints
-
 ## Vocab SRS (`#/vocab-srs`)
 
-Anki-style spaced repetition using [ts-fsrs](https://github.com/open-spaced-repetition/ts-fsrs). **Sign-in required** — the module renders a sign-in gate when the user is logged out; progress is never written to localStorage for this module.
+**Self-contained module** — all code under `src/modules/vocab-srs/`. Do not look elsewhere unless touching shared components.
+
+Anki-style spaced repetition using [ts-fsrs](https://github.com/open-spaced-repetition/ts-fsrs). **Sign-in required** — the module renders a sign-in gate when the user is logged out; progress is stored in Supabase only (no localStorage fallback for this module).
 
 ### Key files
 
 | File | Purpose |
 |---|---|
-| `src/modules/vocab-srs/srs.js` | FSRS functions: `createCard`, `createBundledCardState`, `reviewCard`, `resolveCard`, `getTodaysQueue`, `getDeckStats`, `getGlobalStats` |
+| `src/modules/vocab-srs/srs.js` | FSRS functions — see exports below |
+| `src/modules/vocab-srs/session.js` | In-session queue — see exports below |
 | `src/modules/vocab-srs/migrate.js` | `migrateProgress(raw)` — shape migration; `initializeDeckCards(progress, deckId)` — first-activation setup |
 | `src/modules/vocab-srs/import.js` | `parseAnkiExport(tsvString, existingIds)` — Anki plain-text export parser |
-| `src/modules/vocab-srs/session.js` | In-session queue: `initSession`, `answerCard`, `isComplete`, `getSessionStats` |
-| `src/modules/vocab-srs/VocabSrsModule.jsx` | Home screen + sidebar: deck management, stats, import, Start Review |
-| `src/modules/vocab-srs/VocabSrsDrill.jsx` | Drill UI — flip card, Again/Good buttons, session complete screen |
-| `src/modules/vocab-srs/config.js` | Dashboard module config entry |
-| `src/modules/vocab-srs/decks/core3k.json` | Bundled deck — 30 N5-N4 everyday words |
+| `src/modules/vocab-srs/VocabSrsModule.jsx` | Home screen + sidebar: deck management, stats, settings, Start Review |
+| `src/modules/vocab-srs/VocabSrsDrill.jsx` | Drill UI — FlipCard, rating buttons, audio, relearn countdown, session complete |
+| `src/modules/vocab-srs/decks/core2000.json` | Bundled deck — 2007 Core 2000 cards with word + sentence audio |
 | `src/modules/vocab-srs/decks/keigo.json` | Bundled deck — 30 keigo/formal-register words |
+| `src/modules/vocab-srs/srs.test.js` | Vitest unit tests for srs.js |
+| `src/modules/vocab-srs/session.test.js` | Vitest unit tests for session.js |
+| `src/modules/vocab-srs/import.test.js` | Vitest unit tests for import.js |
+
+**Note:** `config.js` exists in the directory but is not imported anywhere — it is vestigial and can be ignored.
+
+### srs.js exports
+
+```js
+// Card lifecycle
+createBundledCardState(id, deckId)       // New FSRS card state — no content stored
+createCard(front, back, id, deckId, extras) // Full card for imported decks (content inline)
+resetCardProgress(card)                   // Reset FSRS scheduling; preserve content fields
+reviewCard(card, rating, now?)            // Apply FSRS rating; returns updated card
+
+// Queue
+getTodaysQueue(cardsObj, decks, { newPerDay, maxOverdueDays })
+// → { due, newCards, rescheduled }
+//   due: cards with dueDate ≤ now and ≤ 7 days overdue
+//   newCards: State.New cards, sliced to newPerDay
+//   rescheduled: cards > 7 days overdue, due reset to now; skips suspended cards
+
+// Content resolution
+resolveCard(cardState)
+// Bundled: looks up all content fields from DECK_FILES[deckId] Map.
+// Imported: already has content inline, returned as-is.
+// The drill always receives resolved cards.
+
+// Interval preview (for button hints)
+previewIntervals(card, now?) → { [Rating.Again|Hard|Good|Easy]: Date }
+
+// Stats
+getDeckStats(cardsObj, deckId)   → { total, dueToday, newAvailable, learned }
+getGlobalStats(cardsObj, decks)  → { totalCards, dueToday, newAvailable, learned, estimatedMinutes, activeDecks }
+getCardStateCounts(cardsObj, decks) → { unlearned, learning, graduated, relearning }
+
+// Re-exports from ts-fsrs
+Rating, State
+```
+
+### session.js exports
+
+```js
+initSession(due, newCards)
+// → { queue, completed, history, startTime, initialCount, againCount, goodCount }
+
+getCurrentCard(session)
+// Returns first queue card whose waitUntil is in the past (or absent). null if all waiting.
+
+getWaitMs(session)
+// ms until the earliest waiting card becomes available (for countdown display). 0 if none.
+
+answerCard(session, card, rating, opts?)
+// opts: { leechThreshold = 0 }
+// Again on review card → pushed to end of queue with waitUntil = now + 10 min (relearn step)
+// Again on new card    → requeued at position 3 immediately
+// Hard/Good/Easy       → moved to completed
+// If lapses >= leechThreshold on a non-New card: suspended = true added to card
+// Returns { session, updatedCard, isLeech }
+
+undoLastAnswer(session)
+// Restores the last snapshot from history (ring buffer of 20). Returns { session, revertedCard }.
+// revertedCard is the original pre-answer card state — use it directly, no need to re-call reviewCard.
+
+isComplete(session)   // queue.length === 0
+
+getSessionStats(session)
+// → { total, remaining, waitingCount, againCount, goodCount, elapsedSeconds, canUndo }
+```
 
 ### Deck architecture
 
 Cards come from two sources:
 
-**Bundled decks** — static JSON files in `decks/`. Content (front/back) lives in the JSON; only FSRS scheduling state is persisted to storage. New bundled decks start with no card entries in storage; entries are created on first activation via `initializeDeckCards`.
+**Bundled decks** — static JSON files in `decks/`. Content lives in the JSON; only FSRS scheduling state is persisted to storage. New bundled decks start with no card entries in storage; entries are created on first activation via `initializeDeckCards`.
 
-**Imported decks** — created from Anki TSV exports. Content (front/back) is stored inline on each card object in storage.
+**Imported decks** — created from Anki TSV exports. Content (front/back/audio/sentence fields) is stored inline on each card object in storage.
 
 Both sources write to the same `cards{}` object, distinguished by `deckId`.
 
-### Card content resolution (`resolveCard`)
+### Core 2000 deck content format
 
-Before a session starts, every card state is resolved to include `front` and `back`:
+Each entry in `core2000.json` (also the shape for `resolveCard` output for this deck):
 
 ```js
-resolveCard(cardState)
-// → { ...cardState, front, back }
+{
+  "id": "anki-1",
+  "front": "それ",
+  "back": "that, that one",
+  "wordAudio": "8b0ee07c....mp3",        // Supabase Storage filename
+  "sentenceAudio": "c951babc....mp3",    // Supabase Storage filename
+  "sentence": "それはとってもいい話だ。",
+  "sentenceEnglish": "That's a really nice story."
+}
 ```
 
-Bundled cards look up `front`/`back` from the static JSON via `DECK_FILES[deckId].get(cardId)`. Imported cards already carry `front`/`back` inline and are returned as-is.
+`sentenceEnglish` is shown below the Japanese sentence on the card back (smaller font).
 
-The drill (VocabSrsDrill) always receives resolved cards — it never calls `resolveCard` itself.
+### Audio playback
+
+Audio files live in Supabase Storage bucket `audio/imported/`. URL pattern:
+
+```
+${VITE_SUPABASE_URL}/storage/v1/object/public/audio/imported/${filename}
+```
+
+Built in `VocabSrsDrill.jsx` via the `AUDIO_BASE` constant. Autoplay sequence on flip: word audio first, then sentence audio. Autoplay can be toggled independently for front (on card load) and back (on flip).
+
+### FSRS setup
+
+- `fsrs(generatorParameters({ enable_fuzz: true }))`
+- All four ratings are used: **Again** (1), **Hard** (2), **Good** (3), **Easy** (4). Hard/Easy can be hidden via `showHardEasy` setting — when hidden, only Again + Good are shown and keyboard shortcuts remap accordingly.
+- `reviewCard` special-cases `New + Again` to keep the card in `State.New` (FSRS would normally transition it to Learning, but we handle new card re-queueing in session logic instead).
+- `previewIntervals(card)` returns the projected due date for each rating, displayed as a hint below each rating button.
+
+### Relearn steps
+
+When a **review card** (non-New) is answered Again, `answerCard` pushes it to the end of the queue with `waitUntil = Date.now() + 10min`. `getCurrentCard` skips it until the timer expires; the drill shows a live countdown. When a **new card** is answered Again, it requeues at position 3 immediately (no wait).
+
+### Leech detection
+
+Configured via `leechThreshold` (default 8, localStorage key `srs-leech-threshold`). If `card.lapses >= leechThreshold` on an Again answer for a non-New card, `suspended: true` is added. `getTodaysQueue` skips suspended cards. The drill shows a toast. Suspended cards can be unsuspended by resetting their progress via `resetCardProgress`.
 
 ### Progress shape (`useProgress('vocab-srs')`)
 
@@ -262,10 +424,16 @@ The drill (VocabSrsDrill) always receives resolved cards — it never calls `res
     [cardId]: {
       id: string,
       deckId: string,
+      suspended?: true,              // set by leech detection; absent means not suspended
       // imported decks only — bundled decks read content from static JSON:
       front?: string,
       back?: string,
-      // FSRS scheduling fields (stability, difficulty, due, state, …):
+      kana?: string,
+      wordAudio?: string,
+      sentenceAudio?: string,
+      sentence?: string,
+      sentenceEnglish?: string,
+      // FSRS scheduling fields (stability, difficulty, due, state, lapses, …):
       ...fsrsFields
     }
   },
@@ -278,18 +446,15 @@ The drill (VocabSrsDrill) always receives resolved cards — it never calls `res
 }
 ```
 
-`migrateProgress(raw)` transparently converts old-shape data (`cards` array) to this shape on first load. `initializeDeckCards(progress, deckId)` populates card entries for a bundled deck when it is first activated.
+`migrateProgress(raw)` handles three cases: fresh install, already-new shape (also drops retired `core3k` deck and its cards), and old shape (cards was an array). Always safe to call on load.
+
+`initializeDeckCards(progress, deckId)` populates card entries for a bundled deck when it is first activated (skips cards that already exist).
 
 `newCardDay` is missing from old data — always access as `progress.newCardDay ?? { date: '', count: 0 }`.
 
-### FSRS setup
-
-- `fsrs(generatorParameters({ enable_fuzz: true }))` — only Again (1) and Good (3) ratings used.
-- `f.next(card, new Date(), rating)` returns `{ card, log }` — spread `result.card` onto the original to preserve custom fields.
-
 ### Daily new card limit
 
-`dailyNewCards` (localStorage key `srs-daily-new-cards`, default 10) caps how many new cards can be introduced per calendar day. The effective limit is computed in `VocabSrsModule`:
+`dailyNewCards` (localStorage key `srs-daily-new-cards`, default 10) caps how many new cards can be introduced per calendar day. Computed in `VocabSrsModule`:
 
 ```js
 const todayStr = new Date().toISOString().split('T')[0]  // YYYY-MM-DD UTC
@@ -297,26 +462,43 @@ const newCardsIntroducedToday = newCardDay.date === todayStr ? newCardDay.count 
 const effectiveNewPerDay = Math.max(0, dailyNewCards - newCardsIntroducedToday)
 ```
 
-When a session starts, `newCardDay` is updated immediately: `{ date: todayStr, count: prevCount + n.length }`. This deducts the session's new card count from today's budget before the drill begins.
-
-On a new calendar day `newCardDay.date` won't match `todayStr`, so the full `dailyNewCards` allocation is available again.
-
-If `dailyNewCards` changes mid-day: raising it makes more new cards available (up to the remaining backlog); lowering it below the already-introduced count sets `effectiveNewPerDay = 0` for the rest of the day.
+When a session starts, `newCardDay` is updated immediately before the drill renders.
 
 ### Session flow
 
 1. Compute `effectiveNewPerDay = max(0, dailyNewCards - newCardsIntroducedToday)`.
-2. `getTodaysQueue(cardsObj, decks, { newPerDay: effectiveNewPerDay })` returns `{ due, newCards, rescheduled }`:
-   - `due` — cards with `dueDate <= now` and ≤ 7 days overdue
-   - `newCards` — State.New cards, sliced to `effectiveNewPerDay`
-   - `rescheduled` — cards > 7 days overdue, with `due` reset to now
-3. `canStart = due.length > 0 || newCards.length > 0 || rescheduled.length > 0`. Rescheduled cards are included — without this, advancing many days (pushing cards > 7 days overdue) would incorrectly show "Nothing due".
-4. On "Start review": `newCardDay` is saved with the updated count; rescheduled cards are merged into `due` for the session and their updated due dates saved; all cards resolved via `resolveCard`.
-5. `initSession(resolvedDue, resolvedNewCards)` creates `{ queue, completed, startTime, initialCount, againCount, goodCount }`.
-6. `answerCard(session, card, Rating.Again)` — re-inserts at `Math.min(queue.length, 3)`. `Rating.Good` — moves to `completed`.
-7. Session ends when `queue.length === 0`.
-8. On save, the drill returns an array of resolved session cards; the module strips `front`/`back` for bundled cards before merging back into `cards{}`.
+2. `getTodaysQueue(cardsObj, decks, { newPerDay: effectiveNewPerDay })` returns `{ due, newCards, rescheduled }`.
+3. `canStart = due.length > 0 || newCards.length > 0 || rescheduled.length > 0`. Rescheduled cards are included so advancing many days doesn't produce "Nothing due".
+4. On "Start review": `newCardDay` saved with updated count; rescheduled cards merged into `due` (their updated due dates saved); all cards resolved via `resolveCard`.
+5. `initSession(resolvedDue, resolvedNewCards)` creates the session object.
+6. Drill calls `getCurrentCard(session)` each render — skips cards with a future `waitUntil`.
+7. `answerCard(session, card, rating, { leechThreshold })` returns `{ session, updatedCard, isLeech }`.
+8. `undoLastAnswer(session)` restores the previous snapshot; `revertedCard` is the pre-answer state.
+9. Session ends when `isComplete(session)` (queue empty).
+10. Drill returns the resolved session card array; module calls `resolvedArrayToCardsObj` to strip `front`/`back` from bundled cards before merging back into `cards{}`.
+
+### SRS settings (localStorage)
+
+All keys use `srs-` prefix. The VocabSrsModule reads these on mount; VocabSrsDrill receives them as props.
+
+| Key | Default | Purpose |
+|---|---|---|
+| `srs-daily-new-cards` | `10` | New cards per calendar day |
+| `srs-show-hard-easy` | `true` | Show Hard + Easy rating buttons (4-way vs 2-way) |
+| `srs-leech-threshold` | `8` | Lapse count before card is suspended (0 = disabled) |
+| `srs-audio-enabled` | `true` | Master audio switch |
+| `srs-autoplay-audio` | `true` | Parent toggle for front/back autoplay |
+| `srs-autoplay-front` | `true` | Autoplay word audio when card loads |
+| `srs-autoplay-back` | `true` | Autoplay word → sentence audio on flip |
+| `srs-tts-enabled` | `false` | TTS fallback when no audio file |
+| `srs-tts-voice` | `''` | TTS voice name |
+| `srs-sfx-enabled` | `true` | Sound effects (correct/wrong beeps) |
+| `srs-show-furigana` | `true` | Show kana reading on card front; always shown on back |
+| `srs-show-translation` | `true` | Show English translation on card back |
+| `srs-show-sentence` | `true` | Show example sentence on card back |
+| `srs-pixel-font` | `true` | Use DotGothic16 pixel font on cards |
+| `srs-visual-effects` | `true` | Enable card visual effects |
 
 ### Dev advance feature (DEV only)
 
-Visible in the settings sidebar when `import.meta.env.DEV` and cards exist. "Advance N days" shifts all card `due` dates back by N days (simulating time passing) **and** resets `newCardDay: { date: '', count: 0 }` to grant a fresh daily new card allocation. Each click is cumulative. Rescheduled-card inclusion in sessions means advancing arbitrarily many days still surfaces all due cards correctly.
+Visible in the settings sidebar when `import.meta.env.DEV` and cards exist. "Advance N days" shifts all card `due` dates back by N days and resets `newCardDay: { date: '', count: 0 }` to grant a fresh daily new card allocation. Each click is cumulative. Rescheduled-card inclusion in sessions means advancing arbitrarily many days still surfaces all due cards correctly.
