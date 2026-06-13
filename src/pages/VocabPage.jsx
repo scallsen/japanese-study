@@ -6,6 +6,7 @@ import DrawerCheckbox from '../components/DrawerCheckbox.jsx'
 import DrawerSelect from '../components/DrawerSelect.jsx'
 import SpeedModeControls from '../components/SpeedModeControls.jsx'
 import PageHeader from '../components/PageHeader.jsx'
+import AuthSlot from '../components/AuthSlot.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../data/theme.js'
 import { WORD_SOURCES } from '../data/wordLists.js'
 import { useDrill } from '../hooks/useDrill.js'
@@ -752,6 +753,7 @@ export default function VocabPage() {
             crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary Training' }]}
             noBorder
             rightSlot={<div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <AuthSlot />
               <button
                 onClick={() => setAudioEnabled(v => !v)}
                 onMouseEnter={() => setAudioHovered(true)}
@@ -789,6 +791,16 @@ export default function VocabPage() {
               </button>
             </div>}
           />
+          {isDrilling && !drill.done && (
+            <div style={{ height: 3, background: 'rgba(255,255,255,0.08)' }}>
+              <div style={{
+                height: '100%',
+                width: `${pool.length > 0 ? (drill.correct / pool.length) * 100 : 0}%`,
+                background: '#3ABDA4',
+                transition: 'width 300ms ease',
+              }} />
+            </div>
+          )}
         </div>
 
         {/* Center content */}
