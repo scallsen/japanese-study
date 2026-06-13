@@ -751,7 +751,6 @@ export default function VocabPage() {
         <div ref={headerRef} style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 }}>
           <PageHeader
             crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary Training' }]}
-            noBorder
             rightSlot={<div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <AuthSlot />
               <button
