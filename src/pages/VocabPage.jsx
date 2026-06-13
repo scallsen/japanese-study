@@ -1,18 +1,19 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import VocabCard from '../components/VocabCard.jsx'
 import DrillHUD from '../components/DrillHUD.jsx'
-import SelectButton from '../components/SelectButton.jsx'
 import DrawerSectionHeader from '../components/DrawerSectionHeader.jsx'
 import DrawerCheckbox from '../components/DrawerCheckbox.jsx'
 import DrawerSelect from '../components/DrawerSelect.jsx'
 import SpeedModeControls from '../components/SpeedModeControls.jsx'
 import PageHeader from '../components/PageHeader.jsx'
-import { FONT, TRACKING } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../data/theme.js'
 import { WORD_SOURCES } from '../data/wordLists.js'
 import { useDrill } from '../hooks/useDrill.js'
 import { useTTS, useJaVoices } from '../hooks/useTTS.js'
 import { useSFX } from '../hooks/useSFX.js'
 import { useGamepad } from '../hooks/useGamepad.js'
+import { useAuth } from '../context/AuthContext.jsx'
+import { useProgress } from '../hooks/useProgress.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../utils/storage.js'
 import * as SimpleQueue from '../engines/simpleQueue.js'
 import NSM_N3 from '../data/words/nsm_n3_vocab.json'
@@ -27,9 +28,19 @@ const NSM_N3_I4 = NSM_N3_I4_RAW.map(w => ({
 const WORD_DATA = [...NSM_N3, ...NSM_N3_I4]
 
 const PANEL_W = 420
-const DEFAULT_LIST_KEYS = WORD_SOURCES.filter(s => !s.lists).map(s => s.id)
 const CHEVRON_W = 28
 const PANEL_CONTENT_W = PANEL_W - CHEVRON_W
+const ACCENT = '#3ABDA4'
+
+const ALL_SOURCE_IDS = WORD_SOURCES.map(s => s.id)
+
+function defaultActiveSources() {
+  try {
+    const raw = safeLocalStorageGet('vocab-active-sources')
+    if (raw) return JSON.parse(raw)
+  } catch (_) { /* ignore parse errors */ }
+  return ALL_SOURCE_IDS
+}
 
 function useIsMobile(breakpoint = 768) {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= breakpoint)
@@ -55,6 +66,68 @@ function useIsShort(breakpoint = 680) {
 
 function toggle(arr, val) {
   return arr.includes(val) ? arr.filter(v => v !== val) : [...arr, val]
+}
+
+function relativeTime(isoStr) {
+  if (!isoStr) return null
+  const diff = Date.now() - new Date(isoStr).getTime()
+  const mins = Math.floor(diff / 60000)
+  if (mins < 60) return mins <= 1 ? 'just now' : `${mins}m ago`
+  const hrs = Math.floor(mins / 60)
+  if (hrs < 24) return `${hrs}h ago`
+  const days = Math.floor(hrs / 24)
+  return `${days}d ago`
+}
+
+// ── SourceRow ─────────────────────────────────────────────────────────────────
+
+function SourceRow({ source, active, onToggle }) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: 10,
+      padding: '8px 0',
+      borderBottom: '1px solid rgba(255,255,255,0.05)',
+    }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span style={{ fontSize: 9, color: active ? ACCENT : 'rgba(255,255,255,0.2)' }}>
+            {active ? '●' : '○'}
+          </span>
+          <span style={{ fontSize: 13, color: TEXT }}>{source.label}</span>
+        </div>
+        {source.lists && (
+          <div style={{ fontSize: 12, color: TEXT_MUTED, marginTop: 2 }}>
+            {source.lists.length} sub-lists
+          </div>
+        )}
+      </div>
+      <button
+        onClick={onToggle}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        style={{
+          flexShrink: 0,
+          padding: '4px 10px',
+          fontSize: 12,
+          fontFamily: 'inherit',
+          letterSpacing: TRACKING,
+          background: active
+            ? hovered ? 'rgba(58,189,164,0.2)' : 'rgba(58,189,164,0.12)'
+            : hovered ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.06)',
+          color: active ? ACCENT : TEXT_MUTED,
+          border: `1px solid ${active ? 'rgba(58,189,164,0.35)' : 'rgba(255,255,255,0.15)'}`,
+          borderRadius: 5,
+          cursor: 'pointer',
+          transition: 'background 130ms',
+        }}
+      >
+        {active ? 'On' : 'Off'}
+      </button>
+    </div>
+  )
 }
 
 // ── ActiveDrill ───────────────────────────────────────────────────────────────
@@ -232,7 +305,7 @@ function ActiveDrill({ drill, ttsEnabled, sfxEnabled, ttsVoice, showStreak, show
   )
 }
 
-function DoneScreen({ correct, troubled, onRestart, onRedoTroubled }) {
+function DoneScreen({ correct, troubled, onRestart, onRedoTroubled, onBack }) {
   const btnBase = {
     padding: '10px 28px',
     fontSize: 14,
@@ -270,17 +343,189 @@ function DoneScreen({ correct, troubled, onRestart, onRedoTroubled }) {
         >
           Restart
         </button>
+        <button
+          onClick={onBack}
+          style={{ ...btnBase, background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.1)' }}
+        >
+          Back to lists
+        </button>
       </div>
     </div>
+  )
+}
+
+// ── HomeScreen ────────────────────────────────────────────────────────────────
+
+function HomeScreen({ availableSubLists, selectedSubLists, onToggleSubList, wordCountByList, vocabProgress, onStart, sourcesByListId }) {
+  const [startHovered, setStartHovered] = useState(false)
+
+  const canStart = selectedSubLists.length > 0
+  const noSources = availableSubLists.length === 0
+
+  const groupedSources = []
+  const seenSourceIds = new Set()
+  for (const list of availableSubLists) {
+    const sourceId = sourcesByListId[list.id]
+    if (!seenSourceIds.has(sourceId)) {
+      seenSourceIds.add(sourceId)
+      groupedSources.push({ sourceId, lists: [] })
+    }
+    groupedSources[groupedSources.length - 1].lists.push(list)
+  }
+
+  return (
+    <div style={{
+      width: '100%',
+      maxWidth: 680,
+      margin: '0 auto',
+      padding: '32px 24px 48px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 24,
+    }}>
+
+      {noSources ? (
+        <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 14, textAlign: 'center', paddingTop: 40 }}>
+          Enable a word list in the sidebar to begin
+        </div>
+      ) : (
+        <>
+          {groupedSources.map(({ sourceId, lists }) => {
+            const source = WORD_SOURCES.find(s => s.id === sourceId)
+            return (
+              <div key={sourceId}>
+                {groupedSources.length > 1 && (
+                  <div style={{ fontSize: 11, color: TEXT_MUTED, letterSpacing: '0.08em', marginBottom: 10 }}>
+                    {source?.label?.toUpperCase() ?? sourceId.toUpperCase()}
+                  </div>
+                )}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 6 }}>
+                  {lists.map(list => {
+                    const count = wordCountByList[list.id] ?? 0
+                    const prog = vocabProgress?.sublists?.[list.id]
+                    const isSelected = selectedSubLists.includes(list.id)
+                    return (
+                      <SubListTile
+                        key={list.id}
+                        label={list.label}
+                        wordCount={count}
+                        progress={prog}
+                        selected={isSelected}
+                        onClick={() => onToggleSubList(list.id)}
+                      />
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })}
+
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 8 }}>
+            <button
+              onClick={canStart ? onStart : undefined}
+              onMouseEnter={() => setStartHovered(true)}
+              onMouseLeave={() => setStartHovered(false)}
+              style={{
+                padding: '11px 28px',
+                fontSize: 14,
+                fontFamily: 'inherit',
+                letterSpacing: TRACKING,
+                borderRadius: 8,
+                cursor: canStart ? 'pointer' : 'not-allowed',
+                background: canStart
+                  ? startHovered ? 'rgba(58,189,164,0.25)' : 'rgba(58,189,164,0.15)'
+                  : 'rgba(255,255,255,0.04)',
+                color: canStart ? ACCENT : 'rgba(255,255,255,0.2)',
+                border: `1px solid ${canStart ? 'rgba(58,189,164,0.4)' : 'rgba(255,255,255,0.1)'}`,
+                transition: 'background 130ms, color 130ms, border-color 130ms',
+              }}
+            >
+              Start review
+              {selectedSubLists.length > 0 && (
+                <span style={{ marginLeft: 8, fontSize: 12, opacity: 0.7 }}>
+                  ({selectedSubLists.reduce((sum, id) => sum + (wordCountByList[id] ?? 0), 0)} words)
+                </span>
+              )}
+            </button>
+
+            <button
+              disabled
+              style={{
+                padding: '11px 28px',
+                fontSize: 14,
+                fontFamily: 'inherit',
+                letterSpacing: TRACKING,
+                borderRadius: 8,
+                cursor: 'not-allowed',
+                background: 'rgba(255,255,255,0.03)',
+                color: 'rgba(255,255,255,0.2)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                opacity: 0.5,
+              }}
+            >
+              Send to SRS
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
+function SubListTile({ label, wordCount, progress, selected, onClick }) {
+  const [hovered, setHovered] = useState(false)
+  const timeAgo = relativeTime(progress?.lastReviewed)
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        gap: 3,
+        width: '100%',
+        minHeight: 54,
+        padding: '10px 12px',
+        background: selected
+          ? 'rgba(255,255,255,0.1)'
+          : hovered ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.03)',
+        border: `1px solid ${selected ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.1)'}`,
+        borderRadius: 6,
+        cursor: 'pointer',
+        fontFamily: 'inherit',
+        letterSpacing: TRACKING,
+        transition: 'background 130ms, border-color 130ms',
+      }}
+    >
+      <span style={{ fontSize: 13, color: selected ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.7)' }}>
+        {label}
+      </span>
+      <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>
+        {wordCount} words
+        {progress && (
+          <>
+            <span style={{ margin: '0 4px' }}>·</span>
+            {progress.correct}/{progress.total}
+            {timeAgo && <span style={{ marginLeft: 4 }}>{timeAgo}</span>}
+          </>
+        )}
+      </span>
+    </button>
   )
 }
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 export default function VocabPage() {
+  const { user } = useAuth()
+  const { data: vocabProgress, save: saveVocabProgress } = useProgress('vocab-flashcard')
+
   const [showOptions,      setShowOptions]      = useState(() => window.innerWidth > 768)
-  const [selectedLists,    setSelectedLists]    = useState(() => DEFAULT_LIST_KEYS)
-  const [expandedSourceId, setExpandedSourceId] = useState(null)
+  const [activeSources,    setActiveSources]    = useState(defaultActiveSources)
+  const [selectedSubLists, setSelectedSubLists] = useState([])
+  const [isDrilling,       setIsDrilling]       = useState(false)
   const [audioEnabled,     setAudioEnabled]     = useState(() => {
     const s = safeLocalStorageGet('vocab-audio-enabled'); return s === null ? true : s === 'true'
   })
@@ -319,6 +564,7 @@ export default function VocabPage() {
   const isShort  = useIsShort()
   const jaVoices = useJaVoices()
 
+  useEffect(() => { safeLocalStorageSet('vocab-active-sources',  JSON.stringify(activeSources)) }, [activeSources])
   useEffect(() => { safeLocalStorageSet('vocab-audio-enabled',  audioEnabled) },     [audioEnabled])
   useEffect(() => { safeLocalStorageSet('vocab-tts-enabled',    ttsEnabled) },       [ttsEnabled])
   useEffect(() => { safeLocalStorageSet('vocab-sfx-enabled',    sfxEnabled) },       [sfxEnabled])
@@ -338,16 +584,58 @@ export default function VocabPage() {
     return () => ro.disconnect()
   }, [])
 
+  const availableSubLists = useMemo(() =>
+    WORD_SOURCES
+      .filter(s => activeSources.includes(s.id))
+      .flatMap(s => s.lists ?? [{ id: s.id, label: s.label }]),
+    [activeSources]
+  )
+
+  const sourcesByListId = useMemo(() => {
+    const map = {}
+    for (const source of WORD_SOURCES) {
+      const lists = source.lists ?? [{ id: source.id }]
+      for (const list of lists) {
+        map[list.id] = source.id
+      }
+    }
+    return map
+  }, [])
+
+  const wordCountByList = useMemo(() => {
+    const map = {}
+    for (const w of WORD_DATA) {
+      map[w.listKey] = (map[w.listKey] ?? 0) + 1
+    }
+    return map
+  }, [])
+
   const pool = useMemo(() =>
     WORD_DATA
-      .filter(w => selectedLists.includes(w.listKey))
+      .filter(w => selectedSubLists.includes(w.listKey))
       .map(w => ({ id: w.id, word: w })),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedLists.join(',')]
+    [selectedSubLists.join(',')]
   )
 
   const drill = useDrill(pool, { engine: SimpleQueue })
-  const hasSelection = selectedLists.length > 0
+
+  // Save progress when session completes
+  useEffect(() => {
+    if (!isDrilling || !drill.done || !user) return
+    const now = new Date().toISOString()
+    const total = pool.length
+    const updatedSublists = { ...(vocabProgress?.sublists ?? {}) }
+    for (const listId of selectedSubLists) {
+      updatedSublists[listId] = {
+        lastReviewed: now,
+        correct: drill.correct,
+        total,
+      }
+    }
+    saveVocabProgress({ ...(vocabProgress ?? {}), sublists: updatedSublists })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [drill.done, isDrilling, user])
 
   const hairline = { height: 1, background: 'rgba(255,255,255,0.08)', margin: '20px 0' }
 
@@ -360,93 +648,34 @@ export default function VocabPage() {
     else if (tRect.bottom > cRect.bottom - 8) container.scrollTop += tRect.bottom - cRect.bottom + 8
   }
 
+  function handleToggleSource(sourceId) {
+    setActiveSources(prev => {
+      const next = toggle(prev, sourceId)
+      if (!next.includes(sourceId)) {
+        const source = WORD_SOURCES.find(s => s.id === sourceId)
+        const removedKeys = new Set((source?.lists ?? [{ id: sourceId }]).map(l => l.id))
+        setSelectedSubLists(sl => sl.filter(id => !removedKeys.has(id)))
+      }
+      return next
+    })
+  }
+
   function renderPanelContent(paddingH) {
     return (
       <div style={{ padding: `16px ${paddingH}px 16px` }}>
 
         {/* ── Word Lists ── */}
-        <DrawerSectionHeader
-          title="Word Lists"
-          hasSelections={selectedLists.length > 0}
-          onClearAll={() => setSelectedLists([])}
-        />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          {WORD_SOURCES.map(source => {
-            if (!source.lists) {
-              return (
-                <SelectButton
-                  key={source.id}
-                  selected={selectedLists.includes(source.id)}
-                  centered minHeight={44} fontSize={13}
-                  onClick={() => setSelectedLists(prev => toggle(prev, source.id))}
-                >
-                  {source.label}
-                </SelectButton>
-              )
-            }
-            const isExpanded = expandedSourceId === source.id
-            const sourceKeys = source.lists.map(l => l.id)
-            const selectedCount = sourceKeys.filter(k => selectedLists.includes(k)).length
-            return (
-              <div key={source.id}>
-                <button
-                  onClick={() => setExpandedSourceId(prev => prev === source.id ? null : source.id)}
-                  style={{
-                    width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    padding: '10px 12px',
-                    background: isExpanded ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.03)',
-                    border: '1px solid rgba(255,255,255,0.12)',
-                    borderRadius: isExpanded ? '6px 6px 0 0' : 6,
-                    color: 'rgba(255,255,255,0.8)',
-                    fontFamily: 'inherit', letterSpacing: 'inherit',
-                    fontSize: 13, cursor: 'pointer',
-                    transition: 'background 130ms',
-                  }}
-                >
-                  <span>{source.label}</span>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    {selectedCount > 0 && (
-                      <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)' }}>
-                        {selectedCount}/{sourceKeys.length}
-                      </span>
-                    )}
-                    <span style={{
-                      fontSize: 10, color: 'rgba(255,255,255,0.4)',
-                      display: 'inline-block',
-                      transform: isExpanded ? 'rotate(180deg)' : 'none',
-                      transition: 'transform 150ms',
-                    }}>▾</span>
-                  </span>
-                </button>
-                {isExpanded && (
-                  <div style={{
-                    border: '1px solid rgba(255,255,255,0.12)', borderTop: 'none',
-                    borderRadius: '0 0 6px 6px',
-                    padding: 8,
-                  }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 5 }}>
-                      {source.lists.map(list => (
-                        <SelectButton
-                          key={list.id}
-                          selected={selectedLists.includes(list.id)}
-                          centered minHeight={38} fontSize={12}
-                          onClick={() => setSelectedLists(prev => toggle(prev, list.id))}
-                        >
-                          {list.label}
-                        </SelectButton>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )
-          })}
+        <DrawerSectionHeader title="Word Lists" />
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {WORD_SOURCES.map(source => (
+            <SourceRow
+              key={source.id}
+              source={source}
+              active={activeSources.includes(source.id)}
+              onToggle={() => handleToggleSource(source.id)}
+            />
+          ))}
         </div>
-        {selectedLists.length === 0 && (
-          <div style={{ color: '#f87171', fontSize: 12, fontFamily: 'inherit', marginTop: 6 }}>
-            Select at least 1 list
-          </div>
-        )}
 
         {/* ── Separator + Additional Settings ── */}
         <div style={hairline} />
@@ -572,29 +801,43 @@ export default function VocabPage() {
         }}>
           <div style={{
             flex: 1, width: '100%',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            display: 'flex', alignItems: isDrilling ? 'center' : 'flex-start', justifyContent: 'center',
             minHeight: 'min-content',
           }}>
-            {!hasSelection ? (
-              <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 14 }}>Select a word list to begin</div>
-            ) : pool.length === 0 ? (
-              <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 14 }}>No words in selected lists</div>
-            ) : drill.done ? (
-              <DoneScreen correct={drill.correct} troubled={drill.troubled} onRestart={drill.restart} onRedoTroubled={drill.redoTroubled} />
+            {isDrilling ? (
+              drill.done ? (
+                <DoneScreen
+                  correct={drill.correct}
+                  troubled={drill.troubled}
+                  onRestart={drill.restart}
+                  onRedoTroubled={drill.redoTroubled}
+                  onBack={() => setIsDrilling(false)}
+                />
+              ) : (
+                <ActiveDrill
+                  drill={drill}
+                  ttsEnabled={audioEnabled && ttsEnabled}
+                  sfxEnabled={audioEnabled && sfxEnabled}
+                  ttsVoice={ttsVoice}
+                  showStreak={showStreak}
+                  showFurigana={showFurigana}
+                  showTranslation={showTranslation}
+                  showSentence={showSentence}
+                  pixelFont={pixelFont}
+                  showVisualEffects={showVisualEffects}
+                  onPulse={setPulseColor}
+                  isShort={isShort}
+                />
+              )
             ) : (
-              <ActiveDrill
-                drill={drill}
-                ttsEnabled={audioEnabled && ttsEnabled}
-                sfxEnabled={audioEnabled && sfxEnabled}
-                ttsVoice={ttsVoice}
-                showStreak={showStreak}
-                showFurigana={showFurigana}
-                showTranslation={showTranslation}
-                showSentence={showSentence}
-                pixelFont={pixelFont}
-                showVisualEffects={showVisualEffects}
-                onPulse={setPulseColor}
-                isShort={isShort}
+              <HomeScreen
+                availableSubLists={availableSubLists}
+                selectedSubLists={selectedSubLists}
+                onToggleSubList={id => setSelectedSubLists(prev => toggle(prev, id))}
+                wordCountByList={wordCountByList}
+                vocabProgress={vocabProgress}
+                onStart={() => setIsDrilling(true)}
+                sourcesByListId={sourcesByListId}
               />
             )}
           </div>

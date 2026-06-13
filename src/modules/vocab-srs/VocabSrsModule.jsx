@@ -40,7 +40,7 @@ function StatRow({ label, value, accent }) {
   )
 }
 
-function FileInput({ onChange }) {
+function FileInput({ onChange, accept = '.txt', label = 'Choose .txt file' }) {
   return (
     <label style={{ cursor: 'pointer' }}>
       <div style={{
@@ -55,9 +55,9 @@ function FileInput({ onChange }) {
         fontFamily: FONT,
         letterSpacing: TRACKING,
       }}>
-        Choose .txt file
+        {label}
       </div>
-      <input type="file" accept=".txt" style={{ display: 'none' }} onChange={onChange} />
+      <input type="file" accept={accept} style={{ display: 'none' }} onChange={onChange} />
     </label>
   )
 }
@@ -136,6 +136,7 @@ export default function VocabSrsModule() {
   const [session, setSession] = useState(null)
   const [sessionCards, setSessionCards] = useState([])
   const [importMsg, setImportMsg] = useState(null)
+  const [ankiSyncMsg, setAnkiSyncMsg] = useState(null)
   const [advanceDays, setAdvanceDays] = useState(3)
   const [showOptions, setShowOptions] = useState(() => window.innerWidth > 768)
   const [chevronHovered, setChevronHovered] = useState(false)
@@ -357,6 +358,47 @@ export default function VocabSrsModule() {
     setProgress(newProgress)
     await save(newProgress)
     setImportMsg(`${imported.length} card${imported.length === 1 ? '' : 's'} imported`)
+    e.target.value = ''
+  }
+
+  async function handleAnkiSyncFileChange(e) {
+    const file = e.target.files[0]
+    if (!file) return
+
+    let syncCards
+    try {
+      syncCards = JSON.parse(await file.text())
+    } catch {
+      setAnkiSyncMsg('Invalid JSON file')
+      e.target.value = ''
+      return
+    }
+
+    if (typeof syncCards !== 'object' || Array.isArray(syncCards)) {
+      setAnkiSyncMsg('Expected a JSON object')
+      e.target.value = ''
+      return
+    }
+
+    // Ensure all core2000 cards exist as New before overwriting reviewed ones
+    let newProgress = progress
+    const hasCore2000Cards = Object.values(cardsObj).some(c => c.deckId === 'core2000')
+    if (!hasCore2000Cards) {
+      newProgress = initializeDeckCards(newProgress, 'core2000')
+    }
+
+    const newCardsObj = { ...newProgress.cards }
+    let count = 0
+    for (const [id, cardState] of Object.entries(syncCards)) {
+      if (typeof cardState !== 'object' || !cardState.id || !cardState.deckId) continue
+      newCardsObj[id] = cardState
+      count++
+    }
+
+    const merged = { ...newProgress, cards: newCardsObj }
+    setProgress(merged)
+    await save(merged)
+    setAnkiSyncMsg(`${count} card${count === 1 ? '' : 's'} synced`)
     e.target.value = ''
   }
 
@@ -767,11 +809,23 @@ export default function VocabSrsModule() {
                       <div style={{ fontSize: 11, color: TEXT_MUTED, letterSpacing: TRACKING, marginBottom: 10, textTransform: 'uppercase' }}>
                         Import
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-                        <FileInput onChange={handleFileChange} />
-                        {importMsg && (
-                          <span style={{ fontSize: 13, color: '#4ade80' }}>{importMsg}</span>
-                        )}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                          <FileInput onChange={handleFileChange} />
+                          {importMsg && (
+                            <span style={{ fontSize: 13, color: '#4ade80' }}>{importMsg}</span>
+                          )}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                          <FileInput
+                            accept=".json"
+                            label="Sync from Anki (.json)"
+                            onChange={handleAnkiSyncFileChange}
+                          />
+                          {ankiSyncMsg && (
+                            <span style={{ fontSize: 13, color: '#4ade80' }}>{ankiSyncMsg}</span>
+                          )}
+                        </div>
                       </div>
                       <div style={{ marginTop: 8, fontSize: 12, color: 'rgba(255,255,255,0.2)' }}>
                         {Object.keys(cardsObj).length} total cards
