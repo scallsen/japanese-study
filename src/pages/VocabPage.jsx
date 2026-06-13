@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import VocabCard from '../components/VocabCard.jsx'
 import DrillHUD from '../components/DrillHUD.jsx'
-import SelectButton from '../components/SelectButton.jsx'
 import DrawerSectionHeader from '../components/DrawerSectionHeader.jsx'
 import DrawerCheckbox from '../components/DrawerCheckbox.jsx'
 import DrawerSelect from '../components/DrawerSelect.jsx'
@@ -39,7 +38,7 @@ function defaultActiveSources() {
   try {
     const raw = safeLocalStorageGet('vocab-active-sources')
     if (raw) return JSON.parse(raw)
-  } catch {}
+  } catch (_) { /* ignore parse errors */ }
   return ALL_SOURCE_IDS
 }
 
