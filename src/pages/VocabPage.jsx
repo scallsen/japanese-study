@@ -503,15 +503,24 @@ function SubListTile({ label, wordCount, progress, selected, onClick }) {
       <span style={{ fontSize: 13, color: selected ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.7)' }}>
         {label}
       </span>
-      <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>
+      <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', display: 'flex', alignItems: 'center', gap: 6 }}>
         {wordCount} words
-        {progress && (
+        {!progress ? (
+          <span style={{
+            fontSize: 10,
+            padding: '1px 5px',
+            background: 'rgba(58,189,164,0.12)',
+            color: 'rgba(58,189,164,0.65)',
+            border: '1px solid rgba(58,189,164,0.2)',
+            borderRadius: 3,
+            letterSpacing: '0.06em',
+          }}>New</span>
+        ) : timeAgo ? (
           <>
-            <span style={{ margin: '0 4px' }}>·</span>
-            {progress.correct}/{progress.total}
-            {timeAgo && <span style={{ marginLeft: 4 }}>{timeAgo}</span>}
+            <span>·</span>
+            {timeAgo}
           </>
-        )}
+        ) : null}
       </span>
     </button>
   )
