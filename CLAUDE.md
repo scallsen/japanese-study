@@ -502,3 +502,60 @@ All keys use `srs-` prefix. The VocabSrsModule reads these on mount; VocabSrsDri
 ### Dev advance feature (DEV only)
 
 Visible in the settings sidebar when `import.meta.env.DEV` and cards exist. "Advance N days" shifts all card `due` dates back by N days and resets `newCardDay: { date: '', count: 0 }` to grant a fresh daily new card allocation. Each click is cumulative. Rescheduled-card inclusion in sessions means advancing arbitrarily many days still surfaces all due cards correctly.
+
+## Immersion (`#/immersion`)
+
+**Self-contained module** — all code under `src/modules/immersion/`. NHK-style Japanese reading articles generated nightly by a GitHub Actions pipeline.
+
+### Key files
+
+| File | Purpose |
+|---|---|
+| `src/modules/immersion/ImmersionModule.jsx` | Article list screen — fetches from Supabase, reading history |
+| `src/modules/immersion/ImmersionReader.jsx` | Reader — tokenized body, word popup, furigana toggle, SRS bridge |
+| `scripts/fetch-nhk.mjs` | Nightly pipeline — fetches Yahoo Japan RSS, generates articles via Claude Haiku, tokenizes with Kuromoji, fetches definitions |
+| `scripts/backfill-definitions.mjs` | One-off backfill — re-tokenizes all existing articles and regenerates `vocabulary_ja` |
+| `.github/workflows/fetch-articles.yml` | GHA cron — runs `fetch-nhk.mjs` nightly at 01:00 UTC; requires Node 22 (for native WebSocket in `@supabase/realtime-js`) |
+
+### Supabase `articles` table
+
+```sql
+create table if not exists articles (
+  id           uuid primary key default gen_random_uuid(),
+  slug         text not null unique,
+  source       text,
+  title        text not null,
+  title_en     text,
+  published_at timestamptz not null,
+  body_ja      text not null,
+  body_simple  text,
+  summary_en   text,
+  questions    jsonb,   -- [{q, a}] x3
+  difficulty   smallint,
+  tokens_ja    jsonb,   -- [{t, r, w}] — Kuromoji tokens for body_ja
+  tokens_simple jsonb,  -- [{t, r, w}] — Kuromoji tokens for body_simple
+  vocabulary_ja jsonb,  -- [{word, reading, meaning}] — definition for every content token
+  active       boolean not null default true
+);
+grant select on articles to anon, authenticated;
+```
+
+Token shape: `{ t: "surface", r: "hiragana-reading|null", w: boolean }` — `w: false` for particles, auxiliary verbs, punctuation, BOS/EOS.
+
+### Word popup / definitions
+
+Every content token (`w: true`) in `tokens_ja`/`tokens_simple` is clickable in the reader. Clicking shows a popup with the word, its reading, and an English definition. Definitions come from `vocabulary_ja`, which the pipeline generates via a second Claude Haiku call covering every unique content word (typically 60–120 per article). Run `backfill-definitions.mjs` if articles predate this feature or need regeneration.
+
+### Article retention
+
+Articles accumulate indefinitely — there is no cleanup job. The reader fetches the 10 most recent (`limit(10)` ordered by `published_at desc`), so old articles are invisible to users but stay in the database. At ~5 articles/day × ~10 KB each (with JSONB tokens), growth is ~18 MB/year — well within Supabase free tier limits. If storage ever becomes a concern, add a post-upsert delete to `fetch-nhk.mjs` that removes rows beyond the newest N.
+
+### `useProgress('immersion')` payload
+
+```js
+{ read: { [slug]: { readAt: ISO string, score: null } } }
+```
+
+### SRS bridge
+
+`ImmersionReader` imports `createCard` from `../vocab-srs/srs.js` and writes directly to the `vocab-srs` progress namespace, appending words to an `immersion-words` imported deck (created on first add). This is the only cross-module write in the codebase.
