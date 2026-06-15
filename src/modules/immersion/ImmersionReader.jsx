@@ -2,6 +2,9 @@ import { useState } from 'react'
 import PageHeader from '../../components/PageHeader.jsx'
 import AuthSlot from '../../components/AuthSlot.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
+import { useProgress } from '../../hooks/useProgress.js'
+// Cross-module write: creates cards in vocab-srs progress namespace
+import { createCard } from '../vocab-srs/srs.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../../data/theme.js'
 
 const ACCENT = '#E05A4E'
@@ -10,11 +13,35 @@ function formatDate(iso) {
   return new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
 }
 
+const IMMERSION_DECK_ID = 'immersion-words'
+
 export default function ImmersionReader({ article, onBack, isRead, onMarkRead }) {
   const { user, signIn } = useAuth()
   const [showSimplified, setShowSimplified] = useState(!!article.body_simple)
   const [summaryOpen, setSummaryOpen] = useState(false)
   const [revealedAnswers, setRevealedAnswers] = useState({})
+  const [srsWord, setSrsWord] = useState('')
+  const [srsMeaning, setSrsMeaning] = useState('')
+  const [srsStatus, setSrsStatus] = useState(null) // null | 'added' | 'duplicate'
+  const { data: srsData, save: saveSrs } = useProgress('vocab-srs')
+
+  function addToSrs() {
+    const word = srsWord.trim()
+    if (!word) return
+    const meaning = srsMeaning.trim()
+    const current = srsData ?? { decks: {}, cards: {}, lastSession: null, totalReviews: 0, newCardDay: { date: '', count: 0 } }
+    const decks = { ...current.decks }
+    if (!decks[IMMERSION_DECK_ID]) {
+      decks[IMMERSION_DECK_ID] = { id: IMMERSION_DECK_ID, name: 'Immersion Words', active: true, source: 'imported', addedAt: Date.now() }
+    }
+    const cardId = `${IMMERSION_DECK_ID}-${Date.now()}`
+    const card = createCard(word, meaning, cardId, IMMERSION_DECK_ID)
+    saveSrs({ ...current, decks, cards: { ...current.cards, [cardId]: card } })
+    setSrsWord('')
+    setSrsMeaning('')
+    setSrsStatus('added')
+    setTimeout(() => setSrsStatus(null), 2000)
+  }
 
   const body = showSimplified && article.body_simple ? article.body_simple : article.body_ja
   const hasSimplified = !!article.body_simple
@@ -169,6 +196,68 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
               </div>
             </div>
           )}
+
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 24, marginBottom: 32 }}>
+            <div style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, marginBottom: 12 }}>
+              Add to SRS
+            </div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              <input
+                value={srsWord}
+                onChange={e => setSrsWord(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && addToSrs()}
+                placeholder="Word or phrase"
+                style={{
+                  flex: '1 1 140px',
+                  fontSize: 14,
+                  fontFamily: FONT,
+                  letterSpacing: TRACKING,
+                  color: TEXT,
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  borderRadius: 6,
+                  padding: '6px 12px',
+                  outline: 'none',
+                }}
+              />
+              <input
+                value={srsMeaning}
+                onChange={e => setSrsMeaning(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && addToSrs()}
+                placeholder="Meaning (optional)"
+                style={{
+                  flex: '1 1 140px',
+                  fontSize: 14,
+                  fontFamily: FONT,
+                  letterSpacing: TRACKING,
+                  color: TEXT,
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  borderRadius: 6,
+                  padding: '6px 12px',
+                  outline: 'none',
+                }}
+              />
+              <button
+                onClick={addToSrs}
+                disabled={!srsWord.trim()}
+                style={{
+                  fontSize: 13,
+                  fontFamily: FONT,
+                  letterSpacing: TRACKING,
+                  color: srsWord.trim() ? TEXT : TEXT_MUTED,
+                  background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.15)',
+                  borderRadius: 6,
+                  padding: '6px 16px',
+                  cursor: srsWord.trim() ? 'pointer' : 'default',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {srsStatus === 'added' ? '✓ Added' : 'Add'}
+              </button>
+            </div>
+          </div>
 
           <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 24, paddingBottom: 48, display: 'flex', alignItems: 'center', gap: 12 }}>
             {user ? (
