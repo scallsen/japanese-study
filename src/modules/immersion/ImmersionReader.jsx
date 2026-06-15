@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import PageHeader from '../../components/PageHeader.jsx'
 import AuthSlot from '../../components/AuthSlot.jsx'
+import { useAuth } from '../../context/AuthContext.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../../data/theme.js'
 
 const ACCENT = '#E05A4E'
@@ -9,7 +10,8 @@ function formatDate(iso) {
   return new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
 }
 
-export default function ImmersionReader({ article, onBack }) {
+export default function ImmersionReader({ article, onBack, isRead, onMarkRead }) {
+  const { user, signIn } = useAuth()
   const [showSimplified, setShowSimplified] = useState(!!article.body_simple)
   const [summaryOpen, setSummaryOpen] = useState(false)
   const [revealedAnswers, setRevealedAnswers] = useState({})
@@ -167,6 +169,51 @@ export default function ImmersionReader({ article, onBack }) {
               </div>
             </div>
           )}
+
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 24, paddingBottom: 48, display: 'flex', alignItems: 'center', gap: 12 }}>
+            {user ? (
+              isRead ? (
+                <span style={{ fontSize: 13, color: '#6BCB6B', fontFamily: FONT, letterSpacing: TRACKING, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span>✓</span> Marked as read
+                </span>
+              ) : (
+                <button
+                  onClick={onMarkRead}
+                  style={{
+                    fontSize: 13,
+                    fontFamily: FONT,
+                    letterSpacing: TRACKING,
+                    color: TEXT,
+                    background: 'rgba(255,255,255,0.06)',
+                    border: '1px solid rgba(255,255,255,0.15)',
+                    borderRadius: 6,
+                    padding: '6px 16px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Mark as read
+                </button>
+              )
+            ) : (
+              <button
+                onClick={signIn}
+                style={{
+                  fontSize: 13,
+                  fontFamily: FONT,
+                  letterSpacing: TRACKING,
+                  color: TEXT_MUTED,
+                  background: 'none',
+                  border: 'none',
+                  padding: 0,
+                  cursor: 'pointer',
+                  textDecoration: 'underline',
+                  textUnderlineOffset: 3,
+                }}
+              >
+                Sign in to save reading history
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
