@@ -3,6 +3,7 @@ import PageHeader from '../../components/PageHeader.jsx'
 import AuthSlot from '../../components/AuthSlot.jsx'
 import ImmersionReader from './ImmersionReader.jsx'
 import { supabase } from '../../lib/supabase.js'
+import { useProgress } from '../../hooks/useProgress.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../../data/theme.js'
 
 const ACCENT = '#E05A4E'
@@ -14,7 +15,7 @@ function formatDate(iso) {
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
-function ArticleCard({ article, onClick }) {
+function ArticleCard({ article, onClick, isRead }) {
   const [hovered, setHovered] = useState(false)
   return (
     <div
@@ -23,7 +24,7 @@ function ArticleCard({ article, onClick }) {
       onMouseLeave={() => setHovered(false)}
       style={{
         background: hovered ? '#313131' : '#2A2A2A',
-        border: '1px solid rgba(255,255,255,0.07)',
+        border: `1px solid ${isRead ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.07)'}`,
         borderRadius: 8,
         padding: '18px 20px',
         cursor: 'pointer',
@@ -66,7 +67,11 @@ function ArticleCard({ article, onClick }) {
           fontFamily: FONT,
           letterSpacing: TRACKING,
           marginLeft: 'auto',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 6,
         }}>
+          {isRead && <span style={{ color: '#6BCB6B', fontSize: 10 }}>✓</span>}
           {formatDate(article.published_at)}
         </span>
       </div>
@@ -87,6 +92,20 @@ export default function ImmersionModule() {
   const [articles, setArticles] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const { data: progressData, save: saveProgress } = useProgress('immersion')
+
+  const readSet = new Set(Object.keys(progressData?.read ?? {}))
+
+  function markRead(slug) {
+    if (readSet.has(slug)) return
+    saveProgress({
+      ...progressData,
+      read: {
+        ...(progressData?.read ?? {}),
+        [slug]: { readAt: new Date().toISOString(), score: null },
+      },
+    })
+  }
 
   useEffect(() => {
     if (!supabase) {
@@ -115,6 +134,8 @@ export default function ImmersionModule() {
       <ImmersionReader
         article={selectedArticle}
         onBack={() => setSelectedArticle(null)}
+        isRead={readSet.has(selectedArticle.slug)}
+        onMarkRead={() => markRead(selectedArticle.slug)}
       />
     )
   }
@@ -154,6 +175,7 @@ export default function ImmersionModule() {
                   key={article.slug}
                   article={article}
                   onClick={() => setSelectedArticle(article)}
+                  isRead={readSet.has(article.slug)}
                 />
               ))}
             </>
