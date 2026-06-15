@@ -60,6 +60,30 @@ function tokenizeText(tokenizerInstance, text) {
   })
 }
 
+async function generateDefinitions(words) {
+  if (words.length === 0) return {}
+  const message = await anthropic.messages.create({
+    model: 'claude-haiku-4-5-20251001',
+    max_tokens: 2000,
+    messages: [{
+      role: 'user',
+      content: `Give concise English definitions for these Japanese words. Return raw JSON only — an array: [{"word":"...","meaning":"..."}, ...]. One entry per input word. Meanings should be 1-5 words.
+
+Words: ${words.join('、')}`,
+    }],
+  })
+  const raw = message.content[0].text.trim()
+  const start = raw.indexOf('[')
+  const end = raw.lastIndexOf(']')
+  if (start === -1 || end === -1) return {}
+  const arr = JSON.parse(raw.slice(start, end + 1))
+  const map = {}
+  for (const entry of arr) {
+    if (entry.word && entry.meaning) map[entry.word] = entry.meaning
+  }
+  return map
+}
+
 function slugFromUrl(url) {
   const m = url.match(/\/(\d+)(?:\?|$)/)
   return m ? `yahoo-${m[1]}` : `yahoo-${Buffer.from(url).toString('base64').slice(0, 16)}`
@@ -91,7 +115,7 @@ async function fetchHeadlines() {
 async function generateArticle(headline, pubDate) {
   const message = await anthropic.messages.create({
     model: 'claude-haiku-4-5-20251001',
-    max_tokens: 2000,
+    max_tokens: 1600,
     messages: [
       {
         role: 'user',
@@ -114,14 +138,8 @@ Return a JSON object (raw JSON only, no markdown):
     {"q": "...", "a": "..."},
     {"q": "...", "a": "..."}
   ],
-  "difficulty": <integer 1-5 where 1=N5, 2=N4, 3=N3, 4=N2, 5=N1>,
-  "vocabulary": [
-    {"word": "魚", "reading": "さかな", "meaning": "fish"},
-    ...
-  ]
-}
-
-Include 10-15 key vocabulary words from body_ja that an N4 learner might not know. Use hiragana/katakana for reading. Meaning should be a concise English gloss (1-5 words).`,
+  "difficulty": <integer 1-5 where 1=N5, 2=N4, 3=N3, 4=N2, 5=N1>
+}`,
       },
     ],
   })
@@ -184,6 +202,23 @@ async function main() {
     const tokensJa = ai.body_ja ? tokenizeText(tokenizer, ai.body_ja) : null
     const tokensSimple = ai.body_simple ? tokenizeText(tokenizer, ai.body_simple) : null
 
+    // Collect unique content words with their readings from both bodies
+    const wordReadings = new Map()
+    for (const tok of [...(tokensJa ?? []), ...(tokensSimple ?? [])]) {
+      if (tok.w && !wordReadings.has(tok.t)) wordReadings.set(tok.t, tok.r ?? null)
+    }
+
+    let vocabularyJa = null
+    if (wordReadings.size > 0) {
+      console.log(`  Generating definitions for ${wordReadings.size} unique words...`)
+      const definitionsMap = await generateDefinitions([...wordReadings.keys()])
+      vocabularyJa = [...wordReadings.entries()].map(([word, reading]) => ({
+        word,
+        reading,
+        meaning: definitionsMap[word] ?? null,
+      })).filter(e => e.meaning)
+    }
+
     try {
       await upsertArticle({
         slug,
@@ -198,7 +233,7 @@ async function main() {
         difficulty: ai.difficulty ?? 2,
         tokens_ja: tokensJa,
         tokens_simple: tokensSimple,
-        vocabulary_ja: ai.vocabulary ?? null,
+        vocabulary_ja: vocabularyJa,
         active: true,
       })
       console.log(`  Done (difficulty: ${ai.difficulty})`)
