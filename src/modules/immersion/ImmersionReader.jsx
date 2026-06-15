@@ -127,9 +127,6 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
   const [showSimplified, setShowSimplified] = useState(!!article.body_simple)
   const [summaryOpen, setSummaryOpen] = useState(false)
   const [revealedAnswers, setRevealedAnswers] = useState({})
-  const [srsWord, setSrsWord] = useState('')
-  const [srsMeaning, setSrsMeaning] = useState('')
-  const [srsStatus, setSrsStatus] = useState(null) // null | 'added'
   const [popup, setPopup] = useState(null) // { token, vocabEntry, anchorRect }
   const [showFurigana, setShowFurigana] = useState(true)
   const { data: srsData, save: saveSrs } = useProgress('vocab-srs')
@@ -143,17 +140,8 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
   }
 
   function handlePopupAddToSrs(token, vocabEntry) {
-    setSrsWord(token.t)
-    setSrsMeaning(vocabEntry?.meaning ?? (token.r ?? ''))
-    setPopup(null)
-    // Scroll to the Add to SRS form at bottom
-    document.getElementById('srs-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-  }
-
-  function addToSrs() {
-    const word = srsWord.trim()
-    if (!word) return
-    const meaning = srsMeaning.trim()
+    const word = token.t
+    const meaning = vocabEntry?.meaning ?? token.r ?? ''
     const current = srsData ?? { decks: {}, cards: {}, lastSession: null, totalReviews: 0, newCardDay: { date: '', count: 0 } }
     const decks = { ...current.decks }
     if (!decks[IMMERSION_DECK_ID]) {
@@ -162,10 +150,7 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
     const cardId = `${IMMERSION_DECK_ID}-${Date.now()}`
     const card = createCard(word, meaning, cardId, IMMERSION_DECK_ID)
     saveSrs({ ...current, decks, cards: { ...current.cards, [cardId]: card } })
-    setSrsWord('')
-    setSrsMeaning('')
-    setSrsStatus('added')
-    setTimeout(() => setSrsStatus(null), 2000)
+    setPopup(null)
   }
 
   const showingSimplified = showSimplified && !!article.body_simple
@@ -354,68 +339,6 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
               </div>
             </div>
           )}
-
-          <div id="srs-form" style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 24, marginBottom: 32 }}>
-            <div style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, marginBottom: 12 }}>
-              Add to SRS
-            </div>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              <input
-                value={srsWord}
-                onChange={e => setSrsWord(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && addToSrs()}
-                placeholder="Word or phrase"
-                style={{
-                  flex: '1 1 140px',
-                  fontSize: 14,
-                  fontFamily: FONT,
-                  letterSpacing: TRACKING,
-                  color: TEXT,
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.12)',
-                  borderRadius: 6,
-                  padding: '6px 12px',
-                  outline: 'none',
-                }}
-              />
-              <input
-                value={srsMeaning}
-                onChange={e => setSrsMeaning(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && addToSrs()}
-                placeholder="Meaning (optional)"
-                style={{
-                  flex: '1 1 140px',
-                  fontSize: 14,
-                  fontFamily: FONT,
-                  letterSpacing: TRACKING,
-                  color: TEXT,
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.12)',
-                  borderRadius: 6,
-                  padding: '6px 12px',
-                  outline: 'none',
-                }}
-              />
-              <button
-                onClick={addToSrs}
-                disabled={!srsWord.trim()}
-                style={{
-                  fontSize: 13,
-                  fontFamily: FONT,
-                  letterSpacing: TRACKING,
-                  color: srsWord.trim() ? TEXT : TEXT_MUTED,
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.15)',
-                  borderRadius: 6,
-                  padding: '6px 16px',
-                  cursor: srsWord.trim() ? 'pointer' : 'default',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {srsStatus === 'added' ? '✓ Added' : 'Add'}
-              </button>
-            </div>
-          </div>
 
           <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 24, paddingBottom: 48, display: 'flex', alignItems: 'center', gap: 12 }}>
             {user ? (
