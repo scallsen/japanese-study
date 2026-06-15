@@ -24,24 +24,39 @@ function buildVocabMap(vocabulary) {
   return map
 }
 
-function TokenizedBody({ tokens, vocabMap, onWordClick }) {
+function TokenizedBody({ tokens, vocabMap, onWordClick, showFurigana }) {
+  const [hoveredIdx, setHoveredIdx] = useState(null)
   if (!Array.isArray(tokens) || tokens.length === 0) return null
   return (
     <span>
       {tokens.map((tok, i) => {
         if (!tok.w) return <span key={i}>{tok.t}</span>
+        const isHovered = hoveredIdx === i
         const inVocab = !!vocabMap[tok.t]
         return (
           <span
             key={i}
+            onMouseEnter={() => setHoveredIdx(i)}
+            onMouseLeave={() => setHoveredIdx(null)}
             onClick={e => { e.stopPropagation(); onWordClick(tok, e) }}
             style={{
               cursor: 'pointer',
-              borderBottom: inVocab ? '1px dotted rgba(224,90,78,0.6)' : '1px dotted rgba(255,255,255,0.2)',
-              paddingBottom: 1,
+              borderRadius: 3,
+              background: isHovered
+                ? inVocab ? 'rgba(224,90,78,0.22)' : 'rgba(255,255,255,0.1)'
+                : 'transparent',
+              padding: '0 1px',
+              transition: 'background 80ms',
             }}
           >
-            {tok.t}
+            {showFurigana && tok.r
+              ? (
+                <ruby>
+                  {tok.t}
+                  <rt style={{ fontSize: '0.55em', color: TEXT_MUTED, letterSpacing: 0 }}>{tok.r}</rt>
+                </ruby>
+              )
+              : tok.t}
           </span>
         )
       })}
@@ -116,6 +131,7 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
   const [srsMeaning, setSrsMeaning] = useState('')
   const [srsStatus, setSrsStatus] = useState(null) // null | 'added'
   const [popup, setPopup] = useState(null) // { token, vocabEntry, anchorRect }
+  const [showFurigana, setShowFurigana] = useState(true)
   const { data: srsData, save: saveSrs } = useProgress('vocab-srs')
 
   const vocabMap = useMemo(() => buildVocabMap(article.vocabulary_ja), [article.vocabulary_ja])
@@ -203,9 +219,9 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
             )}
           </div>
 
-          {hasSimplified && (
-            <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
-              {['Original', 'Simplified'].map(label => {
+          {(hasSimplified || tokens) && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24 }}>
+              {hasSimplified && ['Original', 'Simplified'].map(label => {
                 const active = label === 'Simplified' ? showSimplified : !showSimplified
                 return (
                   <button
@@ -227,6 +243,26 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
                   </button>
                 )
               })}
+              {tokens && (
+                <button
+                  onClick={() => setShowFurigana(f => !f)}
+                  style={{
+                    marginLeft: 'auto',
+                    fontSize: 12,
+                    fontFamily: FONT,
+                    letterSpacing: TRACKING,
+                    color: showFurigana ? TEXT : TEXT_MUTED,
+                    background: showFurigana ? 'rgba(255,255,255,0.08)' : 'transparent',
+                    border: `1px solid ${showFurigana ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)'}`,
+                    borderRadius: 4,
+                    padding: '3px 12px',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {showFurigana ? 'Hide furigana' : 'Show furigana'}
+                </button>
+              )}
             </div>
           )}
 
@@ -235,12 +271,12 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
             color: TEXT,
             fontFamily: FONT,
             letterSpacing: TRACKING,
-            lineHeight: 1.9,
+            lineHeight: tokens && showFurigana ? 2.4 : 1.9,
             whiteSpace: 'pre-wrap',
             marginBottom: 40,
           }}>
             {tokens
-              ? <TokenizedBody tokens={tokens} vocabMap={vocabMap} onWordClick={handleWordClick} />
+              ? <TokenizedBody tokens={tokens} vocabMap={vocabMap} onWordClick={handleWordClick} showFurigana={showFurigana} />
               : body}
           </div>
 
