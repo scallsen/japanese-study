@@ -17,6 +17,7 @@
     "ts-fsrs": "^5.4.1"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^0.104.1",
     "@vitejs/plugin-react": "^4.2.1",
     "esbuild": "^0.28.0",
     "eslint": "^8.57.0",
