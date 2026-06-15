@@ -15,6 +15,7 @@
 
 import { createClient } from '@supabase/supabase-js'
 import Anthropic from '@anthropic-ai/sdk'
+import kuromoji from 'kuromoji'
 
 const SUPABASE_URL = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.SUPABASE_SECRET_KEY
@@ -34,6 +35,30 @@ if (!ANTHROPIC_API_KEY) {
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 const anthropic = new Anthropic({ apiKey: ANTHROPIC_API_KEY })
+
+const PARTICLE_POS = new Set(['助詞', '助動詞', '記号', 'BOS/EOS'])
+
+function buildTokenizerInstance() {
+  return new Promise((resolve, reject) => {
+    kuromoji.builder({ dicPath: 'node_modules/kuromoji/dict' }).build((err, t) => {
+      err ? reject(err) : resolve(t)
+    })
+  })
+}
+
+function katakanaToHiragana(str) {
+  return (str ?? '').replace(/[ァ-ヶ]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0x60))
+}
+
+function tokenizeText(tokenizerInstance, text) {
+  return tokenizerInstance.tokenize(text).map(tok => {
+    const isContent = !PARTICLE_POS.has(tok.pos) && tok.surface_form.trim().length > 0
+    const reading = tok.reading && tok.reading !== tok.surface_form
+      ? katakanaToHiragana(tok.reading)
+      : null
+    return { t: tok.surface_form, r: reading, w: isContent }
+  })
+}
 
 function slugFromUrl(url) {
   const m = url.match(/\/(\d+)(?:\?|$)/)
@@ -66,7 +91,7 @@ async function fetchHeadlines() {
 async function generateArticle(headline, pubDate) {
   const message = await anthropic.messages.create({
     model: 'claude-haiku-4-5-20251001',
-    max_tokens: 1500,
+    max_tokens: 2000,
     messages: [
       {
         role: 'user',
@@ -89,8 +114,14 @@ Return a JSON object (raw JSON only, no markdown):
     {"q": "...", "a": "..."},
     {"q": "...", "a": "..."}
   ],
-  "difficulty": <integer 1-5 where 1=N5, 2=N4, 3=N3, 4=N2, 5=N1>
-}`,
+  "difficulty": <integer 1-5 where 1=N5, 2=N4, 3=N3, 4=N2, 5=N1>,
+  "vocabulary": [
+    {"word": "魚", "reading": "さかな", "meaning": "fish"},
+    ...
+  ]
+}
+
+Include 10-15 key vocabulary words from body_ja that an N4 learner might not know. Use hiragana/katakana for reading. Meaning should be a concise English gloss (1-5 words).`,
       },
     ],
   })
@@ -114,6 +145,10 @@ async function upsertArticle(article) {
 }
 
 async function main() {
+  console.log('Building Kuromoji tokenizer...')
+  const tokenizer = await buildTokenizerInstance()
+  console.log('Tokenizer ready.')
+
   console.log('Fetching Yahoo Japan News headlines...')
   const headlines = await fetchHeadlines()
   console.log(`Found ${headlines.length} headlines`)
@@ -146,6 +181,9 @@ async function main() {
 
     const publishedAt = item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString()
 
+    const tokensJa = ai.body_ja ? tokenizeText(tokenizer, ai.body_ja) : null
+    const tokensSimple = ai.body_simple ? tokenizeText(tokenizer, ai.body_simple) : null
+
     try {
       await upsertArticle({
         slug,
@@ -158,6 +196,9 @@ async function main() {
         summary_en: ai.summary_en ?? null,
         questions: ai.questions ?? null,
         difficulty: ai.difficulty ?? 2,
+        tokens_ja: tokensJa,
+        tokens_simple: tokensSimple,
+        vocabulary_ja: ai.vocabulary ?? null,
         active: true,
       })
       console.log(`  Done (difficulty: ${ai.difficulty})`)

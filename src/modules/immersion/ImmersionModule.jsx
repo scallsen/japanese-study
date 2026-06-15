@@ -115,7 +115,7 @@ export default function ImmersionModule() {
     }
     supabase
       .from('articles')
-      .select('id, slug, source, title, title_en, published_at, body_ja, body_simple, summary_en, questions, difficulty')
+      .select('id, slug, source, title, title_en, published_at, body_ja, body_simple, summary_en, questions, difficulty, tokens_ja, tokens_simple, vocabulary_ja')
       .eq('active', true)
       .order('published_at', { ascending: false })
       .limit(10)
