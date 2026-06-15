@@ -29,4 +29,14 @@ export const MODULES = [
     accent: '#3ABDA4',
     requiresAuth: true,
   },
+  {
+    id: 'immersion',
+    label: 'Immersion',
+    sublabel: 'Daily Reading',
+    stats: null,
+    href: '#/immersion',
+    external: false,
+    accent: '#E05A4E',
+    requiresAuth: false,
+  },
 ]
