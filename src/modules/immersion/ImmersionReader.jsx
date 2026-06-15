@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import PageHeader from '../../components/PageHeader.jsx'
 import AuthSlot from '../../components/AuthSlot.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
@@ -15,6 +15,98 @@ function formatDate(iso) {
 
 const IMMERSION_DECK_ID = 'immersion-words'
 
+function buildVocabMap(vocabulary) {
+  const map = {}
+  if (!Array.isArray(vocabulary)) return map
+  for (const entry of vocabulary) {
+    if (entry.word) map[entry.word] = entry
+  }
+  return map
+}
+
+function TokenizedBody({ tokens, vocabMap, onWordClick }) {
+  if (!Array.isArray(tokens) || tokens.length === 0) return null
+  return (
+    <span>
+      {tokens.map((tok, i) => {
+        if (!tok.w) return <span key={i}>{tok.t}</span>
+        const inVocab = !!vocabMap[tok.t]
+        return (
+          <span
+            key={i}
+            onClick={e => { e.stopPropagation(); onWordClick(tok, e) }}
+            style={{
+              cursor: 'pointer',
+              borderBottom: inVocab ? '1px dotted rgba(224,90,78,0.6)' : '1px dotted rgba(255,255,255,0.2)',
+              paddingBottom: 1,
+            }}
+          >
+            {tok.t}
+          </span>
+        )
+      })}
+    </span>
+  )
+}
+
+function WordPopup({ token, vocabEntry, onAddToSrs, onClose, anchorRect }) {
+  const popupRef = useRef(null)
+
+  useEffect(() => {
+    function handleClick(e) {
+      if (popupRef.current && !popupRef.current.contains(e.target)) onClose()
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [onClose])
+
+  return (
+    <div
+      ref={popupRef}
+      style={{
+        position: 'fixed',
+        top: anchorRect ? anchorRect.bottom + 6 : 0,
+        left: Math.max(8, anchorRect ? anchorRect.left : 0),
+        zIndex: 200,
+        background: '#2A2A2A',
+        border: '1px solid rgba(255,255,255,0.15)',
+        borderRadius: 8,
+        padding: '10px 14px',
+        minWidth: 160,
+        maxWidth: 260,
+        boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+        fontFamily: FONT,
+        letterSpacing: TRACKING,
+      }}
+    >
+      <div style={{ fontSize: 20, color: TEXT, marginBottom: 2 }}>{token.t}</div>
+      {token.r && (
+        <div style={{ fontSize: 13, color: TEXT_MUTED, marginBottom: vocabEntry ? 6 : 10 }}>{token.r}</div>
+      )}
+      {vocabEntry?.meaning && (
+        <div style={{ fontSize: 13, color: TEXT, marginBottom: 10 }}>{vocabEntry.meaning}</div>
+      )}
+      <button
+        onClick={() => onAddToSrs(token, vocabEntry)}
+        style={{
+          fontSize: 12,
+          fontFamily: FONT,
+          letterSpacing: TRACKING,
+          color: TEXT,
+          background: 'rgba(255,255,255,0.08)',
+          border: '1px solid rgba(255,255,255,0.15)',
+          borderRadius: 5,
+          padding: '4px 12px',
+          cursor: 'pointer',
+          width: '100%',
+        }}
+      >
+        Add to SRS
+      </button>
+    </div>
+  )
+}
+
 export default function ImmersionReader({ article, onBack, isRead, onMarkRead }) {
   const { user, signIn } = useAuth()
   const [showSimplified, setShowSimplified] = useState(!!article.body_simple)
@@ -22,8 +114,25 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
   const [revealedAnswers, setRevealedAnswers] = useState({})
   const [srsWord, setSrsWord] = useState('')
   const [srsMeaning, setSrsMeaning] = useState('')
-  const [srsStatus, setSrsStatus] = useState(null) // null | 'added' | 'duplicate'
+  const [srsStatus, setSrsStatus] = useState(null) // null | 'added'
+  const [popup, setPopup] = useState(null) // { token, vocabEntry, anchorRect }
   const { data: srsData, save: saveSrs } = useProgress('vocab-srs')
+
+  const vocabMap = useMemo(() => buildVocabMap(article.vocabulary_ja), [article.vocabulary_ja])
+
+  function handleWordClick(token, e) {
+    const rect = e.target.getBoundingClientRect()
+    const vocabEntry = vocabMap[token.t] ?? null
+    setPopup({ token, vocabEntry, anchorRect: rect })
+  }
+
+  function handlePopupAddToSrs(token, vocabEntry) {
+    setSrsWord(token.t)
+    setSrsMeaning(vocabEntry?.meaning ?? (token.r ?? ''))
+    setPopup(null)
+    // Scroll to the Add to SRS form at bottom
+    document.getElementById('srs-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
 
   function addToSrs() {
     const word = srsWord.trim()
@@ -43,13 +152,24 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
     setTimeout(() => setSrsStatus(null), 2000)
   }
 
-  const body = showSimplified && article.body_simple ? article.body_simple : article.body_ja
+  const showingSimplified = showSimplified && !!article.body_simple
+  const body = showingSimplified ? article.body_simple : article.body_ja
+  const tokens = showingSimplified ? article.tokens_simple : article.tokens_ja
   const hasSimplified = !!article.body_simple
   const hasSummary = !!article.summary_en
   const questions = Array.isArray(article.questions) && article.questions.length > 0 ? article.questions : null
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', background: '#1E1E1E' }}>
+      {popup && (
+        <WordPopup
+          token={popup.token}
+          vocabEntry={popup.vocabEntry}
+          anchorRect={popup.anchorRect}
+          onAddToSrs={handlePopupAddToSrs}
+          onClose={() => setPopup(null)}
+        />
+      )}
       <PageHeader
         crumbs={[
           { label: 'Japanese Study', href: '#/' },
@@ -119,7 +239,9 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
             whiteSpace: 'pre-wrap',
             marginBottom: 40,
           }}>
-            {body}
+            {tokens
+              ? <TokenizedBody tokens={tokens} vocabMap={vocabMap} onWordClick={handleWordClick} />
+              : body}
           </div>
 
           {hasSummary && (
@@ -197,7 +319,7 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
             </div>
           )}
 
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 24, marginBottom: 32 }}>
+          <div id="srs-form" style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 24, marginBottom: 32 }}>
             <div style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, marginBottom: 12 }}>
               Add to SRS
             </div>
