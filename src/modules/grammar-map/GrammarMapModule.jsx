@@ -5,12 +5,13 @@ import PageHeader from '../../components/PageHeader.jsx'
 import DrawerSectionHeader from '../../components/DrawerSectionHeader.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../../data/theme.js'
 import { GRAMMAR_NODES } from './grammarNodes.js'
-import { computeLayout } from './layout.js'
+import { computeGroupedLayout } from './layout.js'
 import GrammarNode from './GrammarNode.jsx'
+import GrammarGroupNode from './GrammarGroupNode.jsx'
 
 const ACCENT = '#8B7CF8'
 const STORAGE_KEY = 'grammar-map-known'
-const nodeTypes = { grammarNode: GrammarNode }
+const nodeTypes = { grammarNode: GrammarNode, grammarGroup: GrammarGroupNode }
 const PANEL_W = 380
 const CHEVRON_W = 28
 const PANEL_CONTENT_W = PANEL_W - CHEVRON_W
@@ -37,14 +38,6 @@ function saveKnown(set) {
 
 const CORE_LEVELS = new Set(['N5', 'N4'])
 
-// All edges — filtered per render based on visible node set
-const ALL_EDGES = GRAMMAR_NODES.flatMap(n =>
-  n.prereqs.map(prereqId => ({
-    id: `${prereqId}-${n.id}`,
-    source: prereqId,
-    target: n.id,
-  }))
-)
 
 export default function GrammarMapModule() {
   const [known, setKnown] = useState(loadKnown)
@@ -68,49 +61,96 @@ export default function GrammarMapModule() {
     coreOnly ? GRAMMAR_NODES.filter(n => CORE_LEVELS.has(n.jlptLevel)) : GRAMMAR_NODES
   , [coreOnly])
 
-  const visibleIds = useMemo(() => new Set(visibleGrammarNodes.map(n => n.id)), [visibleGrammarNodes])
-
-  const visibleEdges = useMemo(() =>
-    ALL_EDGES.filter(e => visibleIds.has(e.source) && visibleIds.has(e.target))
-  , [visibleIds])
-
-  const positionMap = useMemo(() => {
-    const laid = computeLayout(
-      visibleGrammarNodes.map(n => ({ id: n.id, position: n.position })),
-      visibleEdges
-    )
-    return Object.fromEntries(laid.map(n => [n.id, n.position]))
-  }, [visibleGrammarNodes, visibleEdges])
+  const layout = useMemo(() => computeGroupedLayout(visibleGrammarNodes), [visibleGrammarNodes])
 
   const selectedNode = selectedId ? GRAMMAR_NODES.find(n => n.id === selectedId) : null
-  const unlockedCount = visibleGrammarNodes.filter(n => n.prereqs.every(p => known.has(p))).length
+  const visibleIds = useMemo(() => new Set(visibleGrammarNodes.map(n => n.id)), [visibleGrammarNodes])
+  const unlockedCount = visibleGrammarNodes.filter(n =>
+    n.prereqs.filter(p => visibleIds.has(p)).every(p => known.has(p))
+  ).length
 
-  const nodes = useMemo(() => visibleGrammarNodes.map(n => ({
-    id: n.id,
-    type: 'grammarNode',
-    position: positionMap[n.id],
-    data: {
-      label: n.label,
-      sublabel: n.sublabel,
-      isUnlocked: n.prereqs.filter(p => visibleIds.has(p)).every(p => known.has(p)),
-      isKnown: known.has(n.id),
-      isSelected: n.id === selectedId,
-      onToggle: () => toggleKnown(n.id),
-      accent: ACCENT,
-    },
-  })), [visibleGrammarNodes, positionMap, visibleIds, known, selectedId])
+  const nodes = useMemo(() => {
+    const { groups, soloNodes, posMap, childPositions } = layout
 
-  const edges = useMemo(() => visibleEdges.map(e => ({
-    ...e,
-    style: {
-      stroke: known.has(e.source) ? ACCENT : '#333',
-      strokeWidth: known.has(e.source) ? 2 : 1.5,
-    },
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-      color: known.has(e.source) ? ACCENT : '#333',
-    },
-  })), [visibleEdges, known])
+    const groupNodes = groups.map(g => ({
+      id: g.id,
+      type: 'grammarGroup',
+      position: posMap[g.id],
+      style: { width: g.width, height: g.height },
+      data: {
+        label: g.prereqs.length === 0 ? 'Foundations' : g.prereqs.join(' + '),
+        count: g.nodes.length,
+      },
+    }))
+
+    const childNodes = groups.flatMap(g =>
+      g.nodes.map(n => ({
+        id: n.id,
+        type: 'grammarNode',
+        parentId: g.id,
+        extent: 'parent',
+        position: childPositions[n.id],
+        data: {
+          label: n.label,
+          sublabel: n.sublabel,
+          isUnlocked: n.prereqs.filter(p => visibleIds.has(p)).every(p => known.has(p)),
+          isKnown: known.has(n.id),
+          isSelected: n.id === selectedId,
+          onToggle: () => toggleKnown(n.id),
+          accent: ACCENT,
+        },
+      }))
+    )
+
+    const soloFlowNodes = soloNodes.map(n => ({
+      id: n.id,
+      type: 'grammarNode',
+      position: posMap[n.id],
+      data: {
+        label: n.label,
+        sublabel: n.sublabel,
+        isUnlocked: n.prereqs.filter(p => visibleIds.has(p)).every(p => known.has(p)),
+        isKnown: known.has(n.id),
+        isSelected: n.id === selectedId,
+        onToggle: () => toggleKnown(n.id),
+        accent: ACCENT,
+      },
+    }))
+
+    return [...groupNodes, ...childNodes, ...soloFlowNodes]
+  }, [layout, visibleIds, known, selectedId])
+
+  const edges = useMemo(() => {
+    const { groups, soloNodes, nodeToRep } = layout
+    const getRep = id => nodeToRep[id] ?? id
+
+    // Build visible edges: between actual node IDs, deduped at the group level
+    const edgeSet = new Set()
+    const result = []
+    visibleGrammarNodes.forEach(n => {
+      n.prereqs.forEach(prereqId => {
+        if (!visibleIds.has(prereqId)) return
+        const srcRep = getRep(prereqId)
+        const tgtRep = getRep(n.id)
+        if (srcRep === tgtRep) return // skip intra-group
+
+        // One edge per (source node/group → target node/group) pair
+        const edgeKey = `${prereqId}→${n.id}`
+        if (edgeSet.has(edgeKey)) return
+        edgeSet.add(edgeKey)
+
+        const isKnownEdge = known.has(prereqId)
+        result.push({
+          id: edgeKey,
+          source: prereqId,
+          target: n.id,
+          style: { stroke: isKnownEdge ? ACCENT : '#333', strokeWidth: isKnownEdge ? 2 : 1.5 },
+          markerEnd: { type: MarkerType.ArrowClosed, color: isKnownEdge ? ACCENT : '#333' },
+        })
+      })
+    })
+    return result
+  }, [layout, visibleGrammarNodes, visibleIds, known])
 
   function renderPanelContent(px = 16) {
     if (selectedNode) {
