@@ -1,14 +1,16 @@
 import { Handle, Position } from '@xyflow/react'
 import { FONT, TRACKING, TEXT_MUTED } from '../../data/theme.js'
 
+const ACCENT = '#8B7CF8'
+
 export default function GrammarGroupNode({ data }) {
-  const { label, count } = data
+  const { label, count, isGateway } = data
   return (
     <div style={{
       width: '100%', height: '100%',
-      border: '1px solid rgba(255,255,255,0.1)',
+      border: isGateway ? `1px solid ${ACCENT}44` : '1px solid rgba(255,255,255,0.1)',
       borderRadius: 10,
-      background: 'rgba(255,255,255,0.02)',
+      background: isGateway ? `${ACCENT}08` : 'rgba(255,255,255,0.02)',
       fontFamily: FONT,
       letterSpacing: TRACKING,
     }}>

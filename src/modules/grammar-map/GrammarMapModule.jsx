@@ -78,8 +78,9 @@ export default function GrammarMapModule() {
       position: posMap[g.id],
       style: { width: g.width, height: g.height },
       data: {
-        label: g.prereqs.length === 0 ? 'Foundations' : g.prereqs.join(' + '),
+        label: g.id === 'grp:gateways' ? 'Gateways' : g.prereqs.length === 0 ? 'Foundations' : g.prereqs.join(' + '),
         count: g.nodes.length,
+        isGateway: g.id === 'grp:gateways',
       },
     }))
 
@@ -99,6 +100,7 @@ export default function GrammarMapModule() {
           onToggle: () => toggleKnown(n.id),
           accent: ACCENT,
           hideHandles: true,
+          category: n.category,
         },
       }))
     )
@@ -115,6 +117,7 @@ export default function GrammarMapModule() {
         isSelected: n.id === selectedId,
         onToggle: () => toggleKnown(n.id),
         accent: ACCENT,
+        category: n.category,
       },
     }))
 

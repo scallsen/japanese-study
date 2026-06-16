@@ -3,7 +3,8 @@
     "term": "あげる",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N5"
+    "jlptLevel": "N5",
+    "category": "Auxiliary"
   },
   {
     "term": "あとで",
@@ -11,13 +12,15 @@
     "prereqs": [
       "て"
     ],
-    "jlptLevel": "N5"
+    "jlptLevel": "N5",
+    "category": "Connector"
   },
   {
     "term": "あまり",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N5"
+    "jlptLevel": "N5",
+    "category": "Expression"
   },
   {
     "term": "うちに",
@@ -25,7 +28,8 @@
     "prereqs": [
       "て"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Connector"
   },
   {
     "term": "おく",
@@ -33,7 +37,8 @@
     "prereqs": [
       "て"
     ],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Auxiliary"
   },
   {
     "term": "かもしれない",
@@ -41,7 +46,8 @@
     "prereqs": [
       "だろう"
     ],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Modal"
   },
   {
     "term": "がる",
@@ -49,25 +55,29 @@
     "prereqs": [
       "たい"
     ],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Auxiliary"
   },
   {
     "term": "くらい",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Particle"
   },
   {
     "term": "けれども",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Connector"
   },
   {
     "term": "ごとに",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "ことにする",
@@ -75,31 +85,36 @@
     "prereqs": [
       "ことになる"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "ことになる",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "ことは",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "ごろ",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N5"
+    "jlptLevel": "N5",
+    "category": "Particle"
   },
   {
     "term": "さ",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Expression"
   },
   {
     "term": "させる",
@@ -107,25 +122,29 @@
     "prereqs": [
       "て"
     ],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Form"
   },
   {
     "term": "し",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Connector"
   },
   {
     "term": "しい",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Form"
   },
   {
     "term": "しか",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Particle"
   },
   {
     "term": "しまう",
@@ -133,55 +152,64 @@
     "prereqs": [
       "て"
     ],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Auxiliary"
   },
   {
     "term": "ずつ",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Particle"
   },
   {
     "term": "すると",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Connector"
   },
   {
     "term": "せっかく",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "そして",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N5"
+    "jlptLevel": "N5",
+    "category": "Connector"
   },
   {
     "term": "それから",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N5"
+    "jlptLevel": "N5",
+    "category": "Connector"
   },
   {
     "term": "それで",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Connector"
   },
   {
     "term": "それでは",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N5"
+    "jlptLevel": "N5",
+    "category": "Expression"
   },
   {
     "term": "それとも",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Connector"
   },
   {
     "term": "それなら",
@@ -189,25 +217,29 @@
     "prereqs": [
       "なら"
     ],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Expression"
   },
   {
     "term": "たい",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N5"
+    "jlptLevel": "N5",
+    "category": "Auxiliary"
   },
   {
     "term": "だい",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "だけ",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N5"
+    "jlptLevel": "N5",
+    "category": "Particle"
   },
   {
     "term": "たって",
@@ -215,7 +247,8 @@
     "prereqs": [
       "ても"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Connector"
   },
   {
     "term": "たら",
@@ -223,7 +256,8 @@
     "prereqs": [
       "て"
     ],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Connector"
   },
   {
     "term": "たらどうですか",
@@ -231,13 +265,15 @@
     "prereqs": [
       "たら"
     ],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Expression"
   },
   {
     "term": "だろう",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Modal"
   },
   {
     "term": "って",
@@ -245,19 +281,22 @@
     "prereqs": [
       "という"
     ],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Particle"
   },
   {
     "term": "つもり",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Modal"
   },
   {
     "term": "て",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N5"
+    "jlptLevel": "N5",
+    "category": "Form"
   },
   {
     "term": "ても",
@@ -265,7 +304,8 @@
     "prereqs": [
       "て"
     ],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Connector"
   },
   {
     "term": "てもいい",
@@ -273,31 +313,36 @@
     "prereqs": [
       "ても"
     ],
-    "jlptLevel": "N5"
+    "jlptLevel": "N5",
+    "category": "Modal"
   },
   {
     "term": "という",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "とか",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Particle"
   },
   {
     "term": "ところだ",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "として",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "としては",
@@ -305,7 +350,8 @@
     "prereqs": [
       "として"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "と言えば",
@@ -313,13 +359,15 @@
     "prereqs": [
       "という"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "な",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Expression"
   },
   {
     "term": "ないで",
@@ -327,7 +375,8 @@
     "prereqs": [
       "て"
     ],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Form"
   },
   {
     "term": "ながら",
@@ -335,7 +384,8 @@
     "prereqs": [
       "て"
     ],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Connector"
   },
   {
     "term": "なくて",
@@ -343,7 +393,8 @@
     "prereqs": [
       "て"
     ],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Form"
   },
   {
     "term": "なくなる",
@@ -351,31 +402,36 @@
     "prereqs": [
       "ことになる"
     ],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Expression"
   },
   {
     "term": "なければならない",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Modal"
   },
   {
     "term": "なさい",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Expression"
   },
   {
     "term": "など",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Particle"
   },
   {
     "term": "なら",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Connector"
   },
   {
     "term": "にしては",
@@ -383,19 +439,22 @@
     "prereqs": [
       "として"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "にする",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Expression"
   },
   {
     "term": "ば",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Form"
   },
   {
     "term": "はいけない",
@@ -403,7 +462,8 @@
     "prereqs": [
       "ても"
     ],
-    "jlptLevel": "N5"
+    "jlptLevel": "N5",
+    "category": "Modal"
   },
   {
     "term": "ばかり",
@@ -411,13 +471,15 @@
     "prereqs": [
       "だけ"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Particle"
   },
   {
     "term": "はず",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Modal"
   },
   {
     "term": "ばよかった",
@@ -425,19 +487,22 @@
     "prereqs": [
       "ば"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "へ",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N5"
+    "jlptLevel": "N5",
+    "category": "Particle"
   },
   {
     "term": "ほうがいい",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Modal"
   },
   {
     "term": "ほど",
@@ -445,13 +510,15 @@
     "prereqs": [
       "くらい"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Particle"
   },
   {
     "term": "まで",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N5"
+    "jlptLevel": "N5",
+    "category": "Particle"
   },
   {
     "term": "までに",
@@ -459,13 +526,15 @@
     "prereqs": [
       "まで"
     ],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Particle"
   },
   {
     "term": "まま",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "みる",
@@ -473,25 +542,29 @@
     "prereqs": [
       "て"
     ],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Auxiliary"
   },
   {
     "term": "もらう",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Auxiliary"
   },
   {
     "term": "や",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N5"
+    "jlptLevel": "N5",
+    "category": "Particle"
   },
   {
     "term": "やはり",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "ようだ",
@@ -499,7 +572,8 @@
     "prereqs": [
       "らしい"
     ],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Modal"
   },
   {
     "term": "ようと思う",
@@ -507,7 +581,8 @@
     "prereqs": [
       "つもり"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "ようにする",
@@ -515,7 +590,8 @@
     "prereqs": [
       "ようになる"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "ようになる",
@@ -523,7 +599,8 @@
     "prereqs": [
       "ことになる"
     ],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Expression"
   },
   {
     "term": "ように言う",
@@ -531,19 +608,22 @@
     "prereqs": [
       "ようにする"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "より",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Particle"
   },
   {
     "term": "らしい",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Modal"
   },
   {
     "term": "られる",
@@ -551,13 +631,15 @@
     "prereqs": [
       "させる"
     ],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Form"
   },
   {
     "term": "わけだ",
     "level": "basic",
     "prereqs": [],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Modal"
   },
   {
     "term": "堪らない",
@@ -565,13 +647,15 @@
     "prereqs": [
       "て"
     ],
-    "jlptLevel": "N1"
+    "jlptLevel": "N1",
+    "category": "Expression"
   },
   {
     "term": "いかにも",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N1"
+    "jlptLevel": "N1",
+    "category": "Expression"
   },
   {
     "term": "おり",
@@ -579,13 +663,15 @@
     "prereqs": [
       "て"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Auxiliary"
   },
   {
     "term": "かえって",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "がたい",
@@ -593,13 +679,15 @@
     "prereqs": [
       "かねる"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Auxiliary"
   },
   {
     "term": "がち",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "かと言うと",
@@ -607,19 +695,22 @@
     "prereqs": [
       "という"
     ],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Connector"
   },
   {
     "term": "かな",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Expression"
   },
   {
     "term": "かねる",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Auxiliary"
   },
   {
     "term": "からと言って",
@@ -627,7 +718,8 @@
     "prereqs": [
       "という"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Connector"
   },
   {
     "term": "かろう",
@@ -635,13 +727,15 @@
     "prereqs": [
       "だろう"
     ],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Modal"
   },
   {
     "term": "く",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Form"
   },
   {
     "term": "くせに",
@@ -649,25 +743,29 @@
     "prereqs": [
       "けれども"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Connector"
   },
   {
     "term": "こうした",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "こそ",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Particle"
   },
   {
     "term": "こと",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "ことで",
@@ -675,7 +773,8 @@
     "prereqs": [
       "ことになる"
     ],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "ことによる",
@@ -683,7 +782,8 @@
     "prereqs": [
       "ことで"
     ],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "ことはない",
@@ -691,13 +791,15 @@
     "prereqs": [
       "ことは"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Modal"
   },
   {
     "term": "この",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "さえ",
@@ -705,7 +807,8 @@
     "prereqs": [
       "しか"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Particle"
   },
   {
     "term": "さすが",
@@ -713,7 +816,8 @@
     "prereqs": [
       "やはり"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "ざるを得ない",
@@ -722,7 +826,8 @@
       "なければならない",
       "ぬ"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Modal"
   },
   {
     "term": "しかも",
@@ -730,7 +835,8 @@
     "prereqs": [
       "そして"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Connector"
   },
   {
     "term": "したがって",
@@ -738,31 +844,36 @@
     "prereqs": [
       "それで"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Connector"
   },
   {
     "term": "すぐ",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N5"
+    "jlptLevel": "N5",
+    "category": "Expression"
   },
   {
     "term": "せい",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "せめて",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "ぞ",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "そうかと言って",
@@ -771,7 +882,8 @@
       "けれども",
       "という"
     ],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Connector"
   },
   {
     "term": "そうになった",
@@ -779,7 +891,8 @@
     "prereqs": [
       "ようになる"
     ],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "そうになる",
@@ -787,7 +900,8 @@
     "prereqs": [
       "ようになる"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "そこで",
@@ -795,13 +909,15 @@
     "prereqs": [
       "それで"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Connector"
   },
   {
     "term": "そこを",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Connector"
   },
   {
     "term": "その上",
@@ -809,19 +925,22 @@
     "prereqs": [
       "しかも"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Connector"
   },
   {
     "term": "それが",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "それぞれ",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "それでも",
@@ -830,7 +949,8 @@
       "それで",
       "ても"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Connector"
   },
   {
     "term": "それと",
@@ -838,7 +958,8 @@
     "prereqs": [
       "そして"
     ],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Connector"
   },
   {
     "term": "それどころか",
@@ -846,7 +967,8 @@
     "prereqs": [
       "どころか"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Connector"
   },
   {
     "term": "それに",
@@ -854,13 +976,15 @@
     "prereqs": [
       "そして"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Connector"
   },
   {
     "term": "それは",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "それも",
@@ -868,7 +992,8 @@
     "prereqs": [
       "しかも"
     ],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Connector"
   },
   {
     "term": "だが",
@@ -876,7 +1001,8 @@
     "prereqs": [
       "けれども"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Connector"
   },
   {
     "term": "だからと言って",
@@ -884,7 +1010,8 @@
     "prereqs": [
       "からと言って"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Connector"
   },
   {
     "term": "だけで",
@@ -893,7 +1020,8 @@
       "だけ",
       "て"
     ],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "ただ",
@@ -901,13 +1029,15 @@
     "prereqs": [
       "だけ"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "ただの",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "たところで",
@@ -916,7 +1046,8 @@
       "ところ",
       "ても"
     ],
-    "jlptLevel": "N1"
+    "jlptLevel": "N1",
+    "category": "Connector"
   },
   {
     "term": "たびに",
@@ -924,13 +1055,15 @@
     "prereqs": [
       "ごとに"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Connector"
   },
   {
     "term": "だらけ",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "つつ",
@@ -938,7 +1071,8 @@
     "prereqs": [
       "ながら"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Auxiliary"
   },
   {
     "term": "っぱなし",
@@ -946,7 +1080,8 @@
     "prereqs": [
       "まま"
     ],
-    "jlptLevel": "N1"
+    "jlptLevel": "N1",
+    "category": "Auxiliary"
   },
   {
     "term": "っぽい",
@@ -954,25 +1089,29 @@
     "prereqs": [
       "らしい"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "つまり",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "で",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Particle"
   },
   {
     "term": "である",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "であろう",
@@ -981,7 +1120,8 @@
       "だろう",
       "である"
     ],
-    "jlptLevel": "N1"
+    "jlptLevel": "N1",
+    "category": "Modal"
   },
   {
     "term": "ては",
@@ -989,7 +1129,8 @@
     "prereqs": [
       "て"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Connector"
   },
   {
     "term": "て初めて",
@@ -997,7 +1138,8 @@
     "prereqs": [
       "て"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "と",
@@ -1005,7 +1147,8 @@
     "prereqs": [
       "という"
     ],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Particle"
   },
   {
     "term": "ということは",
@@ -1013,7 +1156,8 @@
     "prereqs": [
       "という"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "というのに",
@@ -1021,7 +1165,8 @@
     "prereqs": [
       "という"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Connector"
   },
   {
     "term": "というのは",
@@ -1029,7 +1174,8 @@
     "prereqs": [
       "という"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "というより",
@@ -1038,7 +1184,8 @@
       "という",
       "より"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "というよりは",
@@ -1046,7 +1193,8 @@
     "prereqs": [
       "というより"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "という風に",
@@ -1055,13 +1203,15 @@
       "という",
       "風に"
     ],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "どうせ",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "とうとう",
@@ -1069,13 +1219,15 @@
     "prereqs": [
       "やっと"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "どうも",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "とかで",
@@ -1083,7 +1235,8 @@
     "prereqs": [
       "とか"
     ],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Connector"
   },
   {
     "term": "ところ",
@@ -1091,7 +1244,8 @@
     "prereqs": [
       "ところだ"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "ところが",
@@ -1099,7 +1253,8 @@
     "prereqs": [
       "けれども"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Connector"
   },
   {
     "term": "どころか",
@@ -1107,7 +1262,8 @@
     "prereqs": [
       "ばかりか"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Connector"
   },
   {
     "term": "とする",
@@ -1115,7 +1271,8 @@
     "prereqs": [
       "として"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "となる",
@@ -1123,7 +1280,8 @@
     "prereqs": [
       "ことになる"
     ],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "となると",
@@ -1132,7 +1290,8 @@
       "となる",
       "なら"
     ],
-    "jlptLevel": "N1"
+    "jlptLevel": "N1",
+    "category": "Connector"
   },
   {
     "term": "とは限らない",
@@ -1140,7 +1299,8 @@
     "prereqs": [
       "必ずしも"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "とも",
@@ -1148,7 +1308,8 @@
     "prereqs": [
       "ても"
     ],
-    "jlptLevel": "N1"
+    "jlptLevel": "N1",
+    "category": "Connector"
   },
   {
     "term": "どんなに",
@@ -1156,7 +1317,8 @@
     "prereqs": [
       "ほど"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "と共に",
@@ -1164,7 +1326,8 @@
     "prereqs": [
       "ながら"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "と同時に",
@@ -1172,7 +1335,8 @@
     "prereqs": [
       "ながら"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "と言うと",
@@ -1180,7 +1344,8 @@
     "prereqs": [
       "と言えば"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "と言っても",
@@ -1189,13 +1354,15 @@
       "ても",
       "という"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Connector"
   },
   {
     "term": "なあ",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "ないことは",
@@ -1203,7 +1370,8 @@
     "prereqs": [
       "ことは"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "ないことも",
@@ -1211,13 +1379,15 @@
     "prereqs": [
       "ことは"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "なかなか",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "なく",
@@ -1226,13 +1396,15 @@
       "く",
       "なくて"
     ],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Form"
   },
   {
     "term": "なしでは",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "などと",
@@ -1241,7 +1413,8 @@
       "など",
       "と"
     ],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Particle"
   },
   {
     "term": "ならない",
@@ -1249,25 +1422,29 @@
     "prereqs": [
       "堪らない"
     ],
-    "jlptLevel": "N1"
+    "jlptLevel": "N1",
+    "category": "Modal"
   },
   {
     "term": "なりに",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N1"
+    "jlptLevel": "N1",
+    "category": "Expression"
   },
   {
     "term": "に",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "において",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "における",
@@ -1275,7 +1452,8 @@
     "prereqs": [
       "において"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "にかけて",
@@ -1283,13 +1461,15 @@
     "prereqs": [
       "まで"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "について",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "につき",
@@ -1297,7 +1477,8 @@
     "prereqs": [
       "ごとに"
     ],
-    "jlptLevel": "N1"
+    "jlptLevel": "N1",
+    "category": "Expression"
   },
   {
     "term": "につれて",
@@ -1305,7 +1486,8 @@
     "prereqs": [
       "ようになる"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "にとって",
@@ -1313,7 +1495,8 @@
     "prereqs": [
       "として"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "になると",
@@ -1322,7 +1505,8 @@
       "ことになる",
       "なら"
     ],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "には",
@@ -1330,7 +1514,8 @@
     "prereqs": [
       "へ"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "にほかならない",
@@ -1338,7 +1523,8 @@
     "prereqs": [
       "わけだ"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "にもかかわらず",
@@ -1346,13 +1532,15 @@
     "prereqs": [
       "ても"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Connector"
   },
   {
     "term": "によって",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "により",
@@ -1360,7 +1548,8 @@
     "prereqs": [
       "によって"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "に代わって",
@@ -1368,13 +1557,15 @@
     "prereqs": [
       "代わりに"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "に反して",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "に反する",
@@ -1382,19 +1573,22 @@
     "prereqs": [
       "に反して"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "に基づいて",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "に対して",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "に対する",
@@ -1402,7 +1596,8 @@
     "prereqs": [
       "に対して"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "に当たって",
@@ -1410,7 +1605,8 @@
     "prereqs": [
       "において"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "に当たり",
@@ -1418,7 +1614,8 @@
     "prereqs": [
       "に当たって"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "に従い",
@@ -1426,7 +1623,8 @@
     "prereqs": [
       "に従って"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "に従って",
@@ -1434,7 +1632,8 @@
     "prereqs": [
       "につれて"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "に比べる",
@@ -1442,7 +1641,8 @@
     "prereqs": [
       "より"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "に至るまで",
@@ -1450,7 +1650,8 @@
     "prereqs": [
       "まで"
     ],
-    "jlptLevel": "N1"
+    "jlptLevel": "N1",
+    "category": "Expression"
   },
   {
     "term": "に過ぎない",
@@ -1458,7 +1659,8 @@
     "prereqs": [
       "だけ"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "に関して",
@@ -1466,7 +1668,8 @@
     "prereqs": [
       "について"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "に限って",
@@ -1474,7 +1677,8 @@
     "prereqs": [
       "だけ"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "に限らず",
@@ -1482,13 +1686,15 @@
     "prereqs": [
       "に限って"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "ぬ",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N1"
+    "jlptLevel": "N1",
+    "category": "Auxiliary"
   },
   {
     "term": "ねばならない",
@@ -1497,7 +1703,8 @@
       "なければならない",
       "ぬ"
     ],
-    "jlptLevel": "N1"
+    "jlptLevel": "N1",
+    "category": "Modal"
   },
   {
     "term": "のこと",
@@ -1505,7 +1712,8 @@
     "prereqs": [
       "について"
     ],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "のことだ",
@@ -1513,7 +1721,8 @@
     "prereqs": [
       "のこと"
     ],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "のことだから",
@@ -1521,7 +1730,8 @@
     "prereqs": [
       "のこと"
     ],
-    "jlptLevel": "N1"
+    "jlptLevel": "N1",
+    "category": "Connector"
   },
   {
     "term": "のみ",
@@ -1529,7 +1739,8 @@
     "prereqs": [
       "だけ"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Particle"
   },
   {
     "term": "の上で",
@@ -1537,7 +1748,8 @@
     "prereqs": [
       "上で"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "の上では",
@@ -1545,13 +1757,15 @@
     "prereqs": [
       "の上で"
     ],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "の下で",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "の関係で",
@@ -1559,13 +1773,15 @@
     "prereqs": [
       "せい"
     ],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "は",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Particle"
   },
   {
     "term": "ばかりか",
@@ -1574,7 +1790,8 @@
       "ばかり",
       "さえ"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "は言うまでもなく",
@@ -1582,7 +1799,8 @@
     "prereqs": [
       "など"
     ],
-    "jlptLevel": "N1"
+    "jlptLevel": "N1",
+    "category": "Expression"
   },
   {
     "term": "べきだ",
@@ -1590,7 +1808,8 @@
     "prereqs": [
       "なければならない"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Modal"
   },
   {
     "term": "まい",
@@ -1598,7 +1817,8 @@
     "prereqs": [
       "だろう"
     ],
-    "jlptLevel": "N1"
+    "jlptLevel": "N1",
+    "category": "Modal"
   },
   {
     "term": "まさか",
@@ -1606,7 +1826,8 @@
     "prereqs": [
       "だろう"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "ましだ",
@@ -1614,7 +1835,8 @@
     "prereqs": [
       "ほうがいい"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "または",
@@ -1622,7 +1844,8 @@
     "prereqs": [
       "それとも"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Connector"
   },
   {
     "term": "までもない",
@@ -1631,7 +1854,8 @@
       "まで",
       "ことはない"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Modal"
   },
   {
     "term": "みせる",
@@ -1639,19 +1863,22 @@
     "prereqs": [
       "みる"
     ],
-    "jlptLevel": "N1"
+    "jlptLevel": "N1",
+    "category": "Auxiliary"
   },
   {
     "term": "も",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N5"
+    "jlptLevel": "N5",
+    "category": "Particle"
   },
   {
     "term": "やっと",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "やる",
@@ -1659,13 +1886,15 @@
     "prereqs": [
       "あげる"
     ],
-    "jlptLevel": "N5"
+    "jlptLevel": "N5",
+    "category": "Auxiliary"
   },
   {
     "term": "よう",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "わけがない",
@@ -1673,7 +1902,8 @@
     "prereqs": [
       "わけだ"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Modal"
   },
   {
     "term": "わけではない",
@@ -1681,7 +1911,8 @@
     "prereqs": [
       "わけだ"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Modal"
   },
   {
     "term": "わけにはいかない",
@@ -1689,7 +1920,8 @@
     "prereqs": [
       "わけだ"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Modal"
   },
   {
     "term": "を通して",
@@ -1697,7 +1929,8 @@
     "prereqs": [
       "によって"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "一方で",
@@ -1705,13 +1938,15 @@
     "prereqs": [
       "けれども"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Connector"
   },
   {
     "term": "上",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "上で",
@@ -1719,7 +1954,8 @@
     "prereqs": [
       "上"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "上に",
@@ -1728,7 +1964,8 @@
       "上",
       "しかも"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Connector"
   },
   {
     "term": "代わりに",
@@ -1736,7 +1973,8 @@
     "prereqs": [
       "にする"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "以上",
@@ -1744,7 +1982,8 @@
     "prereqs": [
       "限り"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Connector"
   },
   {
     "term": "以外",
@@ -1752,7 +1991,8 @@
     "prereqs": [
       "しか"
     ],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Expression"
   },
   {
     "term": "何しろ",
@@ -1760,25 +2000,29 @@
     "prereqs": [
       "せい"
     ],
-    "jlptLevel": "N1"
+    "jlptLevel": "N1",
+    "category": "Expression"
   },
   {
     "term": "何でも",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "例の",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "分",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "得る",
@@ -1786,13 +2030,15 @@
     "prereqs": [
       "られる"
     ],
-    "jlptLevel": "N1"
+    "jlptLevel": "N1",
+    "category": "Auxiliary"
   },
   {
     "term": "必ずしも",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "思われる",
@@ -1800,7 +2046,8 @@
     "prereqs": [
       "ようだ"
     ],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "方をする",
@@ -1808,13 +2055,15 @@
     "prereqs": [
       "よう"
     ],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "来",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N1"
+    "jlptLevel": "N1",
+    "category": "Expression"
   },
   {
     "term": "次第",
@@ -1822,13 +2071,15 @@
     "prereqs": [
       "たら"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Connector"
   },
   {
     "term": "目",
     "level": "intermediate",
     "prereqs": [],
-    "jlptLevel": "N4"
+    "jlptLevel": "N4",
+    "category": "Expression"
   },
   {
     "term": "結果",
@@ -1836,7 +2087,8 @@
     "prereqs": [
       "て"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "結構",
@@ -1844,7 +2096,8 @@
     "prereqs": [
       "なかなか"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "逆に",
@@ -1852,7 +2105,8 @@
     "prereqs": [
       "かえって"
     ],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   },
   {
     "term": "途端",
@@ -1860,7 +2114,8 @@
     "prereqs": [
       "すると"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "通り",
@@ -1868,7 +2123,8 @@
     "prereqs": [
       "ように言う"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "通りに",
@@ -1876,7 +2132,8 @@
     "prereqs": [
       "通り"
     ],
-    "jlptLevel": "N3"
+    "jlptLevel": "N3",
+    "category": "Expression"
   },
   {
     "term": "限り",
@@ -1885,7 +2142,8 @@
       "まで",
       "うちに"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Connector"
   },
   {
     "term": "面",
@@ -1893,7 +2151,8 @@
     "prereqs": [
       "上"
     ],
-    "jlptLevel": "N2"
+    "jlptLevel": "N2",
+    "category": "Expression"
   },
   {
     "term": "風に",
@@ -1901,6 +2160,7 @@
     "prereqs": [
       "ようだ"
     ],
-    "jlptLevel": null
+    "jlptLevel": null,
+    "category": "Expression"
   }
 ]

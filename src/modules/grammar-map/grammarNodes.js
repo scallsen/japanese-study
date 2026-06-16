@@ -11,6 +11,7 @@ export const GRAMMAR_NODES = grammarDeps.map(e => ({
   example: listMap[e.term]?.example ?? null,
   level: e.level,
   jlptLevel: listMap[e.term]?.jlptLevel ?? null,
+  category: listMap[e.term]?.category ?? null,
   prereqs: e.prereqs,
-  position: { x: 0, y: 0 }, // overwritten by dagre layout
+  position: { x: 0, y: 0 },
 }))

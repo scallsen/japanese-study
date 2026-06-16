@@ -3,7 +3,15 @@ import { Handle, Position } from '@xyflow/react'
 import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../../data/theme.js'
 
 export default function GrammarNode({ data }) {
-  const { label, sublabel, isUnlocked, isKnown, isSelected, onToggle, accent, hideHandles } = data
+  const { label, sublabel, isUnlocked, isKnown, isSelected, onToggle, accent, hideHandles, category } = data
+
+  const BADGE = category === 'Particle'
+    ? { label: 'particle', color: '#7BBAD6', bg: '#1C3545' }
+    : category === 'Connector'
+    ? { label: 'connector', color: '#D4A970', bg: '#3A2C14' }
+    : category === 'Form'
+    ? { label: 'form', color: '#7BC4A0', bg: '#1A3226' }
+    : null
   const [isHovered, setIsHovered] = useState(false)
   const [isCheckHovered, setIsCheckHovered] = useState(false)
 
@@ -35,6 +43,8 @@ export default function GrammarNode({ data }) {
         borderRadius: 8,
         padding: '10px 12px',
         width: 190,
+        height: 96,
+        overflow: 'hidden',
         boxSizing: 'border-box',
         fontFamily: FONT,
         letterSpacing: TRACKING,
@@ -77,9 +87,29 @@ export default function GrammarNode({ data }) {
         >✓</span>
       </div>
 
-      <div style={{ fontSize: 11, color: sublabelColor }}>
+      <div style={{
+        fontSize: 11, color: sublabelColor,
+        overflow: 'hidden', display: '-webkit-box',
+        WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+      }}>
         {sublabel}
       </div>
+
+      {isUnlocked && BADGE && (
+        <div style={{
+          display: 'inline-block',
+          marginTop: 6,
+          padding: '2px 6px',
+          borderRadius: 4,
+          fontSize: 9,
+          letterSpacing: '0.07em',
+          textTransform: 'uppercase',
+          color: BADGE.color,
+          background: BADGE.bg,
+        }}>
+          {BADGE.label}
+        </div>
+      )}
 
       {!hideHandles && <Handle type="source" position={Position.Right} style={{ background: '#444', border: 'none', width: 7, height: 7 }} />}
     </div>
