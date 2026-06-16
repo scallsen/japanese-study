@@ -1,16 +1,17 @@
-import { useState, useCallback, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { ReactFlow, Background, Controls, MarkerType } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import PageHeader from '../../components/PageHeader.jsx'
 import DrawerSectionHeader from '../../components/DrawerSectionHeader.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../../data/theme.js'
 import { GRAMMAR_NODES } from './grammarNodes.js'
+import { computeLayout } from './layout.js'
 import GrammarNode from './GrammarNode.jsx'
 
 const ACCENT = '#8B7CF8'
 const STORAGE_KEY = 'grammar-map-known'
 const nodeTypes = { grammarNode: GrammarNode }
-const PANEL_W = 360
+const PANEL_W = 380
 const CHEVRON_W = 28
 const PANEL_CONTENT_W = PANEL_W - CHEVRON_W
 
@@ -34,14 +35,26 @@ function saveKnown(set) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify([...set]))
 }
 
+const CORE_LEVELS = new Set(['N5', 'N4'])
+
+// All edges — filtered per render based on visible node set
+const ALL_EDGES = GRAMMAR_NODES.flatMap(n =>
+  n.prereqs.map(prereqId => ({
+    id: `${prereqId}-${n.id}`,
+    source: prereqId,
+    target: n.id,
+  }))
+)
+
 export default function GrammarMapModule() {
   const [known, setKnown] = useState(loadKnown)
   const [selectedId, setSelectedId] = useState(null)
   const [showOptions, setShowOptions] = useState(true)
   const [chevronHovered, setChevronHovered] = useState(false)
+  const [coreOnly, setCoreOnly] = useState(false)
   const isMobile = useIsMobile()
 
-  const toggleKnown = useCallback((id) => {
+  const toggleKnown = (id) => {
     setKnown(prev => {
       const next = new Set(prev)
       if (next.has(id)) next.delete(id)
@@ -49,41 +62,55 @@ export default function GrammarMapModule() {
       saveKnown(next)
       return next
     })
-  }, [])
+  }
+
+  const visibleGrammarNodes = useMemo(() =>
+    coreOnly ? GRAMMAR_NODES.filter(n => CORE_LEVELS.has(n.jlptLevel)) : GRAMMAR_NODES
+  , [coreOnly])
+
+  const visibleIds = useMemo(() => new Set(visibleGrammarNodes.map(n => n.id)), [visibleGrammarNodes])
+
+  const visibleEdges = useMemo(() =>
+    ALL_EDGES.filter(e => visibleIds.has(e.source) && visibleIds.has(e.target))
+  , [visibleIds])
+
+  const positionMap = useMemo(() => {
+    const laid = computeLayout(
+      visibleGrammarNodes.map(n => ({ id: n.id, position: n.position })),
+      visibleEdges
+    )
+    return Object.fromEntries(laid.map(n => [n.id, n.position]))
+  }, [visibleGrammarNodes, visibleEdges])
 
   const selectedNode = selectedId ? GRAMMAR_NODES.find(n => n.id === selectedId) : null
-  const unlockedCount = GRAMMAR_NODES.filter(n => n.prereqs.every(p => known.has(p))).length
+  const unlockedCount = visibleGrammarNodes.filter(n => n.prereqs.every(p => known.has(p))).length
 
-  const nodes = useMemo(() => GRAMMAR_NODES.map(n => ({
+  const nodes = useMemo(() => visibleGrammarNodes.map(n => ({
     id: n.id,
     type: 'grammarNode',
-    position: n.position,
+    position: positionMap[n.id],
     data: {
       label: n.label,
       sublabel: n.sublabel,
-      isUnlocked: n.prereqs.every(p => known.has(p)),
+      isUnlocked: n.prereqs.filter(p => visibleIds.has(p)).every(p => known.has(p)),
       isKnown: known.has(n.id),
       isSelected: n.id === selectedId,
       onToggle: () => toggleKnown(n.id),
       accent: ACCENT,
     },
-  })), [known, toggleKnown, selectedId])
+  })), [visibleGrammarNodes, positionMap, visibleIds, known, selectedId])
 
-  const edges = useMemo(() => GRAMMAR_NODES.flatMap(n =>
-    n.prereqs.map(prereqId => ({
-      id: `${prereqId}-${n.id}`,
-      source: prereqId,
-      target: n.id,
-      style: {
-        stroke: known.has(prereqId) ? ACCENT : '#333',
-        strokeWidth: known.has(prereqId) ? 2 : 1.5,
-      },
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-        color: known.has(prereqId) ? ACCENT : '#333',
-      },
-    }))
-  ), [known])
+  const edges = useMemo(() => visibleEdges.map(e => ({
+    ...e,
+    style: {
+      stroke: known.has(e.source) ? ACCENT : '#333',
+      strokeWidth: known.has(e.source) ? 2 : 1.5,
+    },
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: known.has(e.source) ? ACCENT : '#333',
+    },
+  })), [visibleEdges, known])
 
   function renderPanelContent(px = 16) {
     if (selectedNode) {
@@ -92,10 +119,12 @@ export default function GrammarMapModule() {
 
       return (
         <div style={{ padding: `16px ${px}px` }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
             <div>
-              <div style={{ fontSize: 20, color: TEXT, marginBottom: 4 }}>{selectedNode.label}</div>
-              <div style={{ fontSize: 12, color: TEXT_MUTED }}>{selectedNode.sublabel}</div>
+              <div style={{ fontSize: 22, color: TEXT, marginBottom: 4 }}>{selectedNode.label}</div>
+              {selectedNode.sublabel && (
+                <div style={{ fontSize: 12, color: ACCENT }}>{selectedNode.sublabel}</div>
+              )}
             </div>
             <button
               onClick={() => setSelectedId(null)}
@@ -104,23 +133,40 @@ export default function GrammarMapModule() {
                 fontSize: 18, cursor: 'pointer', padding: '0 0 0 8px',
                 fontFamily: FONT, lineHeight: 1, flexShrink: 0,
               }}
-            >
-              ✕
-            </button>
+            >✕</button>
           </div>
 
-          <div style={{
-            padding: '14px',
-            background: 'rgba(255,255,255,0.03)',
-            border: '1px solid rgba(255,255,255,0.07)',
-            borderRadius: 6,
-            fontSize: 12,
-            color: TEXT_MUTED,
-            lineHeight: 1.7,
-            marginBottom: 20,
-          }}>
-            Grammar detail coming soon.
-          </div>
+          {selectedNode.description && (
+            <div style={{
+              padding: 12,
+              background: 'rgba(139,124,248,0.06)',
+              border: '1px solid rgba(139,124,248,0.15)',
+              borderRadius: 6,
+              fontSize: 13,
+              color: TEXT,
+              lineHeight: 1.65,
+              marginBottom: selectedNode.example ? 0 : 20,
+            }}>
+              {selectedNode.description}
+            </div>
+          )}
+
+          {selectedNode.example && (
+            <div style={{
+              padding: 12,
+              background: 'rgba(255,255,255,0.02)',
+              border: '1px solid rgba(255,255,255,0.06)',
+              borderTop: selectedNode.description ? 'none' : undefined,
+              borderRadius: selectedNode.description ? '0 0 6px 6px' : 6,
+              fontSize: 12,
+              color: TEXT_MUTED,
+              lineHeight: 1.65,
+              marginBottom: 20,
+              fontStyle: 'italic',
+            }}>
+              {selectedNode.example}
+            </div>
+          )}
 
           {prereqNodes.length > 0 && (
             <>
@@ -137,7 +183,7 @@ export default function GrammarMapModule() {
                 >
                   <div>
                     <span style={{ fontSize: 13, color: known.has(pNode.id) ? ACCENT : TEXT }}>{pNode.label}</span>
-                    <span style={{ fontSize: 11, color: TEXT_MUTED, marginLeft: 8 }}>{pNode.sublabel}</span>
+                    {pNode.sublabel && <span style={{ fontSize: 11, color: TEXT_MUTED, marginLeft: 8 }}>{pNode.sublabel}</span>}
                   </div>
                   {known.has(pNode.id) && <span style={{ fontSize: 11, color: ACCENT }}>✓</span>}
                 </div>
@@ -161,7 +207,7 @@ export default function GrammarMapModule() {
                 >
                   <div>
                     <span style={{ fontSize: 13, color: TEXT }}>{dNode.label}</span>
-                    <span style={{ fontSize: 11, color: TEXT_MUTED, marginLeft: 8 }}>{dNode.sublabel}</span>
+                    {dNode.sublabel && <span style={{ fontSize: 11, color: TEXT_MUTED, marginLeft: 8 }}>{dNode.sublabel}</span>}
                   </div>
                   {known.has(dNode.id) && <span style={{ fontSize: 11, color: ACCENT }}>✓</span>}
                 </div>
@@ -172,20 +218,48 @@ export default function GrammarMapModule() {
       )
     }
 
+    const total = visibleGrammarNodes.length
     return (
       <div style={{ padding: `16px ${px}px` }}>
         <DrawerSectionHeader title="Progress" />
         <div style={{ marginBottom: 20 }}>
           {[
-            { label: 'Known', value: `${known.size} / ${GRAMMAR_NODES.length}` },
-            { label: 'Unlocked', value: `${unlockedCount} / ${GRAMMAR_NODES.length}` },
-            { label: 'Locked', value: `${GRAMMAR_NODES.length - unlockedCount} / ${GRAMMAR_NODES.length}` },
+            { label: 'Known', value: `${known.size} / ${total}` },
+            { label: 'Unlocked', value: `${unlockedCount} / ${total}` },
+            { label: 'Locked', value: `${total - unlockedCount} / ${total}` },
           ].map(({ label, value }) => (
             <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', fontSize: 13 }}>
               <span style={{ color: TEXT_MUTED }}>{label}</span>
               <span style={{ color: TEXT }}>{value}</span>
             </div>
           ))}
+        </div>
+
+        <DrawerSectionHeader title="View" />
+        <div
+          onClick={() => setCoreOnly(v => !v)}
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '7px 0', cursor: 'pointer', marginBottom: 4,
+          }}
+        >
+          <span style={{ fontSize: 13, color: TEXT }}>Core grammar only</span>
+          <div style={{
+            width: 32, height: 18, borderRadius: 9,
+            background: coreOnly ? ACCENT : 'rgba(255,255,255,0.12)',
+            position: 'relative', transition: 'background 150ms', flexShrink: 0,
+          }}>
+            <div style={{
+              position: 'absolute', top: 3, left: coreOnly ? 17 : 3,
+              width: 12, height: 12, borderRadius: '50%',
+              background: '#fff', transition: 'left 150ms',
+            }} />
+          </div>
+        </div>
+        <div style={{ fontSize: 11, color: TEXT_MUTED, lineHeight: 1.55, marginBottom: 20 }}>
+          {coreOnly
+            ? `Showing ${visibleGrammarNodes.length} core grammar points (N5 + N4)`
+            : `Showing all ${GRAMMAR_NODES.length} grammar points`}
         </div>
 
         <DrawerSectionHeader title="How to use" />
@@ -207,8 +281,6 @@ export default function GrammarMapModule() {
       letterSpacing: TRACKING,
       overflow: 'hidden',
     }}>
-
-      {/* ── Main content column ── */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         <PageHeader
           crumbs={[
@@ -227,8 +299,8 @@ export default function GrammarMapModule() {
             edges={edges}
             nodeTypes={nodeTypes}
             fitView
-            fitViewOptions={{ padding: 0.15 }}
-            minZoom={0.25}
+            fitViewOptions={{ padding: 0.1 }}
+            minZoom={0.08}
             maxZoom={2}
             colorMode="dark"
             nodesDraggable={false}
@@ -244,7 +316,6 @@ export default function GrammarMapModule() {
         </div>
       </div>
 
-      {/* ── Desktop sidebar ── */}
       {!isMobile && (
         <>
           <div
@@ -284,7 +355,6 @@ export default function GrammarMapModule() {
           </div>
         </>
       )}
-
     </div>
   )
 }
