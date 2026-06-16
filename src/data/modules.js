@@ -30,6 +30,16 @@ export const MODULES = [
     requiresAuth: true,
   },
   {
+    id: 'grammar-map',
+    label: 'Grammar Map',
+    sublabel: 'Skill Tree',
+    stats: null,
+    href: '#/grammar-map',
+    external: false,
+    accent: '#8B7CF8',
+    requiresAuth: false,
+  },
+  {
     id: 'immersion',
     label: 'Immersion',
     sublabel: 'Daily Reading',
