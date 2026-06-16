@@ -1,0 +1,2082 @@
+[
+  {
+    "id": "あげる",
+    "term": "あげる",
+    "level": "basic",
+    "description": "あげる (1) Someone gives something to a person who is not a member of the giver’s in group but whose status is about equal to that of the giver.",
+    "meaning": "Give",
+    "example": "I gave Yoshiko flowers."
+  },
+  {
+    "id": "あとで",
+    "term": "あとで",
+    "level": "basic",
+    "description": "Some state or action takes place at a time (not always immediately) after another state or action has taken place.",
+    "meaning": "After",
+    "example": "Mr. Mason became ill after he went to Japan."
+  },
+  {
+    "id": "あまり",
+    "term": "あまり",
+    "level": "basic",
+    "description": "The degree of something is not great.",
+    "meaning": "(not) very much; (not) very",
+    "example": "This book is not very good."
+  },
+  {
+    "id": "うちに",
+    "term": "うちに",
+    "level": "basic",
+    "description": "During a period when a certain situation remains in effect.",
+    "meaning": "While; before; during",
+    "example": "Mr. Maeda's English improved while he was in America."
+  },
+  {
+    "id": "おく",
+    "term": "おく",
+    "level": "basic",
+    "description": "Do something in advance for future convenience.",
+    "meaning": "Do something in advance; go ahead and do something; let someone/something remain as he/it is",
+    "example": "Since we are having a party tomorrow, I bought some beer for it."
+  },
+  {
+    "id": "かもしれない",
+    "term": "かもしれない",
+    "level": "basic",
+    "description": "Can't tell if ~",
+    "meaning": "Might",
+    "example": "It might rain in the afternoon."
+  },
+  {
+    "id": "がる",
+    "term": "がる",
+    "level": "basic",
+    "description": "An auxiliary verb attached to a psychological/physiological adjective meaning a person other than the speaker shows signs of ~",
+    "meaning": "Show signs of ~",
+    "example": "Kazuo showed signs of wanting a sports car."
+  },
+  {
+    "id": "くらい",
+    "term": "くらい",
+    "level": "basic",
+    "description": "Approximate quantity or extent.",
+    "meaning": "Approximately; about",
+    "example": "It's about nine hours by plane from Tokyo to San Francisco."
+  },
+  {
+    "id": "けれども",
+    "term": "けれども",
+    "level": "basic",
+    "description": "A disjunctive subordinate conjunction that combines two sentences.",
+    "meaning": "Although; though",
+    "example": "Although I didn't tell him, Tom knew (about it)."
+  },
+  {
+    "id": "ごとに",
+    "term": "ごとに",
+    "level": "basic",
+    "description": "Something takes place regularly in succession after a certain temporal or spatial interval.",
+    "meaning": "Every",
+    "example": "I took medicine every three hours."
+  },
+  {
+    "id": "ことにする",
+    "term": "ことにする",
+    "level": "basic",
+    "description": "A volitional decision to do something is made.",
+    "meaning": "Decide to",
+    "example": "I decided to quit my company."
+  },
+  {
+    "id": "ことになる",
+    "term": "ことになる",
+    "level": "basic",
+    "description": "An event takes place as if spontaneously, irrespective of the speaker's volition.",
+    "meaning": "It will be decided that ~; come about ~; be arranged that ~; turn out that ~",
+    "example": "I'm going to be transferred to Osaka next year."
+  },
+  {
+    "id": "ことは",
+    "term": "ことは",
+    "level": "basic",
+    "description": "Speaking of proposition X, X is certainly true.",
+    "meaning": "Indeed one does something alright, (but ~); indeed ~ (but ~); do ~ (but ~)",
+    "example": "I do play tennis, but I am not good at it."
+  },
+  {
+    "id": "ごろ",
+    "term": "ごろ",
+    "level": "basic",
+    "description": "Approximately (with a specific point of time).",
+    "meaning": "About; around",
+    "example": "Mr. Suzuki leaves home at about 7:00 o'clock in the morning."
+  },
+  {
+    "id": "さ",
+    "term": "さ",
+    "level": "basic",
+    "description": "A suffix that makes a noun out of an adjective by attaching it to the stem of an Adj (い) or much less frequently to the stem of an Adj (な)",
+    "meaning": "-ness; -ly",
+    "example": "This size of this house is just right."
+  },
+  {
+    "id": "させる",
+    "term": "させる",
+    "level": "basic",
+    "description": "Cause someone/something to do something or cause something to change its state.",
+    "meaning": "Make someone/something do something; cause someone/something to do something; let someone/something do something; allow someone/something to do something; have someone/something do something; get someone/something to do something.",
+    "example": "Mr. Suzuki made/let his daughter go to college."
+  },
+  {
+    "id": "し",
+    "term": "し",
+    "level": "basic",
+    "description": "A conjunction to indicate ‘and’ in an emphatic way.",
+    "meaning": "And what’s more; not only ~ but also ~; so",
+    "example": "I not only played tennis but also saw a movie today."
+  },
+  {
+    "id": "しい",
+    "term": "しい",
+    "level": "basic",
+    "description": "An infix attached to the stem of an adjective い to indicate something that one cannot objectively measure on any scale (e.g. human emotion).",
+    "meaning": "",
+    "example": null
+  },
+  {
+    "id": "しか",
+    "term": "しか",
+    "level": "basic",
+    "description": "A particle which marks an element X when nothing but X makes the expressed proposition true.",
+    "meaning": "Nothing/nobody/no ~ but; only",
+    "example": "No one but Mr. Toda smokes."
+  },
+  {
+    "id": "しまう",
+    "term": "しまう",
+    "level": "basic",
+    "description": "An auxiliary verb which indicates the completion of an action.",
+    "meaning": "Have dome something; finish doing something; finish something up",
+    "example": "Mr. Ikeda finished reading the book in three days."
+  },
+  {
+    "id": "ずつ",
+    "term": "ずつ",
+    "level": "basic",
+    "description": "A particle that indicates equal distribution of quantity.",
+    "meaning": "By; at a time.",
+    "example": "I memorize five kanji every day."
+  },
+  {
+    "id": "すると",
+    "term": "すると",
+    "level": "basic",
+    "description": "A coordinate conjunction which connects two sentences (the second sentence either describes an event which takes place right after the event described in the first sentence or it expresses a logical guess related to the event in the first sentence.)",
+    "meaning": "Thereupon ~; then ~; and ~",
+    "example": "I began jogging. Then, I began to have a good appetite."
+  },
+  {
+    "id": "せっかく",
+    "term": "せっかく",
+    "level": "basic",
+    "description": "Some situation which seldom occurs has now occurred and one can either make use of it or, to one’s regret, cannot make use of it.",
+    "meaning": "With effort; at great pain; take the trouble to do ~",
+    "example": "I took the trouble to go see my friend, but he wasn't at home."
+  },
+  {
+    "id": "そして",
+    "term": "そして",
+    "level": "basic",
+    "description": "A coordinate conjunction that connects two sentences.",
+    "meaning": "And; and then",
+    "example": "I went to Tokyo today. And I met my friend there."
+  },
+  {
+    "id": "それから",
+    "term": "それから",
+    "level": "basic",
+    "description": "A conjunction that indicates (1) temporally contiguous actions or states, or (2) a cumulative listing of objects, actions or states.",
+    "meaning": "After that; and then; in addition to that",
+    "example": "Yesterday I drank with my friend for about two hours and then went home."
+  },
+  {
+    "id": "それで",
+    "term": "それで",
+    "level": "basic",
+    "description": "A conjunction to indicate that what is stated in the preceding sentence is the reason or cause for what is stated in the following sentence.",
+    "meaning": "And; because of that; that is why; therefore; so",
+    "example": "I had a cold yesterday. That's why I took a day off from school."
+  },
+  {
+    "id": "それでは",
+    "term": "それでは",
+    "level": "basic",
+    "description": "If that is the case",
+    "meaning": "If so; then; well then",
+    "example": "A: This orange is not sweet."
+  },
+  {
+    "id": "それとも",
+    "term": "それとも",
+    "level": "basic",
+    "description": "A coordinate conjunction which connects two alternatives expressed by sentences.",
+    "meaning": "Or; either ~ or ~",
+    "example": "It's either that this book is wrong or that I am wrong."
+  },
+  {
+    "id": "それなら",
+    "term": "それなら",
+    "level": "basic",
+    "description": "If that is the case,",
+    "meaning": "Then; in that case",
+    "example": "A: I have a headache.  B: In that case, go to sleep right away."
+  },
+  {
+    "id": "たい",
+    "term": "たい",
+    "level": "basic",
+    "description": "An auxiliary adjective which expresses a desire to do something.",
+    "meaning": "Want (to do something); would like (to do something)",
+    "example": "I want to go to Japan."
+  },
+  {
+    "id": "だい",
+    "term": "だい",
+    "level": "basic",
+    "description": "A sentence final particle which indicates an interrogative word question in informal male speech.",
+    "meaning": "",
+    "example": null
+  },
+  {
+    "id": "だけ",
+    "term": "だけ",
+    "level": "basic",
+    "description": "A particle which expresses a limit imposed upon something that is growing and expanding.",
+    "meaning": "Only; just; alone; merely; that’s all",
+    "example": "Only Mr. Smith came."
+  },
+  {
+    "id": "たって",
+    "term": "たって",
+    "level": "basic",
+    "description": "Even if someone did something or something were in some state (the desired result would not come about) or even if someone or something is in some state.",
+    "meaning": "Even if ~",
+    "example": "Even if I tell him that, he won't understand it."
+  },
+  {
+    "id": "たら",
+    "term": "たら",
+    "level": "basic",
+    "description": "A subordinate conjunction which indicates that the action/state expressed by the main clause in a sentence takes place after the action/state expressed by the subordinate clause.",
+    "meaning": "If; when; after",
+    "example": "When/If Mr. Yamada comes, I'll go home."
+  },
+  {
+    "id": "たらどうですか",
+    "term": "たらどうですか",
+    "level": "basic",
+    "description": "A phrase which expresses a suggestion (literally: How would you feel if you do something?)",
+    "meaning": "Why don't you do ~?; what about doing ~?",
+    "example": null
+  },
+  {
+    "id": "だろう",
+    "term": "だろう",
+    "level": "basic",
+    "description": "An auxiliary indicating the speaker’s conjecture which is not based on any particular information or evidence.",
+    "meaning": "Probably",
+    "example": "Ms. Anderson will probably go to Japan."
+  },
+  {
+    "id": "って",
+    "term": "って",
+    "level": "basic",
+    "description": "って (2) A colloquial quotation marker.",
+    "meaning": "That",
+    "example": "Jane said that she wouldn't dance / They say that Jane won't dance."
+  },
+  {
+    "id": "つもり",
+    "term": "つもり",
+    "level": "basic",
+    "description": "An intention or conviction of a speaker (or a person with whom the speaker can empathise) about his future or past actions or current state.",
+    "meaning": "Intend to ~; be convinced that ~; believe; feel sure that ~; be going to; mean",
+    "example": "I intend to get married next year."
+  },
+  {
+    "id": "て",
+    "term": "て",
+    "level": "basic",
+    "description": "The て form ending of verbs and い-type adjectives (The て form ending of な-type adjectives and the て form of the copula is で.)",
+    "meaning": "And; -ing",
+    "example": "Jim went to Japan and studied (there)."
+  },
+  {
+    "id": "ても",
+    "term": "ても",
+    "level": "basic",
+    "description": "",
+    "meaning": "Even if; although",
+    "example": "I'll go there even if it rains."
+  },
+  {
+    "id": "てもいい",
+    "term": "てもいい",
+    "level": "basic",
+    "description": "A phrase which expresses persmission or concession.",
+    "meaning": "May; It is all right if",
+    "example": "A: May I smoke here?  B: Yes, you may."
+  },
+  {
+    "id": "という",
+    "term": "という",
+    "level": "basic",
+    "description": "A phrase marking information which identifies or explains the noun following the phrase.",
+    "meaning": "Called; that says ~; that",
+    "example": "I read a novel called Snow Country."
+  },
+  {
+    "id": "とか",
+    "term": "とか",
+    "level": "basic",
+    "description": "A conjunction that lists two or more items, actions or states as inexhaustive examples.",
+    "meaning": "And; or",
+    "example": "I like Bach, Mozart and Beethoven, among others."
+  },
+  {
+    "id": "ところだ",
+    "term": "ところだ",
+    "level": "basic",
+    "description": "ところだ (1) A place is in a location which takes a certain amount of time to get to.",
+    "meaning": "~ is (in) a place where it takes ~ to get to",
+    "example": "My house is in a place where it takes ten minutes to get to from the station on foot. / On foot my house is ten minutes from the station."
+  },
+  {
+    "id": "として",
+    "term": "として",
+    "level": "basic",
+    "description": "A compound particle which indicates the capacity, role or function of someone or something.",
+    "meaning": "As; in the capacity of",
+    "example": "Mr. Tanaka was hired as a salesman."
+  },
+  {
+    "id": "としては",
+    "term": "としては",
+    "level": "basic",
+    "description": "A compound particle which indicates a standard for comparisons.",
+    "meaning": "For",
+    "example": "This steak is inexpensive for Japanese steak."
+  },
+  {
+    "id": "と言えば",
+    "term": "と言えば",
+    "level": "basic",
+    "description": "An expression which presents as the topic of a following discourse a phrase which has just been uttered.",
+    "meaning": "Speaking of ~",
+    "example": "A: I borrowed this book from Mr. Tanaka.  B: Speaking of Mr. Tanaka, I wonder if he's gotten over his illness yet."
+  },
+  {
+    "id": "な",
+    "term": "な",
+    "level": "basic",
+    "description": "A negative imperative marker used by a male speaker in very informal speech",
+    "meaning": "Don't do ~",
+    "example": null
+  },
+  {
+    "id": "ないで",
+    "term": "ないで",
+    "level": "basic",
+    "description": "A negative て form of a verb.",
+    "meaning": "Do not do something and; without doing ~",
+    "example": "Nancy went to school yesterday without eating her breakfast."
+  },
+  {
+    "id": "ながら",
+    "term": "ながら",
+    "level": "basic",
+    "description": "A conjunction which indicates that the action expressed by the preceding verb takes place concurrently or simultaneously with the action expressed in the main clause.",
+    "meaning": "While; over; with",
+    "example": "Mr. Taguchi always reads a newspaper while eating his breakfast."
+  },
+  {
+    "id": "なくて",
+    "term": "なくて",
+    "level": "basic",
+    "description": "A て form of the negative ない, which indicates a cause/reason for a state or action.",
+    "meaning": "Do not do something and ~; is not ~ and ~; because ~ do not do something",
+    "example": "I couldn't get up at seven and was late for work (at my company)."
+  },
+  {
+    "id": "なくなる",
+    "term": "なくなる",
+    "level": "basic",
+    "description": "It has reached the point where some state or action does not take place anymore.",
+    "meaning": "Not ~ any more",
+    "example": "I cannot even write easy kanji any more."
+  },
+  {
+    "id": "なければならない",
+    "term": "なければならない",
+    "level": "basic",
+    "description": "It won’t do if someone does not take some action or if someone or something is not in some state.",
+    "meaning": "Have to; must; need",
+    "example": "A: Don't you have work today?  B: Yes, I have work."
+  },
+  {
+    "id": "なさい",
+    "term": "なさい",
+    "level": "basic",
+    "description": "A polite imperative used by superiors such as parents or teachers to their inferiors (=people of younger age and lower rank)",
+    "meaning": "Do something",
+    "example": "Eat more."
+  },
+  {
+    "id": "など",
+    "term": "など",
+    "level": "basic",
+    "description": "A marker that indicates exemplification.",
+    "meaning": "And so on; and the like; for example; things like ~",
+    "example": "Among Japanese foods I like things like sushi and tempura."
+  },
+  {
+    "id": "なら",
+    "term": "なら",
+    "level": "basic",
+    "description": "A conjunction which indicates that the preceding sentence is the speaker’s supposition about the truth of a present or past fact or the actualisation of something in the future.",
+    "meaning": "If it is true that; if it is the case that; if; would; could",
+    "example": "If it is true that Matsuda will come, I won't go."
+  },
+  {
+    "id": "にしては",
+    "term": "にしては",
+    "level": "basic",
+    "description": "A phrase that indicates a generally agreed upon standard (the entire sentence that includes this phrase expresses some deviation from that standard.)",
+    "meaning": "For ~; considering that ~",
+    "example": "Mr. Takayama is big for a Japanese person."
+  },
+  {
+    "id": "にする",
+    "term": "にする",
+    "level": "basic",
+    "description": "Someone has decided on something.",
+    "meaning": "Decide on ~; make it ~",
+    "example": "I've decided on this apartment."
+  },
+  {
+    "id": "ば",
+    "term": "ば",
+    "level": "basic",
+    "description": "A conjunction which indicates that the preceding clause expresses a conditional.",
+    "meaning": "If",
+    "example": "If you take this medicine, you'll get well."
+  },
+  {
+    "id": "はいけない",
+    "term": "はいけない",
+    "level": "basic",
+    "description": "A phrase which indicates prohibition.",
+    "meaning": "Cannot do something; must not do something; don’t do something; should not do something",
+    "example": "You must not enter this room."
+  },
+  {
+    "id": "ばかり",
+    "term": "ばかり",
+    "level": "basic",
+    "description": "A particle which indicates that something is the only thing or state which exists, or the action someone will take, takes, is taking or took.",
+    "meaning": "Only; just; be ready to do something; have just done something; just did something; be just doing something; about",
+    "example": "The only thing left to do with the dessert is to eat it./The dessert is ready to eat."
+  },
+  {
+    "id": "はず",
+    "term": "はず",
+    "level": "basic",
+    "description": "A dependant noun which expresses the speaker’s expectation that something will take place or took place or that someone/something is or was in some state.",
+    "meaning": "I expect that ~; it is expected that ~; ~ is expected to; I am fairly certain that ~; should; ought to; it is natural that ~; no wonder ~",
+    "example": "I expect that Mr. Clark will go to the party."
+  },
+  {
+    "id": "ばよかった",
+    "term": "ばよかった",
+    "level": "basic",
+    "description": "A phrase which expresses the speaker’s regret.",
+    "meaning": "I wish ~ had done something",
+    "example": "I wish I had asked my teacher."
+  },
+  {
+    "id": "へ",
+    "term": "へ",
+    "level": "basic",
+    "description": "A particle that indicates the direction toward which some directional movement or action proceeds.",
+    "meaning": "To; towards",
+    "example": "I went on a trip to Kyoto last week."
+  },
+  {
+    "id": "ほうがいい",
+    "term": "ほうがいい",
+    "level": "basic",
+    "description": "It is strongly suggested that someone do something.",
+    "meaning": "Had better do something",
+    "example": "You'd better read Japanese books."
+  },
+  {
+    "id": "ほど",
+    "term": "ほど",
+    "level": "basic",
+    "description": "A particle which indicates an extent or a degree to which someone/something does something or is in some state.",
+    "meaning": "To the extent of; to the extent that ~; (not as) ~ as ~; about",
+    "example": "I'm not as strong as Ken."
+  },
+  {
+    "id": "まで",
+    "term": "まで",
+    "level": "basic",
+    "description": "A particle to indicate a spatial, temporal or quantitative limit or an unexpected animate/inanimate object.",
+    "meaning": "As far as; till; up to; until; through; even",
+    "example": "Yesterday I played tennis from three to five with my friend."
+  },
+  {
+    "id": "までに",
+    "term": "までに",
+    "level": "basic",
+    "description": "A particle that indicates a time limit on/for an action.",
+    "meaning": "By; by the time (when)",
+    "example": "I'll come home by 10 o'clock."
+  },
+  {
+    "id": "まま",
+    "term": "まま",
+    "level": "basic",
+    "description": "An already given situation or condition remains unaltered.",
+    "meaning": "As it is; unchanged; undisturbed; leave as is; remain",
+    "example": "My younger brother went to sleep leaving the TV on."
+  },
+  {
+    "id": "みる",
+    "term": "みる",
+    "level": "basic",
+    "description": "Do something to see what it’s like or what will happen.",
+    "meaning": "Do something and see; try to do something",
+    "example": "I will read Japanese novels (to see what they are like)."
+  },
+  {
+    "id": "もらう",
+    "term": "もらう",
+    "level": "basic",
+    "description": "もらう (1)The first person or someone the speaker empathises with receives something from someone whose status is not as high as the receiver’s.",
+    "meaning": "Get; receive; be given",
+    "example": "I got a book from Mr. Yamamoto."
+  },
+  {
+    "id": "や",
+    "term": "や",
+    "level": "basic",
+    "description": "A coordinate conjunction that is used to list two or more items (nouns or noun phrases) in an inexhaustive fashion.",
+    "meaning": "And",
+    "example": "Mr. Yamada and Mr. Ogawa (and others) came."
+  },
+  {
+    "id": "やはり",
+    "term": "やはり",
+    "level": "basic",
+    "description": "An adverb indicating that the actual situation expectedly/anticipatively conforms to a standard based on past experience, comparison with other people, or common sense.",
+    "meaning": "Still; also; after all; as expected; you know",
+    "example": "As expected, Mr."
+  },
+  {
+    "id": "ようだ",
+    "term": "ようだ",
+    "level": "basic",
+    "description": "An auxiliary な type adjective which expresses the likelihood of something/someone or the likeness of something/someone to something/someone.",
+    "meaning": "Look like; look as if; be like; appear; seem",
+    "example": "It appears that Mr. Sugiyama is going to America."
+  },
+  {
+    "id": "ようと思う",
+    "term": "ようと思う",
+    "level": "basic",
+    "description": "The speaker desires or decides to do something.",
+    "meaning": "~ think ~ will",
+    "example": "I think I will read Japanese history (books)."
+  },
+  {
+    "id": "ようにする",
+    "term": "ようにする",
+    "level": "basic",
+    "description": "Someone causes some circumstantial or behavioural change to take place.",
+    "meaning": "Do ~ in such a way that ~; see to it that ~; make sure that ~; bring it about that ~",
+    "example": "I'll make sure that I do exercises everyday."
+  },
+  {
+    "id": "ようになる",
+    "term": "ようになる",
+    "level": "basic",
+    "description": "Some change takes place gradually.",
+    "meaning": "Reach the point where ~; come to ~; it has come to be that ~; have finally become",
+    "example": "Mr. Jackson has reached the point where he can speak Japanese."
+  },
+  {
+    "id": "ように言う",
+    "term": "ように言う",
+    "level": "basic",
+    "description": "Tell someone in such a way that he will do something.",
+    "meaning": "Tell ~ to ~; say ~ in such a way",
+    "example": "The teacher told his students to do homework."
+  },
+  {
+    "id": "より",
+    "term": "より",
+    "level": "basic",
+    "description": "より (2)A particle which indicates a set point in terms of space or time.",
+    "meaning": "In ~ of; inside; outside; before; after",
+    "example": "Mexico is located north of the equator."
+  },
+  {
+    "id": "らしい",
+    "term": "らしい",
+    "level": "basic",
+    "description": "An auxiliary adjective which indicates that the preceding sentence is the speaker’s conjecture based on what he has heard, read or seen.",
+    "meaning": "Seem; look like; apparently; I heard",
+    "example": "It seems that Mr. Matsuda is going to America."
+  },
+  {
+    "id": "られる",
+    "term": "られる",
+    "level": "basic",
+    "description": "られる (1)A state or an action cannot be controlled by someone or something.",
+    "meaning": "Be –ed; get –ed",
+    "example": "Ichiro was deceived by Hanako."
+  },
+  {
+    "id": "わけだ",
+    "term": "わけだ",
+    "level": "basic",
+    "description": "The speaker's conclusion obtained through deductive, logical judgment or calculation on the basis of what he has heard or read.",
+    "meaning": "No wonder; so it means that ~; that's why; should ~; I take it that ~; naturally",
+    "example": "Are you studying Japanese (as long as) three hours every day? No wonder your Japanese is good."
+  },
+  {
+    "id": "堪らない",
+    "term": "堪らない",
+    "level": "basic",
+    "description": "The speaker or whomever he empathises with cannot cope with a situation expressed by the て phrase.",
+    "meaning": "Unbearably ~; extremely; be dying to do ~",
+    "example": "It is unbearably hot today."
+  },
+  {
+    "id": "いかにも",
+    "term": "いかにも",
+    "level": "intermediate",
+    "description": "An adverb that indicates the speaker/writer's emotive conviction.",
+    "meaning": "Really; truly; indeed",
+    "example": "From an American perspective, Japanese society is indeed closed."
+  },
+  {
+    "id": "おり",
+    "term": "おり",
+    "level": "intermediate",
+    "description": "Vます of the auxiliary verb おる.",
+    "meaning": "Be ~ and",
+    "example": "This entrance is for employees only and other people (literally: general people) cannot enter from here."
+  },
+  {
+    "id": "かえって",
+    "term": "かえって",
+    "level": "intermediate",
+    "description": "Contrary to one's expectation an opposite result comes about.",
+    "meaning": "On the contrary; rather",
+    "example": "I took medicine, and the illness got worse (contrary to my expectation)."
+  },
+  {
+    "id": "がたい",
+    "term": "がたい",
+    "level": "intermediate",
+    "description": "An auxiliary adjective which expresses the idea that for someone to do something is virtually impossible or impossible.",
+    "meaning": "Cannot; un—able; can hardly; difficult to; impossible",
+    "example": "What he did is unforgivable."
+  },
+  {
+    "id": "がち",
+    "term": "がち",
+    "level": "intermediate",
+    "description": "A suffix to express an undesirable tendency in someone or something.",
+    "meaning": "Tend to; be prone to; be apt to; be liable to; be subject to; often",
+    "example": "Tanaka tends to miss classes these days."
+  },
+  {
+    "id": "かと言うと",
+    "term": "かと言うと",
+    "level": "intermediate",
+    "description": "A conjunction to indicate the speaker's assertion that a popular belief is not right.",
+    "meaning": "You would think that ~ but (that is not right)",
+    "example": "You would think that all the Japanese like sushi, but that is not true. Some Japanese don't like it."
+  },
+  {
+    "id": "かな",
+    "term": "かな",
+    "level": "intermediate",
+    "description": "A sentence-final particle that indicates a self-addressed question or a question addressed to an in-group member.",
+    "meaning": "I wonder if ~",
+    "example": "I wonder what I should do this weekend."
+  },
+  {
+    "id": "かねる",
+    "term": "かねる",
+    "level": "intermediate",
+    "description": "An auxiliary expressing that someone cannot do something even if s/he wants to do it.",
+    "meaning": "Cannot; be not in a position to; hardly possible; hard; hesitate to do",
+    "example": "I am not in a position to figure out that matter, so please ask the departmental chief."
+  },
+  {
+    "id": "からと言って",
+    "term": "からと言って",
+    "level": "intermediate",
+    "description": "A conjunction which introduces the reason for someone's action or for someone's having some idea, and conveys disapproval of the action or idea.",
+    "meaning": "Just because; even if; even though",
+    "example": "I cannot forgive him just because he is a child."
+  },
+  {
+    "id": "かろう",
+    "term": "かろう",
+    "level": "intermediate",
+    "description": "An auxiliary indicating the writer's conjecture which is not based on any particular information or evidence.",
+    "meaning": "Probably",
+    "example": "It is probably difficult to predict what one's self will be like in ten years time."
+  },
+  {
+    "id": "く",
+    "term": "く",
+    "level": "intermediate",
+    "description": "A continuative form of an い-type adjective.",
+    "meaning": "And; so",
+    "example": "Kanako's personality was cheerful and innocent."
+  },
+  {
+    "id": "くせに",
+    "term": "くせに",
+    "level": "intermediate",
+    "description": "A conjunction which expresses the speaker's contempt, anger, or disagreement about someone's action, behaviour, or state.",
+    "meaning": "Although; in spite of the fact that; and yet; but",
+    "example": "Although Mr. Yamada is Japanese, he doesn't know many kanji."
+  },
+  {
+    "id": "こうした",
+    "term": "こうした",
+    "level": "intermediate",
+    "description": "A demonstrative which refers to someone or something mentioned as an example in previous discourse.",
+    "meaning": "Such; like this",
+    "example": "We do not seem to hear about problems like this in this country."
+  },
+  {
+    "id": "こそ",
+    "term": "こそ",
+    "level": "intermediate",
+    "description": "A particle which emphasizes a word, phrase, or clause.",
+    "meaning": "The very ~; it is ~; that ~; only (when, after, because, etc.); in particular; precisely; definitely;",
+    "example": "This is the very thing that we've been looking for."
+  },
+  {
+    "id": "こと",
+    "term": "こと",
+    "level": "intermediate",
+    "description": "An auxiliary noun to express a command.",
+    "meaning": "(don't) V; should (not); (not) ought to; may not",
+    "example": "Each presentation should be completed (literally: done) within fifteen minutes."
+  },
+  {
+    "id": "ことで",
+    "term": "ことで",
+    "level": "intermediate",
+    "description": "A compound particle which indicates a means or a cause.",
+    "meaning": "By V-ing; because; result in; cause",
+    "example": "I try to lift my spirits by playing golf on weekends."
+  },
+  {
+    "id": "ことによる",
+    "term": "ことによる",
+    "level": "intermediate",
+    "description": "A phrase which is used to present an event as the cause of something.",
+    "meaning": "Be due to the fact that; be caused by; be brought about by; be the result of; because",
+    "example": "The failure this time is the result of insufficient discussion beforehand (literally: due to the fact that the preceding discussion was insufficient)."
+  },
+  {
+    "id": "ことはない",
+    "term": "ことはない",
+    "level": "intermediate",
+    "description": "A phrase which expresses the idea that there is no need to do something or that there is no possibility of doing something.",
+    "meaning": "There is no need to; not necessary; there is no possibility that; there is no chance to",
+    "example": "There's no need to listen to a man like that."
+  },
+  {
+    "id": "この",
+    "term": "この",
+    "level": "intermediate",
+    "description": "A demonstrative adjective which indicates a time or time period around the moment of speech.",
+    "meaning": "The last; this past; this; this coming",
+    "example": "Miss Akiyama will marry (this spring / this coming spring)."
+  },
+  {
+    "id": "さえ",
+    "term": "さえ",
+    "level": "intermediate",
+    "description": "An emphatic particle which expresses the idea of \"even\" in non-conditional clauses (or sentences) or the idea of \"only\" in conditional clauses.",
+    "meaning": "Even; if ~ only; if ~ just; as long as; the only thing ~ need is",
+    "example": "She can read even classical Japanese, not to mention modern Japanese."
+  },
+  {
+    "id": "さすが",
+    "term": "さすが",
+    "level": "intermediate",
+    "description": "An adverb that expresses the speaker's/writer's strong feeling that something has turned out as s/he expected.",
+    "meaning": "As might be expected; after all; it is only natural that ~; naturally; truly; really; indeed; impressive",
+    "example": "Because Mr. Nelson has studied in Japan for three years, naturally he speaks Japanese well."
+  },
+  {
+    "id": "ざるを得ない",
+    "term": "ざるを得ない",
+    "level": "intermediate",
+    "description": "An auxiliary indicating that there is no other choice but to do something.",
+    "meaning": "Cannot help -ing; cannot (help) but; have no choice but to ~; have to",
+    "example": "It was a textbook so I had no choice but to buy it, although it was expensive."
+  },
+  {
+    "id": "しかも",
+    "term": "しかも",
+    "level": "intermediate",
+    "description": "A conjunction which is used to provide additional important information.",
+    "meaning": "Moreover; furthermore; besides; on top of that; what's more; what's worse; more surprisingly; at that; nevertheless; and yet; even so",
+    "example": "The tape recorders available these days are compact and light, and on top of that, their sound has improved greatly."
+  },
+  {
+    "id": "したがって",
+    "term": "したがって",
+    "level": "intermediate",
+    "description": "A conjunction that is used to indicate that a result/situation follows necessarily from the foregoing situation.",
+    "meaning": "Therefore; accordingly; consequently",
+    "example": "The budget is insufficient. Therefore this plan cannot be implemented."
+  },
+  {
+    "id": "すぐ",
+    "term": "すぐ",
+    "level": "intermediate",
+    "description": "Without having much temporal or physical distance.",
+    "meaning": "At once; soon; right away; immediately; readily; instantly; easily; right",
+    "example": "I went to sleep as soon as I got home."
+  },
+  {
+    "id": "せい",
+    "term": "せい",
+    "level": "intermediate",
+    "description": "A dependent noun expressing a cause which brings about an undesirable result.",
+    "meaning": "Because; due to",
+    "example": "Because of the depression, cars are not selling well this year."
+  },
+  {
+    "id": "せめて",
+    "term": "せめて",
+    "level": "intermediate",
+    "description": "An adverb that indicates the speaker/writer's minimally satisfactory level.",
+    "meaning": "At least",
+    "example": "I am not saying that I want to get 100 points, but I would like to get at least 80 points."
+  },
+  {
+    "id": "ぞ",
+    "term": "ぞ",
+    "level": "intermediate",
+    "description": "A sentence final particle that emphasises a male speaker's emotion about something in his monologue or his strong desire to draw someone else's attention.",
+    "meaning": "I tell you; I'm telling you; you know",
+    "example": null
+  },
+  {
+    "id": "そうかと言って",
+    "term": "そうかと言って",
+    "level": "intermediate",
+    "description": "A structure which expresses that the speaker/writer cannot easily accept the corollary from the preceding statement owing to some circumstances, although he feels like accepting it",
+    "meaning": "But; yet; even so",
+    "example": "A: I hear that fish is good for your health. B: But we couldn't eat just fish every day, you know."
+  },
+  {
+    "id": "そうになった",
+    "term": "そうになった",
+    "level": "intermediate",
+    "description": "A phrase expressing that something almost happens.",
+    "meaning": "Almost",
+    "example": "While walking in the cold rain without using an umbrella, I almost caught a cold."
+  },
+  {
+    "id": "そうになる",
+    "term": "そうになる",
+    "level": "intermediate",
+    "description": "A phrase expressing that something almost happens.",
+    "meaning": "Almost",
+    "example": "While walking in the cold rain without using an umbrella, I almost caught a cold."
+  },
+  {
+    "id": "そこで",
+    "term": "そこで",
+    "level": "intermediate",
+    "description": "A conjunction which connects a situation presented as a reason and an action taken because of that situation",
+    "meaning": "So; because of that; therefore",
+    "example": "My friend told me that something simple would be fine for supper. So, I ordered a pizza."
+  },
+  {
+    "id": "そこを",
+    "term": "そこを",
+    "level": "intermediate",
+    "description": "A conjunction used to indicate that in spite of the negative situation mentioned in the previous part of the sentence/discourse some positive effort is made.",
+    "meaning": "But; in spite of that",
+    "example": "Tom is small for a football player, but he makes up for it with his swift legs."
+  },
+  {
+    "id": "その上",
+    "term": "その上",
+    "level": "intermediate",
+    "description": "A conjunction which introduces an additional, emphatic statement.",
+    "meaning": "On top of that; besides; moreover; furthermore; what's more; what's worse; not only ~ but also",
+    "example": "He looked for an apartment with me, and moreover, he even helped me move."
+  },
+  {
+    "id": "それが",
+    "term": "それが",
+    "level": "intermediate",
+    "description": "An interjection which signals that the speaker is going to provide an unexpected response to a question.",
+    "meaning": "Well (contrary to your expectation; I'm afraid to say this, but)",
+    "example": "A: Does it look like you can get a scholarship? B: Well, (no,) it looks difficult."
+  },
+  {
+    "id": "それぞれ",
+    "term": "それぞれ",
+    "level": "intermediate",
+    "description": "Each of two or more things/persons.",
+    "meaning": "Each; respectively",
+    "example": "Yamada and Suzuki bought fruits and cakes, respectively."
+  },
+  {
+    "id": "それでも",
+    "term": "それでも",
+    "level": "intermediate",
+    "description": "In spite of the circumstance expressed in the preceding sentence.",
+    "meaning": "Nevertheless; yet; but in spite of that; even so",
+    "example": "The parents are opposed to the couple's marriage. Nevertheless, they seem intent to marrying."
+  },
+  {
+    "id": "それと",
+    "term": "それと",
+    "level": "intermediate",
+    "description": "A conjunction which introduces an additional item or statement.",
+    "meaning": "And; also; in addition; as well",
+    "example": "Give me three apples and two oranges, and three bananas, as well."
+  },
+  {
+    "id": "それどころか",
+    "term": "それどころか",
+    "level": "intermediate",
+    "description": "A conjunction that is used to indicate that the level/degree of a fact or a situation expressed in the second sentence is far above or below the level/degree of a fact or a situation expressed in the first sentence.",
+    "meaning": "On the contrary; far from that; as a matter of fact",
+    "example": "Mr. Smith cannot write kanji. As a matter of fact, he cannot write even hiragana satisfactorily."
+  },
+  {
+    "id": "それに",
+    "term": "それに",
+    "level": "intermediate",
+    "description": "A conjunction which introduces an additional item or statement.",
+    "meaning": "(and) in addition; moreover; furthermore; what's more; on top of that",
+    "example": "The \"morning set\" here includes coffee and some toast; in addition, there is a boiled egg (literally: it is accompanied by a boiled egg)."
+  },
+  {
+    "id": "それは",
+    "term": "それは",
+    "level": "intermediate",
+    "description": "An interjection which is used when the speaker emphatically provides an expected response to a question.",
+    "meaning": "(yes,) naturally; (yes,) of course; oh, surely",
+    "example": "A: I bet you want to win (the game). B: (Yes,) of course, I do."
+  },
+  {
+    "id": "それも",
+    "term": "それも",
+    "level": "intermediate",
+    "description": "A conjunction which is used to add more specific information to information about a rather uncommon action or state.",
+    "meaning": "What's more; what's worse; at that; furthermore; moreover; on top of that",
+    "example": "Because he spoke (literally: I was talked to) in English, and what's worse, rapidly, I didn't understand anything."
+  },
+  {
+    "id": "だが",
+    "term": "だが",
+    "level": "intermediate",
+    "description": "A conjunction that expresses something that is contrasted with what is expressed in the previous sentence.",
+    "meaning": "But; however; yet; nevertheless",
+    "example": "Japanese economic power is growing, but we can't tell how long it will last."
+  },
+  {
+    "id": "だからと言って",
+    "term": "だからと言って",
+    "level": "intermediate",
+    "description": "A coordinate conjunction indicating that even if one accepts a premise expressed in the preceding sentence(s) one cannot jump to an expected conclusion from the premise.",
+    "meaning": "However, it doesn't follow from this that ~; but it doesn't mean that ~; because of that",
+    "example": "Mr. Cheng is not good at Japanese. On a test he cannot even finish half of it. But it doesn't follow from this that he is not smart."
+  },
+  {
+    "id": "だけで",
+    "term": "だけで",
+    "level": "intermediate",
+    "description": "A phrase which expresses the idea that just doing something is enough for something.",
+    "meaning": "Just V-ing is enough; can just ~; just by V-ing",
+    "example": "You can just sit (literally: be sitting) here."
+  },
+  {
+    "id": "ただ",
+    "term": "ただ",
+    "level": "intermediate",
+    "description": "An adverb which emphasizes the idea of \"only\".",
+    "meaning": "Only; just; simply; that's all",
+    "example": "His only (one) defect is that he is not punctual (literally: he is slack about time)."
+  },
+  {
+    "id": "ただの",
+    "term": "ただの",
+    "level": "intermediate",
+    "description": "Not deserving to be mentioned.",
+    "meaning": "Usual; ordinary; plain; common; rank and file",
+    "example": "I'm only an ordinary employee, so I'm not aware of that."
+  },
+  {
+    "id": "たところで",
+    "term": "たところで",
+    "level": "intermediate",
+    "description": "Even if an action or a state were realised.",
+    "meaning": "Even if",
+    "example": "No matter how low we estimate the construction expense it will go beyond 500 million yen."
+  },
+  {
+    "id": "たびに",
+    "term": "たびに",
+    "level": "intermediate",
+    "description": "A conjunction to express that each time someone/something does something, something else takes place.",
+    "meaning": "Every time; each time; on every occasion; whenever",
+    "example": "Each time I go to Japan I come home having learned something new."
+  },
+  {
+    "id": "だらけ",
+    "term": "だらけ",
+    "level": "intermediate",
+    "description": "A suffix that indicates that something/someone is covered or filled with something undesirable.",
+    "meaning": "Full of; filled with; covered with",
+    "example": "Mr. Smith is always wearing shoes covered with mud."
+  },
+  {
+    "id": "つつ",
+    "term": "つつ",
+    "level": "intermediate",
+    "description": "(1) an auxiliary which expresses an action in progress; (2) a conjunction which is used to present two concurrent actions.",
+    "meaning": "-ing; while; although",
+    "example": "A typhoon is approaching Kyushu."
+  },
+  {
+    "id": "っぱなし",
+    "term": "っぱなし",
+    "level": "intermediate",
+    "description": "An auxiliary which expresses the idea that someone or something keeps doing something, or someone leaves something in an improper state.",
+    "meaning": "Keep -ing; have been -ing; leave",
+    "example": "The Shinkansen was so crowded that I stood all the way (literally: kept standing) from Tokyo to Kyoto."
+  },
+  {
+    "id": "っぽい",
+    "term": "っぽい",
+    "level": "intermediate",
+    "description": "A suffix that indicates someone/something has some distinctive characteristic or an attribute identified by a noun, an adjective, or a verb to which the suffix is attached.",
+    "meaning": "Apt to; easy to; -ish; -like",
+    "example": "A yakuza-like man wearing sunglasses was standing at the comer of the street."
+  },
+  {
+    "id": "つまり",
+    "term": "つまり",
+    "level": "intermediate",
+    "description": "An adverb that is used to summarise or rephrase what has been mentioned/stated in the preceding context.",
+    "meaning": "That is (to say); namely; in short; to sum up; in other words; after all; that means",
+    "example": "The Berlin Wall fell apart. This means that the storm of democratization has started."
+  },
+  {
+    "id": "で",
+    "term": "で",
+    "level": "intermediate",
+    "description": "A particle which indicates a basic quantity, for each of which certain amount is associated.",
+    "meaning": "For; per",
+    "example": "We will pay 2.000 yen per page for this translation."
+  },
+  {
+    "id": "である",
+    "term": "である",
+    "level": "intermediate",
+    "description": "A copula which is used in formal writing and formal speech.",
+    "meaning": "Be",
+    "example": "Botchan is representative of Soseki's early work."
+  },
+  {
+    "id": "であろう",
+    "term": "であろう",
+    "level": "intermediate",
+    "description": "An auxiliary which indicates the writer's conjecture which is not based on any particular information or evidence.",
+    "meaning": "Probably",
+    "example": "The Japanese economy will probably still keep growing (literally: from now on, too)."
+  },
+  {
+    "id": "ては",
+    "term": "ては",
+    "level": "intermediate",
+    "description": "A conjunction which presents an action/state as a topic about which a negative comment is given.",
+    "meaning": "If; when; because",
+    "example": "If you study that hard, you will ruin your health."
+  },
+  {
+    "id": "て初めて",
+    "term": "て初めて",
+    "level": "intermediate",
+    "description": "A phrase which expresses the idea that someone does something or something happens only after something else happens or something else is done.",
+    "meaning": "Not until; only after; for the first time",
+    "example": "It was not until I came to America that I saw a tornado."
+  },
+  {
+    "id": "と",
+    "term": "と",
+    "level": "intermediate",
+    "description": "A particle which makes an adverbial clause, with a verb of saying/thinking/understood after it.",
+    "meaning": "(thinking/saying) that ~; because; like; in such a way that ~",
+    "example": "Yukio is very happy that he can buy a house next year."
+  },
+  {
+    "id": "ということは",
+    "term": "ということは",
+    "level": "intermediate",
+    "description": "A phrase which changes a sentence into a topic noun clause.",
+    "meaning": "That; the fact that",
+    "example": "It is unthinkable that he won't come to this meeting."
+  },
+  {
+    "id": "というのに",
+    "term": "というのに",
+    "level": "intermediate",
+    "description": "A conjunction to indicate that an action/state takes place quite contrary to one's expectation.",
+    "meaning": "But; although; in spite of the fact that ~",
+    "example": "It is April, but still chilly (literally: cold on the skin)."
+  },
+  {
+    "id": "というのは",
+    "term": "というのは",
+    "level": "intermediate",
+    "description": "というのは~ことだ A structure which is used in interpreting, explaining, or defining a word, a phrase, or a sentence.",
+    "meaning": "Mean; the meaning of ~ is; what ~ means is",
+    "example": "Pasokon means personal computer."
+  },
+  {
+    "id": "というより",
+    "term": "というより",
+    "level": "intermediate",
+    "description": "というより（は）A phrase that is used to indicate more accurate characterisation of someone or something.",
+    "meaning": "Rather than; more ~ than ~",
+    "example": "This summer was cold rather than cool."
+  },
+  {
+    "id": "というよりは",
+    "term": "というよりは",
+    "level": "intermediate",
+    "description": "というより（は）A phrase that is used to indicate more accurate characterisation of someone or something.",
+    "meaning": "Rather than; more ~ than ~",
+    "example": "This summer was cold rather than cool."
+  },
+  {
+    "id": "という風に",
+    "term": "という風に",
+    "level": "intermediate",
+    "description": "A phrase which expresses a manner or a way in which someone does something.",
+    "meaning": "In such a way that; in such a fashion to suggest/show (etc.) that; as if to say/show (etc.) that",
+    "example": "He shook his head as if to say that there was no way out."
+  },
+  {
+    "id": "どうせ",
+    "term": "どうせ",
+    "level": "intermediate",
+    "description": "An adverb that indicates the speaker/writer's feeling that no matter what s/he does or how s/he does it, the situation will not change.",
+    "meaning": "In any case; anyway; at all events; after all; at all",
+    "example": "I decided not to try for the Education Ministry's Scholarship, because I'd be doomed to failure."
+  },
+  {
+    "id": "とうとう",
+    "term": "とうとう",
+    "level": "intermediate",
+    "description": "An adverb that is used to express the eventual arrival of an expected situation.",
+    "meaning": "Finally; at (long) last; eventually; in the end; after all",
+    "example": "It's been threatening to rain since the morning and finally it started to rain. (literally: The rain which threatened to fall from the morning finally started to fall."
+  },
+  {
+    "id": "どうも",
+    "term": "どうも",
+    "level": "intermediate",
+    "description": "An adverb to indicate that one cannot make a definite statement about something due to lack of hard evidence.",
+    "meaning": "I don't know why but; I cannot manage to; just; from what I gather; seem; no matter how ~; I gather that ~; for some reason",
+    "example": "I tried, but I cannot understand the meaning of this Japanese sentence very well."
+  },
+  {
+    "id": "とかで",
+    "term": "とかで",
+    "level": "intermediate",
+    "description": "A conjunction that is used to give an uncertain reason for something.",
+    "meaning": "For some reason like ~; saying something like ~; because ~ or something like that",
+    "example": "Mr. Takagi didn't show up at the party, saying something like he was going to make a business trip to Osaka."
+  },
+  {
+    "id": "ところ",
+    "term": "ところ",
+    "level": "intermediate",
+    "description": "A dependent noun which is used to express the idea that when someone did something, something took place as the result.",
+    "meaning": "When; then",
+    "example": "When I consulted with my teacher, he strongly advised me to go to graduate school."
+  },
+  {
+    "id": "ところが",
+    "term": "ところが",
+    "level": "intermediate",
+    "description": "A conjunction which is used to present what in fact happened or what is in fact the case when something else was/is expected.",
+    "meaning": "However; but",
+    "example": "I wanted to stay in a Japanese-style room and made a reservation at an inn. However, the room I was shown to was a Western-style one."
+  },
+  {
+    "id": "どころか",
+    "term": "どころか",
+    "level": "intermediate",
+    "description": "A conjunction indicating that someone/something is very far from an expected state.",
+    "meaning": "Far from; not just; even",
+    "example": "I am far from being able to speak Japanese. I haven't studied it at all."
+  },
+  {
+    "id": "とする",
+    "term": "とする",
+    "level": "intermediate",
+    "description": "とする (1) A phrase indicating that someone assumes something.",
+    "meaning": "Assume that; regard ~ as; let; suppose",
+    "example": "We assume that the temperature is constant."
+  },
+  {
+    "id": "となる",
+    "term": "となる",
+    "level": "intermediate",
+    "description": "A phrase which expresses the idea that someone or something becomes something.",
+    "meaning": "Become",
+    "example": "Mr. Yoshida has become the first committee chairman."
+  },
+  {
+    "id": "となると",
+    "term": "となると",
+    "level": "intermediate",
+    "description": "A phrase which expresses the idea \"when it comes to\" or \"if it is true that\".",
+    "meaning": "When it comes to; if it is true that ~; if it is the case that ~; if it turns out that ~",
+    "example": "When it comes to mechanical things, I don't understand anything."
+  },
+  {
+    "id": "とは限らない",
+    "term": "とは限らない",
+    "level": "intermediate",
+    "description": "A phrase which expresses the idea \"not necessarily\".",
+    "meaning": "Not always; not necessarily",
+    "example": "Frail people do not necessarily die young."
+  },
+  {
+    "id": "とも",
+    "term": "とも",
+    "level": "intermediate",
+    "description": "A conjunction in written Japanese that is used to express a concession.",
+    "meaning": "No matter ~ may be; even if; at ~ -est",
+    "example": "Since I studied hard I feel confident no matter what problem shows up on the test."
+  },
+  {
+    "id": "どんなに",
+    "term": "どんなに",
+    "level": "intermediate",
+    "description": "どんなに~（こと）か - A structure that indicates an exclamation about the degree to which an action or state takes/took place.",
+    "meaning": "How ~ (!)",
+    "example": null
+  },
+  {
+    "id": "と共に",
+    "term": "と共に",
+    "level": "intermediate",
+    "description": "A phrase which is used to express the idea that A and B share a common property or do the same thing together, that two things take place at the same time, or that someone or something possesses two properties.",
+    "meaning": "As well as; with; along with; at the same time; when, as; while",
+    "example": "Steinbeck, as well as Hemingway, is a writer representative of American writers."
+  },
+  {
+    "id": "と同時に",
+    "term": "と同時に",
+    "level": "intermediate",
+    "description": "A phrase which is used to express the idea that someone does something or something takes place at the same time as another action or event, or that someone or something is in two states simultaneously.",
+    "meaning": "At the same time (as); at the time; when; as; while; as well as ~",
+    "example": "He got a job at a bank at the time of (literally: at the same time as) his graduation from college."
+  },
+  {
+    "id": "と言うと",
+    "term": "と言うと",
+    "level": "intermediate",
+    "description": "A phrase which is used when something which someone has mentioned causes an involuntary response.",
+    "meaning": "When ~ mention; if ~ say that ~; when ~ say that ~; when it comes to",
+    "example": "When you mention San Francisco, I remember those cable cars."
+  },
+  {
+    "id": "と言っても",
+    "term": "と言っても",
+    "level": "intermediate",
+    "description": "A phrase which is used to clarify a statement in the preceding discourse which might be misleading.",
+    "meaning": "Although ~ say/said that ~; even though ~ say/said that ~",
+    "example": "I have a child. Well, although I said, \"child,\" he is already a college student (literally: he is already a college student, though)."
+  },
+  {
+    "id": "なあ",
+    "term": "なあ",
+    "level": "intermediate",
+    "description": "An exclamatory sentential particle which is used in informal male speech.",
+    "meaning": "How ~!; what ~! ~!; I wonder; I wish",
+    "example": null
+  },
+  {
+    "id": "ないことは",
+    "term": "ないことは",
+    "level": "intermediate",
+    "description": "ないことも / はないA double negative phrase used to make a conditional affirmative statement.",
+    "meaning": "It isn't the case that ~ not ~; it is not that ~ not ~",
+    "example": "A: Don't you read Japanese newspapers? B: I do read them, but very rarely. (literally: It isn't the case that I don't read them, but very rarely."
+  },
+  {
+    "id": "ないことも",
+    "term": "ないことも",
+    "level": "intermediate",
+    "description": "ないことも / はないA double negative phrase used to make a conditional affirmative statement.",
+    "meaning": "It isn't the case that ~ not ~; it is not that ~ not ~",
+    "example": "A: Don't you read Japanese newspapers? B: I do read them, but very rarely. (literally: It isn't the case that I don't read them, but very rarely."
+  },
+  {
+    "id": "なかなか",
+    "term": "なかなか",
+    "level": "intermediate",
+    "description": "An adverb used to indicate the speaker's feelings that something is impressive or his annoyance at slowness or difficulty in achieving something.",
+    "meaning": "Quite; fairly; considerably; (not) easily; pretty; (not) readily",
+    "example": "{Mr. Brown is / Mr. Brown, you are} remarkably good at Japanese."
+  },
+  {
+    "id": "なく",
+    "term": "なく",
+    "level": "intermediate",
+    "description": "a continuative form of ない used in written Japanese (to indicate a reason/cause for what follows if ない is attached to Adjective (い/な) and contrast if it is attached to a Noun+Copula).",
+    "meaning": "Not ~ and; not ~ but",
+    "example": "The Japanese final examination was not very hard, and I felt relieved."
+  },
+  {
+    "id": "なしでは",
+    "term": "なしでは",
+    "level": "intermediate",
+    "description": "If something/someone is missing.",
+    "meaning": "Without",
+    "example": "Without real talents one cannot get along in the society."
+  },
+  {
+    "id": "などと",
+    "term": "などと",
+    "level": "intermediate",
+    "description": "A compound particle that indicates an approximate quote of words or ideas.",
+    "meaning": "(things) like ~; ~ or something like",
+    "example": "There are people who say things like Japanese culture is unique, but I don't think so."
+  },
+  {
+    "id": "ならない",
+    "term": "ならない",
+    "level": "intermediate",
+    "description": "A phrase that is used to express insurmountable psychological or physical feelings.",
+    "meaning": "Cannot help -ing; irresistibly; unbearably",
+    "example": "I'm very much worried about my sick mother. (Literally: I cannot help worrying about my sick mother)."
+  },
+  {
+    "id": "なりに",
+    "term": "なりに",
+    "level": "intermediate",
+    "description": "In a way/style that is proper to someone/something.",
+    "meaning": "In one's own way; in one's own style",
+    "example": "He appears to think hard in his own way."
+  },
+  {
+    "id": "に",
+    "term": "に",
+    "level": "intermediate",
+    "description": "A sentence final particle that expresses the speaker's feeling of great regret or sympathy.",
+    "meaning": "",
+    "example": "If you had come here yesterday, you could have met Natsuko."
+  },
+  {
+    "id": "において",
+    "term": "において",
+    "level": "intermediate",
+    "description": "において/おける A compound particle which indicates the place of an action/event, a state or time.",
+    "meaning": "At; on; in; during",
+    "example": "Next year's general meeting will be held at the Hilton Hotel in Chicago."
+  },
+  {
+    "id": "における",
+    "term": "における",
+    "level": "intermediate",
+    "description": "において/おける A compound particle which indicates the place of an action/event, a state or time.",
+    "meaning": "At; on; in; during",
+    "example": "Next year's general meeting will be held at the Hilton Hotel in Chicago."
+  },
+  {
+    "id": "にかけて",
+    "term": "にかけて",
+    "level": "intermediate",
+    "description": "から~にかけて A structure that expresses coverage from one time/location into the other.",
+    "meaning": "Through ~ into ~; through ~ on to; from ~ till/to",
+    "example": "This summer I travelled on the Chinese continent from July through August."
+  },
+  {
+    "id": "について",
+    "term": "について",
+    "level": "intermediate",
+    "description": "Concerning something/someone.",
+    "meaning": "About; on; concerning; regarding; with regard to; of",
+    "example": "I am doing research on the Japanese political system."
+  },
+  {
+    "id": "につき",
+    "term": "につき",
+    "level": "intermediate",
+    "description": "A compound particle which expresses a rate or ratio.",
+    "meaning": "A; per; for; on; to",
+    "example": "This job will pay you six dollars an hour. (literally: You can get six dollars an hour doing this job."
+  },
+  {
+    "id": "につれて",
+    "term": "につれて",
+    "level": "intermediate",
+    "description": "につれて/つれ A phrase used to indicate that a change occurs in accordance with another simultaneous change.",
+    "meaning": "As; in proportion to; with",
+    "example": "As my Japanese became more proficient, the number of my Japanese friends increased."
+  },
+  {
+    "id": "にとって",
+    "term": "にとって",
+    "level": "intermediate",
+    "description": "From the standpoint of; so far as someone (or something) is concerned.",
+    "meaning": "To; for",
+    "example": "For us this is a problem which cannot be ignored."
+  },
+  {
+    "id": "になると",
+    "term": "になると",
+    "level": "intermediate",
+    "description": "A phrase that expresses the time when an uncontrollable state or a habitual action occurs.",
+    "meaning": "When it becomes; when it comes to; when; if",
+    "example": "In summer (literally: When it becomes summer), there are many days that exceed 30 degrees Celsius."
+  },
+  {
+    "id": "には",
+    "term": "には",
+    "level": "intermediate",
+    "description": "A conjunction/compound particle to indicate a purpose for doing something.",
+    "meaning": "To; in order to; for; for the purpose of ~",
+    "example": "In order to lead a rich life, health should be your primary concern."
+  },
+  {
+    "id": "にほかならない",
+    "term": "にほかならない",
+    "level": "intermediate",
+    "description": "A phrase that is used to indicate that an action/state mentioned in the topic phrase or clause is nothing but something.",
+    "meaning": "Be nothing but ~; be simply ~",
+    "example": "His words are nothing but flowery words."
+  },
+  {
+    "id": "にもかかわらず",
+    "term": "にもかかわらず",
+    "level": "intermediate",
+    "description": "Without any relation to a preceding event/situation.",
+    "meaning": "Although; though; in spite of; despite; notwithstanding; nevertheless",
+    "example": "In spite of his strenuous efforts, Ken'ichi failed the college entrance examination."
+  },
+  {
+    "id": "によって",
+    "term": "によって",
+    "level": "intermediate",
+    "description": "によって/より A particle that indicates means, cause, agent of passive sentence, or dependency on a situation.",
+    "meaning": "According to; due to; owing to; because of; depending on; from ~ to; by means of; on the basis of; with; by",
+    "example": "We examine unknown kanji with a Chinese character dictionary."
+  },
+  {
+    "id": "により",
+    "term": "により",
+    "level": "intermediate",
+    "description": "によって/より A particle that indicates means, cause, agent of passive sentence, or dependency on a situation.",
+    "meaning": "According to; due to; owing to; because of; depending on; from ~ to; by means of; on the basis of; with; by",
+    "example": "We examine unknown kanji with a Chinese character dictionary."
+  },
+  {
+    "id": "に代わって",
+    "term": "に代わって",
+    "level": "intermediate",
+    "description": "A compound particle to express replacement or substitution of a regular person/thing by someone/something.",
+    "meaning": "In place of; replacing; on behalf of",
+    "example": "In place of Professor Yamada, who is ill, Professor Suzuki taught us."
+  },
+  {
+    "id": "に反して",
+    "term": "に反して",
+    "level": "intermediate",
+    "description": "に反して/反する Contrary to or in contrast to.",
+    "meaning": "Against; contrary to; in contrast to; in violation of; while; whereas",
+    "example": "Contrary to the majority's expectations, an unknown runner won the Tokyo International Marathon this year."
+  },
+  {
+    "id": "に反する",
+    "term": "に反する",
+    "level": "intermediate",
+    "description": "に反して/反する Contrary to or in contrast to.",
+    "meaning": "Against; contrary to; in contrast to; in violation of; while; whereas",
+    "example": "Contrary to the majority's expectations, an unknown runner won the Tokyo International Marathon this year."
+  },
+  {
+    "id": "に基づいて",
+    "term": "に基づいて",
+    "level": "intermediate",
+    "description": "に基づいて/基づく With something as a basis.",
+    "meaning": "Based upon",
+    "example": "I will give you the facts. (literally: I will talk on the basis of facts."
+  },
+  {
+    "id": "に対して",
+    "term": "に対して",
+    "level": "intermediate",
+    "description": "に対して/対する Regarding something/someone one opposes, compares, or shows interest in regarding something/someone one opposes, compares or shows interest in.",
+    "meaning": "Toward; to; in contrast to; whereas; in regard to; in; per",
+    "example": "Up until now Japan has taken a closed policy toward foreign countries."
+  },
+  {
+    "id": "に対する",
+    "term": "に対する",
+    "level": "intermediate",
+    "description": "に対して/対する Regarding something/someone one opposes, compares, or shows interest in regarding something/someone one opposes, compares or shows interest in.",
+    "meaning": "Toward; to; in contrast to; whereas; in regard to; in; per",
+    "example": "Up until now Japan has taken a closed policy toward foreign countries."
+  },
+  {
+    "id": "に当たって",
+    "term": "に当たって",
+    "level": "intermediate",
+    "description": "に当たって/当たり A compound particle that indicates occasion of doing something or of having done something in formal Japanese.",
+    "meaning": "On the occasion of; at; in; before; prior to",
+    "example": "On the occasion of new employees' entering the company, the president threw a party at a hotel."
+  },
+  {
+    "id": "に当たり",
+    "term": "に当たり",
+    "level": "intermediate",
+    "description": "に当たって/当たり A compound particle that indicates occasion of doing something or of having done something in formal Japanese.",
+    "meaning": "On the occasion of; at; in; before; prior to",
+    "example": "On the occasion of new employees' entering the company, the president threw a party at a hotel."
+  },
+  {
+    "id": "に従い",
+    "term": "に従い",
+    "level": "intermediate",
+    "description": "に従って/従い Something spontaneously and gradually occurs in accordance with some change.",
+    "meaning": "As, accordingly; in proportion to; in accordance with; following",
+    "example": "As Japan's economic power has become stronger, Japanese language learners have increased, accordingly."
+  },
+  {
+    "id": "に従って",
+    "term": "に従って",
+    "level": "intermediate",
+    "description": "に従って/従い Something spontaneously and gradually occurs in accordance with some change.",
+    "meaning": "As, accordingly; in proportion to; in accordance with; following",
+    "example": "As Japan's economic power has become stronger, Japanese language learners have increased, accordingly."
+  },
+  {
+    "id": "に比べる",
+    "term": "に比べる",
+    "level": "intermediate",
+    "description": "に比べると/比べて If we compare (it) with/to; comparing (it) with.",
+    "meaning": "Compared with/to; when compared with/to; in comparison to",
+    "example": "Compared to (the situations) in Europe and the U.S., the housing situation in Japan is extremely poor."
+  },
+  {
+    "id": "に至るまで",
+    "term": "に至るまで",
+    "level": "intermediate",
+    "description": "から~に至るまで A structure that expresses a wide range of things.",
+    "meaning": "Starting with ~ ending with ~; from ~ to ~",
+    "example": "Mr. Smith can read Japanese widely, ranging from weekly magazines to scholastic books."
+  },
+  {
+    "id": "に過ぎない",
+    "term": "に過ぎない",
+    "level": "intermediate",
+    "description": "Something or someone is nothing more than what is stated in terms of amount, degree, status, significance, etc.",
+    "meaning": "Nothing more than; not more than; mere; merely; only; just; as little/few as; that's all",
+    "example": "This is nothing more than my personal opinion."
+  },
+  {
+    "id": "に関して",
+    "term": "に関して",
+    "level": "intermediate",
+    "description": "に関して/関する Related to.",
+    "meaning": "Concerning; with regard to; about; on",
+    "example": "With regard to the sales tax, the opinions of the leading party and the opposition parties conflicted."
+  },
+  {
+    "id": "に限って",
+    "term": "に限って",
+    "level": "intermediate",
+    "description": "A compound particle to show that only X is different from others.",
+    "meaning": "(X) of all (X's); only",
+    "example": "Our child, of all children, would not do such a terrible thing."
+  },
+  {
+    "id": "に限らず",
+    "term": "に限らず",
+    "level": "intermediate",
+    "description": "Not limiting something to ~.",
+    "meaning": "Not limited to ~ (but also); not only ~ (but also)",
+    "example": "Arranged marriage is not limited to Japan; it is practiced in other countries, too."
+  },
+  {
+    "id": "ぬ",
+    "term": "ぬ",
+    "level": "intermediate",
+    "description": "An archaic auxiliary that indicates negation.",
+    "meaning": "Not",
+    "example": "In the global age we cannot think of our own country alone."
+  },
+  {
+    "id": "ねばならない",
+    "term": "ねばならない",
+    "level": "intermediate",
+    "description": "A phrase that indicates duty, obligation or necessity.",
+    "meaning": "Must; have to; should",
+    "example": "In order to know Japan one has to go to Japan at least once."
+  },
+  {
+    "id": "のこと",
+    "term": "のこと",
+    "level": "intermediate",
+    "description": "Things of/about.",
+    "meaning": "About; in terms of; related to",
+    "example": "I'm going to talk about Japanese culture in my lecture tomorrow."
+  },
+  {
+    "id": "のことだ",
+    "term": "のことだ",
+    "level": "intermediate",
+    "description": "のは~のことだ A structure which focuses on a time when something takes place.",
+    "meaning": "It will be/was ~ when/that ~",
+    "example": "It was in May 1985 that I last met Mr. Yamada."
+  },
+  {
+    "id": "のことだから",
+    "term": "のことだから",
+    "level": "intermediate",
+    "description": "Because it is a matter of X with which/whom something is habitually the case.",
+    "meaning": "Because ~ is habitually/usually/often that way; because",
+    "example": "Because Nakajima is always that way (i.e., comes late), he will probably come late again today. (literally: Because it is a matter of Nakajima (who habitually comes late))."
+  },
+  {
+    "id": "のみ",
+    "term": "のみ",
+    "level": "intermediate",
+    "description": "A particle which expresses a limit imposed upon an action, event, or a state.",
+    "meaning": "Only; just; alone",
+    "example": "Please tell me just the main point."
+  },
+  {
+    "id": "の上で",
+    "term": "の上で",
+    "level": "intermediate",
+    "description": "（の）上で A compound particle that is used to express a preparatory action for a relatively important action.",
+    "meaning": "Upon ~; after ~",
+    "example": "I will reply upon careful consideration."
+  },
+  {
+    "id": "の上では",
+    "term": "の上では",
+    "level": "intermediate",
+    "description": "As far as ~ is concerned.",
+    "meaning": "As far as ~ is concerned; as far as ~ goes; from the viewpoint/standpoint of; according to; in terms of",
+    "example": "There seems to be no problem with this plan as far as the documents are concerned."
+  },
+  {
+    "id": "の下で",
+    "term": "の下で",
+    "level": "intermediate",
+    "description": "Under some object; under the control or influence of someone or something.",
+    "meaning": "Under; in; with",
+    "example": "I finished my master's thesis under Professor Suzuki's guidance."
+  },
+  {
+    "id": "の関係で",
+    "term": "の関係で",
+    "level": "intermediate",
+    "description": "A phrase indicating that something takes place or does not take place because of something.",
+    "meaning": "Because of",
+    "example": "Mr. Hall has gone to Tokyo on a business-related matter."
+  },
+  {
+    "id": "は",
+    "term": "は",
+    "level": "intermediate",
+    "description": "A particle which emphatically affirms or negates the proposition represented by the preceding verbal and other related elements.",
+    "meaning": "",
+    "example": null
+  },
+  {
+    "id": "ばかりか",
+    "term": "ばかりか",
+    "level": "intermediate",
+    "description": "~ばかりか~（さえ）A compound particle/conjunction which is used to connect two nouns or two sentences, the first of which is something normally expected and the second of which is something normally unexpected.",
+    "meaning": "Not only ~ but also",
+    "example": "In Japan not only children but even adults are reading comic books."
+  },
+  {
+    "id": "は言うまでもなく",
+    "term": "は言うまでもなく",
+    "level": "intermediate",
+    "description": "An adverbial phrase that conveys the meaning of 'not to speak of something/someone'.",
+    "meaning": "Not to speak of; let alone; not to mention; to say nothing of",
+    "example": "The duty of the presidency requires physical strength, not to mention brains."
+  },
+  {
+    "id": "べきだ",
+    "term": "べきだ",
+    "level": "intermediate",
+    "description": "An auxiliary which expresses the speaker's judgment that someone/something should do something or should be in some state.",
+    "meaning": "Should; ought to",
+    "example": "This thesis should be rewritten."
+  },
+  {
+    "id": "まい",
+    "term": "まい",
+    "level": "intermediate",
+    "description": "An auxiliary which expresses the speaker's negative volition or conjecture.",
+    "meaning": "Will not; will probably not; be probably not",
+    "example": "I will not ask any more favours of Hashimoto."
+  },
+  {
+    "id": "まさか",
+    "term": "まさか",
+    "level": "intermediate",
+    "description": "An adverb that indicates the speaker's strong belief that something is not expected to (have) become a reality.",
+    "meaning": "Incredible; never thought; never dreamed; surely not; impossible; don't tell me that ~; not at all likely; absolutely not.",
+    "example": "I never dreamed that Michiko would marry that kind of a guy."
+  },
+  {
+    "id": "ましだ",
+    "term": "ましだ",
+    "level": "intermediate",
+    "description": "A phrase indicating that although someone/something (or some situation) is not satisfactory it is better than someone/something else.",
+    "meaning": "Better; less objectionable; preferable; might as well ~",
+    "example": "If this is the salary, it would be better to quit."
+  },
+  {
+    "id": "または",
+    "term": "または",
+    "level": "intermediate",
+    "description": "A conjunction which connects two choices or possibilities expressed by noun phrases or sentences.",
+    "meaning": "Or; either ~ or ~",
+    "example": "Please pay either in cash or by check."
+  },
+  {
+    "id": "までもない",
+    "term": "までもない",
+    "level": "intermediate",
+    "description": "There is no point in going as far as to do something.",
+    "meaning": "Not necessary (to bother) to; do not need (to go as far as) to; do not have to",
+    "example": "This is a simple calculation, so it is not necessary (to bother) to use a calculator."
+  },
+  {
+    "id": "みせる",
+    "term": "みせる",
+    "level": "intermediate",
+    "description": "The speaker's strong determination to achieve something for others to see.",
+    "meaning": "Can manage to; will definitely do; am determined to",
+    "example": "I will definitely write a novel and get the Akutagawa Prize."
+  },
+  {
+    "id": "も",
+    "term": "も",
+    "level": "intermediate",
+    "description": "A particle which implies that something else is also (not) the case.",
+    "meaning": "Also; too; (not) either; (not) even",
+    "example": "Although Mr. Yoshioka is seventy this year, he runs one kilometre every day. He occasionally swims, too."
+  },
+  {
+    "id": "やっと",
+    "term": "やっと",
+    "level": "intermediate",
+    "description": "An adverb to indicate that something desirable has been finally achieved or will be eventually achieved though with great difficulty.",
+    "meaning": "Finally; at last; barely",
+    "example": "I finally finished writing my Japanese history term paper."
+  },
+  {
+    "id": "やる",
+    "term": "やる",
+    "level": "intermediate",
+    "description": "やる (1) To cause something/someone to move to a place or to do/eat/drink something.",
+    "meaning": "Send; give; do; play; operate; eat; drink",
+    "example": "Poor families cannot send their children to college."
+  },
+  {
+    "id": "よう",
+    "term": "よう",
+    "level": "intermediate",
+    "description": "よう (1) A noun forming suffix which means a way (of doing something).",
+    "meaning": "A/the way to; a/the way of -ing; the way (someone does something)",
+    "example": "There is no way to correct this composition."
+  },
+  {
+    "id": "わけがない",
+    "term": "わけがない",
+    "level": "intermediate",
+    "description": "A phrase which negates the existence of a reason to believe that someone does something or is in some state, or that something takes place; or which negates a possibility of someone's doing something or being in some state, or something's taking place.",
+    "meaning": "There is no reason why ~; it is impossible (for ~) to ~; cannot",
+    "example": "There is no reason why you cannot do such an easy job."
+  },
+  {
+    "id": "わけではない",
+    "term": "わけではない",
+    "level": "intermediate",
+    "description": "A phrase which is used to deny what is implied in the previous or following statement.",
+    "meaning": "It does not mean that ~; I don't mean that ~; it is not that ~; it is not true that ~; it is not the case that",
+    "example": "It is very difficult to solve this problem. But that does not mean that it is impossible (to solve)."
+  },
+  {
+    "id": "わけにはいかない",
+    "term": "わけにはいかない",
+    "level": "intermediate",
+    "description": "A phrase which is used to indicate that one cannot do something due to an external circumstance.",
+    "meaning": "Cannot; cannot but ~; cannot help -ing; have no (other) choice but to ~",
+    "example": "There will be final examinations next week, so I cannot fool around this weekend."
+  },
+  {
+    "id": "を通して",
+    "term": "を通して",
+    "level": "intermediate",
+    "description": "A compound particle that is used to indicate a medium through which something is done or time through which something takes place.",
+    "meaning": "Through; by the medium of; via; throughout",
+    "example": "I became acquainted with the pianist through a close friend of mine."
+  },
+  {
+    "id": "一方で",
+    "term": "一方で",
+    "level": "intermediate",
+    "description": "一方で（は） ~ 他方で（は）A structure used to describe two concurring, contrastive actions/states of someone or something.",
+    "meaning": "On the one hand ~, on the other hand",
+    "example": "Professor Kanda teaches physics at college on the one hand and does research on Japanese language on the other."
+  },
+  {
+    "id": "上",
+    "term": "上",
+    "level": "intermediate",
+    "description": "A suffix which indicates the idea of \"from the viewpoint of,\" \"for the sake of,\" \"for the reason,\" or \"in terms of\".",
+    "meaning": "From the viewpoint of; for (the sake of); for (the reason); in (terms of); relating to; in –ing",
+    "example": "This film is not good from an educational point of view."
+  },
+  {
+    "id": "上で",
+    "term": "上で",
+    "level": "intermediate",
+    "description": "（の）上で A compound particle that is used to express a preparatory action for a relatively important action.",
+    "meaning": "Upon ~; after ~",
+    "example": "I will reply upon careful consideration."
+  },
+  {
+    "id": "上に",
+    "term": "上に",
+    "level": "intermediate",
+    "description": "上（に）A conjunction which introduces an additional, emphatic statement.",
+    "meaning": "As well; in addition; besides; furthermore; moreover; not only ~ but also",
+    "example": "Besides the fact that this movie has an interesting storyline, the cast is good."
+  },
+  {
+    "id": "代わりに",
+    "term": "代わりに",
+    "level": "intermediate",
+    "description": "（の）代わりに An action/state that is expressed in the subordinate clause is balanced by another action/state expressed in the main clause, or something/someone that is replaced by something/someone else.",
+    "meaning": "Instead of; instead; but (to make up for ~); so (to make up for ~); in place of",
+    "example": "I am going to enjoy myself in the daytime, so /but (to make up for it) I will study at night."
+  },
+  {
+    "id": "以上",
+    "term": "以上",
+    "level": "intermediate",
+    "description": "以上（は）A conjunction indicating the speaker/writer's feeling that there should be a very strong logical/natural connection between wht precedes the conjunction and what follows it.",
+    "meaning": "Since; now that; once; if ~ at all; as long as; so long as",
+    "example": "Since I came to Japan, I would like to study Japanese hard."
+  },
+  {
+    "id": "以外",
+    "term": "以外",
+    "level": "intermediate",
+    "description": "A dependent noun which means \"something/someone other than\".",
+    "meaning": "Other than; except (for); but; besides; as well as",
+    "example": "Everybody except Yamada knows it."
+  },
+  {
+    "id": "何しろ",
+    "term": "何しろ",
+    "level": "intermediate",
+    "description": "An adverb that indicates the speaker's emotive feeling about some extreme state of affairs.",
+    "meaning": "As a matter of fact; no matter what; believe it or not; you may be surprised, but ~; in fact; unbelievably",
+    "example": "My father is obstinate. As a matter of fact, once he says he will do something, he never changes his mind."
+  },
+  {
+    "id": "何でも",
+    "term": "何でも",
+    "level": "intermediate",
+    "description": "A phrase that indicates the speaker's uncertainty about something.",
+    "meaning": "I don't know for sure, but",
+    "example": "I don't know for sure, but they say that Mr. Yamamoto has separated from his wife and lives alone."
+  },
+  {
+    "id": "例の",
+    "term": "例の",
+    "level": "intermediate",
+    "description": "A phrase which signals that the referent of the following noun phrase is definite and that the speaker expects the hearer to understand what the referent is.",
+    "meaning": "The ~ (in question); that (same); the usual",
+    "example": null
+  },
+  {
+    "id": "分",
+    "term": "分",
+    "level": "intermediate",
+    "description": "A suffix which indicates the amount of something.",
+    "meaning": "For ~; ~ worth; amount equivalent to ~; portion",
+    "example": "I put in ten dollars worth of gas."
+  },
+  {
+    "id": "得る",
+    "term": "得る",
+    "level": "intermediate",
+    "description": "得る　（うる・える）An auxiliary verb that expresses possibility.",
+    "meaning": "Can; possible; -able",
+    "example": "I think it's possible for the Japanese language to become an international language in the 21st century."
+  },
+  {
+    "id": "必ずしも",
+    "term": "必ずしも",
+    "level": "intermediate",
+    "description": "An adverb that indicates that the proposition expressed in the sentence is not always true.",
+    "meaning": "Not always; not necessarily",
+    "example": "A bright person does not always succeed."
+  },
+  {
+    "id": "思われる",
+    "term": "思われる",
+    "level": "intermediate",
+    "description": "A verb that indicates what the speaker/writer feels spontaneously or his/her hesitation about asserting himself/herself.",
+    "meaning": "Seem; appear; apparently",
+    "example": "It seems that the business conditions of the coming year will be better than those of this year."
+  },
+  {
+    "id": "方をする",
+    "term": "方をする",
+    "level": "intermediate",
+    "description": "A phrase to indicate a manner of doing something.",
+    "meaning": "Do something in a ~ fashion/manner/way",
+    "example": "Professor Hayashida teaches in a strict manner."
+  },
+  {
+    "id": "来",
+    "term": "来",
+    "level": "intermediate",
+    "description": "During a certain amount of time (something has continued up until the moment of speech or something has never been like the current state).",
+    "meaning": "For; in; since",
+    "example": "Tom has been studying Japanese for the past 20 years."
+  },
+  {
+    "id": "次第",
+    "term": "次第",
+    "level": "intermediate",
+    "description": "A conjunction/noun to express that an action indicated by a preceding verb or an action implied by a preceding noun is a prerequisite for another action.",
+    "meaning": "As soon as; depend on",
+    "example": "As soon as I get to Osaka, I will call you."
+  },
+  {
+    "id": "目",
+    "term": "目",
+    "level": "intermediate",
+    "description": "A suffix which represents an ordinal number.",
+    "meaning": "-th; -th one",
+    "example": "My car is the second one from the right."
+  },
+  {
+    "id": "結果",
+    "term": "結果",
+    "level": "intermediate",
+    "description": "A noun which expresses the idea \"as a result of\".",
+    "meaning": "As a result of; after; upon",
+    "example": "As a result of the vote, the proposal was rejected by the majority's opposition."
+  },
+  {
+    "id": "結構",
+    "term": "結構",
+    "level": "intermediate",
+    "description": "An adverb that indicates that something exceeds the speaker's and/or hearer's expectation to a considerable degree.",
+    "meaning": "Quite; rather; pretty",
+    "example": null
+  },
+  {
+    "id": "逆に",
+    "term": "逆に",
+    "level": "intermediate",
+    "description": "An adverb to introduce an event which takes place contrary to one's expectation/intention, or an action or event which is converse to that stated in the preceding sentence or clause.",
+    "meaning": "Contrary to one's expectation; contrary to one's intention; conversely",
+    "example": "Contrary to expectations, when I took medicine, I got a fever."
+  },
+  {
+    "id": "途端",
+    "term": "途端",
+    "level": "intermediate",
+    "description": "途端（に）A noun/adverb which expresses the idea that 'something occurred the moment someone did something or something took place'.",
+    "meaning": "The moment; just as; as soon as; then",
+    "example": "The moment I saw my teacher, I remembered that there was a homework assignment."
+  },
+  {
+    "id": "通り",
+    "term": "通り",
+    "level": "intermediate",
+    "description": "通り（に）A dependent noun which expresses the idea that someone does something or something takes place in the same way as something else.",
+    "meaning": "(in) the same way as; (in) the way; as",
+    "example": "I did it as the manual shows (literally: in the same way as the manual), but it didn't work."
+  },
+  {
+    "id": "通りに",
+    "term": "通りに",
+    "level": "intermediate",
+    "description": "通り（に）A dependent noun which expresses the idea that someone does something or something takes place in the same way as something else.",
+    "meaning": "(in) the same way as; (in) the way; as",
+    "example": "I did it as the manual shows (literally: in the same way as the manual), but it didn't work."
+  },
+  {
+    "id": "限り",
+    "term": "限り",
+    "level": "intermediate",
+    "description": "A conjunction which expresses the idea \"as long as (a certain condition is met)\" or \"as long as (= to the extent)\".",
+    "meaning": "As long as; as far as; while; to the extent; until; unless",
+    "example": "As long as I am here, you don't have to worry."
+  },
+  {
+    "id": "面",
+    "term": "面",
+    "level": "intermediate",
+    "description": "A suffix which forms a compound that means a side of X, or an aspect of X.",
+    "meaning": "(on) the side of; (from) the aspect of; (from) the standpoint/viewpoint of; in terms of",
+    "example": "He is excellent in terms of his academic performance (literally: on the side of his academic performance) but he seems to have some psychological weakness (literally: have some weakness on the side of his psychology)."
+  },
+  {
+    "id": "風に",
+    "term": "風に",
+    "level": "intermediate",
+    "description": "With an appearance/style/tone/manner of ~.",
+    "meaning": "In ~ manner; after ~ style; a la ~; like",
+    "example": "The yard of my house has big rocks arranged in Japanese style."
+  }
+]

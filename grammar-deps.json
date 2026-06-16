@@ -1,0 +1,1646 @@
+[
+  {
+    "term": "あげる",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "あとで",
+    "level": "basic",
+    "prereqs": [
+      "て"
+    ]
+  },
+  {
+    "term": "あまり",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "うちに",
+    "level": "basic",
+    "prereqs": [
+      "て"
+    ]
+  },
+  {
+    "term": "おく",
+    "level": "basic",
+    "prereqs": [
+      "て"
+    ]
+  },
+  {
+    "term": "かもしれない",
+    "level": "basic",
+    "prereqs": [
+      "だろう"
+    ]
+  },
+  {
+    "term": "がる",
+    "level": "basic",
+    "prereqs": [
+      "たい"
+    ]
+  },
+  {
+    "term": "くらい",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "けれども",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "ごとに",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "ことにする",
+    "level": "basic",
+    "prereqs": [
+      "ことになる"
+    ]
+  },
+  {
+    "term": "ことになる",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "ことは",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "ごろ",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "さ",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "させる",
+    "level": "basic",
+    "prereqs": [
+      "て"
+    ]
+  },
+  {
+    "term": "し",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "しい",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "しか",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "しまう",
+    "level": "basic",
+    "prereqs": [
+      "て"
+    ]
+  },
+  {
+    "term": "ずつ",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "すると",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "せっかく",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "そして",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "それから",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "それで",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "それでは",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "それとも",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "それなら",
+    "level": "basic",
+    "prereqs": [
+      "なら"
+    ]
+  },
+  {
+    "term": "たい",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "だい",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "だけ",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "たって",
+    "level": "basic",
+    "prereqs": [
+      "ても"
+    ]
+  },
+  {
+    "term": "たら",
+    "level": "basic",
+    "prereqs": [
+      "て"
+    ]
+  },
+  {
+    "term": "たらどうですか",
+    "level": "basic",
+    "prereqs": [
+      "たら"
+    ]
+  },
+  {
+    "term": "だろう",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "って",
+    "level": "basic",
+    "prereqs": [
+      "という"
+    ]
+  },
+  {
+    "term": "つもり",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "て",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "ても",
+    "level": "basic",
+    "prereqs": [
+      "て"
+    ]
+  },
+  {
+    "term": "てもいい",
+    "level": "basic",
+    "prereqs": [
+      "ても"
+    ]
+  },
+  {
+    "term": "という",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "とか",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "ところだ",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "として",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "としては",
+    "level": "basic",
+    "prereqs": [
+      "として"
+    ]
+  },
+  {
+    "term": "と言えば",
+    "level": "basic",
+    "prereqs": [
+      "という"
+    ]
+  },
+  {
+    "term": "な",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "ないで",
+    "level": "basic",
+    "prereqs": [
+      "て"
+    ]
+  },
+  {
+    "term": "ながら",
+    "level": "basic",
+    "prereqs": [
+      "て"
+    ]
+  },
+  {
+    "term": "なくて",
+    "level": "basic",
+    "prereqs": [
+      "て"
+    ]
+  },
+  {
+    "term": "なくなる",
+    "level": "basic",
+    "prereqs": [
+      "ことになる"
+    ]
+  },
+  {
+    "term": "なければならない",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "なさい",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "など",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "なら",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "にしては",
+    "level": "basic",
+    "prereqs": [
+      "として"
+    ]
+  },
+  {
+    "term": "にする",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "ば",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "はいけない",
+    "level": "basic",
+    "prereqs": [
+      "ても"
+    ]
+  },
+  {
+    "term": "ばかり",
+    "level": "basic",
+    "prereqs": [
+      "だけ"
+    ]
+  },
+  {
+    "term": "はず",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "ばよかった",
+    "level": "basic",
+    "prereqs": [
+      "ば"
+    ]
+  },
+  {
+    "term": "へ",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "ほうがいい",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "ほど",
+    "level": "basic",
+    "prereqs": [
+      "くらい"
+    ]
+  },
+  {
+    "term": "まで",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "までに",
+    "level": "basic",
+    "prereqs": [
+      "まで"
+    ]
+  },
+  {
+    "term": "まま",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "みる",
+    "level": "basic",
+    "prereqs": [
+      "て"
+    ]
+  },
+  {
+    "term": "もらう",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "や",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "やはり",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "ようだ",
+    "level": "basic",
+    "prereqs": [
+      "らしい"
+    ]
+  },
+  {
+    "term": "ようと思う",
+    "level": "basic",
+    "prereqs": [
+      "つもり"
+    ]
+  },
+  {
+    "term": "ようにする",
+    "level": "basic",
+    "prereqs": [
+      "ようになる"
+    ]
+  },
+  {
+    "term": "ようになる",
+    "level": "basic",
+    "prereqs": [
+      "ことになる"
+    ]
+  },
+  {
+    "term": "ように言う",
+    "level": "basic",
+    "prereqs": [
+      "ようにする"
+    ]
+  },
+  {
+    "term": "より",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "らしい",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "られる",
+    "level": "basic",
+    "prereqs": [
+      "させる"
+    ]
+  },
+  {
+    "term": "わけだ",
+    "level": "basic",
+    "prereqs": []
+  },
+  {
+    "term": "堪らない",
+    "level": "basic",
+    "prereqs": [
+      "て"
+    ]
+  },
+  {
+    "term": "いかにも",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "おり",
+    "level": "intermediate",
+    "prereqs": [
+      "て"
+    ]
+  },
+  {
+    "term": "かえって",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "がたい",
+    "level": "intermediate",
+    "prereqs": [
+      "かねる"
+    ]
+  },
+  {
+    "term": "がち",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "かと言うと",
+    "level": "intermediate",
+    "prereqs": [
+      "という"
+    ]
+  },
+  {
+    "term": "かな",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "かねる",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "からと言って",
+    "level": "intermediate",
+    "prereqs": [
+      "という"
+    ]
+  },
+  {
+    "term": "かろう",
+    "level": "intermediate",
+    "prereqs": [
+      "だろう"
+    ]
+  },
+  {
+    "term": "く",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "くせに",
+    "level": "intermediate",
+    "prereqs": [
+      "けれども"
+    ]
+  },
+  {
+    "term": "こうした",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "こそ",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "こと",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "ことで",
+    "level": "intermediate",
+    "prereqs": [
+      "ことになる"
+    ]
+  },
+  {
+    "term": "ことによる",
+    "level": "intermediate",
+    "prereqs": [
+      "ことで"
+    ]
+  },
+  {
+    "term": "ことはない",
+    "level": "intermediate",
+    "prereqs": [
+      "ことは"
+    ]
+  },
+  {
+    "term": "この",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "さえ",
+    "level": "intermediate",
+    "prereqs": [
+      "しか"
+    ]
+  },
+  {
+    "term": "さすが",
+    "level": "intermediate",
+    "prereqs": [
+      "やはり"
+    ]
+  },
+  {
+    "term": "ざるを得ない",
+    "level": "intermediate",
+    "prereqs": [
+      "なければならない",
+      "ぬ"
+    ]
+  },
+  {
+    "term": "しかも",
+    "level": "intermediate",
+    "prereqs": [
+      "そして"
+    ]
+  },
+  {
+    "term": "したがって",
+    "level": "intermediate",
+    "prereqs": [
+      "それで"
+    ]
+  },
+  {
+    "term": "すぐ",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "せい",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "せめて",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "ぞ",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "そうかと言って",
+    "level": "intermediate",
+    "prereqs": [
+      "けれども",
+      "という"
+    ]
+  },
+  {
+    "term": "そうになった",
+    "level": "intermediate",
+    "prereqs": [
+      "ようになる"
+    ]
+  },
+  {
+    "term": "そうになる",
+    "level": "intermediate",
+    "prereqs": [
+      "ようになる"
+    ]
+  },
+  {
+    "term": "そこで",
+    "level": "intermediate",
+    "prereqs": [
+      "それで"
+    ]
+  },
+  {
+    "term": "そこを",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "その上",
+    "level": "intermediate",
+    "prereqs": [
+      "しかも"
+    ]
+  },
+  {
+    "term": "それが",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "それぞれ",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "それでも",
+    "level": "intermediate",
+    "prereqs": [
+      "それで",
+      "ても"
+    ]
+  },
+  {
+    "term": "それと",
+    "level": "intermediate",
+    "prereqs": [
+      "そして"
+    ]
+  },
+  {
+    "term": "それどころか",
+    "level": "intermediate",
+    "prereqs": [
+      "どころか"
+    ]
+  },
+  {
+    "term": "それに",
+    "level": "intermediate",
+    "prereqs": [
+      "そして"
+    ]
+  },
+  {
+    "term": "それは",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "それも",
+    "level": "intermediate",
+    "prereqs": [
+      "しかも"
+    ]
+  },
+  {
+    "term": "だが",
+    "level": "intermediate",
+    "prereqs": [
+      "けれども"
+    ]
+  },
+  {
+    "term": "だからと言って",
+    "level": "intermediate",
+    "prereqs": [
+      "からと言って"
+    ]
+  },
+  {
+    "term": "だけで",
+    "level": "intermediate",
+    "prereqs": [
+      "だけ",
+      "て"
+    ]
+  },
+  {
+    "term": "ただ",
+    "level": "intermediate",
+    "prereqs": [
+      "だけ"
+    ]
+  },
+  {
+    "term": "ただの",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "たところで",
+    "level": "intermediate",
+    "prereqs": [
+      "ところ",
+      "ても"
+    ]
+  },
+  {
+    "term": "たびに",
+    "level": "intermediate",
+    "prereqs": [
+      "ごとに"
+    ]
+  },
+  {
+    "term": "だらけ",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "つつ",
+    "level": "intermediate",
+    "prereqs": [
+      "ながら"
+    ]
+  },
+  {
+    "term": "っぱなし",
+    "level": "intermediate",
+    "prereqs": [
+      "まま"
+    ]
+  },
+  {
+    "term": "っぽい",
+    "level": "intermediate",
+    "prereqs": [
+      "らしい"
+    ]
+  },
+  {
+    "term": "つまり",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "で",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "である",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "であろう",
+    "level": "intermediate",
+    "prereqs": [
+      "だろう",
+      "である"
+    ]
+  },
+  {
+    "term": "ては",
+    "level": "intermediate",
+    "prereqs": [
+      "て"
+    ]
+  },
+  {
+    "term": "て初めて",
+    "level": "intermediate",
+    "prereqs": [
+      "て"
+    ]
+  },
+  {
+    "term": "と",
+    "level": "intermediate",
+    "prereqs": [
+      "という"
+    ]
+  },
+  {
+    "term": "ということは",
+    "level": "intermediate",
+    "prereqs": [
+      "という"
+    ]
+  },
+  {
+    "term": "というのに",
+    "level": "intermediate",
+    "prereqs": [
+      "という"
+    ]
+  },
+  {
+    "term": "というのは",
+    "level": "intermediate",
+    "prereqs": [
+      "という"
+    ]
+  },
+  {
+    "term": "というより",
+    "level": "intermediate",
+    "prereqs": [
+      "という",
+      "より"
+    ]
+  },
+  {
+    "term": "というよりは",
+    "level": "intermediate",
+    "prereqs": [
+      "というより"
+    ]
+  },
+  {
+    "term": "という風に",
+    "level": "intermediate",
+    "prereqs": [
+      "という",
+      "風に"
+    ]
+  },
+  {
+    "term": "どうせ",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "とうとう",
+    "level": "intermediate",
+    "prereqs": [
+      "やっと"
+    ]
+  },
+  {
+    "term": "どうも",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "とかで",
+    "level": "intermediate",
+    "prereqs": [
+      "とか"
+    ]
+  },
+  {
+    "term": "ところ",
+    "level": "intermediate",
+    "prereqs": [
+      "ところだ"
+    ]
+  },
+  {
+    "term": "ところが",
+    "level": "intermediate",
+    "prereqs": [
+      "けれども"
+    ]
+  },
+  {
+    "term": "どころか",
+    "level": "intermediate",
+    "prereqs": [
+      "ばかりか"
+    ]
+  },
+  {
+    "term": "とする",
+    "level": "intermediate",
+    "prereqs": [
+      "として"
+    ]
+  },
+  {
+    "term": "となる",
+    "level": "intermediate",
+    "prereqs": [
+      "ことになる"
+    ]
+  },
+  {
+    "term": "となると",
+    "level": "intermediate",
+    "prereqs": [
+      "となる",
+      "なら"
+    ]
+  },
+  {
+    "term": "とは限らない",
+    "level": "intermediate",
+    "prereqs": [
+      "必ずしも"
+    ]
+  },
+  {
+    "term": "とも",
+    "level": "intermediate",
+    "prereqs": [
+      "ても"
+    ]
+  },
+  {
+    "term": "どんなに",
+    "level": "intermediate",
+    "prereqs": [
+      "ほど"
+    ]
+  },
+  {
+    "term": "と共に",
+    "level": "intermediate",
+    "prereqs": [
+      "ながら"
+    ]
+  },
+  {
+    "term": "と同時に",
+    "level": "intermediate",
+    "prereqs": [
+      "ながら"
+    ]
+  },
+  {
+    "term": "と言うと",
+    "level": "intermediate",
+    "prereqs": [
+      "と言えば"
+    ]
+  },
+  {
+    "term": "と言っても",
+    "level": "intermediate",
+    "prereqs": [
+      "ても",
+      "という"
+    ]
+  },
+  {
+    "term": "なあ",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "ないことは",
+    "level": "intermediate",
+    "prereqs": [
+      "ことは"
+    ]
+  },
+  {
+    "term": "ないことも",
+    "level": "intermediate",
+    "prereqs": [
+      "ことは"
+    ]
+  },
+  {
+    "term": "なかなか",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "なく",
+    "level": "intermediate",
+    "prereqs": [
+      "く",
+      "なくて"
+    ]
+  },
+  {
+    "term": "なしでは",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "などと",
+    "level": "intermediate",
+    "prereqs": [
+      "など",
+      "と"
+    ]
+  },
+  {
+    "term": "ならない",
+    "level": "intermediate",
+    "prereqs": [
+      "堪らない"
+    ]
+  },
+  {
+    "term": "なりに",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "に",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "において",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "における",
+    "level": "intermediate",
+    "prereqs": [
+      "において"
+    ]
+  },
+  {
+    "term": "にかけて",
+    "level": "intermediate",
+    "prereqs": [
+      "まで"
+    ]
+  },
+  {
+    "term": "について",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "につき",
+    "level": "intermediate",
+    "prereqs": [
+      "ごとに"
+    ]
+  },
+  {
+    "term": "につれて",
+    "level": "intermediate",
+    "prereqs": [
+      "ようになる"
+    ]
+  },
+  {
+    "term": "にとって",
+    "level": "intermediate",
+    "prereqs": [
+      "として"
+    ]
+  },
+  {
+    "term": "になると",
+    "level": "intermediate",
+    "prereqs": [
+      "ことになる",
+      "なら"
+    ]
+  },
+  {
+    "term": "には",
+    "level": "intermediate",
+    "prereqs": [
+      "へ"
+    ]
+  },
+  {
+    "term": "にほかならない",
+    "level": "intermediate",
+    "prereqs": [
+      "わけだ"
+    ]
+  },
+  {
+    "term": "にもかかわらず",
+    "level": "intermediate",
+    "prereqs": [
+      "ても"
+    ]
+  },
+  {
+    "term": "によって",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "により",
+    "level": "intermediate",
+    "prereqs": [
+      "によって"
+    ]
+  },
+  {
+    "term": "に代わって",
+    "level": "intermediate",
+    "prereqs": [
+      "代わりに"
+    ]
+  },
+  {
+    "term": "に反して",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "に反する",
+    "level": "intermediate",
+    "prereqs": [
+      "に反して"
+    ]
+  },
+  {
+    "term": "に基づいて",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "に対して",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "に対する",
+    "level": "intermediate",
+    "prereqs": [
+      "に対して"
+    ]
+  },
+  {
+    "term": "に当たって",
+    "level": "intermediate",
+    "prereqs": [
+      "において"
+    ]
+  },
+  {
+    "term": "に当たり",
+    "level": "intermediate",
+    "prereqs": [
+      "に当たって"
+    ]
+  },
+  {
+    "term": "に従い",
+    "level": "intermediate",
+    "prereqs": [
+      "に従って"
+    ]
+  },
+  {
+    "term": "に従って",
+    "level": "intermediate",
+    "prereqs": [
+      "につれて"
+    ]
+  },
+  {
+    "term": "に比べる",
+    "level": "intermediate",
+    "prereqs": [
+      "より"
+    ]
+  },
+  {
+    "term": "に至るまで",
+    "level": "intermediate",
+    "prereqs": [
+      "まで"
+    ]
+  },
+  {
+    "term": "に過ぎない",
+    "level": "intermediate",
+    "prereqs": [
+      "だけ"
+    ]
+  },
+  {
+    "term": "に関して",
+    "level": "intermediate",
+    "prereqs": [
+      "について"
+    ]
+  },
+  {
+    "term": "に限って",
+    "level": "intermediate",
+    "prereqs": [
+      "だけ"
+    ]
+  },
+  {
+    "term": "に限らず",
+    "level": "intermediate",
+    "prereqs": [
+      "に限って"
+    ]
+  },
+  {
+    "term": "ぬ",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "ねばならない",
+    "level": "intermediate",
+    "prereqs": [
+      "なければならない",
+      "ぬ"
+    ]
+  },
+  {
+    "term": "のこと",
+    "level": "intermediate",
+    "prereqs": [
+      "について"
+    ]
+  },
+  {
+    "term": "のことだ",
+    "level": "intermediate",
+    "prereqs": [
+      "のこと"
+    ]
+  },
+  {
+    "term": "のことだから",
+    "level": "intermediate",
+    "prereqs": [
+      "のこと"
+    ]
+  },
+  {
+    "term": "のみ",
+    "level": "intermediate",
+    "prereqs": [
+      "だけ"
+    ]
+  },
+  {
+    "term": "の上で",
+    "level": "intermediate",
+    "prereqs": [
+      "上で"
+    ]
+  },
+  {
+    "term": "の上では",
+    "level": "intermediate",
+    "prereqs": [
+      "の上で"
+    ]
+  },
+  {
+    "term": "の下で",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "の関係で",
+    "level": "intermediate",
+    "prereqs": [
+      "せい"
+    ]
+  },
+  {
+    "term": "は",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "ばかりか",
+    "level": "intermediate",
+    "prereqs": [
+      "ばかり",
+      "さえ"
+    ]
+  },
+  {
+    "term": "は言うまでもなく",
+    "level": "intermediate",
+    "prereqs": [
+      "など"
+    ]
+  },
+  {
+    "term": "べきだ",
+    "level": "intermediate",
+    "prereqs": [
+      "なければならない"
+    ]
+  },
+  {
+    "term": "まい",
+    "level": "intermediate",
+    "prereqs": [
+      "だろう"
+    ]
+  },
+  {
+    "term": "まさか",
+    "level": "intermediate",
+    "prereqs": [
+      "だろう"
+    ]
+  },
+  {
+    "term": "ましだ",
+    "level": "intermediate",
+    "prereqs": [
+      "ほうがいい"
+    ]
+  },
+  {
+    "term": "または",
+    "level": "intermediate",
+    "prereqs": [
+      "それとも"
+    ]
+  },
+  {
+    "term": "までもない",
+    "level": "intermediate",
+    "prereqs": [
+      "まで",
+      "ことはない"
+    ]
+  },
+  {
+    "term": "みせる",
+    "level": "intermediate",
+    "prereqs": [
+      "みる"
+    ]
+  },
+  {
+    "term": "も",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "やっと",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "やる",
+    "level": "intermediate",
+    "prereqs": [
+      "あげる"
+    ]
+  },
+  {
+    "term": "よう",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "わけがない",
+    "level": "intermediate",
+    "prereqs": [
+      "わけだ"
+    ]
+  },
+  {
+    "term": "わけではない",
+    "level": "intermediate",
+    "prereqs": [
+      "わけだ"
+    ]
+  },
+  {
+    "term": "わけにはいかない",
+    "level": "intermediate",
+    "prereqs": [
+      "わけだ"
+    ]
+  },
+  {
+    "term": "を通して",
+    "level": "intermediate",
+    "prereqs": [
+      "によって"
+    ]
+  },
+  {
+    "term": "一方で",
+    "level": "intermediate",
+    "prereqs": [
+      "けれども"
+    ]
+  },
+  {
+    "term": "上",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "上で",
+    "level": "intermediate",
+    "prereqs": [
+      "上"
+    ]
+  },
+  {
+    "term": "上に",
+    "level": "intermediate",
+    "prereqs": [
+      "上",
+      "しかも"
+    ]
+  },
+  {
+    "term": "代わりに",
+    "level": "intermediate",
+    "prereqs": [
+      "にする"
+    ]
+  },
+  {
+    "term": "以上",
+    "level": "intermediate",
+    "prereqs": [
+      "限り"
+    ]
+  },
+  {
+    "term": "以外",
+    "level": "intermediate",
+    "prereqs": [
+      "しか"
+    ]
+  },
+  {
+    "term": "何しろ",
+    "level": "intermediate",
+    "prereqs": [
+      "せい"
+    ]
+  },
+  {
+    "term": "何でも",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "例の",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "分",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "得る",
+    "level": "intermediate",
+    "prereqs": [
+      "られる"
+    ]
+  },
+  {
+    "term": "必ずしも",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "思われる",
+    "level": "intermediate",
+    "prereqs": [
+      "ようだ"
+    ]
+  },
+  {
+    "term": "方をする",
+    "level": "intermediate",
+    "prereqs": [
+      "よう"
+    ]
+  },
+  {
+    "term": "来",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "次第",
+    "level": "intermediate",
+    "prereqs": [
+      "たら"
+    ]
+  },
+  {
+    "term": "目",
+    "level": "intermediate",
+    "prereqs": []
+  },
+  {
+    "term": "結果",
+    "level": "intermediate",
+    "prereqs": [
+      "て"
+    ]
+  },
+  {
+    "term": "結構",
+    "level": "intermediate",
+    "prereqs": [
+      "なかなか"
+    ]
+  },
+  {
+    "term": "逆に",
+    "level": "intermediate",
+    "prereqs": [
+      "かえって"
+    ]
+  },
+  {
+    "term": "途端",
+    "level": "intermediate",
+    "prereqs": [
+      "すると"
+    ]
+  },
+  {
+    "term": "通り",
+    "level": "intermediate",
+    "prereqs": [
+      "ように言う"
+    ]
+  },
+  {
+    "term": "通りに",
+    "level": "intermediate",
+    "prereqs": [
+      "通り"
+    ]
+  },
+  {
+    "term": "限り",
+    "level": "intermediate",
+    "prereqs": [
+      "まで",
+      "うちに"
+    ]
+  },
+  {
+    "term": "面",
+    "level": "intermediate",
+    "prereqs": [
+      "上"
+    ]
+  },
+  {
+    "term": "風に",
+    "level": "intermediate",
+    "prereqs": [
+      "ようだ"
+    ]
+  }
+]
