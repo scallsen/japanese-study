@@ -98,6 +98,7 @@ export default function GrammarMapModule() {
           isSelected: n.id === selectedId,
           onToggle: () => toggleKnown(n.id),
           accent: ACCENT,
+          hideHandles: true,
         },
       }))
     )
@@ -134,16 +135,16 @@ export default function GrammarMapModule() {
         const tgtRep = getRep(n.id)
         if (srcRep === tgtRep) return // skip intra-group
 
-        // One edge per (source node/group → target node/group) pair
-        const edgeKey = `${prereqId}→${n.id}`
+        // Deduplicate at the representative level (group→group or node→node)
+        const edgeKey = `${srcRep}→${tgtRep}`
         if (edgeSet.has(edgeKey)) return
         edgeSet.add(edgeKey)
 
         const isKnownEdge = known.has(prereqId)
         result.push({
           id: edgeKey,
-          source: prereqId,
-          target: n.id,
+          source: srcRep,
+          target: tgtRep,
           style: { stroke: isKnownEdge ? ACCENT : '#333', strokeWidth: isKnownEdge ? 2 : 1.5 },
           markerEnd: { type: MarkerType.ArrowClosed, color: isKnownEdge ? ACCENT : '#333' },
         })
@@ -156,6 +157,10 @@ export default function GrammarMapModule() {
     if (selectedNode) {
       const prereqNodes = selectedNode.prereqs.map(pId => GRAMMAR_NODES.find(n => n.id === pId)).filter(Boolean)
       const dependents = GRAMMAR_NODES.filter(n => n.prereqs.includes(selectedNode.id))
+      const isKnownSelected = known.has(selectedNode.id)
+      const selectedUnlocked = selectedNode.prereqs
+        .filter(p => visibleIds.has(p))
+        .every(p => known.has(p))
 
       return (
         <div style={{ padding: `16px ${px}px` }}>
@@ -206,6 +211,28 @@ export default function GrammarMapModule() {
             }}>
               {selectedNode.example}
             </div>
+          )}
+
+          {(selectedUnlocked || isKnownSelected) && (
+            <button
+              onClick={() => toggleKnown(selectedNode.id)}
+              style={{
+                width: '100%',
+                padding: '8px 0',
+                marginBottom: 20,
+                background: isKnownSelected ? `${ACCENT}22` : 'transparent',
+                border: `1px solid ${isKnownSelected ? `${ACCENT}88` : 'rgba(255,255,255,0.12)'}`,
+                borderRadius: 6,
+                color: isKnownSelected ? ACCENT : TEXT_MUTED,
+                fontSize: 13,
+                cursor: 'pointer',
+                fontFamily: FONT,
+                letterSpacing: TRACKING,
+                transition: 'all 120ms',
+              }}
+            >
+              {isKnownSelected ? 'Known ✓' : 'Mark as known'}
+            </button>
           )}
 
           {prereqNodes.length > 0 && (
@@ -347,7 +374,7 @@ export default function GrammarMapModule() {
             nodesConnectable={false}
             elementsSelectable={false}
             proOptions={{ hideAttribution: true }}
-            onNodeClick={(e, node) => { setSelectedId(node.id); setShowOptions(true) }}
+            onNodeClick={(e, node) => { if (node.type === 'grammarGroup') return; setSelectedId(node.id); setShowOptions(true) }}
             onPaneClick={() => setSelectedId(null)}
           >
             <Background color="#282828" gap={24} />

@@ -11,7 +11,6 @@ export default function GrammarGroupNode({ data }) {
       background: 'rgba(255,255,255,0.02)',
       fontFamily: FONT,
       letterSpacing: TRACKING,
-      pointerEvents: 'none',
     }}>
       <Handle type="target" position={Position.Left} style={{ background: '#444', border: 'none', width: 7, height: 7, top: 18 }} />
       <div style={{
@@ -21,6 +20,7 @@ export default function GrammarGroupNode({ data }) {
         textTransform: 'uppercase',
         letterSpacing: '0.08em',
         opacity: 0.6,
+        pointerEvents: 'none',
       }}>
         {label}{count != null ? ` · ${count}` : ''}
       </div>

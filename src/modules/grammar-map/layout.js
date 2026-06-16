@@ -24,7 +24,7 @@ function groupDimensions(nodeCount) {
 function runDagre(nodes, edges) {
   const g = new dagre.graphlib.Graph()
   g.setDefaultEdgeLabel(() => ({}))
-  g.setGraph({ rankdir: 'LR', ranksep: 100, nodesep: 32 })
+  g.setGraph({ rankdir: 'LR', ranksep: 100, nodesep: 60 })
   nodes.forEach(n => g.setNode(n.id, { width: n.width ?? NODE_W, height: n.height ?? NODE_H }))
   edges.forEach(e => g.setEdge(e.source, e.target))
   dagre.layout(g)
