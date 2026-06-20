@@ -157,7 +157,11 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
     if (!el) return
     function onScroll() { setPopup(null) }
     el.addEventListener('scroll', onScroll, { passive: true })
-    return () => el.removeEventListener('scroll', onScroll)
+    document.addEventListener('touchmove', onScroll, { passive: true })
+    return () => {
+      el.removeEventListener('scroll', onScroll)
+      document.removeEventListener('touchmove', onScroll)
+    }
   }, [])
 
   const vocabMap = useMemo(() => buildVocabMap(article.vocabulary_ja), [article.vocabulary_ja])
