@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react'
 import PageHeader from '../../components/PageHeader.jsx'
 import AuthSlot from '../../components/AuthSlot.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
@@ -75,13 +75,33 @@ function WordPopup({ token, vocabEntry, onAddToSrs, onClose, anchorRect }) {
     return () => document.removeEventListener('mousedown', handleClick)
   }, [onClose])
 
+  useLayoutEffect(() => {
+    if (!popupRef.current || !anchorRect) return
+    const el = popupRef.current
+    const { width, height } = el.getBoundingClientRect()
+    const vw = window.innerWidth
+    const vh = window.innerHeight
+
+    let top = anchorRect.bottom + 6
+    let left = anchorRect.left
+
+    if (left + width + 8 > vw) left = vw - width - 8
+    left = Math.max(8, left)
+
+    if (top + height + 8 > vh) top = anchorRect.top - height - 6
+    top = Math.max(8, top)
+
+    el.style.top = top + 'px'
+    el.style.left = left + 'px'
+  }, [anchorRect])
+
   return (
     <div
       ref={popupRef}
       style={{
         position: 'fixed',
         top: anchorRect ? anchorRect.bottom + 6 : 0,
-        left: Math.max(8, anchorRect ? anchorRect.left : 0),
+        left: anchorRect ? anchorRect.left : 0,
         zIndex: 200,
         background: '#2A2A2A',
         border: '1px solid rgba(255,255,255,0.15)',
