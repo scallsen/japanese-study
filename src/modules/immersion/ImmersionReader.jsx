@@ -150,6 +150,15 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
   const [popup, setPopup] = useState(null) // { token, vocabEntry, anchorRect }
   const [showFurigana, setShowFurigana] = useState(true)
   const { data: srsData, save: saveSrs } = useProgress('vocab-srs')
+  const scrollRef = useRef(null)
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    function onScroll() { setPopup(null) }
+    el.addEventListener('scroll', onScroll, { passive: true })
+    return () => el.removeEventListener('scroll', onScroll)
+  }, [])
 
   const vocabMap = useMemo(() => buildVocabMap(article.vocabulary_ja), [article.vocabulary_ja])
 
@@ -199,7 +208,7 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
         ]}
         rightSlot={<AuthSlot />}
       />
-      <div style={{ flex: 1, overflowY: 'auto', padding: '40px 24px' }}>
+      <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', padding: '40px 24px' }}>
         <div style={{ maxWidth: 640, margin: '0 auto' }}>
           <div style={{ marginBottom: 28 }}>
             <div style={{
