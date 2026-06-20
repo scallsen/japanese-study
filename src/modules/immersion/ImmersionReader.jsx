@@ -24,25 +24,25 @@ function buildVocabMap(vocabulary) {
   return map
 }
 
-function TokenizedBody({ tokens, vocabMap, onWordClick, showFurigana }) {
+function TokenizedBody({ tokens, vocabMap, onWordClick, showFurigana, activeIdx }) {
   const [hoveredIdx, setHoveredIdx] = useState(null)
   if (!Array.isArray(tokens) || tokens.length === 0) return null
   return (
     <span>
       {tokens.map((tok, i) => {
         if (!tok.w) return <span key={i}>{tok.t}</span>
-        const isHovered = hoveredIdx === i
+        const isActive = hoveredIdx === i || activeIdx === i
         const inVocab = !!vocabMap[tok.t]
         return (
           <span
             key={i}
             onMouseEnter={() => setHoveredIdx(i)}
             onMouseLeave={() => setHoveredIdx(null)}
-            onClick={e => { e.stopPropagation(); onWordClick(tok, e) }}
+            onClick={e => { e.stopPropagation(); onWordClick(tok, e, i) }}
             style={{
               cursor: 'pointer',
               borderRadius: 3,
-              background: isHovered
+              background: isActive
                 ? inVocab ? 'rgba(224,90,78,0.22)' : 'rgba(255,255,255,0.1)'
                 : 'transparent',
               padding: '0 1px',
@@ -147,7 +147,7 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
   const [showSimplified, setShowSimplified] = useState(!!article.body_simple)
   const [summaryOpen, setSummaryOpen] = useState(false)
   const [revealedAnswers, setRevealedAnswers] = useState({})
-  const [popup, setPopup] = useState(null) // { token, vocabEntry, anchorRect }
+  const [popup, setPopup] = useState(null) // { token, vocabEntry, anchorRect, idx }
   const [showFurigana, setShowFurigana] = useState(true)
   const { data: srsData, save: saveSrs } = useProgress('vocab-srs')
   const scrollRef = useRef(null)
@@ -162,10 +162,10 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
 
   const vocabMap = useMemo(() => buildVocabMap(article.vocabulary_ja), [article.vocabulary_ja])
 
-  function handleWordClick(token, e) {
+  function handleWordClick(token, e, idx) {
     const rect = e.target.getBoundingClientRect()
     const vocabEntry = vocabMap[token.t] ?? null
-    setPopup({ token, vocabEntry, anchorRect: rect })
+    setPopup({ token, vocabEntry, anchorRect: rect, idx })
   }
 
   function handlePopupAddToSrs(token, vocabEntry) {
@@ -290,7 +290,7 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
             marginBottom: 40,
           }}>
             {tokens
-              ? <TokenizedBody tokens={tokens} vocabMap={vocabMap} onWordClick={handleWordClick} showFurigana={showFurigana} />
+              ? <TokenizedBody tokens={tokens} vocabMap={vocabMap} onWordClick={handleWordClick} showFurigana={showFurigana} activeIdx={popup?.idx ?? null} />
               : body}
           </div>
 
