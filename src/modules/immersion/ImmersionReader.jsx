@@ -26,6 +26,11 @@ function buildVocabMap(vocabulary) {
 
 function TokenizedBody({ tokens, vocabMap, onWordClick, showFurigana, activeIdx }) {
   const [hoveredIdx, setHoveredIdx] = useState(null)
+
+  useEffect(() => {
+    if (activeIdx === null) setHoveredIdx(null)
+  }, [activeIdx])
+
   if (!Array.isArray(tokens) || tokens.length === 0) return null
   return (
     <span>
