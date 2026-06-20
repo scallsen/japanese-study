@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react'
 import PageHeader from '../../components/PageHeader.jsx'
 import AuthSlot from '../../components/AuthSlot.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
@@ -24,25 +24,30 @@ function buildVocabMap(vocabulary) {
   return map
 }
 
-function TokenizedBody({ tokens, vocabMap, onWordClick, showFurigana }) {
+function TokenizedBody({ tokens, vocabMap, onWordClick, showFurigana, activeIdx }) {
   const [hoveredIdx, setHoveredIdx] = useState(null)
+
+  useEffect(() => {
+    if (activeIdx === null) setHoveredIdx(null)
+  }, [activeIdx])
+
   if (!Array.isArray(tokens) || tokens.length === 0) return null
   return (
     <span>
       {tokens.map((tok, i) => {
         if (!tok.w) return <span key={i}>{tok.t}</span>
-        const isHovered = hoveredIdx === i
+        const isActive = hoveredIdx === i || activeIdx === i
         const inVocab = !!vocabMap[tok.t]
         return (
           <span
             key={i}
             onMouseEnter={() => setHoveredIdx(i)}
             onMouseLeave={() => setHoveredIdx(null)}
-            onClick={e => { e.stopPropagation(); onWordClick(tok, e) }}
+            onClick={e => { e.stopPropagation(); onWordClick(tok, e, i) }}
             style={{
               cursor: 'pointer',
               borderRadius: 3,
-              background: isHovered
+              background: isActive
                 ? inVocab ? 'rgba(224,90,78,0.22)' : 'rgba(255,255,255,0.1)'
                 : 'transparent',
               padding: '0 1px',
@@ -75,13 +80,33 @@ function WordPopup({ token, vocabEntry, onAddToSrs, onClose, anchorRect }) {
     return () => document.removeEventListener('mousedown', handleClick)
   }, [onClose])
 
+  useLayoutEffect(() => {
+    if (!popupRef.current || !anchorRect) return
+    const el = popupRef.current
+    const { width, height } = el.getBoundingClientRect()
+    const vw = window.innerWidth
+    const vh = window.innerHeight
+
+    let top = anchorRect.bottom + 6
+    let left = anchorRect.left
+
+    if (left + width + 8 > vw) left = vw - width - 8
+    left = Math.max(8, left)
+
+    if (top + height + 8 > vh) top = anchorRect.top - height - 6
+    top = Math.max(8, top)
+
+    el.style.top = top + 'px'
+    el.style.left = left + 'px'
+  }, [anchorRect])
+
   return (
     <div
       ref={popupRef}
       style={{
         position: 'fixed',
         top: anchorRect ? anchorRect.bottom + 6 : 0,
-        left: Math.max(8, anchorRect ? anchorRect.left : 0),
+        left: anchorRect ? anchorRect.left : 0,
         zIndex: 200,
         background: '#2A2A2A',
         border: '1px solid rgba(255,255,255,0.15)',
@@ -127,16 +152,29 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
   const [showSimplified, setShowSimplified] = useState(!!article.body_simple)
   const [summaryOpen, setSummaryOpen] = useState(false)
   const [revealedAnswers, setRevealedAnswers] = useState({})
-  const [popup, setPopup] = useState(null) // { token, vocabEntry, anchorRect }
+  const [popup, setPopup] = useState(null) // { token, vocabEntry, anchorRect, idx }
   const [showFurigana, setShowFurigana] = useState(true)
   const { data: srsData, save: saveSrs } = useProgress('vocab-srs')
+  const scrollRef = useRef(null)
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    function onScroll() { setPopup(null) }
+    el.addEventListener('scroll', onScroll, { passive: true })
+    document.addEventListener('touchmove', onScroll, { passive: true })
+    return () => {
+      el.removeEventListener('scroll', onScroll)
+      document.removeEventListener('touchmove', onScroll)
+    }
+  }, [])
 
   const vocabMap = useMemo(() => buildVocabMap(article.vocabulary_ja), [article.vocabulary_ja])
 
-  function handleWordClick(token, e) {
+  function handleWordClick(token, e, idx) {
     const rect = e.target.getBoundingClientRect()
     const vocabEntry = vocabMap[token.t] ?? null
-    setPopup({ token, vocabEntry, anchorRect: rect })
+    setPopup({ token, vocabEntry, anchorRect: rect, idx })
   }
 
   function handlePopupAddToSrs(token, vocabEntry) {
@@ -179,7 +217,7 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
         ]}
         rightSlot={<AuthSlot />}
       />
-      <div style={{ flex: 1, overflowY: 'auto', padding: '40px 24px' }}>
+      <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', padding: '40px 24px' }}>
         <div style={{ maxWidth: 640, margin: '0 auto' }}>
           <div style={{ marginBottom: 28 }}>
             <div style={{
@@ -261,7 +299,7 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
             marginBottom: 40,
           }}>
             {tokens
-              ? <TokenizedBody tokens={tokens} vocabMap={vocabMap} onWordClick={handleWordClick} showFurigana={showFurigana} />
+              ? <TokenizedBody tokens={tokens} vocabMap={vocabMap} onWordClick={handleWordClick} showFurigana={showFurigana} activeIdx={popup?.idx ?? null} />
               : body}
           </div>
 

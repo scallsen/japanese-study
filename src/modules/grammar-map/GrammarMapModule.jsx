@@ -125,7 +125,7 @@ export default function GrammarMapModule() {
   }, [layout, visibleIds, known, selectedId])
 
   const edges = useMemo(() => {
-    const { groups, soloNodes, nodeToRep } = layout
+    const { nodeToRep } = layout
     const getRep = id => nodeToRep[id] ?? id
 
     // Build visible edges: between actual node IDs, deduped at the group level
