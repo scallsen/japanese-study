@@ -803,7 +803,7 @@ export default function VocabPage() {
             <div style={{ height: 3, background: 'rgba(255,255,255,0.08)' }}>
               <div style={{
                 height: '100%',
-                width: `${pool.length > 0 ? (drill.correct / pool.length) * 100 : 0}%`,
+                width: `${(drill.correct + drill.remaining) > 0 ? (drill.correct / (drill.correct + drill.remaining)) * 100 : 0}%`,
                 background: '#3ABDA4',
                 transition: 'width 300ms ease',
               }} />
