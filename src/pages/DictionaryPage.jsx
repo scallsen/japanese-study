@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
+import { toKana } from 'wanakana'
 import PageHeader from '../components/PageHeader.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
 import { supabase } from '../lib/supabase.js'
@@ -15,6 +16,13 @@ function isJapanese(str) {
 
 function isKanaOnly(str) {
   return /^[ぁ-ヿ]+$/.test(str)
+}
+
+// Returns the kana form if term is pure romaji that fully converts; null otherwise.
+function romajiToKana(term) {
+  if (!term || isJapanese(term) || !/^[a-zA-Z'-]+$/.test(term)) return null
+  const converted = toKana(term)
+  return /^[ぁ-ヿ]+$/.test(converted) ? converted : null
 }
 
 function relevanceScore(row, term) {
@@ -53,8 +61,12 @@ async function doSearch(term, offset, commonOnly) {
   const trimmed = term.trim()
   if (!trimmed) return { rows: [], hasMore: false }
 
-  const jp = isJapanese(trimmed)
-  const kana = jp && isKanaOnly(trimmed)
+  // Convert romaji to kana if the input fully maps (e.g. "hon" → "ほん")
+  const kanaForm = romajiToKana(trimmed)
+  const effectiveTerm = kanaForm ?? trimmed
+
+  const jp = isJapanese(effectiveTerm) || !!kanaForm
+  const kana = jp && isKanaOnly(effectiveTerm)
 
   const buildBase = () => {
     let q = supabase
@@ -68,11 +80,11 @@ async function doSearch(term, offset, commonOnly) {
   if (kana && offset === 0) {
     // Merge prefix match on primary_form + exact match in kana_forms array
     const [r1, r2] = await Promise.all([
-      buildBase().ilike('primary_form', trimmed + '%').limit(PAGE_SIZE),
+      buildBase().ilike('primary_form', effectiveTerm + '%').limit(PAGE_SIZE),
       supabase
         .from('dictionary')
         .select('id, primary_form, kana_forms, gloss_en, pos, common')
-        .filter('kana_forms', 'cs', `{${trimmed}}`)
+        .filter('kana_forms', 'cs', `{${effectiveTerm}}`)
         .order('common', { ascending: false })
         .limit(PAGE_SIZE),
     ])
@@ -82,21 +94,21 @@ async function doSearch(term, offset, commonOnly) {
     for (const row of [...(r1.data ?? []), ...(r2.data ?? [])]) {
       if (!seen.has(row.id)) { seen.add(row.id); merged.push(row) }
     }
-    merged.sort((a, b) => relevanceScore(b, trimmed) - relevanceScore(a, trimmed))
+    merged.sort((a, b) => relevanceScore(b, effectiveTerm) - relevanceScore(a, effectiveTerm))
     const rows = merged.slice(0, PAGE_SIZE)
     return { rows, hasMore: rows.length === PAGE_SIZE }
   }
 
   let q = buildBase().range(offset, offset + PAGE_SIZE - 1)
   if (jp) {
-    q = q.ilike('primary_form', trimmed + '%')
+    q = q.ilike('primary_form', effectiveTerm + '%')
   } else {
-    q = q.ilike('gloss_en', '%' + trimmed + '%')
+    q = q.ilike('gloss_en', '%' + effectiveTerm + '%')
   }
 
   const { data, error } = await q
   if (error) throw error
-  const rows = (data ?? []).sort((a, b) => relevanceScore(b, trimmed) - relevanceScore(a, trimmed))
+  const rows = (data ?? []).sort((a, b) => relevanceScore(b, effectiveTerm) - relevanceScore(a, effectiveTerm))
   return { rows, hasMore: rows.length === PAGE_SIZE }
 }
 
@@ -150,6 +162,9 @@ export default function DictionaryPage() {
   const [inputFocused, setInputFocused] = useState(false)
   const debounceRef = useRef(null)
   const ticketRef = useRef(0)
+  const composingRef = useRef(false)
+
+  const romajiHint = useMemo(() => romajiToKana(query.trim()), [query])
 
   async function runSearch(term, off, append, common) {
     if (!term.trim()) {
@@ -186,6 +201,7 @@ export default function DictionaryPage() {
       setOffset(0)
       return
     }
+    if (composingRef.current) return
     debounceRef.current = setTimeout(() => {
       runSearch(query, 0, false, commonOnly)
     }, 250)
@@ -212,9 +228,15 @@ export default function DictionaryPage() {
             placeholder="Search Japanese or English..."
             value={query}
             onChange={e => setQuery(e.target.value)}
+            onCompositionStart={() => { composingRef.current = true }}
+            onCompositionEnd={e => { composingRef.current = false; setQuery(e.target.value) }}
             onFocus={() => setInputFocused(true)}
             onBlur={() => setInputFocused(false)}
             autoFocus
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="none"
+            spellCheck={false}
             style={{
               width: '100%',
               boxSizing: 'border-box',
@@ -227,10 +249,23 @@ export default function DictionaryPage() {
               letterSpacing: TRACKING,
               color: TEXT,
               outline: 'none',
-              marginBottom: 12,
+              marginBottom: romajiHint ? 6 : 12,
               transition: 'border-color 100ms',
             }}
           />
+
+          {romajiHint && (
+            <div style={{
+              fontSize: 11,
+              color: TEXT_MUTED,
+              fontFamily: FONT,
+              letterSpacing: TRACKING,
+              marginBottom: 12,
+              opacity: 0.6,
+            }}>
+              Searching as {romajiHint}
+            </div>
+          )}
 
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
             <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', userSelect: 'none' }}>
