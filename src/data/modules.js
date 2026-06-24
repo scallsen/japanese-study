@@ -49,4 +49,14 @@ export const MODULES = [
     accent: '#E05A4E',
     requiresAuth: false,
   },
+  {
+    id: 'dictionary',
+    label: 'Dictionary',
+    sublabel: 'JMdict Lookup',
+    stats: null,
+    href: '#/dictionary',
+    external: false,
+    accent: '#D4A84B',
+    requiresAuth: false,
+  },
 ]
