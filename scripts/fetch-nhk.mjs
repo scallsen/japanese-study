@@ -50,38 +50,63 @@ function katakanaToHiragana(str) {
   return (str ?? '').replace(/[ァ-ヶ]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0x60))
 }
 
-function tokenizeText(tokenizerInstance, text) {
+function tokenizeTextRich(tokenizerInstance, text) {
   return tokenizerInstance.tokenize(text).map(tok => {
     const isContent = !PARTICLE_POS.has(tok.pos) && tok.surface_form.trim().length > 0
     const reading = tok.reading && tok.reading !== tok.surface_form
       ? katakanaToHiragana(tok.reading)
       : null
-    return { t: tok.surface_form, r: reading, w: isContent }
+    const basicForm = tok.basic_form && tok.basic_form !== '*'
+      ? tok.basic_form
+      : tok.surface_form
+    return { t: tok.surface_form, r: reading, w: isContent, b: basicForm }
   })
 }
 
-async function generateDefinitions(words) {
-  if (words.length === 0) return {}
-  const message = await anthropic.messages.create({
-    model: 'claude-haiku-4-5-20251001',
-    max_tokens: 2000,
-    messages: [{
-      role: 'user',
-      content: `Give concise English definitions for these Japanese words. Return raw JSON only — an array: [{"word":"...","meaning":"..."}, ...]. One entry per input word. Meanings should be 1-5 words.
+async function lookupJmdict(wordInfos) {
+  if (wordInfos.size === 0) return new Map()
 
-Words: ${words.join('、')}`,
-    }],
-  })
-  const raw = message.content[0].text.trim()
-  const start = raw.indexOf('[')
-  const end = raw.lastIndexOf(']')
-  if (start === -1 || end === -1) return {}
-  const arr = JSON.parse(raw.slice(start, end + 1))
-  const map = {}
-  for (const entry of arr) {
-    if (entry.word && entry.meaning) map[entry.word] = entry.meaning
+  const basicForms = [...new Set([...wordInfos.values()].map(v => v.basicForm))]
+  const surfaceForms = [...wordInfos.keys()]
+  const allForms = [...new Set([...basicForms, ...surfaceForms])]
+
+  const { data: stage1, error: e1 } = await supabase
+    .from('dictionary')
+    .select('id, primary_form, kana_forms, gloss_en, pos')
+    .in('primary_form', allForms)
+  if (e1) throw new Error(`JMdict stage-1 lookup failed: ${e1.message}`)
+
+  const formToRow = new Map()
+  for (const row of (stage1 ?? [])) {
+    formToRow.set(row.primary_form, row)
   }
-  return map
+
+  // Stage 2: kana fallback for words whose basicForm didn't match a primary_form
+  // Handles cases like basicForm='ある' where JMdict primary_form is '有る'
+  const missedKana = [...new Set(basicForms.filter(f => !formToRow.has(f)))]
+  if (missedKana.length > 0) {
+    const pgArray = '{' + missedKana.map(f => `"${f.replace(/["\\]/g, '\\$&')}"`).join(',') + '}'
+    const { data: stage2, error: e2 } = await supabase
+      .from('dictionary')
+      .select('id, primary_form, kana_forms, gloss_en, pos')
+      .filter('kana_forms', 'ov', pgArray)
+    if (e2) throw new Error(`JMdict stage-2 lookup failed: ${e2.message}`)
+    for (const row of (stage2 ?? [])) {
+      for (const kana of row.kana_forms) {
+        if (!formToRow.has(kana)) formToRow.set(kana, row)
+      }
+    }
+  }
+
+  const result = new Map()
+  for (const [surface, { basicForm }] of wordInfos) {
+    const row = formToRow.get(basicForm) ?? formToRow.get(surface) ?? null
+    if (!row) continue
+    const meaning = row.gloss_en?.split('; ')[0] ?? null
+    const pos = Array.isArray(row.pos) && row.pos.length > 0 ? row.pos[0] : null
+    result.set(surface, { jmdictId: row.id, meaning, pos })
+  }
+  return result
 }
 
 function slugFromUrl(url) {
@@ -199,24 +224,33 @@ async function main() {
 
     const publishedAt = item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString()
 
-    const tokensJa = ai.body_ja ? tokenizeText(tokenizer, ai.body_ja) : null
-    const tokensSimple = ai.body_simple ? tokenizeText(tokenizer, ai.body_simple) : null
+    const richJa = ai.body_ja ? tokenizeTextRich(tokenizer, ai.body_ja) : null
+    const richSimple = ai.body_simple ? tokenizeTextRich(tokenizer, ai.body_simple) : null
+    const tokensJa = richJa?.map(({ t, r, w }) => ({ t, r, w })) ?? null
+    const tokensSimple = richSimple?.map(({ t, r, w }) => ({ t, r, w })) ?? null
 
-    // Collect unique content words with their readings from both bodies
-    const wordReadings = new Map()
-    for (const tok of [...(tokensJa ?? []), ...(tokensSimple ?? [])]) {
-      if (tok.w && !wordReadings.has(tok.t)) wordReadings.set(tok.t, tok.r ?? null)
+    // Collect unique content words with their readings and basic forms from both bodies
+    const wordInfos = new Map()
+    for (const tok of [...(richJa ?? []), ...(richSimple ?? [])]) {
+      if (tok.w && !wordInfos.has(tok.t)) {
+        wordInfos.set(tok.t, { reading: tok.r ?? null, basicForm: tok.b })
+      }
     }
 
     let vocabularyJa = null
-    if (wordReadings.size > 0) {
-      console.log(`  Generating definitions for ${wordReadings.size} unique words...`)
-      const definitionsMap = await generateDefinitions([...wordReadings.keys()])
-      vocabularyJa = [...wordReadings.entries()].map(([word, reading]) => ({
-        word,
-        reading,
-        meaning: definitionsMap[word] ?? null,
-      })).filter(e => e.meaning)
+    if (wordInfos.size > 0) {
+      console.log(`  Looking up ${wordInfos.size} unique words in JMdict...`)
+      const jmdictMap = await lookupJmdict(wordInfos)
+      vocabularyJa = [...wordInfos.entries()].map(([word, { reading }]) => {
+        const j = jmdictMap.get(word) ?? null
+        return {
+          word,
+          reading,
+          meaning: j?.meaning ?? null,
+          jmdictId: j?.jmdictId ?? null,
+          pos: j?.pos ?? null,
+        }
+      }).filter(e => e.meaning)
     }
 
     try {
