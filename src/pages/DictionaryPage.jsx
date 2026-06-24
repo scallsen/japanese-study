@@ -1,0 +1,347 @@
+import { useState, useEffect, useRef, useMemo } from 'react'
+import { toKana } from 'wanakana'
+import PageHeader from '../components/PageHeader.jsx'
+import AuthSlot from '../components/AuthSlot.jsx'
+import { supabase } from '../lib/supabase.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../data/theme.js'
+
+const BG = '#1E1E1E'
+const SURFACE = '#2A2A2A'
+
+const PAGE_SIZE = 20
+
+function isJapanese(str) {
+  return /[぀-鿿]/.test(str)
+}
+
+function isKanaOnly(str) {
+  return /^[ぁ-ヿ]+$/.test(str)
+}
+
+// Returns the kana form if term is pure romaji that fully converts; null otherwise.
+function romajiToKana(term) {
+  if (!term || isJapanese(term) || !/^[a-zA-Z'-]+$/.test(term)) return null
+  const converted = toKana(term)
+  return /^[ぁ-ヿ]+$/.test(converted) ? converted : null
+}
+
+function relevanceScore(row, term) {
+  let score = 0
+  if (row.common) score += 100
+  if (row.primary_form === term) score += 50
+  if (row.kana_forms?.includes(term)) score += 30
+  score -= Math.min(row.primary_form.length, 20)
+  return score
+}
+
+function shortPos(raw) {
+  if (!raw) return null
+  if (raw.startsWith('Godan verb')) return 'v5'
+  if (raw.startsWith('Ichidan verb')) return 'v1'
+  if (raw.startsWith('suru verb')) return 'vs'
+  if (raw.startsWith('adjectival nouns') || raw.startsWith('quasi-adj')) return 'adj-na'
+  if (raw.startsWith('adjective')) return 'adj-i'
+  if (raw.startsWith('adverb')) return 'adv'
+  if (raw.startsWith('noun')) return 'noun'
+  if (raw.startsWith('expression')) return 'exp'
+  if (raw.startsWith('conjunction')) return 'conj'
+  if (raw.startsWith('interjection')) return 'int'
+  if (raw.startsWith('auxiliary')) return 'aux'
+  if (raw.startsWith('particle')) return 'part'
+  if (raw.startsWith('prefix')) return 'pfx'
+  if (raw.startsWith('suffix')) return 'sfx'
+  if (raw.startsWith('pronoun')) return 'pron'
+  if (raw.startsWith('counter')) return 'ctr'
+  if (raw.startsWith('numeric')) return 'num'
+  return raw.split(' ')[0].slice(0, 6).toLowerCase()
+}
+
+async function doSearch(term, offset, commonOnly) {
+  if (!supabase) throw new Error('Supabase is not configured (missing env vars)')
+  const trimmed = term.trim()
+  if (!trimmed) return { rows: [], hasMore: false }
+
+  // Convert romaji to kana if the input fully maps (e.g. "hon" → "ほん")
+  const kanaForm = romajiToKana(trimmed)
+  const effectiveTerm = kanaForm ?? trimmed
+
+  const jp = isJapanese(effectiveTerm) || !!kanaForm
+  const kana = jp && isKanaOnly(effectiveTerm)
+
+  const buildBase = () => {
+    let q = supabase
+      .from('dictionary')
+      .select('id, primary_form, kana_forms, gloss_en, pos, common')
+      .order('common', { ascending: false })
+    if (commonOnly) q = q.eq('common', true)
+    return q
+  }
+
+  if (kana && offset === 0) {
+    // Merge prefix match on primary_form + exact match in kana_forms array
+    const [r1, r2] = await Promise.all([
+      buildBase().ilike('primary_form', effectiveTerm + '%').limit(PAGE_SIZE),
+      supabase
+        .from('dictionary')
+        .select('id, primary_form, kana_forms, gloss_en, pos, common')
+        .filter('kana_forms', 'cs', `{${effectiveTerm}}`)
+        .order('common', { ascending: false })
+        .limit(PAGE_SIZE),
+    ])
+    if (r1.error) throw r1.error
+    const seen = new Set()
+    const merged = []
+    for (const row of [...(r1.data ?? []), ...(r2.data ?? [])]) {
+      if (!seen.has(row.id)) { seen.add(row.id); merged.push(row) }
+    }
+    merged.sort((a, b) => relevanceScore(b, effectiveTerm) - relevanceScore(a, effectiveTerm))
+    const rows = merged.slice(0, PAGE_SIZE)
+    return { rows, hasMore: rows.length === PAGE_SIZE }
+  }
+
+  let q = buildBase().range(offset, offset + PAGE_SIZE - 1)
+  if (jp) {
+    q = q.ilike('primary_form', effectiveTerm + '%')
+  } else {
+    q = q.ilike('gloss_en', '%' + effectiveTerm + '%')
+  }
+
+  const { data, error } = await q
+  if (error) throw error
+  const rows = (data ?? []).sort((a, b) => relevanceScore(b, effectiveTerm) - relevanceScore(a, effectiveTerm))
+  return { rows, hasMore: rows.length === PAGE_SIZE }
+}
+
+function EntryRow({ entry }) {
+  const kana = entry.kana_forms?.[0]
+  const showKana = kana && kana !== entry.primary_form
+  const posLabel = shortPos(Array.isArray(entry.pos) ? entry.pos[0] : null)
+  const meaning = entry.gloss_en?.split('; ').slice(0, 3).join('; ') ?? ''
+
+  return (
+    <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 5 }}>
+        <span style={{ fontSize: 20, color: TEXT, fontFamily: FONT, letterSpacing: 0 }}>{entry.primary_form}</span>
+        {showKana && (
+          <span style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{kana}</span>
+        )}
+        {entry.common && (
+          <span style={{ fontSize: 10, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>common</span>
+        )}
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        {posLabel && (
+          <span style={{
+            fontSize: 10,
+            color: TEXT_MUTED,
+            background: 'rgba(255,255,255,0.07)',
+            borderRadius: 3,
+            padding: '1px 6px',
+            fontFamily: FONT,
+            letterSpacing: TRACKING,
+            flexShrink: 0,
+          }}>{posLabel}</span>
+        )}
+        {meaning && (
+          <span style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{meaning}</span>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export default function DictionaryPage() {
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [hasMore, setHasMore] = useState(false)
+  const [offset, setOffset] = useState(0)
+  const [commonOnly, setCommonOnly] = useState(false)
+  const [error, setError] = useState(null)
+  const [inputFocused, setInputFocused] = useState(false)
+  const debounceRef = useRef(null)
+  const ticketRef = useRef(0)
+  const romajiHint = useMemo(() => romajiToKana(query.trim()), [query])
+
+  async function runSearch(term, off, append, common) {
+    if (!term.trim()) {
+      setResults([])
+      setHasMore(false)
+      setOffset(0)
+      return
+    }
+    const ticket = ++ticketRef.current
+    append ? setLoadingMore(true) : setLoading(true)
+    setError(null)
+    try {
+      const { rows, hasMore: more } = await doSearch(term, off, common)
+      if (ticket !== ticketRef.current) return
+      setResults(prev => append ? [...prev, ...rows] : rows)
+      setHasMore(more)
+      setOffset(off + rows.length)
+    } catch {
+      if (ticket !== ticketRef.current) return
+      setError('Search failed. Please try again.')
+    } finally {
+      if (ticket === ticketRef.current) {
+        setLoading(false)
+        setLoadingMore(false)
+      }
+    }
+  }
+
+  useEffect(() => {
+    clearTimeout(debounceRef.current)
+    if (!query.trim()) {
+      setResults([])
+      setHasMore(false)
+      setOffset(0)
+      return
+    }
+    debounceRef.current = setTimeout(() => {
+      runSearch(query, 0, false, commonOnly)
+    }, 250)
+    return () => clearTimeout(debounceRef.current)
+  }, [query, commonOnly])
+
+  const showEmpty = !loading && !error && query && results.length === 0
+  const showPrompt = !query
+  const showResults = results.length > 0
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', background: BG }}>
+      <PageHeader
+        crumbs={[
+          { label: 'Japanese Study', href: '#/' },
+          { label: 'Dictionary' },
+        ]}
+        rightSlot={<AuthSlot />}
+      />
+      <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 48px' }}>
+        <div style={{ maxWidth: 600, margin: '0 auto' }}>
+          <input
+            type="text"
+            placeholder="Search Japanese or English..."
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            onFocus={() => setInputFocused(true)}
+            onBlur={() => setInputFocused(false)}
+            autoFocus
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="none"
+            spellCheck={false}
+            style={{
+              width: '100%',
+              boxSizing: 'border-box',
+              background: SURFACE,
+              border: `1px solid ${inputFocused ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.1)'}`,
+              borderRadius: 8,
+              padding: '12px 16px',
+              fontSize: 16,
+              fontFamily: FONT,
+              letterSpacing: TRACKING,
+              color: TEXT,
+              outline: 'none',
+              marginBottom: romajiHint ? 6 : 12,
+              transition: 'border-color 100ms',
+            }}
+          />
+
+          {romajiHint && (
+            <div style={{
+              fontSize: 11,
+              color: TEXT_MUTED,
+              fontFamily: FONT,
+              letterSpacing: TRACKING,
+              marginBottom: 12,
+              opacity: 0.6,
+            }}>
+              Searching as {romajiHint}
+            </div>
+          )}
+
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', userSelect: 'none' }}>
+              <input
+                type="checkbox"
+                checked={commonOnly}
+                onChange={e => setCommonOnly(e.target.checked)}
+                style={{ cursor: 'pointer', accentColor: '#3ABDA4' }}
+              />
+              <span style={{ fontSize: 12, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+                Common words only
+              </span>
+            </label>
+            {showResults && (
+              <span style={{ fontSize: 12, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, marginLeft: 'auto', opacity: 0.55 }}>
+                {results.length}{hasMore ? '+' : ''} results
+              </span>
+            )}
+          </div>
+
+          {loading && (
+            <div style={{ textAlign: 'center', padding: '48px 0', color: TEXT_MUTED, fontFamily: FONT, fontSize: 13, letterSpacing: TRACKING }}>
+              Searching...
+            </div>
+          )}
+
+          {!loading && error && (
+            <div style={{ textAlign: 'center', padding: '48px 0', color: '#E05A4E', fontFamily: FONT, fontSize: 13, letterSpacing: TRACKING }}>
+              {error}
+            </div>
+          )}
+
+          {!loading && showEmpty && (
+            <div style={{ textAlign: 'center', padding: '48px 0', color: TEXT_MUTED, fontFamily: FONT, fontSize: 13, letterSpacing: TRACKING }}>
+              No results for &ldquo;{query}&rdquo;
+            </div>
+          )}
+
+          {!loading && showPrompt && (
+            <div style={{ textAlign: 'center', padding: '48px 0', color: TEXT_MUTED, fontFamily: FONT, fontSize: 13, letterSpacing: TRACKING, opacity: 0.5 }}>
+              217,625 entries · JMdict
+            </div>
+          )}
+
+          {showResults && !loading && (
+            <>
+              <div style={{
+                background: SURFACE,
+                borderRadius: 8,
+                overflow: 'hidden',
+                border: '1px solid rgba(255,255,255,0.06)',
+              }}>
+                {results.map(entry => <EntryRow key={entry.id} entry={entry} />)}
+              </div>
+
+              {hasMore && (
+                <div style={{ textAlign: 'center', marginTop: 16 }}>
+                  <button
+                    onClick={() => runSearch(query, offset, true, commonOnly)}
+                    disabled={loadingMore}
+                    style={{
+                      fontSize: 13,
+                      fontFamily: FONT,
+                      letterSpacing: TRACKING,
+                      color: TEXT_MUTED,
+                      background: SURFACE,
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: 6,
+                      padding: '8px 28px',
+                      cursor: loadingMore ? 'default' : 'pointer',
+                      opacity: loadingMore ? 0.5 : 1,
+                    }}
+                  >
+                    {loadingMore ? 'Loading...' : 'Load more'}
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}

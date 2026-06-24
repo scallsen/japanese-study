@@ -121,7 +121,10 @@ function WordPopup({ token, vocabEntry, onAddToSrs, onClose, anchorRect }) {
     >
       <div style={{ fontSize: 20, color: TEXT, marginBottom: 2 }}>{token.t}</div>
       {token.r && (
-        <div style={{ fontSize: 13, color: TEXT_MUTED, marginBottom: vocabEntry ? 6 : 10 }}>{token.r}</div>
+        <div style={{ fontSize: 13, color: TEXT_MUTED, marginBottom: (vocabEntry?.pos || vocabEntry?.meaning) ? 4 : 10 }}>{token.r}</div>
+      )}
+      {vocabEntry?.pos && (
+        <div style={{ fontSize: 11, color: TEXT_MUTED, marginBottom: vocabEntry.meaning ? 4 : 10, opacity: 0.7 }}>{vocabEntry.pos}</div>
       )}
       {vocabEntry?.meaning && (
         <div style={{ fontSize: 13, color: TEXT, marginBottom: 10 }}>{vocabEntry.meaning}</div>
@@ -186,7 +189,9 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
       decks[IMMERSION_DECK_ID] = { id: IMMERSION_DECK_ID, name: 'Immersion Words', active: true, source: 'imported', addedAt: Date.now() }
     }
     const cardId = `${IMMERSION_DECK_ID}-${Date.now()}`
-    const card = createCard(word, meaning, cardId, IMMERSION_DECK_ID)
+    const extras = {}
+    if (vocabEntry?.jmdictId) extras.jmdictId = vocabEntry.jmdictId
+    const card = createCard(word, meaning, cardId, IMMERSION_DECK_ID, extras)
     saveSrs({ ...current, decks, cards: { ...current.cards, [cardId]: card } })
     setPopup(null)
   }

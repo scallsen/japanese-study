@@ -30,7 +30,7 @@ Two patterns for internal modules. Pick the right one before looking for code:
 | Shared UI components | `src/components/` |
 | Design tokens | `src/data/theme.js` |
 
-**Database:** The only Supabase table used by this app is `progress` (schema in the Auth section below). All word/card content lives in static JSON files in the repo — never in the database.
+**Database:** Two Supabase tables: `progress` (user learning state, schema in Auth section) and `dictionary` (JMdict central dictionary, schema in Immersion section). All word/card content lives in static JSON files in the repo — never in the database.
 
 ## Routing
 
@@ -239,7 +239,7 @@ const { data, save, loading } = useProgress('my-module-namespace')
 
 ### Supabase schema
 
-The only table in the database. All card/word content lives in static JSON in the repo.
+The `progress` table. All card/word content lives in static JSON in the repo.
 
 ```sql
 create table if not exists progress (
@@ -433,6 +433,7 @@ Configured via `leechThreshold` (default 8, localStorage key `srs-leech-threshol
       sentenceAudio?: string,
       sentence?: string,
       sentenceEnglish?: string,
+      jmdictId?: string,             // set on immersion-words cards when word matched JMdict
       // FSRS scheduling fields (stability, difficulty, due, state, lapses, …):
       ...fsrsFields
     }
@@ -513,8 +514,10 @@ Visible in the settings sidebar when `import.meta.env.DEV` and cards exist. "Adv
 |---|---|
 | `src/modules/immersion/ImmersionModule.jsx` | Article list screen — fetches from Supabase, reading history |
 | `src/modules/immersion/ImmersionReader.jsx` | Reader — tokenized body, word popup, furigana toggle, SRS bridge |
-| `scripts/fetch-nhk.mjs` | Nightly pipeline — fetches Yahoo Japan RSS, generates articles via Claude Haiku, tokenizes with Kuromoji, fetches definitions |
-| `scripts/backfill-definitions.mjs` | One-off backfill — re-tokenizes all existing articles and regenerates `vocabulary_ja` |
+| `scripts/fetch-nhk.mjs` | Nightly pipeline — fetches Yahoo Japan RSS, generates articles via Claude Haiku, tokenizes with Kuromoji, looks up JMdict definitions |
+| `scripts/import-jmdict.mjs` | One-time import — downloads jmdict-simplified JSON and populates the Supabase `dictionary` table |
+| `scripts/backfill-jmdict.mjs` | One-off backfill — re-tokenizes existing articles and regenerates `vocabulary_ja` from JMdict |
+| `scripts/backfill-definitions.mjs` | Legacy — original Claude Haiku definition backfill, superseded by `backfill-jmdict.mjs` |
 | `.github/workflows/fetch-articles.yml` | GHA cron — runs `fetch-nhk.mjs` nightly at 01:00 UTC; requires Node 22 (for native WebSocket in `@supabase/realtime-js`) |
 
 ### Supabase `articles` table
@@ -534,7 +537,7 @@ create table if not exists articles (
   difficulty   smallint,
   tokens_ja    jsonb,   -- [{t, r, w}] — Kuromoji tokens for body_ja
   tokens_simple jsonb,  -- [{t, r, w}] — Kuromoji tokens for body_simple
-  vocabulary_ja jsonb,  -- [{word, reading, meaning}] — definition for every content token
+  vocabulary_ja jsonb,  -- [{word, reading, meaning, jmdictId, pos}] — JMdict entry per content token
   active       boolean not null default true
 );
 grant select on articles to anon, authenticated;
@@ -542,9 +545,33 @@ grant select on articles to anon, authenticated;
 
 Token shape: `{ t: "surface", r: "hiragana-reading|null", w: boolean }` — `w: false` for particles, auxiliary verbs, punctuation, BOS/EOS.
 
+`vocabulary_ja` entry shape: `{ word, reading, meaning, jmdictId, pos }` — `jmdictId` and `pos` are null for words not found in JMdict (proper nouns, new slang, etc).
+
+### Supabase `dictionary` table
+
+Central dictionary backed by [jmdict-simplified](https://github.com/scriptin/jmdict-simplified). 217,625 entries; `common = true` on ~22,610 entries (ichi1/ichi2/news1/news2/spec1/spec2 priority markers). To prune to common-only: `DELETE FROM dictionary WHERE NOT common;`
+
+```sql
+create table if not exists dictionary (
+  id           text primary key,       -- JMdict entry id
+  primary_form text not null,          -- first kanji form, or first kana form if no kanji
+  kana_forms   text[] not null default '{}',
+  gloss_en     text,                   -- all English glosses joined with '; '
+  pos          text[],                 -- partOfSpeech codes across all senses
+  common       boolean not null default false
+);
+create index dictionary_primary_form_idx on dictionary (primary_form);
+create index dictionary_kana_forms_gin   on dictionary using gin (kana_forms);
+create index dictionary_common_idx       on dictionary (common);
+grant select on dictionary to anon, authenticated;
+grant all on dictionary to service_role;
+```
+
+Lookup in the pipeline uses a two-stage query: stage 1 matches `primary_form` against Kuromoji `basic_form`; stage 2 uses GIN array overlap on `kana_forms` for entries where the basic form is kana but the JMdict primary form is kanji (e.g. `ある` → `有る`).
+
 ### Word popup / definitions
 
-Every content token (`w: true`) in `tokens_ja`/`tokens_simple` is clickable in the reader. Clicking shows a popup with the word, its reading, and an English definition. Definitions come from `vocabulary_ja`, which the pipeline generates via a second Claude Haiku call covering every unique content word (typically 60–120 per article). Run `backfill-definitions.mjs` if articles predate this feature or need regeneration.
+Every content token (`w: true`) in `tokens_ja`/`tokens_simple` is clickable in the reader. Clicking shows a popup with the word, its reading, part of speech, and an English definition sourced from `vocabulary_ja`. Run `backfill-jmdict.mjs` to regenerate definitions for existing articles.
 
 ### Article retention
 
