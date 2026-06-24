@@ -56,6 +56,44 @@ function shortPos(raw) {
   return raw.split(' ')[0].slice(0, 6).toLowerCase()
 }
 
+function katakanaToHiragana(str) {
+  return str.replace(/[ァ-ヶ]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0x60))
+}
+
+function isSingleKanji(str) {
+  return /^[一-鿿]$/.test(str)
+}
+
+async function doKanjiSearch(term) {
+  if (!supabase) return []
+  const trimmed = term.trim()
+  if (!trimmed) return []
+
+  const kanaForm = romajiToKana(trimmed)
+  const effectiveTerm = kanaForm ?? trimmed
+  const jp = isJapanese(effectiveTerm) || !!kanaForm
+
+  let q = supabase
+    .from('kanji')
+    .select('literal, on_readings, kun_readings, meanings, jlpt, grade, stroke_count, frequency')
+    .limit(8)
+
+  if (isSingleKanji(trimmed)) {
+    q = q.eq('literal', trimmed)
+  } else if (jp && isKanaOnly(effectiveTerm)) {
+    const hiragana = katakanaToHiragana(effectiveTerm)
+    q = q.filter('readings_hira', 'cs', `{${hiragana}}`).order('frequency', { ascending: true, nullsFirst: false })
+  } else if (!jp) {
+    q = q.ilike('meanings', `%${trimmed}%`).order('frequency', { ascending: true, nullsFirst: false })
+  } else {
+    return []
+  }
+
+  const { data, error } = await q
+  if (error) throw error
+  return data ?? []
+}
+
 async function doSearch(term, offset, commonOnly) {
   if (!supabase) throw new Error('Supabase is not configured (missing env vars)')
   const trimmed = term.trim()
@@ -112,6 +150,66 @@ async function doSearch(term, offset, commonOnly) {
   return { rows, hasMore: rows.length === PAGE_SIZE }
 }
 
+function KanjiRow({ entry }) {
+  const jlptLabel = entry.jlpt ? `N${entry.jlpt}` : null
+  const gradeLabel = entry.grade && entry.grade <= 6 ? `G${entry.grade}` : null
+
+  return (
+    <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+      <span style={{ fontSize: 36, color: TEXT, fontFamily: FONT, lineHeight: 1, flexShrink: 0, letterSpacing: 0, minWidth: 40, textAlign: 'center' }}>
+        {entry.literal}
+      </span>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 5 }}>
+          {entry.on_readings.length > 0 && (
+            <span style={{ fontSize: 13, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>
+              {entry.on_readings.join('、')}
+            </span>
+          )}
+          {entry.kun_readings.length > 0 && (
+            <span style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+              {entry.kun_readings.join('、')}
+            </span>
+          )}
+          {jlptLabel && (
+            <span style={{ fontSize: 10, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>{jlptLabel}</span>
+          )}
+          {gradeLabel && !jlptLabel && (
+            <span style={{ fontSize: 10, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{gradeLabel}</span>
+          )}
+          {entry.stroke_count && (
+            <span style={{ fontSize: 10, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.6 }}>
+              {entry.stroke_count} strokes
+            </span>
+          )}
+        </div>
+        {entry.meanings && (
+          <span style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+            {entry.meanings.split('; ').slice(0, 4).join('; ')}
+          </span>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function SectionLabel({ label }) {
+  return (
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8,
+      marginBottom: 8,
+      marginTop: 4,
+    }}>
+      <span style={{ fontSize: 10, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: '0.1em', opacity: 0.5, textTransform: 'uppercase' }}>
+        {label}
+      </span>
+      <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.06)' }} />
+    </div>
+  )
+}
+
 function EntryRow({ entry }) {
   const kana = entry.kana_forms?.[0]
   const showKana = kana && kana !== entry.primary_form
@@ -153,6 +251,7 @@ function EntryRow({ entry }) {
 export default function DictionaryPage() {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
+  const [kanjiResults, setKanjiResults] = useState([])
   const [loading, setLoading] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
   const [hasMore, setHasMore] = useState(false)
@@ -167,6 +266,7 @@ export default function DictionaryPage() {
   async function runSearch(term, off, append, common) {
     if (!term.trim()) {
       setResults([])
+      setKanjiResults([])
       setHasMore(false)
       setOffset(0)
       return
@@ -175,11 +275,15 @@ export default function DictionaryPage() {
     append ? setLoadingMore(true) : setLoading(true)
     setError(null)
     try {
-      const { rows, hasMore: more } = await doSearch(term, off, common)
+      const [{ rows, hasMore: more }, kanji] = await Promise.all([
+        doSearch(term, off, common),
+        append ? Promise.resolve(null) : doKanjiSearch(term),
+      ])
       if (ticket !== ticketRef.current) return
       setResults(prev => append ? [...prev, ...rows] : rows)
       setHasMore(more)
       setOffset(off + rows.length)
+      if (!append) setKanjiResults(kanji ?? [])
     } catch {
       if (ticket !== ticketRef.current) return
       setError('Search failed. Please try again.')
@@ -195,6 +299,7 @@ export default function DictionaryPage() {
     clearTimeout(debounceRef.current)
     if (!query.trim()) {
       setResults([])
+      setKanjiResults([])
       setHasMore(false)
       setOffset(0)
       return
@@ -205,7 +310,7 @@ export default function DictionaryPage() {
     return () => clearTimeout(debounceRef.current)
   }, [query, commonOnly])
 
-  const showEmpty = !loading && !error && query && results.length === 0
+  const showEmpty = !loading && !error && query && results.length === 0 && kanjiResults.length === 0
   const showPrompt = !query
   const showResults = results.length > 0
 
@@ -305,8 +410,24 @@ export default function DictionaryPage() {
             </div>
           )}
 
+          {!loading && kanjiResults.length > 0 && (
+            <>
+              <SectionLabel label="Kanji" />
+              <div style={{
+                background: SURFACE,
+                borderRadius: 8,
+                overflow: 'hidden',
+                border: '1px solid rgba(255,255,255,0.06)',
+                marginBottom: showResults ? 20 : 0,
+              }}>
+                {kanjiResults.map(entry => <KanjiRow key={entry.literal} entry={entry} />)}
+              </div>
+            </>
+          )}
+
           {showResults && !loading && (
             <>
+              {kanjiResults.length > 0 && <SectionLabel label="Words" />}
               <div style={{
                 background: SURFACE,
                 borderRadius: 8,
