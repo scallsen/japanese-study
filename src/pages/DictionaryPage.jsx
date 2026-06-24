@@ -7,6 +7,7 @@ import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../data/theme.js'
 
 const BG = '#1E1E1E'
 const SURFACE = '#2A2A2A'
+const SURFACE_HOVER = '#313131'
 
 const PAGE_SIZE = 20
 
@@ -190,6 +191,88 @@ function KanjiRow({ entry }) {
         )}
       </div>
     </div>
+  )
+}
+
+function KanjiSection({ entries, hasWords }) {
+  const [expanded, setExpanded] = useState(false)
+  const [hovered, setHovered] = useState(false)
+  const [collapseHovered, setCollapseHovered] = useState(false)
+
+  return (
+    <>
+      <SectionLabel label="Kanji" />
+      <div style={{
+        background: SURFACE,
+        borderRadius: 8,
+        border: '1px solid rgba(255,255,255,0.06)',
+        overflow: expanded ? 'hidden' : 'visible',
+        marginBottom: hasWords ? 20 : 0,
+      }}>
+        {!expanded ? (
+          <div
+            onClick={() => setExpanded(true)}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              cursor: 'pointer',
+              background: hovered ? SURFACE_HOVER : 'transparent',
+              borderRadius: 8,
+              transition: 'background 100ms',
+            }}
+          >
+            <div style={{ display: 'flex', overflowX: 'auto', flex: 1 }}>
+              {entries.map((entry, i) => (
+                <div
+                  key={entry.literal}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '12px 20px',
+                    flexShrink: 0,
+                    borderRight: '1px solid rgba(255,255,255,0.05)',
+                  }}
+                >
+                  <span style={{ fontSize: 22, color: TEXT, fontFamily: FONT, letterSpacing: 0 }}>
+                    {entry.literal}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div style={{ padding: '0 16px', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+              <span style={{ fontSize: 20, lineHeight: 1, color: TEXT_MUTED, opacity: 0.5, fontFamily: 'system-ui' }}>›</span>
+            </div>
+          </div>
+        ) : (
+          <>
+            {entries.map(entry => <KanjiRow key={entry.literal} entry={entry} />)}
+            <div
+              onClick={() => setExpanded(false)}
+              onMouseEnter={() => setCollapseHovered(true)}
+              onMouseLeave={() => setCollapseHovered(false)}
+              style={{
+                padding: '10px 16px',
+                textAlign: 'center',
+                cursor: 'pointer',
+                fontSize: 12,
+                color: TEXT_MUTED,
+                fontFamily: FONT,
+                letterSpacing: TRACKING,
+                opacity: 0.6,
+                borderTop: '1px solid rgba(255,255,255,0.05)',
+                background: collapseHovered ? SURFACE_HOVER : 'transparent',
+                transition: 'background 100ms',
+              }}
+            >
+              Collapse Kanji
+            </div>
+          </>
+        )}
+      </div>
+    </>
   )
 }
 
@@ -411,18 +494,11 @@ export default function DictionaryPage() {
           )}
 
           {!loading && kanjiResults.length > 0 && (
-            <>
-              <SectionLabel label="Kanji" />
-              <div style={{
-                background: SURFACE,
-                borderRadius: 8,
-                overflow: 'hidden',
-                border: '1px solid rgba(255,255,255,0.06)',
-                marginBottom: showResults ? 20 : 0,
-              }}>
-                {kanjiResults.map(entry => <KanjiRow key={entry.literal} entry={entry} />)}
-              </div>
-            </>
+            <KanjiSection
+              key={kanjiResults.map(r => r.literal).join('')}
+              entries={kanjiResults}
+              hasWords={showResults}
+            />
           )}
 
           {showResults && !loading && (
