@@ -48,6 +48,7 @@ async function resolveSource() {
   const arg = process.argv[2]
   if (arg) {
     console.log(`Using local file: ${arg}`)
+    if (arg.endsWith('.zip')) return execSync(`unzip -p "${arg}"`, { maxBuffer: 50 * 1024 * 1024 }).toString()
     return readFileSync(arg, 'utf-8')
   }
   console.log('No file argument — fetching latest release from GitHub...')
