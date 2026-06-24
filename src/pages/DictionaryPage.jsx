@@ -162,8 +162,6 @@ export default function DictionaryPage() {
   const [inputFocused, setInputFocused] = useState(false)
   const debounceRef = useRef(null)
   const ticketRef = useRef(0)
-  const composingRef = useRef(false)
-
   const romajiHint = useMemo(() => romajiToKana(query.trim()), [query])
 
   async function runSearch(term, off, append, common) {
@@ -201,7 +199,6 @@ export default function DictionaryPage() {
       setOffset(0)
       return
     }
-    if (composingRef.current) return
     debounceRef.current = setTimeout(() => {
       runSearch(query, 0, false, commonOnly)
     }, 250)
@@ -228,8 +225,6 @@ export default function DictionaryPage() {
             placeholder="Search Japanese or English..."
             value={query}
             onChange={e => setQuery(e.target.value)}
-            onCompositionStart={() => { composingRef.current = true }}
-            onCompositionEnd={e => { composingRef.current = false; setQuery(e.target.value) }}
             onFocus={() => setInputFocused(true)}
             onBlur={() => setInputFocused(false)}
             autoFocus
