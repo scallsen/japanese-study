@@ -56,7 +56,7 @@ async function resolveSource() {
   })
   if (!apiRes.ok) throw new Error(`GitHub API error: ${apiRes.status}`)
   const release = await apiRes.json()
-  const asset = release.assets.find(a => /^kanjidic2-eng-\d/.test(a.name) && a.name.endsWith('.json.zip'))
+  const asset = release.assets.find(a => /^kanjidic2-en-\d/.test(a.name) && a.name.endsWith('.json.zip'))
   if (!asset) throw new Error('No kanjidic2-eng JSON zip asset found in latest release')
   console.log(`Downloading: ${asset.name} (${Math.round(asset.size / 1024)}KB)`)
   const dlRes = await fetch(asset.browser_download_url)
