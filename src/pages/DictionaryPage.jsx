@@ -295,7 +295,7 @@ export default function DictionaryPage() {
 
           {!loading && showEmpty && (
             <div style={{ textAlign: 'center', padding: '48px 0', color: TEXT_MUTED, fontFamily: FONT, fontSize: 13, letterSpacing: TRACKING }}>
-              No results for "{query}"
+              No results for &ldquo;{query}&rdquo;
             </div>
           )}
 
