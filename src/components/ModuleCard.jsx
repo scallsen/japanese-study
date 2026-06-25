@@ -41,17 +41,21 @@ export default function ModuleCard({ module, disabled }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {icon && (
-        <img src={icon} alt="" style={{ width: 36, height: 36, marginBottom: 10, imageRendering: 'pixelated' }} />
-      )}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-        <div style={{ fontSize: 16, color: hovered && !disabled ? 'rgba(255,255,255,0.85)' : TEXT, transition: 'color 130ms' }}>
-          {label}
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+        {icon && (
+          <img src={icon} alt="" style={{ width: 36, height: 36, flexShrink: 0, imageRendering: 'pixelated' }} />
+        )}
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+            <div style={{ fontSize: 16, color: hovered && !disabled ? 'rgba(255,255,255,0.85)' : TEXT, transition: 'color 130ms' }}>
+              {label}
+            </div>
+            {external && <ExternalLinkIcon />}
+          </div>
+          <div style={{ fontSize: 16, color: TEXT_MUTED, marginTop: 4 }}>
+            {sublabel}
+          </div>
         </div>
-        {external && <ExternalLinkIcon />}
-      </div>
-      <div style={{ fontSize: 16, color: TEXT_MUTED, marginTop: 4 }}>
-        {sublabel}
       </div>
     </Tag>
   )
