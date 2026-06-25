@@ -43,7 +43,7 @@ export default function ModuleCard({ module, disabled }) {
     >
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
         {icon && (
-          <img src={icon} alt="" style={{ width: 36, height: 36, flexShrink: 0, imageRendering: 'pixelated' }} />
+          <img src={icon} alt="" style={{ width: 36, height: 36, flexShrink: 0 }} />
         )}
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
