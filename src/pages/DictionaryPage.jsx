@@ -386,7 +386,7 @@ export default function DictionaryPage() {
     if (saved?.scrollTop && scrollRef.current) {
       scrollRef.current.scrollTop = saved.scrollTop
     }
-  }, [])
+  }, [saved?.scrollTop])
 
   useEffect(() => {
     try {
@@ -394,7 +394,7 @@ export default function DictionaryPage() {
         query, results, kanjiResults, hasMore, offset, commonOnly,
         scrollTop: scrollRef.current?.scrollTop ?? 0,
       }))
-    } catch {}
+    } catch (e) { void e }
   }, [query, results, kanjiResults, hasMore, offset, commonOnly])
 
   const handleScroll = useCallback(() => {
@@ -405,7 +405,7 @@ export default function DictionaryPage() {
         const state = raw ? JSON.parse(raw) : {}
         state.scrollTop = scrollRef.current?.scrollTop ?? 0
         sessionStorage.setItem(SESSION_KEY, JSON.stringify(state))
-      } catch {}
+      } catch (e) { void e }
     }, 100)
   }, [])
 
