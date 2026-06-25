@@ -27,10 +27,11 @@ function romajiToKana(term) {
 }
 
 function relevanceScore(row, term) {
+  const kata = hiraganaToKatakana(term)
   let score = 0
   if (row.common) score += 100
-  if (row.primary_form === term) score += 50
-  if (row.kana_forms?.includes(term)) score += 30
+  if (row.primary_form === term || row.primary_form === kata) score += 50
+  if (row.kana_forms?.includes(term) || row.kana_forms?.includes(kata)) score += 30
   score -= Math.min(row.primary_form.length, 20)
   return score
 }
@@ -59,6 +60,10 @@ function shortPos(raw) {
 
 function katakanaToHiragana(str) {
   return str.replace(/[ァ-ヶ]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0x60))
+}
+
+function hiraganaToKatakana(str) {
+  return str.replace(/[ぁ-ん]/g, ch => String.fromCharCode(ch.charCodeAt(0) + 0x60))
 }
 
 function isSingleKanji(str) {
@@ -106,6 +111,8 @@ async function doSearch(term, offset, commonOnly) {
 
   const jp = isJapanese(effectiveTerm) || !!kanaForm
   const kana = jp && isKanaOnly(effectiveTerm)
+  // When romaji converted to hiragana, also search the katakana equivalent (e.g. terebi → てれび → テレビ)
+  const katakanaForm = kanaForm ? hiraganaToKatakana(effectiveTerm) : null
 
   const buildBase = () => {
     let q = supabase
@@ -118,7 +125,8 @@ async function doSearch(term, offset, commonOnly) {
 
   if (kana && offset === 0) {
     // Merge prefix match on primary_form + exact match in kana_forms array
-    const [r1, r2] = await Promise.all([
+    // Also search katakana form when input came from romaji conversion
+    const queries = [
       buildBase().ilike('primary_form', effectiveTerm + '%').limit(PAGE_SIZE),
       supabase
         .from('dictionary')
@@ -126,12 +134,18 @@ async function doSearch(term, offset, commonOnly) {
         .filter('kana_forms', 'cs', `{${effectiveTerm}}`)
         .order('common', { ascending: false })
         .limit(PAGE_SIZE),
-    ])
-    if (r1.error) throw r1.error
+    ]
+    if (katakanaForm) {
+      queries.push(buildBase().ilike('primary_form', katakanaForm + '%').limit(PAGE_SIZE))
+    }
+    const results = await Promise.all(queries)
+    if (results[0].error) throw results[0].error
     const seen = new Set()
     const merged = []
-    for (const row of [...(r1.data ?? []), ...(r2.data ?? [])]) {
-      if (!seen.has(row.id)) { seen.add(row.id); merged.push(row) }
+    for (const { data } of results) {
+      for (const row of (data ?? [])) {
+        if (!seen.has(row.id)) { seen.add(row.id); merged.push(row) }
+      }
     }
     merged.sort((a, b) => relevanceScore(b, effectiveTerm) - relevanceScore(a, effectiveTerm))
     const rows = merged.slice(0, PAGE_SIZE)
@@ -140,7 +154,10 @@ async function doSearch(term, offset, commonOnly) {
 
   let q = buildBase().range(offset, offset + PAGE_SIZE - 1)
   if (jp) {
-    q = q.ilike('primary_form', effectiveTerm + '%')
+    const prefix = katakanaForm
+      ? `primary_form.ilike.${effectiveTerm}%,primary_form.ilike.${katakanaForm}%`
+      : null
+    q = prefix ? q.or(prefix) : q.ilike('primary_form', effectiveTerm + '%')
   } else {
     q = q.ilike('gloss_en', '%' + effectiveTerm + '%')
   }
