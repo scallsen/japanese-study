@@ -9,7 +9,7 @@ import VocabSrsDrill from './VocabSrsDrill.jsx'
 import PageHeader from '../../components/PageHeader.jsx'
 import SpeakerIcon from '../../components/SpeakerIcon.jsx'
 import HeaderMenu from '../../components/HeaderMenu.jsx'
-import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_NAV, SUBHEADING_STYLE, FS_CAPTION, FS_CONTENT_HEADING } from '../../data/theme.js'
 import DrawerSectionHeader from '../../components/DrawerSectionHeader.jsx'
 import DrawerCheckbox from '../../components/DrawerCheckbox.jsx'
 import DrawerSelect from '../../components/DrawerSelect.jsx'
@@ -35,8 +35,8 @@ function useIsMobile(breakpoint = 768) {
 function StatRow({ label, value, accent }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '5px 0' }}>
-      <span style={{ fontSize: 13, color: TEXT_MUTED }}>{label}</span>
-      <span style={{ fontSize: 13, color: accent || TEXT, fontVariantNumeric: 'tabular-nums' }}>{value}</span>
+      <span style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>{label}</span>
+      <span style={{ fontSize: FS_BASE, color: accent || TEXT, fontVariantNumeric: 'tabular-nums' }}>{value}</span>
     </div>
   )
 }
@@ -50,7 +50,7 @@ function FileInput({ onChange, accept = '.txt', label = 'Choose .txt file' }) {
         background: 'rgba(255,255,255,0.06)',
         border: '1px solid rgba(255,255,255,0.15)',
         borderRadius: 6,
-        fontSize: 13,
+        fontSize: FS_BASE,
         color: 'rgba(255,255,255,0.7)',
         cursor: 'pointer',
         fontFamily: FONT,
@@ -83,9 +83,9 @@ function DeckRow({ deck, stats, onToggle }) {
           <span style={{ fontSize: 9, color: deck.active ? ACCENT : 'rgba(255,255,255,0.2)' }}>
             {deck.active ? '●' : '○'}
           </span>
-          <span style={{ fontSize: 13, color: TEXT }}>{deck.name}</span>
+          <span style={{ fontSize: FS_BASE, color: TEXT }}>{deck.name}</span>
         </div>
-        <div style={{ fontSize: 12, color: TEXT_MUTED, marginTop: 2 }}>{infoText}</div>
+        <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: 2 }}>{infoText}</div>
       </div>
       <button
         onClick={onToggle}
@@ -94,7 +94,7 @@ function DeckRow({ deck, stats, onToggle }) {
         style={{
           flexShrink: 0,
           padding: '4px 10px',
-          fontSize: 12,
+          fontSize: FS_BASE,
           fontFamily: 'inherit',
           letterSpacing: TRACKING,
           background: deck.active
@@ -236,11 +236,11 @@ export default function VocabSrsModule() {
       <div style={{ width: '100vw', height: '100dvh', background: '#1E1E1E', fontFamily: FONT, letterSpacing: TRACKING, display: 'flex', flexDirection: 'column', color: TEXT }}>
         <PageHeader crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'SRS' }]} />
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-          <div style={{ fontSize: 15, color: TEXT }}>Sign in to use Vocab SRS</div>
-          <div style={{ fontSize: 13, color: TEXT_MUTED, marginBottom: 8 }}>Progress syncs to your account across devices</div>
+          <div style={{ fontSize: FS_BASE, color: TEXT }}>Sign in to use Vocab SRS</div>
+          <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginBottom: 8 }}>Progress syncs to your account across devices</div>
           <button
             onClick={signIn}
-            style={{ padding: '10px 24px', background: ACCENT, border: 'none', borderRadius: 8, color: '#fff', fontFamily: FONT, fontSize: 13, letterSpacing: TRACKING, cursor: 'pointer' }}
+            style={{ padding: '10px 24px', background: ACCENT, border: 'none', borderRadius: 8, color: '#fff', fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING, cursor: 'pointer' }}
           >
             Sign in with GitHub
           </button>
@@ -419,7 +419,7 @@ export default function VocabSrsModule() {
         {/* ── Deck Stats (global) ── */}
         <DrawerSectionHeader title="Deck Stats" />
         {globalStats.totalCards === 0 ? (
-          <div style={{ fontSize: 13, color: TEXT_MUTED, padding: '4px 0 8px' }}>
+          <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, padding: '4px 0 8px' }}>
             No cards yet
           </div>
         ) : (
@@ -452,7 +452,7 @@ export default function VocabSrsModule() {
         <DrawerSectionHeader title="SRS Settings" />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Daily new cards</span>
+            <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Daily new cards</span>
             <input
               type="number"
               value={dailyNewCards}
@@ -466,16 +466,16 @@ export default function VocabSrsModule() {
                 borderRadius: 4,
                 color: TEXT,
                 fontFamily: 'inherit',
-                fontSize: 13,
+                fontSize: FS_BASE,
                 letterSpacing: TRACKING,
                 textAlign: 'center',
               }}
             />
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>
+            <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>
               Leech threshold
-              <span style={{ fontSize: 11, color: TEXT_MUTED, marginLeft: 6 }}>lapses (0 = off)</span>
+              <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginLeft: 6 }}>lapses (0 = off)</span>
             </span>
             <input
               type="number"
@@ -490,7 +490,7 @@ export default function VocabSrsModule() {
                 borderRadius: 4,
                 color: TEXT,
                 fontFamily: 'inherit',
-                fontSize: 13,
+                fontSize: FS_BASE,
                 letterSpacing: TRACKING,
                 textAlign: 'center',
               }}
@@ -575,7 +575,7 @@ export default function VocabSrsModule() {
             <div style={hairline} />
             <DrawerSectionHeader title="Dev" />
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-              <span style={{ fontSize: 13, color: TEXT_MUTED }}>Advance</span>
+              <span style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>Advance</span>
               <input
                 type="number"
                 value={advanceDays}
@@ -589,11 +589,11 @@ export default function VocabSrsModule() {
                   borderRadius: 4,
                   color: TEXT,
                   fontFamily: 'inherit',
-                  fontSize: 13,
+                  fontSize: FS_BASE,
                   letterSpacing: TRACKING,
                 }}
               />
-              <span style={{ fontSize: 13, color: TEXT_MUTED }}>days</span>
+              <span style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>days</span>
               <button
                 onClick={() => {
                   const ms = advanceDays * 24 * 60 * 60 * 1000
@@ -612,7 +612,7 @@ export default function VocabSrsModule() {
                   borderRadius: 4,
                   color: TEXT,
                   fontFamily: 'inherit',
-                  fontSize: 13,
+                  fontSize: FS_BASE,
                   cursor: 'pointer',
                   letterSpacing: TRACKING,
                 }}
@@ -641,7 +641,7 @@ export default function VocabSrsModule() {
                   borderRadius: 4,
                   color: '#f87171',
                   fontFamily: 'inherit',
-                  fontSize: 13,
+                  fontSize: FS_BASE,
                   cursor: 'pointer',
                   letterSpacing: TRACKING,
                 }}
@@ -705,7 +705,7 @@ export default function VocabSrsModule() {
                     onMouseLeave={() => setOptionsHovered(false)}
                     style={{
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      height: 34, padding: '0 12px', fontSize: 13,
+                      height: 34, padding: '0 12px', fontSize: FS_BASE,
                       fontFamily: 'inherit',
                       background: optionsHovered ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)',
                       color: 'rgba(255,255,255,0.7)',
@@ -737,8 +737,8 @@ export default function VocabSrsModule() {
 
                 {activeDecks.length === 0 ? (
                   <div style={{ textAlign: 'center', paddingTop: 60 }}>
-                    <div style={{ fontSize: 16, color: TEXT, marginBottom: 8 }}>No active decks</div>
-                    <div style={{ fontSize: 13, color: TEXT_MUTED }}>
+                    <div style={{ fontSize: FS_NAV, color: TEXT, marginBottom: 8 }}>No active decks</div>
+                    <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>
                       Enable a deck in the settings panel to begin
                     </div>
                   </div>
@@ -746,7 +746,7 @@ export default function VocabSrsModule() {
                   <>
                     {/* Global summary */}
                     <div style={{ marginBottom: 20 }}>
-                      <div style={{ fontSize: 22, color: TEXT, letterSpacing: TRACKING, marginBottom: 6 }}>
+                      <div style={{ fontSize: FS_CONTENT_HEADING, color: TEXT, letterSpacing: TRACKING, marginBottom: 6 }}>
                         {canStart
                           ? `${due.length + rescheduled.length} due · ${newCards.length} new · ~${Math.ceil((due.length + rescheduled.length + newCards.length) * 0.25) || '<1'} min`
                           : 'Nothing due'}
@@ -765,8 +765,8 @@ export default function VocabSrsModule() {
                               padding: '5px 0',
                               borderBottom: '1px solid rgba(255,255,255,0.05)',
                             }}>
-                              <span style={{ fontSize: 13, color: TEXT_MUTED }}>{deck.name}</span>
-                              <span style={{ fontSize: 13, color: TEXT }}>
+                              <span style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>{deck.name}</span>
+                              <span style={{ fontSize: FS_BASE, color: TEXT }}>
                                 {ds.dueToday} due · {ds.newAvailable} new
                               </span>
                             </div>
@@ -783,7 +783,7 @@ export default function VocabSrsModule() {
                       style={{
                         width: '100%',
                         height: 44,
-                        fontSize: 14,
+                        fontSize: FS_BASE,
                         fontFamily: 'inherit',
                         letterSpacing: TRACKING,
                         background: canStart
@@ -801,14 +801,14 @@ export default function VocabSrsModule() {
                     </button>
 
                     <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 20 }}>
-                      <div style={{ fontSize: 11, color: TEXT_MUTED, letterSpacing: TRACKING, marginBottom: 10, textTransform: 'uppercase' }}>
+                      <div style={{ ...SUBHEADING_STYLE, color: TEXT_MUTED, marginBottom: 10 }}>
                         Import
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
                           <FileInput onChange={handleFileChange} />
                           {importMsg && (
-                            <span style={{ fontSize: 13, color: '#4ade80' }}>{importMsg}</span>
+                            <span style={{ fontSize: FS_BASE, color: '#4ade80' }}>{importMsg}</span>
                           )}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
@@ -818,7 +818,7 @@ export default function VocabSrsModule() {
                             onChange={handleAnkiSyncFileChange}
                           />
                           {ankiSyncMsg && (
-                            <span style={{ fontSize: 13, color: '#4ade80' }}>{ankiSyncMsg}</span>
+                            <span style={{ fontSize: FS_BASE, color: '#4ade80' }}>{ankiSyncMsg}</span>
                           )}
                         </div>
                       </div>
@@ -891,10 +891,10 @@ export default function VocabSrsModule() {
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               flexShrink: 0,
             }}>
-              <div style={{ color: '#fff', fontSize: 13, fontWeight: 700 }}>Options</div>
+              <div style={{ color: '#fff', fontSize: FS_BASE, fontWeight: 700 }}>Options</div>
               <button
                 onClick={() => setShowOptions(false)}
-                style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: 13, fontFamily: 'inherit', cursor: 'pointer', padding: 0 }}
+                style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: FS_BASE, fontFamily: 'inherit', cursor: 'pointer', padding: 0 }}
               >
                 Back
               </button>

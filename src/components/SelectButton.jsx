@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import { FS_BASE } from '../data/theme.js'
 
-export default function SelectButton({ selected, bgColor = '#DDDDDD', dotColor, subtext, onClick, children, centered, minHeight, horizontal, fontSize = 13 }) {
+export default function SelectButton({ selected, bgColor = '#DDDDDD', dotColor, subtext, onClick, children, centered, minHeight, horizontal, fontSize = FS_BASE }) {
   const [hovered, setHovered] = useState(false)
   return (
     <button

@@ -1,5 +1,5 @@
 import { Handle, Position } from '@xyflow/react'
-import { FONT, TRACKING, TEXT_MUTED } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT_MUTED, FS_CAPTION } from '../../data/theme.js'
 
 const ACCENT = '#8B7CF8'
 
@@ -16,7 +16,7 @@ export default function GrammarGroupNode({ data }) {
     }}>
       <Handle type="target" position={Position.Left} style={{ background: '#444', border: 'none', width: 7, height: 7, top: 18 }} />
       <div style={{
-        fontSize: 10,
+        fontSize: FS_CAPTION,
         color: TEXT_MUTED,
         padding: '7px 10px 0',
         textTransform: 'uppercase',

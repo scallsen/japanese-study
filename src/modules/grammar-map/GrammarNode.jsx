@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Handle, Position } from '@xyflow/react'
-import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION } from '../../data/theme.js'
 
 export default function GrammarNode({ data }) {
   const { label, sublabel, isUnlocked, isKnown, isSelected, onToggle, accent, hideHandles, category } = data
@@ -58,15 +58,15 @@ export default function GrammarNode({ data }) {
 
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 4, marginBottom: 2 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 5, minWidth: 0 }}>
-          {!isUnlocked && <span style={{ fontSize: 11, color: '#3A3A3A', flexShrink: 0 }}>▪</span>}
-          <span style={{ fontSize: 13, color: labelColor, lineHeight: 1.3 }}>{label}</span>
+          {!isUnlocked && <span style={{ fontSize: FS_CAPTION, color: '#3A3A3A', flexShrink: 0 }}>▪</span>}
+          <span style={{ fontSize: FS_BASE, color: labelColor, lineHeight: 1.3 }}>{label}</span>
         </div>
         <span
           onClick={(e) => { if (!showCheck) return; e.stopPropagation(); onToggle() }}
           onMouseEnter={(e) => { e.stopPropagation(); setIsCheckHovered(true) }}
           onMouseLeave={(e) => { e.stopPropagation(); setIsCheckHovered(false) }}
           style={{
-            fontSize: 11,
+            fontSize: FS_CAPTION,
             color: showCheck ? (isKnown ? accent : isCheckHovered ? TEXT : TEXT_MUTED) : 'transparent',
             flexShrink: 0,
             lineHeight: 1,
@@ -88,7 +88,7 @@ export default function GrammarNode({ data }) {
       </div>
 
       <div style={{
-        fontSize: 11, color: sublabelColor,
+        fontSize: FS_CAPTION, color: sublabelColor,
         overflow: 'hidden', display: '-webkit-box',
         WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
       }}>
@@ -101,7 +101,7 @@ export default function GrammarNode({ data }) {
           marginTop: 6,
           padding: '2px 6px',
           borderRadius: 4,
-          fontSize: 9,
+          fontSize: FS_CAPTION,
           letterSpacing: '0.07em',
           textTransform: 'uppercase',
           color: BADGE.color,

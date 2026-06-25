@@ -8,7 +8,7 @@ import SpeedModeControls from '../components/SpeedModeControls.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import SpeakerIcon from '../components/SpeakerIcon.jsx'
 import HeaderMenu from '../components/HeaderMenu.jsx'
-import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_BADGE, FS_STAT_VALUE, FS_DISPLAY_HEADING } from '../data/theme.js'
 import { WORD_SOURCES } from '../data/wordLists.js'
 import { useDrill } from '../hooks/useDrill.js'
 import { useTTS, useJaVoices } from '../hooks/useTTS.js'
@@ -98,10 +98,10 @@ function SourceRow({ source, active, onToggle }) {
           <span style={{ fontSize: 9, color: active ? ACCENT : 'rgba(255,255,255,0.2)' }}>
             {active ? '●' : '○'}
           </span>
-          <span style={{ fontSize: 13, color: TEXT }}>{source.label}</span>
+          <span style={{ fontSize: FS_BASE, color: TEXT }}>{source.label}</span>
         </div>
         {source.lists && (
-          <div style={{ fontSize: 12, color: TEXT_MUTED, marginTop: 2 }}>
+          <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: 2 }}>
             {source.lists.length} sub-lists
           </div>
         )}
@@ -113,7 +113,7 @@ function SourceRow({ source, active, onToggle }) {
         style={{
           flexShrink: 0,
           padding: '4px 10px',
-          fontSize: 12,
+          fontSize: FS_BASE,
           fontFamily: 'inherit',
           letterSpacing: TRACKING,
           background: active
@@ -310,7 +310,7 @@ function ActiveDrill({ drill, ttsEnabled, sfxEnabled, ttsVoice, showStreak, show
 function DoneScreen({ correct, troubled, onRestart, onRedoTroubled, onBack }) {
   const btnBase = {
     padding: '10px 28px',
-    fontSize: 14,
+    fontSize: FS_BASE,
     fontFamily: 'inherit',
     borderRadius: 8,
     cursor: 'pointer',
@@ -318,16 +318,16 @@ function DoneScreen({ correct, troubled, onRestart, onRedoTroubled, onBack }) {
   }
   return (
     <div style={{ textAlign: 'center', fontFamily: FONT }}>
-      <div style={{ color: '#fff', fontSize: 28, letterSpacing: '0.05em', marginBottom: 16 }}>Session complete</div>
+      <div style={{ color: '#fff', fontSize: FS_DISPLAY_HEADING, letterSpacing: '0.05em', marginBottom: 16 }}>Session complete</div>
       <div style={{ display: 'flex', gap: 20, justifyContent: 'center', marginBottom: 32 }}>
         <div>
-          <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, marginBottom: 4 }}>CORRECT</div>
-          <div style={{ color: '#fff', fontSize: 24 }}>{correct}</div>
+          <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: FS_CAPTION, marginBottom: 4 }}>CORRECT</div>
+          <div style={{ color: '#fff', fontSize: FS_STAT_VALUE }}>{correct}</div>
         </div>
-        <div style={{ color: 'rgba(255,255,255,0.15)', fontSize: 24, alignSelf: 'center' }}>·</div>
+        <div style={{ color: 'rgba(255,255,255,0.15)', fontSize: FS_STAT_VALUE, alignSelf: 'center' }}>·</div>
         <div>
-          <div style={{ color: troubled > 0 ? '#fbbf24' : 'rgba(255,255,255,0.4)', fontSize: 11, marginBottom: 4 }}>TROUBLED</div>
-          <div style={{ color: troubled > 0 ? '#fbbf24' : 'rgba(255,255,255,0.4)', fontSize: 24 }}>{troubled}</div>
+          <div style={{ color: troubled > 0 ? '#fbbf24' : 'rgba(255,255,255,0.4)', fontSize: FS_CAPTION, marginBottom: 4 }}>TROUBLED</div>
+          <div style={{ color: troubled > 0 ? '#fbbf24' : 'rgba(255,255,255,0.4)', fontSize: FS_STAT_VALUE }}>{troubled}</div>
         </div>
       </div>
       <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -387,7 +387,7 @@ function HomeScreen({ availableSubLists, selectedSubLists, onToggleSubList, word
     }}>
 
       {noSources ? (
-        <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 14, textAlign: 'center', paddingTop: 40 }}>
+        <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: FS_BASE, textAlign: 'center', paddingTop: 40 }}>
           Enable a word list in the sidebar to begin
         </div>
       ) : (
@@ -397,7 +397,7 @@ function HomeScreen({ availableSubLists, selectedSubLists, onToggleSubList, word
             return (
               <div key={sourceId}>
                 {groupedSources.length > 1 && (
-                  <div style={{ fontSize: 11, color: TEXT_MUTED, letterSpacing: '0.08em', marginBottom: 10 }}>
+                  <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, letterSpacing: '0.08em', marginBottom: 10 }}>
                     {source?.label?.toUpperCase() ?? sourceId.toUpperCase()}
                   </div>
                 )}
@@ -429,7 +429,7 @@ function HomeScreen({ availableSubLists, selectedSubLists, onToggleSubList, word
               onMouseLeave={() => setStartHovered(false)}
               style={{
                 padding: '11px 28px',
-                fontSize: 14,
+                fontSize: FS_BASE,
                 fontFamily: 'inherit',
                 letterSpacing: TRACKING,
                 borderRadius: 8,
@@ -444,7 +444,7 @@ function HomeScreen({ availableSubLists, selectedSubLists, onToggleSubList, word
             >
               Start review
               {selectedSubLists.length > 0 && (
-                <span style={{ marginLeft: 8, fontSize: 12, opacity: 0.7 }}>
+                <span style={{ marginLeft: 8, fontSize: FS_CAPTION, opacity: 0.7 }}>
                   ({selectedSubLists.reduce((sum, id) => sum + (wordCountByList[id] ?? 0), 0)} words)
                 </span>
               )}
@@ -454,7 +454,7 @@ function HomeScreen({ availableSubLists, selectedSubLists, onToggleSubList, word
               disabled
               style={{
                 padding: '11px 28px',
-                fontSize: 14,
+                fontSize: FS_BASE,
                 fontFamily: 'inherit',
                 letterSpacing: TRACKING,
                 borderRadius: 8,
@@ -501,14 +501,14 @@ function SubListTile({ label, wordCount, progress, selected, onClick }) {
         transition: 'background 130ms, border-color 130ms',
       }}
     >
-      <span style={{ fontSize: 13, color: selected ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.7)' }}>
+      <span style={{ fontSize: FS_BASE, color: selected ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.7)' }}>
         {label}
       </span>
-      <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', display: 'flex', alignItems: 'center', gap: 6 }}>
+      <span style={{ fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.35)', display: 'flex', alignItems: 'center', gap: 6 }}>
         {wordCount} words
         {!progress ? (
           <span style={{
-            fontSize: 10,
+            fontSize: FS_BADGE,
             padding: '1px 5px',
             background: 'rgba(58,189,164,0.12)',
             color: 'rgba(58,189,164,0.65)',
@@ -768,7 +768,7 @@ export default function VocabPage() {
                   onMouseLeave={() => setOptionsHovered(false)}
                   style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    height: 34, padding: '0 12px', fontSize: 13,
+                    height: 34, padding: '0 12px', fontSize: FS_BASE,
                     fontFamily: 'inherit',
                     background: optionsHovered ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)',
                     color: 'rgba(255,255,255,0.7)',
@@ -879,7 +879,7 @@ export default function VocabPage() {
             <button style={{
               width: CHEVRON_W, height: 44,
               background: 'none', border: 'none',
-              color: 'rgba(255,255,255,0.5)', fontSize: 14,
+              color: 'rgba(255,255,255,0.5)', fontSize: FS_BASE,
               cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontFamily: 'inherit', padding: 0,
             }}>
@@ -914,10 +914,10 @@ export default function VocabPage() {
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               flexShrink: 0,
             }}>
-              <div style={{ color: '#fff', fontSize: 13, fontWeight: 700 }}>Options</div>
+              <div style={{ color: '#fff', fontSize: FS_BASE, fontWeight: 700 }}>Options</div>
               <button
                 onClick={() => setShowOptions(false)}
-                style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: 13, fontFamily: 'inherit', cursor: 'pointer', padding: 0 }}
+                style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: FS_BASE, fontFamily: 'inherit', cursor: 'pointer', padding: 0 }}
               >
                 Back
               </button>

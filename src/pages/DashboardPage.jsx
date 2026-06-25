@@ -3,7 +3,7 @@ import ModuleCard from '../components/ModuleCard.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
-import { FONT, TRACKING, TEXT } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, FS_BASE } from '../data/theme.js'
 import { MODULES } from '../data/modules.js'
 
 
@@ -55,7 +55,7 @@ export default function DashboardPage() {
             background: 'rgba(37, 99, 235, 0.1)',
             borderTop: '1px solid rgba(59, 130, 246, 0.2)',
             padding: '8px 24px',
-            fontSize: 13,
+            fontSize: FS_BASE,
             color: '#93C5FD',
           }}>
             Sign in to unlock all features

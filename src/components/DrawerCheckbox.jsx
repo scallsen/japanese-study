@@ -1,3 +1,5 @@
+import { FS_BASE } from '../data/theme.js'
+
 export default function DrawerCheckbox({ checked, onChange, label, subtext, indent = 0, disabled = false, children }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6, paddingLeft: indent * 16 }}>
@@ -34,7 +36,7 @@ export default function DrawerCheckbox({ checked, onChange, label, subtext, inde
           )}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13, fontFamily: 'inherit' }}>{label}</span>
+          <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: FS_BASE, fontFamily: 'inherit' }}>{label}</span>
           {subtext && <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12, fontFamily: 'inherit' }}>{subtext}</span>}
         </div>
       </label>

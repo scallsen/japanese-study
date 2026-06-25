@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE } from '../data/theme.js'
 
 function ExternalLinkIcon() {
   return (
@@ -43,12 +43,12 @@ export default function ModuleCard({ module, disabled }) {
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-            <div style={{ fontSize: 16, color: hovered && !disabled ? 'rgba(255,255,255,0.85)' : TEXT, transition: 'color 130ms' }}>
+            <div style={{ fontSize: FS_BASE, color: hovered && !disabled ? 'rgba(255,255,255,0.85)' : TEXT, transition: 'color 130ms' }}>
               {label}
             </div>
             {external && !icon && <ExternalLinkIcon />}
           </div>
-          <div style={{ fontSize: 16, color: TEXT_MUTED, marginTop: 4 }}>
+          <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginTop: 4 }}>
             {sublabel}
           </div>
         </div>
