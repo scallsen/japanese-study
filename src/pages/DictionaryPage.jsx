@@ -26,11 +26,16 @@ function romajiToKana(term) {
   return /^[ぁ-ヿ]+$/.test(converted) ? converted : null
 }
 
-function relevanceScore(row, term) {
-  let score = 0
-  if (row.common) score += 100
-  if (row.primary_form === term) score += 50
-  if (row.kana_forms?.includes(term)) score += 30
+function relevanceScore(row, term, effectiveTerm) {
+  const eff = effectiveTerm ?? term
+  let score = row.common ? 100 : 0
+  if (row.primary_form === term || row.primary_form === eff) score += 80
+  if (row.kana_forms?.includes(eff)) score += 60
+  if (row.primary_form.startsWith(eff) || row.primary_form.startsWith(term)) score += 25
+  const firstGloss = row.gloss_en?.split('; ')[0]?.toLowerCase() ?? ''
+  const lowerTerm = term.toLowerCase()
+  if (firstGloss === lowerTerm) score += 40
+  else if (firstGloss.startsWith(lowerTerm)) score += 20
   score -= Math.min(row.primary_form.length, 20)
   return score
 }
@@ -105,7 +110,6 @@ async function doSearch(term, offset, commonOnly) {
   const effectiveTerm = kanaForm ?? trimmed
 
   const jp = isJapanese(effectiveTerm) || !!kanaForm
-  const kana = jp && isKanaOnly(effectiveTerm)
 
   const buildBase = () => {
     let q = supabase
@@ -116,28 +120,37 @@ async function doSearch(term, offset, commonOnly) {
     return q
   }
 
-  if (kana && offset === 0) {
-    // Merge prefix match on primary_form + exact match in kana_forms array
+  if (isJapanese(effectiveTerm) && offset === 0) {
+    // Two-query merge: prefix on primary_form + exact containment in kana_forms
     const [r1, r2] = await Promise.all([
       buildBase().ilike('primary_form', effectiveTerm + '%').limit(PAGE_SIZE),
-      supabase
-        .from('dictionary')
-        .select('id, primary_form, kana_forms, gloss_en, pos, common')
-        .filter('kana_forms', 'cs', `{${effectiveTerm}}`)
-        .order('common', { ascending: false })
-        .limit(PAGE_SIZE),
+      buildBase().filter('kana_forms', 'cs', `{${effectiveTerm}}`).limit(PAGE_SIZE),
     ])
     if (r1.error) throw r1.error
+    if (r2.error) throw r2.error
     const seen = new Set()
     const merged = []
     for (const row of [...(r1.data ?? []), ...(r2.data ?? [])]) {
       if (!seen.has(row.id)) { seen.add(row.id); merged.push(row) }
     }
-    merged.sort((a, b) => relevanceScore(b, effectiveTerm) - relevanceScore(a, effectiveTerm))
+    merged.sort((a, b) => relevanceScore(b, trimmed, effectiveTerm) - relevanceScore(a, trimmed, effectiveTerm))
     const rows = merged.slice(0, PAGE_SIZE)
     return { rows, hasMore: rows.length === PAGE_SIZE }
   }
 
+  if (!jp && offset === 0) {
+    // English first page: fetch then client-sort for first-sense gloss bonus
+    const { data, error } = await buildBase()
+      .ilike('gloss_en', '%' + effectiveTerm + '%')
+      .limit(PAGE_SIZE)
+    if (error) throw error
+    const rows = (data ?? [])
+      .sort((a, b) => relevanceScore(b, trimmed, effectiveTerm) - relevanceScore(a, trimmed, effectiveTerm))
+      .slice(0, PAGE_SIZE)
+    return { rows, hasMore: rows.length === PAGE_SIZE }
+  }
+
+  // Pagination (offset > 0) — DB ordering only
   let q = buildBase().range(offset, offset + PAGE_SIZE - 1)
   if (jp) {
     q = q.ilike('primary_form', effectiveTerm + '%')
@@ -147,8 +160,7 @@ async function doSearch(term, offset, commonOnly) {
 
   const { data, error } = await q
   if (error) throw error
-  const rows = (data ?? []).sort((a, b) => relevanceScore(b, effectiveTerm) - relevanceScore(a, effectiveTerm))
-  return { rows, hasMore: rows.length === PAGE_SIZE }
+  return { rows: data ?? [], hasMore: (data ?? []).length === PAGE_SIZE }
 }
 
 function KanjiRow({ entry }) {
