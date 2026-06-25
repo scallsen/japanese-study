@@ -7,11 +7,12 @@ import { initSession } from './session.js'
 import { migrateProgress, initializeDeckCards } from './migrate.js'
 import VocabSrsDrill from './VocabSrsDrill.jsx'
 import PageHeader from '../../components/PageHeader.jsx'
+import SpeakerIcon from '../../components/SpeakerIcon.jsx'
+import HeaderMenu from '../../components/HeaderMenu.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../../data/theme.js'
 import DrawerSectionHeader from '../../components/DrawerSectionHeader.jsx'
 import DrawerCheckbox from '../../components/DrawerCheckbox.jsx'
 import DrawerSelect from '../../components/DrawerSelect.jsx'
-import AuthSlot from '../../components/AuthSlot.jsx'
 import { useJaVoices } from '../../hooks/useTTS.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
 
@@ -130,7 +131,7 @@ function resolvedArrayToCardsObj(resolvedCards, decks) {
 }
 
 export default function VocabSrsModule() {
-  const { user, signIn } = useAuth()
+  const { user, signIn, signOut, loading: authLoading } = useAuth()
   const { data: rawProgress, save, loading } = useProgress('vocab-srs')
   const [progress, setProgress] = useState(null)
   const [session, setSession] = useState(null)
@@ -141,7 +142,6 @@ export default function VocabSrsModule() {
   const [showOptions, setShowOptions] = useState(() => window.innerWidth > 768)
   const [chevronHovered, setChevronHovered] = useState(false)
   const [startHovered, setStartHovered] = useState(false)
-  const [audioHovered, setAudioHovered] = useState(false)
   const [optionsHovered, setOptionsHovered] = useState(false)
 
   const [showVisualEffects, setShowVisualEffects] = useState(() => {
@@ -697,44 +697,39 @@ export default function VocabSrsModule() {
           <div style={{ height: '100%', display: 'flex', flexDirection: 'column', color: TEXT }}>
             <PageHeader
               crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'SRS' }]}
-              rightSlot={<div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <AuthSlot />
-                <button
-                  onClick={() => setAudioEnabled(v => !v)}
-                  onMouseEnter={() => setAudioHovered(true)}
-                  onMouseLeave={() => setAudioHovered(false)}
-                  title={audioEnabled ? 'Mute audio' : 'Enable audio'}
-                  style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    width: 34, height: 34,
-                    background: audioHovered ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)',
-                    border: '1px solid rgba(255,255,255,0.2)',
-                    borderRadius: 8, cursor: 'pointer',
-                    opacity: audioEnabled ? 1 : 0.35, padding: 0,
-                    transition: 'background 130ms', color: 'rgba(255,255,255,0.8)',
-                    fontSize: 16,
-                  }}
-                >
-                  {audioEnabled ? '🔊' : '🔇'}
-                </button>
-                <button
-                  onClick={() => setShowOptions(v => !v)}
-                  onMouseEnter={() => setOptionsHovered(true)}
-                  onMouseLeave={() => setOptionsHovered(false)}
-                  style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    height: 34, padding: '0 12px', fontSize: 13,
-                    fontFamily: 'inherit',
-                    background: optionsHovered ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)',
-                    color: 'rgba(255,255,255,0.7)',
-                    border: '1px solid rgba(255,255,255,0.2)',
-                    borderRadius: 8, cursor: 'pointer',
-                    transition: 'background 130ms',
-                  }}
-                >
-                  {showOptions ? 'Hide options' : 'Show options'}
-                </button>
-              </div>}
+              rightSlot={<HeaderMenu
+                primary={
+                  <button
+                    onClick={() => setShowOptions(v => !v)}
+                    onMouseEnter={() => setOptionsHovered(true)}
+                    onMouseLeave={() => setOptionsHovered(false)}
+                    style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      height: 34, padding: '0 12px', fontSize: 13,
+                      fontFamily: 'inherit',
+                      background: optionsHovered ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)',
+                      color: 'rgba(255,255,255,0.7)',
+                      border: '1px solid rgba(255,255,255,0.2)',
+                      borderRadius: 8, cursor: 'pointer',
+                      transition: 'background 130ms',
+                    }}
+                  >
+                    Options
+                  </button>
+                }
+                items={[
+                  {
+                    label: audioEnabled ? 'Mute' : 'Unmute',
+                    icon: <SpeakerIcon muted={!audioEnabled} size={20} />,
+                    onClick: () => setAudioEnabled(v => !v),
+                    dim: !audioEnabled,
+                  },
+                  ...(!authLoading ? [{
+                    label: user ? 'Sign out' : 'Sign in',
+                    onClick: user ? signOut : signIn,
+                  }] : []),
+                ]}
+              />}
             />
 
             <main style={{ flex: 1, overflowY: 'auto', padding: '28px 24px' }}>

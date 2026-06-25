@@ -6,7 +6,8 @@ import DrawerCheckbox from '../components/DrawerCheckbox.jsx'
 import DrawerSelect from '../components/DrawerSelect.jsx'
 import SpeedModeControls from '../components/SpeedModeControls.jsx'
 import PageHeader from '../components/PageHeader.jsx'
-import AuthSlot from '../components/AuthSlot.jsx'
+import SpeakerIcon from '../components/SpeakerIcon.jsx'
+import HeaderMenu from '../components/HeaderMenu.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../data/theme.js'
 import { WORD_SOURCES } from '../data/wordLists.js'
 import { useDrill } from '../hooks/useDrill.js'
@@ -529,7 +530,7 @@ function SubListTile({ label, wordCount, progress, selected, onClick }) {
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 export default function VocabPage() {
-  const { user } = useAuth()
+  const { user, signIn, signOut, loading: authLoading } = useAuth()
   const { data: vocabProgress, save: saveVocabProgress } = useProgress('vocab-flashcard')
 
   const [showOptions,      setShowOptions]      = useState(() => window.innerWidth > 768)
@@ -567,7 +568,6 @@ export default function VocabPage() {
   const [pulseColor,       setPulseColor]       = useState(null)
   const [headerHeight,     setHeaderHeight]     = useState(72)
   const headerRef   = useRef(null)
-  const [audioHovered,   setAudioHovered]   = useState(false)
   const [optionsHovered, setOptionsHovered] = useState(false)
   const [chevronHovered, setChevronHovered] = useState(false)
   const isMobile = useIsMobile()
@@ -760,44 +760,39 @@ export default function VocabPage() {
         <div ref={headerRef} style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 }}>
           <PageHeader
             crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary Training' }]}
-            rightSlot={<div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <AuthSlot />
-              <button
-                onClick={() => setAudioEnabled(v => !v)}
-                onMouseEnter={() => setAudioHovered(true)}
-                onMouseLeave={() => setAudioHovered(false)}
-                title={audioEnabled ? 'Mute audio' : 'Enable audio'}
-                style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  width: 34, height: 34,
-                  background: audioHovered ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: 8, cursor: 'pointer',
-                  opacity: audioEnabled ? 1 : 0.35, padding: 0,
-                  transition: 'background 130ms', color: 'rgba(255,255,255,0.8)',
-                  fontSize: 16,
-                }}
-              >
-                {audioEnabled ? '🔊' : '🔇'}
-              </button>
-              <button
-                onClick={() => setShowOptions(v => !v)}
-                onMouseEnter={() => setOptionsHovered(true)}
-                onMouseLeave={() => setOptionsHovered(false)}
-                style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  height: 34, padding: '0 12px', fontSize: 13,
-                  fontFamily: 'inherit',
-                  background: optionsHovered ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)',
-                  color: 'rgba(255,255,255,0.7)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: 8, cursor: 'pointer',
-                  transition: 'background 130ms',
-                }}
-              >
-                {showOptions ? 'Hide options' : 'Show options'}
-              </button>
-            </div>}
+            rightSlot={<HeaderMenu
+              primary={
+                <button
+                  onClick={() => setShowOptions(v => !v)}
+                  onMouseEnter={() => setOptionsHovered(true)}
+                  onMouseLeave={() => setOptionsHovered(false)}
+                  style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    height: 34, padding: '0 12px', fontSize: 13,
+                    fontFamily: 'inherit',
+                    background: optionsHovered ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)',
+                    color: 'rgba(255,255,255,0.7)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    borderRadius: 8, cursor: 'pointer',
+                    transition: 'background 130ms',
+                  }}
+                >
+                  Options
+                </button>
+              }
+              items={[
+                {
+                  label: audioEnabled ? 'Mute' : 'Unmute',
+                  icon: <SpeakerIcon muted={!audioEnabled} size={20} />,
+                  onClick: () => setAudioEnabled(v => !v),
+                  dim: !audioEnabled,
+                },
+                ...(!authLoading ? [{
+                  label: user ? 'Sign out' : 'Sign in',
+                  onClick: user ? signOut : signIn,
+                }] : []),
+              ]}
+            />}
           />
           {isDrilling && !drill.done && (
             <div style={{ height: 3, background: 'rgba(255,255,255,0.08)' }}>
