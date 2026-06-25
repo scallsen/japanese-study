@@ -32,6 +32,8 @@ export default function DashboardPage() {
       Array.from(grid.children).forEach(c => c.style.height = `${max}px`)
     }
     equalise()
+
+    document.fonts.ready.then(equalise)
     window.addEventListener('resize', equalise)
     return () => window.removeEventListener('resize', equalise)
   }, [])
