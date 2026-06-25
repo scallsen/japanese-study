@@ -141,13 +141,13 @@ async function doSearch(term, offset, commonOnly) {
   }
 
   if (kanaForm && offset === 0) {
-    // Romaji: kana readings + 3 English gloss queries (first-gloss, any-gloss, broad).
-    // '%; term%' catches entries where the term is a non-first gloss item (e.g. "automobile; car; ...").
+    // Romaji: kana readings + 3 word-boundary English gloss queries (first, middle, last).
+    // Word-boundary patterns prevent "car" from matching "carriage", "carpet", etc.
     const [r1, r2, r3, r4] = await Promise.all([
       buildBase().filter('kana_forms', 'cs', `{${kanaForm}}`).limit(PAGE_SIZE),
-      buildBase().ilike('gloss_en', trimmed + '%').limit(PAGE_SIZE),
-      buildBase().ilike('gloss_en', '%; ' + trimmed + '%').limit(PAGE_SIZE),
-      buildBase().ilike('gloss_en', '%' + trimmed + '%').limit(PAGE_SIZE),
+      buildBase().ilike('gloss_en', trimmed + '; %').limit(PAGE_SIZE),
+      buildBase().ilike('gloss_en', '%; ' + trimmed + '; %').limit(PAGE_SIZE),
+      buildBase().ilike('gloss_en', '%; ' + trimmed).limit(PAGE_SIZE),
     ])
     if (r1.error) throw r1.error
     if (r2.error) throw r2.error
@@ -164,11 +164,11 @@ async function doSearch(term, offset, commonOnly) {
   }
 
   if (!jp && offset === 0) {
-    // Pure English: 3 gloss queries — first-gloss, any-gloss, broad.
+    // Pure English: 3 word-boundary gloss queries — first, middle, last position.
     const [r1, r2, r3] = await Promise.all([
-      buildBase().ilike('gloss_en', effectiveTerm + '%').limit(PAGE_SIZE),
-      buildBase().ilike('gloss_en', '%; ' + effectiveTerm + '%').limit(PAGE_SIZE),
-      buildBase().ilike('gloss_en', '%' + effectiveTerm + '%').limit(PAGE_SIZE),
+      buildBase().ilike('gloss_en', effectiveTerm + '; %').limit(PAGE_SIZE),
+      buildBase().ilike('gloss_en', '%; ' + effectiveTerm + '; %').limit(PAGE_SIZE),
+      buildBase().ilike('gloss_en', '%; ' + effectiveTerm).limit(PAGE_SIZE),
     ])
     if (r1.error) throw r1.error
     if (r2.error) throw r2.error
