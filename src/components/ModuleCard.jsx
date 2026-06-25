@@ -42,9 +42,6 @@ export default function ModuleCard({ module, disabled }) {
       onMouseLeave={() => setHovered(false)}
     >
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-        {icon && (
-          <img src={icon} alt="" style={{ width: 36, height: 36, flexShrink: 0 }} />
-        )}
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
             <div style={{ fontSize: 16, color: hovered && !disabled ? 'rgba(255,255,255,0.85)' : TEXT, transition: 'color 130ms' }}>
@@ -56,6 +53,9 @@ export default function ModuleCard({ module, disabled }) {
             {sublabel}
           </div>
         </div>
+        {icon && (
+          <img src={icon} alt="" style={{ width: 36, height: 36, flexShrink: 0 }} />
+        )}
       </div>
     </Tag>
   )
