@@ -45,8 +45,8 @@ export default function ModuleCard({ module, disabled }) {
         </div>
         {external && <ExternalLinkIcon />}
       </div>
-      <div style={{ fontSize: 12, color: TEXT_MUTED, marginTop: 4 }}>
-        {disabled && hovered ? `Sign in to access ${label}` : sublabel}
+      <div style={{ fontSize: 16, color: TEXT_MUTED, marginTop: 4 }}>
+        {sublabel}
       </div>
     </Tag>
   )
