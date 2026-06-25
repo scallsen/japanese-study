@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import ModuleCard from '../components/ModuleCard.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
 import PageHeader from '../components/PageHeader.jsx'
@@ -20,7 +20,22 @@ function useIsMobile(breakpoint = 768) {
 
 
 export default function DashboardPage() {
+  const gridRef = useRef(null)
   const isMobile = useIsMobile()
+
+  useEffect(() => {
+    const grid = gridRef.current
+    if (!grid) return
+    const equalise = () => {
+      Array.from(grid.children).forEach(c => c.style.height = '')
+      const max = Math.max(...Array.from(grid.children).map(c => c.getBoundingClientRect().height))
+      Array.from(grid.children).forEach(c => c.style.height = `${max}px`)
+    }
+    equalise()
+    document.fonts.ready.then(equalise)
+    window.addEventListener('resize', equalise)
+    return () => window.removeEventListener('resize', equalise)
+  }, [])
   const { user, loading } = useAuth()
   const signedOut = !loading && !user
 
@@ -53,11 +68,12 @@ export default function DashboardPage() {
         padding: isMobile ? '20px 16px' : '28px 28px',
       }}>
 
-        <div style={{
+        <div ref={gridRef} style={{
           display: 'grid',
           gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
           gap: 10,
           maxWidth: 900,
+          margin: '0 auto',
         }}>
           {MODULES.map(mod => (
             <ModuleCard
