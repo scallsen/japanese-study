@@ -759,7 +759,10 @@ export default function VocabPage() {
         {/* Header */}
         <div ref={headerRef} style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 }}>
           <PageHeader
-            crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary Training' }]}
+            crumbs={isDrilling && !drill.done
+              ? [{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary Training', onClick: () => setIsDrilling(false) }, { label: 'Reviewing' }]
+              : [{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary Training' }]
+            }
             rightSlot={<HeaderMenu
               primary={
                 <button
