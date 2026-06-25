@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { toKana } from 'wanakana'
 import PageHeader from '../components/PageHeader.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
@@ -332,20 +332,57 @@ function EntryRow({ entry }) {
   )
 }
 
+const SESSION_KEY = 'dict-search-state'
+
+function loadSaved() {
+  try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)) } catch { return null }
+}
+
 export default function DictionaryPage() {
-  const [query, setQuery] = useState('')
-  const [results, setResults] = useState([])
-  const [kanjiResults, setKanjiResults] = useState([])
+  const saved = useMemo(loadSaved, [])
+  const [query, setQuery] = useState(saved?.query ?? '')
+  const [results, setResults] = useState(saved?.results ?? [])
+  const [kanjiResults, setKanjiResults] = useState(saved?.kanjiResults ?? [])
   const [loading, setLoading] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
-  const [hasMore, setHasMore] = useState(false)
-  const [offset, setOffset] = useState(0)
-  const [commonOnly, setCommonOnly] = useState(false)
+  const [hasMore, setHasMore] = useState(saved?.hasMore ?? false)
+  const [offset, setOffset] = useState(saved?.offset ?? 0)
+  const [commonOnly, setCommonOnly] = useState(saved?.commonOnly ?? false)
   const [error, setError] = useState(null)
   const [inputFocused, setInputFocused] = useState(false)
   const debounceRef = useRef(null)
   const ticketRef = useRef(0)
+  const restoredRef = useRef(saved?.results?.length > 0 ? 2 : 0)
+  const scrollRef = useRef(null)
+  const scrollSaveRef = useRef(null)
   const romajiHint = useMemo(() => romajiToKana(query.trim()), [query])
+
+  useEffect(() => {
+    if (saved?.scrollTop && scrollRef.current) {
+      scrollRef.current.scrollTop = saved.scrollTop
+    }
+  }, [])
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify({
+        query, results, kanjiResults, hasMore, offset, commonOnly,
+        scrollTop: scrollRef.current?.scrollTop ?? 0,
+      }))
+    } catch {}
+  }, [query, results, kanjiResults, hasMore, offset, commonOnly])
+
+  const handleScroll = useCallback(() => {
+    clearTimeout(scrollSaveRef.current)
+    scrollSaveRef.current = setTimeout(() => {
+      try {
+        const raw = sessionStorage.getItem(SESSION_KEY)
+        const state = raw ? JSON.parse(raw) : {}
+        state.scrollTop = scrollRef.current?.scrollTop ?? 0
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify(state))
+      } catch {}
+    }, 100)
+  }, [])
 
   async function runSearch(term, off, append, common) {
     if (!term.trim()) {
@@ -380,6 +417,10 @@ export default function DictionaryPage() {
   }
 
   useEffect(() => {
+    if (restoredRef.current > 0) {
+      restoredRef.current -= 1
+      return
+    }
     clearTimeout(debounceRef.current)
     if (!query.trim()) {
       setResults([])
@@ -407,7 +448,7 @@ export default function DictionaryPage() {
         ]}
         rightSlot={<AuthSlot />}
       />
-      <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 48px' }}>
+      <div ref={scrollRef} onScroll={handleScroll} style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 48px' }}>
         <div style={{ maxWidth: 600, margin: '0 auto' }}>
           <input
             type="text"
