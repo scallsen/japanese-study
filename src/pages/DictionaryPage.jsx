@@ -120,8 +120,8 @@ async function doSearch(term, offset, commonOnly) {
     return q
   }
 
-  if (isJapanese(effectiveTerm) && offset === 0) {
-    // Two-query merge: prefix on primary_form + exact containment in kana_forms
+  if (isJapanese(trimmed) && offset === 0) {
+    // User typed Japanese directly — two-query merge: prefix + kana_forms containment
     const [r1, r2] = await Promise.all([
       buildBase().ilike('primary_form', effectiveTerm + '%').limit(PAGE_SIZE),
       buildBase().filter('kana_forms', 'cs', `{${effectiveTerm}}`).limit(PAGE_SIZE),
@@ -138,8 +138,28 @@ async function doSearch(term, offset, commonOnly) {
     return { rows, hasMore: rows.length === PAGE_SIZE }
   }
 
+  if (kanaForm && offset === 0) {
+    // Romaji that converts to kana — search both kana readings AND English gloss.
+    // "hon"→"ほん": kana search finds 本 (+60 kana bonus); "house"→"ほうせ": kana finds
+    // nothing, English gloss finds 家 (+40 first-sense bonus). Relevance picks the winner.
+    const [r1, r2] = await Promise.all([
+      buildBase().filter('kana_forms', 'cs', `{${kanaForm}}`).limit(PAGE_SIZE),
+      buildBase().ilike('gloss_en', '%' + trimmed + '%').limit(PAGE_SIZE),
+    ])
+    if (r1.error) throw r1.error
+    if (r2.error) throw r2.error
+    const seen = new Set()
+    const merged = []
+    for (const row of [...(r1.data ?? []), ...(r2.data ?? [])]) {
+      if (!seen.has(row.id)) { seen.add(row.id); merged.push(row) }
+    }
+    merged.sort((a, b) => relevanceScore(b, trimmed, kanaForm) - relevanceScore(a, trimmed, kanaForm))
+    const rows = merged.slice(0, PAGE_SIZE)
+    return { rows, hasMore: rows.length === PAGE_SIZE }
+  }
+
   if (!jp && offset === 0) {
-    // English first page: fetch then client-sort for first-sense gloss bonus
+    // Pure English (doesn't convert to kana) — English gloss + client sort
     const { data, error } = await buildBase()
       .ilike('gloss_en', '%' + effectiveTerm + '%')
       .limit(PAGE_SIZE)
