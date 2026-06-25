@@ -2,8 +2,21 @@
 
 Japanese study dashboard. Vite + React, no TypeScript. Houses multiple learning modules behind a single landing page.
 
+## Worktree dev server
+When working in a git worktree (`.claude/worktrees/<name>/`), two things must be done before the dev server will work correctly:
+
+1. **Symlink `.env`** — the worktree has no `.env` file. Without it, Supabase is unconfigured and all DB queries fail silently or throw. Fix:
+   ```
+   ln -s /Users/simoncallsen/Documents/GitHub/japanese-study/.env \
+         /Users/simoncallsen/Documents/GitHub/japanese-study/.claude/worktrees/<name>/.env
+   ```
+2. **Run `npm run dev` from the worktree directory**, not from the repo root. Running from root serves committed files, not the worktree's edits.
+
+Both issues have occurred in previous sessions and caused confusing bugs (search failures, edits appearing to have no effect).
+
 ## Conventions
-- **Inline styles only** — no CSS modules, no Tailwind. CSS files only for things that can't be expressed inline (e.g. keyframe animations, scrollbar styles).
+- **Inline styles only** — no CSS modules, no Tailwind. CSS files only for things that can't be expressed inline (e.g. keyframe animations, scrollbar styles, `:hover` / `:focus` pseudo-selectors).
+- **Never use `useState` for hover** — the app runs in React StrictMode which double-invokes renders; `onMouseEnter`/`onMouseLeave` + `useState` causes crashes in dev. Use a CSS class + a `:hover` rule in `global.css` instead.
 - **No comments** unless the WHY is non-obvious (a hidden constraint, a workaround, a subtle invariant).
 - **No TypeScript** — plain JS throughout.
 - **No i18n** — all strings hardcoded in English.

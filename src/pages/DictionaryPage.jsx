@@ -193,6 +193,80 @@ function KanjiRow({ entry }) {
   )
 }
 
+function KanjiSection({ entries, hasWords }) {
+  const [expanded, setExpanded] = useState(false)
+
+  return (
+    <>
+      <SectionLabel label="Kanji" />
+      <div style={{
+        background: SURFACE,
+        borderRadius: 8,
+        border: '1px solid rgba(255,255,255,0.06)',
+        overflow: expanded ? 'hidden' : 'visible',
+        marginBottom: hasWords ? 20 : 0,
+      }}>
+        {!expanded ? (
+          <div
+            onClick={() => setExpanded(true)}
+            className="kanji-section-toggle"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              cursor: 'pointer',
+              borderRadius: 8,
+            }}
+          >
+            <div style={{ display: 'flex', overflowX: 'auto', flex: 1 }}>
+              {entries.map(entry => (
+                <div
+                  key={entry.literal}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '12px 20px',
+                    flexShrink: 0,
+                    borderRight: '1px solid rgba(255,255,255,0.05)',
+                  }}
+                >
+                  <span style={{ fontSize: 22, color: TEXT, fontFamily: FONT, letterSpacing: 0 }}>
+                    {entry.literal}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div style={{ padding: '0 16px', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+              <span style={{ fontSize: 20, lineHeight: 1, color: TEXT_MUTED, opacity: 0.5, fontFamily: 'system-ui' }}>›</span>
+            </div>
+          </div>
+        ) : (
+          <>
+            {entries.map(entry => <KanjiRow key={entry.literal} entry={entry} />)}
+            <div
+              onClick={() => setExpanded(false)}
+              className="kanji-section-collapse"
+              style={{
+                padding: '10px 16px',
+                textAlign: 'center',
+                cursor: 'pointer',
+                fontSize: 12,
+                color: TEXT_MUTED,
+                fontFamily: FONT,
+                letterSpacing: TRACKING,
+                opacity: 0.6,
+                borderTop: '1px solid rgba(255,255,255,0.05)',
+              }}
+            >
+              Collapse Kanji
+            </div>
+          </>
+        )}
+      </div>
+    </>
+  )
+}
+
 function SectionLabel({ label }) {
   return (
     <div style={{
@@ -217,7 +291,17 @@ function EntryRow({ entry }) {
   const meaning = entry.gloss_en?.split('; ').slice(0, 3).join('; ') ?? ''
 
   return (
-    <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+    <a
+      href={`#/dictionary/entry/${entry.id}`}
+      className="dict-entry-row"
+      style={{
+        display: 'block',
+        padding: '12px 16px',
+        borderBottom: '1px solid rgba(255,255,255,0.05)',
+        textDecoration: 'none',
+        cursor: 'pointer',
+      }}
+    >
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 5 }}>
         <span style={{ fontSize: 20, color: TEXT, fontFamily: FONT, letterSpacing: 0 }}>{entry.primary_form}</span>
         {showKana && (
@@ -244,7 +328,7 @@ function EntryRow({ entry }) {
           <span style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{meaning}</span>
         )}
       </div>
-    </div>
+    </a>
   )
 }
 
@@ -411,18 +495,11 @@ export default function DictionaryPage() {
           )}
 
           {!loading && kanjiResults.length > 0 && (
-            <>
-              <SectionLabel label="Kanji" />
-              <div style={{
-                background: SURFACE,
-                borderRadius: 8,
-                overflow: 'hidden',
-                border: '1px solid rgba(255,255,255,0.06)',
-                marginBottom: showResults ? 20 : 0,
-              }}>
-                {kanjiResults.map(entry => <KanjiRow key={entry.literal} entry={entry} />)}
-              </div>
-            </>
+            <KanjiSection
+              key={kanjiResults.map(r => r.literal).join('')}
+              entries={kanjiResults}
+              hasWords={showResults}
+            />
           )}
 
           {showResults && !loading && (
