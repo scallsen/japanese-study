@@ -31,8 +31,8 @@ export const MODULES = [
   },
   {
     id: 'grammar-map',
-    label: 'Grammar Map',
-    sublabel: 'Experimental: Visualize grammar connections and dependencies',
+    label: 'Grammar Map (Experimental)',
+    sublabel: 'Visualize grammar connections and dependencies',
     stats: null,
     href: '#/grammar-map',
     external: false,
