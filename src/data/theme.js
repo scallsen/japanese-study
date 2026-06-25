@@ -23,4 +23,6 @@ export const FS_CONTENT_HEADING = 22  // article title in reader, module stat su
 export const FS_LIST_TITLE = 17       // article card title in list view
 export const FS_ENTRY_WORD = 20       // word form in dictionary results & word popup
 export const FS_ENTRY_KANJI = 36      // dictionary large kanji display
+export const FS_ENTRY_HEADING = 52    // dictionary entry page primary word/kanji display
+export const FS_ENTRY_ALT = 18        // dictionary entry page alternate word forms
 export const FS_ARTICLE_BODY = 18     // article body text (reading-optimised, do not normalise)
