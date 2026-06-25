@@ -30,7 +30,7 @@ Two patterns for internal modules. Pick the right one before looking for code:
 | Shared UI components | `src/components/` |
 | Design tokens | `src/data/theme.js` |
 
-**Database:** Two Supabase tables: `progress` (user learning state, schema in Auth section) and `dictionary` (JMdict central dictionary, schema in Immersion section). All word/card content lives in static JSON files in the repo — never in the database.
+**Database:** Three Supabase tables: `progress` (user learning state, schema in Auth section), `dictionary` (JMdict central dictionary, schema in Immersion section), and `kanji` (KANJIDIC2 kanji data, schema in Dictionary section). All word/card content lives in static JSON files in the repo — never in the database.
 
 ## Routing
 
@@ -41,6 +41,9 @@ Two patterns for internal modules. Pick the right one before looking for code:
 | `#/` (or empty) | `DashboardPage` | `src/pages/DashboardPage.jsx` |
 | `#/vocab` | `VocabPage` | `src/pages/VocabPage.jsx` |
 | `#/vocab-srs` | `VocabSrsModule` | `src/modules/vocab-srs/VocabSrsModule.jsx` |
+| `#/immersion` | `ImmersionModule` | `src/modules/immersion/ImmersionModule.jsx` |
+| `#/grammar-map` | `GrammarMapModule` | `src/modules/grammar-map/GrammarMapModule.jsx` |
+| `#/dictionary` | `DictionaryPage` | `src/pages/DictionaryPage.jsx` |
 
 To add a route: add a branch in `App.jsx`. Page-based → create `src/pages/YourPage.jsx`. Self-contained → create `src/modules/<name>/` and import the root component in `App.jsx`.
 
@@ -586,3 +589,68 @@ Articles accumulate indefinitely — there is no cleanup job. The reader fetches
 ### SRS bridge
 
 `ImmersionReader` imports `createCard` from `../vocab-srs/srs.js` and writes directly to the `vocab-srs` progress namespace, appending words to an `immersion-words` imported deck (created on first add). This is the only cross-module write in the codebase.
+
+## Dictionary (`#/dictionary`)
+
+**Page-based** (`src/pages/DictionaryPage.jsx`). JMdict-backed dictionary with inline kanji lookup. Searches the Supabase `dictionary` table (JMdict) and the `kanji` table (KANJIDIC2).
+
+### Key files
+
+| File | Purpose |
+|---|---|
+| `src/pages/DictionaryPage.jsx` | Search UI, query logic, result rendering, kanji carousel |
+| `scripts/import-jmdict.mjs` | One-time import — populates `dictionary` table from jmdict-simplified JSON |
+| `scripts/import-kanjidic2.mjs` | One-time import — populates `kanji` table from KANJIDIC2 JSON or zip |
+
+### Search branches
+
+`doSearch` in `DictionaryPage.jsx` has three branches based on input:
+
+1. **Japanese typed** (`isJapanese(trimmed)`, offset 0) — two queries merged: `primary_form` prefix + `kana_forms` GIN containment. Results deduped and sorted by `relevanceScore`.
+2. **Romaji input** (converts via wanakana's `toKana()` to a valid kana string, offset 0) — four parallel queries: kana_forms containment + three word-boundary English gloss queries. Merged, deduped, sorted.
+3. **Pure English** (no kana conversion, offset 0) — three word-boundary English gloss queries (first, middle, last gloss position). Merged, deduped, sorted.
+4. **Pagination** (offset > 0) — single range query, DB order only.
+
+**Word-boundary gloss matching**: English gloss queries use word-boundary patterns rather than substring `%term%`, preventing "car" from matching "carriage", "carpet", etc. Patterns for each term:
+- `term + '; %'` — term is first gloss item
+- `'%; ' + term + '; %'` — term is middle gloss item
+- `'%; ' + term` — term is last gloss item
+
+### `relevanceScore(row, term, effectiveTerm)`
+
+Client-side sort applied after merging query results. Scoring:
+
+| Signal | Points |
+|---|---|
+| `common = true` | +100 |
+| `primary_form` exact match | +80 |
+| `kana_forms` contains effective term | +60 |
+| `primary_form` starts with term | +25 |
+| First gloss exact match | +40 |
+| Any gloss exact match | +30 |
+| First gloss starts with term | +20 |
+| Length penalty | −min(primary_form.length, 20) |
+
+### Kanji carousel
+
+When results include common kanji (from `vocabulary_ja` in the articles table or direct KANJIDIC2 lookup), a horizontal carousel appears above the word results showing kanji cards. Each card shows the character, readings, and meaning and can be expanded in place for full detail (stroke count, JLPT level, frequency, all readings/meanings).
+
+### Supabase `kanji` table
+
+```sql
+create table if not exists kanji (
+  literal     text primary key,
+  grade       smallint,
+  stroke_count smallint,
+  jlpt        smallint,
+  frequency   smallint,
+  meanings    text[] not null default '{}',
+  on_readings text[] not null default '{}',
+  kun_readings text[] not null default '{}',
+  common      boolean not null default false
+);
+grant select on kanji to anon, authenticated;
+grant all on kanji to service_role;
+```
+
+Populated by `scripts/import-kanjidic2.mjs` (accepts raw XML zip or pre-converted JSON).
