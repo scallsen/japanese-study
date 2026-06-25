@@ -7,6 +7,7 @@ import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../data/theme.js'
 
 const BG = '#1E1E1E'
 const SURFACE = '#2A2A2A'
+const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
 
 const PAGE_SIZE = 20
 
@@ -156,18 +157,18 @@ function KanjiRow({ entry }) {
 
   return (
     <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-      <span style={{ fontSize: 36, color: TEXT, fontFamily: FONT, lineHeight: 1, flexShrink: 0, letterSpacing: 0, minWidth: 40, textAlign: 'center' }}>
+      <span style={{ fontSize: 36, color: TEXT, fontFamily: KANJI_FONT, lineHeight: 1, flexShrink: 0, letterSpacing: 0, minWidth: 40, textAlign: 'center' }}>
         {entry.literal}
       </span>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 5 }}>
           {entry.on_readings.length > 0 && (
-            <span style={{ fontSize: 13, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>
+            <span style={{ fontSize: 13, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
               {entry.on_readings.join('、')}
             </span>
           )}
           {entry.kun_readings.length > 0 && (
-            <span style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+            <span style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
               {entry.kun_readings.join('、')}
             </span>
           )}
@@ -230,7 +231,7 @@ function KanjiSection({ entries, hasWords }) {
                     borderRight: '1px solid rgba(255,255,255,0.05)',
                   }}
                 >
-                  <span style={{ fontSize: 22, color: TEXT, fontFamily: FONT, letterSpacing: 0 }}>
+                  <span style={{ fontSize: 22, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
                     {entry.literal}
                   </span>
                 </div>
@@ -303,9 +304,9 @@ function EntryRow({ entry }) {
       }}
     >
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 5 }}>
-        <span style={{ fontSize: 20, color: TEXT, fontFamily: FONT, letterSpacing: 0 }}>{entry.primary_form}</span>
+        <span style={{ fontSize: 20, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{entry.primary_form}</span>
         {showKana && (
-          <span style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{kana}</span>
+          <span style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{kana}</span>
         )}
         {entry.common && (
           <span style={{ fontSize: 10, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>common</span>

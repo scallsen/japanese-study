@@ -6,6 +6,7 @@ import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../data/theme.js'
 
 const BG = '#1E1E1E'
 const SURFACE = '#2A2A2A'
+const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
 
 function isSingleKanji(ch) {
   return /^[一-鿿]$/.test(ch)
@@ -127,18 +128,18 @@ function KanjiCard({ entry }) {
       gap: 16,
       alignItems: 'flex-start',
     }}>
-      <span style={{ fontSize: 38, color: TEXT, fontFamily: FONT, lineHeight: 1, letterSpacing: 0, flexShrink: 0, minWidth: 44, textAlign: 'center' }}>
+      <span style={{ fontSize: 38, color: TEXT, fontFamily: KANJI_FONT, lineHeight: 1, letterSpacing: 0, flexShrink: 0, minWidth: 44, textAlign: 'center' }}>
         {entry.literal}
       </span>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 5 }}>
           {entry.on_readings?.length > 0 && (
-            <span style={{ fontSize: 13, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>
+            <span style={{ fontSize: 13, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
               {entry.on_readings.join('、')}
             </span>
           )}
           {entry.kun_readings?.length > 0 && (
-            <span style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+            <span style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
               {entry.kun_readings.join('、')}
             </span>
           )}
@@ -240,7 +241,7 @@ export default function DictionaryEntryPage({ entryId }) {
               {/* Header */}
               <div style={{ marginBottom: 28 }}>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, flexWrap: 'wrap', marginBottom: 10 }}>
-                  <span style={{ fontSize: 52, color: TEXT, fontFamily: FONT, letterSpacing: 0, lineHeight: 1.1 }}>
+                  <span style={{ fontSize: 52, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, lineHeight: 1.1 }}>
                     {entry.primary_form}
                   </span>
                   {entry.common && (
@@ -251,7 +252,7 @@ export default function DictionaryEntryPage({ entryId }) {
                 {altForms.length > 0 && (
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
                     {altForms.map((f, i) => (
-                      <span key={i} style={{ fontSize: 18, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+                      <span key={i} style={{ fontSize: 18, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
                         {f}
                       </span>
                     ))}
