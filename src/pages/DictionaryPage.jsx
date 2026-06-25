@@ -32,9 +32,11 @@ function relevanceScore(row, term, effectiveTerm) {
   if (row.primary_form === term || row.primary_form === eff) score += 80
   if (row.kana_forms?.includes(eff)) score += 60
   if (row.primary_form.startsWith(eff) || row.primary_form.startsWith(term)) score += 25
-  const firstGloss = row.gloss_en?.split('; ')[0]?.toLowerCase() ?? ''
+  const glosses = row.gloss_en?.split('; ') ?? []
   const lowerTerm = term.toLowerCase()
+  const firstGloss = glosses[0]?.toLowerCase() ?? ''
   if (firstGloss === lowerTerm) score += 40
+  else if (glosses.some(g => g.toLowerCase() === lowerTerm)) score += 30
   else if (firstGloss.startsWith(lowerTerm)) score += 20
   score -= Math.min(row.primary_form.length, 20)
   return score
@@ -139,19 +141,21 @@ async function doSearch(term, offset, commonOnly) {
   }
 
   if (kanaForm && offset === 0) {
-    // Romaji: kana readings + English gloss prefix + English gloss broad (3 queries).
-    // Prefix query guarantees high-precision gloss matches (車 for "car") are always fetched.
-    const [r1, r2, r3] = await Promise.all([
+    // Romaji: kana readings + 3 English gloss queries (first-gloss, any-gloss, broad).
+    // '%; term%' catches entries where the term is a non-first gloss item (e.g. "automobile; car; ...").
+    const [r1, r2, r3, r4] = await Promise.all([
       buildBase().filter('kana_forms', 'cs', `{${kanaForm}}`).limit(PAGE_SIZE),
       buildBase().ilike('gloss_en', trimmed + '%').limit(PAGE_SIZE),
+      buildBase().ilike('gloss_en', '%; ' + trimmed + '%').limit(PAGE_SIZE),
       buildBase().ilike('gloss_en', '%' + trimmed + '%').limit(PAGE_SIZE),
     ])
     if (r1.error) throw r1.error
     if (r2.error) throw r2.error
     if (r3.error) throw r3.error
+    if (r4.error) throw r4.error
     const seen = new Set()
     const merged = []
-    for (const row of [...(r1.data ?? []), ...(r2.data ?? []), ...(r3.data ?? [])]) {
+    for (const row of [...(r1.data ?? []), ...(r2.data ?? []), ...(r3.data ?? []), ...(r4.data ?? [])]) {
       if (!seen.has(row.id)) { seen.add(row.id); merged.push(row) }
     }
     merged.sort((a, b) => relevanceScore(b, trimmed, kanaForm) - relevanceScore(a, trimmed, kanaForm))
@@ -160,16 +164,18 @@ async function doSearch(term, offset, commonOnly) {
   }
 
   if (!jp && offset === 0) {
-    // Pure English: gloss prefix + gloss broad to guarantee high-precision matches are fetched.
-    const [r1, r2] = await Promise.all([
+    // Pure English: 3 gloss queries — first-gloss, any-gloss, broad.
+    const [r1, r2, r3] = await Promise.all([
       buildBase().ilike('gloss_en', effectiveTerm + '%').limit(PAGE_SIZE),
+      buildBase().ilike('gloss_en', '%; ' + effectiveTerm + '%').limit(PAGE_SIZE),
       buildBase().ilike('gloss_en', '%' + effectiveTerm + '%').limit(PAGE_SIZE),
     ])
     if (r1.error) throw r1.error
     if (r2.error) throw r2.error
+    if (r3.error) throw r3.error
     const seen = new Set()
     const merged = []
-    for (const row of [...(r1.data ?? []), ...(r2.data ?? [])]) {
+    for (const row of [...(r1.data ?? []), ...(r2.data ?? []), ...(r3.data ?? [])]) {
       if (!seen.has(row.id)) { seen.add(row.id); merged.push(row) }
     }
     merged.sort((a, b) => relevanceScore(b, trimmed, effectiveTerm) - relevanceScore(a, trimmed, effectiveTerm))
