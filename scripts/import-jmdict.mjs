@@ -16,12 +16,18 @@
  *     kana_forms   text[] NOT NULL DEFAULT '{}',
  *     gloss_en     text,
  *     pos          text[],
- *     common       boolean NOT NULL DEFAULT false
+ *     common       boolean NOT NULL DEFAULT false,
+ *     kanji_forms  text[] NOT NULL DEFAULT '{}',
+ *     senses       jsonb
  *   );
  *   CREATE INDEX IF NOT EXISTS dictionary_primary_form_idx ON dictionary (primary_form);
  *   CREATE INDEX IF NOT EXISTS dictionary_kana_forms_gin   ON dictionary USING GIN (kana_forms);
  *   CREATE INDEX IF NOT EXISTS dictionary_common_idx       ON dictionary (common);
  *   GRANT SELECT ON dictionary TO anon, authenticated;
+ *
+ *   -- If upgrading an existing table, run these first:
+ *   ALTER TABLE dictionary ADD COLUMN IF NOT EXISTS kanji_forms text[] NOT NULL DEFAULT '{}';
+ *   ALTER TABLE dictionary ADD COLUMN IF NOT EXISTS senses jsonb;
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -69,6 +75,7 @@ async function resolveSource() {
 
 function transformEntry(entry) {
   const primaryForm = entry.kanji.length > 0 ? entry.kanji[0].text : entry.kana[0].text
+  const kanjiForms = entry.kanji.map(k => k.text)
   const kanaForms = entry.kana.map(k => k.text)
   const common = entry.kanji.some(k => k.common) || entry.kana.some(k => k.common)
   const glossEn = entry.sense
@@ -76,7 +83,23 @@ function transformEntry(entry) {
     .join('; ') || null
   const posSet = new Set(entry.sense.flatMap(s => s.partOfSpeech))
   const pos = posSet.size > 0 ? [...posSet] : null
-  return { id: entry.id, primary_form: primaryForm, kana_forms: kanaForms, gloss_en: glossEn, pos, common }
+  const senses = entry.sense.map(s => {
+    const sense = { gloss: s.gloss.filter(g => g.lang === 'eng').map(g => g.text) }
+    if (s.partOfSpeech?.length) sense.pos = s.partOfSpeech
+    if (s.field?.length) sense.field = s.field
+    if (s.misc?.length) sense.misc = s.misc
+    if (s.info?.length) sense.info = s.info
+    if (s.dialect?.length) sense.dialect = s.dialect
+    if (s.languageSource?.length) sense.languageSource = s.languageSource.map(ls => ({
+      lang: ls.lang,
+      ...(ls.text ? { text: ls.text } : {}),
+      ...(ls.wasei ? { wasei: true } : {}),
+    }))
+    if (s.related?.length) sense.related = s.related.map(r => r[0])
+    if (s.antonym?.length) sense.antonym = s.antonym.map(r => r[0])
+    return sense
+  })
+  return { id: entry.id, primary_form: primaryForm, kanji_forms: kanjiForms, kana_forms: kanaForms, gloss_en: glossEn, pos, common, senses }
 }
 
 async function main() {

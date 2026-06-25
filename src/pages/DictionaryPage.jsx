@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { toKana } from 'wanakana'
 import PageHeader from '../components/PageHeader.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
@@ -7,7 +7,7 @@ import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_NAV, FS_BADGE, FS_CAPTION
 
 const BG = '#1E1E1E'
 const SURFACE = '#2A2A2A'
-const SURFACE_HOVER = '#313131'
+const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
 
 const PAGE_SIZE = 20
 
@@ -28,10 +28,11 @@ function romajiToKana(term) {
 
 function relevanceScore(row, term, effectiveTerm) {
   const eff = effectiveTerm ?? term
+  const kata = hiraganaToKatakana(eff)
   let score = row.common ? 100 : 0
-  if (row.primary_form === term || row.primary_form === eff) score += 80
-  if (row.kana_forms?.includes(eff)) score += 60
-  if (row.primary_form.startsWith(eff) || row.primary_form.startsWith(term)) score += 25
+  if (row.primary_form === term || row.primary_form === eff || row.primary_form === kata) score += 80
+  if (row.kana_forms?.includes(eff) || row.kana_forms?.includes(kata)) score += 60
+  if (row.primary_form.startsWith(eff) || row.primary_form.startsWith(term) || row.primary_form.startsWith(kata)) score += 25
   const glosses = row.gloss_en?.split('; ') ?? []
   const lowerTerm = term.toLowerCase()
   const firstGloss = glosses[0]?.toLowerCase() ?? ''
@@ -66,6 +67,10 @@ function shortPos(raw) {
 
 function katakanaToHiragana(str) {
   return str.replace(/[ァ-ヶ]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0x60))
+}
+
+function hiraganaToKatakana(str) {
+  return str.replace(/[ぁ-ん]/g, ch => String.fromCharCode(ch.charCodeAt(0) + 0x60))
 }
 
 function isSingleKanji(str) {
@@ -107,11 +112,11 @@ async function doSearch(term, offset, commonOnly) {
   const trimmed = term.trim()
   if (!trimmed) return { rows: [], hasMore: false }
 
-  // Convert romaji to kana if the input fully maps (e.g. "hon" → "ほん")
   const kanaForm = romajiToKana(trimmed)
   const effectiveTerm = kanaForm ?? trimmed
-
   const jp = isJapanese(effectiveTerm) || !!kanaForm
+  // When romaji converts to hiragana, also search the katakana equivalent (e.g. terebi → てれび → テレビ)
+  const katakanaForm = kanaForm ? hiraganaToKatakana(kanaForm) : null
 
   const buildBase = () => {
     let q = supabase
@@ -141,22 +146,24 @@ async function doSearch(term, offset, commonOnly) {
   }
 
   if (kanaForm && offset === 0) {
-    // Romaji: kana readings + 3 word-boundary English gloss queries (first, middle, last).
-    // Word-boundary patterns prevent "car" from matching "carriage", "carpet", etc.
-    const [r1, r2, r3, r4] = await Promise.all([
+    // Romaji → kana: kana_forms exact match + katakana primary_form prefix + English gloss word-boundary queries
+    const queries = [
       buildBase().filter('kana_forms', 'cs', `{${kanaForm}}`).limit(PAGE_SIZE),
       buildBase().ilike('gloss_en', trimmed + '; %').limit(PAGE_SIZE),
       buildBase().ilike('gloss_en', '%; ' + trimmed + '; %').limit(PAGE_SIZE),
       buildBase().ilike('gloss_en', '%; ' + trimmed).limit(PAGE_SIZE),
-    ])
-    if (r1.error) throw r1.error
-    if (r2.error) throw r2.error
-    if (r3.error) throw r3.error
-    if (r4.error) throw r4.error
+    ]
+    if (katakanaForm) {
+      queries.push(buildBase().ilike('primary_form', katakanaForm + '%').limit(PAGE_SIZE))
+    }
+    const results = await Promise.all(queries)
+    if (results[0].error) throw results[0].error
     const seen = new Set()
     const merged = []
-    for (const row of [...(r1.data ?? []), ...(r2.data ?? []), ...(r3.data ?? []), ...(r4.data ?? [])]) {
-      if (!seen.has(row.id)) { seen.add(row.id); merged.push(row) }
+    for (const { data } of results) {
+      for (const row of (data ?? [])) {
+        if (!seen.has(row.id)) { seen.add(row.id); merged.push(row) }
+      }
     }
     merged.sort((a, b) => relevanceScore(b, trimmed, kanaForm) - relevanceScore(a, trimmed, kanaForm))
     const rows = merged.slice(0, PAGE_SIZE)
@@ -186,7 +193,10 @@ async function doSearch(term, offset, commonOnly) {
   // Pagination (offset > 0) — DB ordering only
   let q = buildBase().range(offset, offset + PAGE_SIZE - 1)
   if (jp) {
-    q = q.ilike('primary_form', effectiveTerm + '%')
+    const prefix = katakanaForm
+      ? `primary_form.ilike.${effectiveTerm}%,primary_form.ilike.${katakanaForm}%`
+      : null
+    q = prefix ? q.or(prefix) : q.ilike('primary_form', effectiveTerm + '%')
   } else {
     q = q.ilike('gloss_en', '%' + effectiveTerm + '%')
   }
@@ -196,31 +206,38 @@ async function doSearch(term, offset, commonOnly) {
   return { rows: data ?? [], hasMore: (data ?? []).length === PAGE_SIZE }
 }
 
+function kanjiGradeLabel(grade) {
+  if (!grade) return null
+  if (grade <= 6) return `G${grade}`
+  if (grade <= 8) return 'Secondary'
+  return 'Jinmeiyō'
+}
+
 function KanjiRow({ entry }) {
   const jlptLabel = entry.jlpt ? `N${entry.jlpt}` : null
-  const gradeLabel = entry.grade && entry.grade <= 6 ? `G${entry.grade}` : null
+  const gradeLabel = kanjiGradeLabel(entry.grade)
 
   return (
     <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-      <span style={{ fontSize: FS_ENTRY_KANJI, color: TEXT, fontFamily: FONT, lineHeight: 1, flexShrink: 0, letterSpacing: 0, minWidth: 40, textAlign: 'center' }}>
+      <span style={{ fontSize: FS_ENTRY_KANJI, color: TEXT, fontFamily: KANJI_FONT, lineHeight: 1, flexShrink: 0, letterSpacing: 0, minWidth: 40, textAlign: 'center' }}>
         {entry.literal}
       </span>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 5 }}>
           {entry.on_readings.length > 0 && (
-            <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>
+            <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
               {entry.on_readings.join('、')}
             </span>
           )}
           {entry.kun_readings.length > 0 && (
-            <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+            <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
               {entry.kun_readings.join('、')}
             </span>
           )}
           {jlptLabel && (
             <span style={{ fontSize: FS_BADGE, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>{jlptLabel}</span>
           )}
-          {gradeLabel && !jlptLabel && (
+          {gradeLabel && (
             <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{gradeLabel}</span>
           )}
           {entry.stroke_count && (
@@ -241,8 +258,6 @@ function KanjiRow({ entry }) {
 
 function KanjiSection({ entries, hasWords }) {
   const [expanded, setExpanded] = useState(false)
-  const [hovered, setHovered] = useState(false)
-  const [collapseHovered, setCollapseHovered] = useState(false)
 
   return (
     <>
@@ -257,19 +272,16 @@ function KanjiSection({ entries, hasWords }) {
         {!expanded ? (
           <div
             onClick={() => setExpanded(true)}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
+            className="kanji-section-toggle"
             style={{
               display: 'flex',
               alignItems: 'center',
               cursor: 'pointer',
-              background: hovered ? SURFACE_HOVER : 'transparent',
               borderRadius: 8,
-              transition: 'background 100ms',
             }}
           >
             <div style={{ display: 'flex', overflowX: 'auto', flex: 1 }}>
-              {entries.map((entry) => (
+              {entries.map(entry => (
                 <div
                   key={entry.literal}
                   style={{
@@ -281,7 +293,7 @@ function KanjiSection({ entries, hasWords }) {
                     borderRight: '1px solid rgba(255,255,255,0.05)',
                   }}
                 >
-                  <span style={{ fontSize: FS_CONTENT_HEADING, color: TEXT, fontFamily: FONT, letterSpacing: 0 }}>
+                  <span style={{ fontSize: FS_CONTENT_HEADING, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
                     {entry.literal}
                   </span>
                 </div>
@@ -296,8 +308,7 @@ function KanjiSection({ entries, hasWords }) {
             {entries.map(entry => <KanjiRow key={entry.literal} entry={entry} />)}
             <div
               onClick={() => setExpanded(false)}
-              onMouseEnter={() => setCollapseHovered(true)}
-              onMouseLeave={() => setCollapseHovered(false)}
+              className="kanji-section-collapse"
               style={{
                 padding: '10px 16px',
                 textAlign: 'center',
@@ -308,8 +319,6 @@ function KanjiSection({ entries, hasWords }) {
                 letterSpacing: TRACKING,
                 opacity: 0.6,
                 borderTop: '1px solid rgba(255,255,255,0.05)',
-                background: collapseHovered ? SURFACE_HOVER : 'transparent',
-                transition: 'background 100ms',
               }}
             >
               Collapse Kanji
@@ -345,11 +354,21 @@ function EntryRow({ entry }) {
   const meaning = entry.gloss_en?.split('; ').slice(0, 3).join('; ') ?? ''
 
   return (
-    <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+    <a
+      href={`#/dictionary/entry/${entry.id}`}
+      className="dict-entry-row"
+      style={{
+        display: 'block',
+        padding: '12px 16px',
+        borderBottom: '1px solid rgba(255,255,255,0.05)',
+        textDecoration: 'none',
+        cursor: 'pointer',
+      }}
+    >
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 5 }}>
-        <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: FONT, letterSpacing: 0 }}>{entry.primary_form}</span>
+        <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{entry.primary_form}</span>
         {showKana && (
-          <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{kana}</span>
+          <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{kana}</span>
         )}
         {entry.common && (
           <span style={{ fontSize: FS_BADGE, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>common</span>
@@ -372,24 +391,61 @@ function EntryRow({ entry }) {
           <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{meaning}</span>
         )}
       </div>
-    </div>
+    </a>
   )
 }
 
+const SESSION_KEY = 'dict-search-state'
+
+function loadSaved() {
+  try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)) } catch { return null }
+}
+
 export default function DictionaryPage() {
-  const [query, setQuery] = useState('')
-  const [results, setResults] = useState([])
-  const [kanjiResults, setKanjiResults] = useState([])
+  const saved = useMemo(loadSaved, [])
+  const [query, setQuery] = useState(saved?.query ?? '')
+  const [results, setResults] = useState(saved?.results ?? [])
+  const [kanjiResults, setKanjiResults] = useState(saved?.kanjiResults ?? [])
   const [loading, setLoading] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
-  const [hasMore, setHasMore] = useState(false)
-  const [offset, setOffset] = useState(0)
-  const [commonOnly, setCommonOnly] = useState(false)
+  const [hasMore, setHasMore] = useState(saved?.hasMore ?? false)
+  const [offset, setOffset] = useState(saved?.offset ?? 0)
+  const [commonOnly, setCommonOnly] = useState(saved?.commonOnly ?? false)
   const [error, setError] = useState(null)
   const [inputFocused, setInputFocused] = useState(false)
   const debounceRef = useRef(null)
   const ticketRef = useRef(0)
+  const restoredRef = useRef(saved?.results?.length > 0 ? 2 : 0)
+  const scrollRef = useRef(null)
+  const scrollSaveRef = useRef(null)
   const romajiHint = useMemo(() => romajiToKana(query.trim()), [query])
+
+  useEffect(() => {
+    if (saved?.scrollTop && scrollRef.current) {
+      scrollRef.current.scrollTop = saved.scrollTop
+    }
+  }, [saved?.scrollTop])
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify({
+        query, results, kanjiResults, hasMore, offset, commonOnly,
+        scrollTop: scrollRef.current?.scrollTop ?? 0,
+      }))
+    } catch (e) { void e }
+  }, [query, results, kanjiResults, hasMore, offset, commonOnly])
+
+  const handleScroll = useCallback(() => {
+    clearTimeout(scrollSaveRef.current)
+    scrollSaveRef.current = setTimeout(() => {
+      try {
+        const raw = sessionStorage.getItem(SESSION_KEY)
+        const state = raw ? JSON.parse(raw) : {}
+        state.scrollTop = scrollRef.current?.scrollTop ?? 0
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify(state))
+      } catch (e) { void e }
+    }, 100)
+  }, [])
 
   async function runSearch(term, off, append, common) {
     if (!term.trim()) {
@@ -424,6 +480,10 @@ export default function DictionaryPage() {
   }
 
   useEffect(() => {
+    if (restoredRef.current > 0) {
+      restoredRef.current -= 1
+      return
+    }
     clearTimeout(debounceRef.current)
     if (!query.trim()) {
       setResults([])
@@ -451,7 +511,7 @@ export default function DictionaryPage() {
         ]}
         rightSlot={<AuthSlot />}
       />
-      <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 48px' }}>
+      <div ref={scrollRef} onScroll={handleScroll} style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 48px' }}>
         <div style={{ maxWidth: 600, margin: '0 auto' }}>
           <input
             type="text"

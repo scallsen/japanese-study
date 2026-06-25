@@ -32,3 +32,15 @@ button, input, select, textarea {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
 }
+
+.dict-entry-row:hover {
+  background: #313131;
+}
+
+.kanji-section-toggle:hover {
+  background: #313131;
+}
+
+.kanji-section-collapse:hover {
+  background: #313131;
+}
