@@ -69,7 +69,6 @@ export default function HeaderMenu({ primary, items = [] }) {
 
   return (
     <div ref={menuRef} style={{ display: 'flex', alignItems: 'center', gap: 8, position: 'relative' }}>
-      {primary}
       {items.length > 0 && (
         <button
           onClick={() => setOpen(v => !v)}
@@ -81,9 +80,10 @@ export default function HeaderMenu({ primary, items = [] }) {
             width: 34, height: 34, padding: 0, fontSize: 16,
           }}
         >
-          ···
+          …
         </button>
       )}
+      {primary}
       {open && (
         <div style={{
           position: 'absolute', top: 'calc(100% + 8px)', right: 0,

@@ -714,7 +714,7 @@ export default function VocabSrsModule() {
                       transition: 'background 130ms',
                     }}
                   >
-                    {showOptions ? 'Hide options' : 'Show options'}
+                    Options
                   </button>
                 }
                 items={[
