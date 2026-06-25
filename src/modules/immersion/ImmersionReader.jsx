@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext.jsx'
 import { useProgress } from '../../hooks/useProgress.js'
 // Cross-module write: creates cards in vocab-srs progress namespace
 import { createCard } from '../vocab-srs/srs.js'
-import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CONTENT_HEADING, FS_CAPTION, FS_ARTICLE_BODY, FS_ENTRY_WORD } from '../../data/theme.js'
 
 const ACCENT = '#E05A4E'
 
@@ -119,20 +119,20 @@ function WordPopup({ token, vocabEntry, onAddToSrs, onClose, anchorRect }) {
         letterSpacing: TRACKING,
       }}
     >
-      <div style={{ fontSize: 20, color: TEXT, marginBottom: 2 }}>{token.t}</div>
+      <div style={{ fontSize: FS_ENTRY_WORD, color: TEXT, marginBottom: 2 }}>{token.t}</div>
       {token.r && (
-        <div style={{ fontSize: 13, color: TEXT_MUTED, marginBottom: (vocabEntry?.pos || vocabEntry?.meaning) ? 4 : 10 }}>{token.r}</div>
+        <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginBottom: (vocabEntry?.pos || vocabEntry?.meaning) ? 4 : 10 }}>{token.r}</div>
       )}
       {vocabEntry?.pos && (
-        <div style={{ fontSize: 11, color: TEXT_MUTED, marginBottom: vocabEntry.meaning ? 4 : 10, opacity: 0.7 }}>{vocabEntry.pos}</div>
+        <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: vocabEntry.meaning ? 4 : 10, opacity: 0.7 }}>{vocabEntry.pos}</div>
       )}
       {vocabEntry?.meaning && (
-        <div style={{ fontSize: 13, color: TEXT, marginBottom: 10 }}>{vocabEntry.meaning}</div>
+        <div style={{ fontSize: FS_BASE, color: TEXT, marginBottom: 10 }}>{vocabEntry.meaning}</div>
       )}
       <button
         onClick={() => onAddToSrs(token, vocabEntry)}
         style={{
-          fontSize: 12,
+          fontSize: FS_BASE,
           fontFamily: FONT,
           letterSpacing: TRACKING,
           color: TEXT,
@@ -226,7 +226,7 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
         <div style={{ maxWidth: 640, margin: '0 auto' }}>
           <div style={{ marginBottom: 28 }}>
             <div style={{
-              fontSize: 22,
+              fontSize: FS_CONTENT_HEADING,
               color: TEXT,
               fontFamily: FONT,
               letterSpacing: TRACKING,
@@ -236,12 +236,12 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
               {article.title}
             </div>
             {article.title_en && (
-              <div style={{ fontSize: 14, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, marginBottom: 6 }}>
+              <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, marginBottom: 6 }}>
                 {article.title_en}
               </div>
             )}
             {article.published_at && (
-              <div style={{ fontSize: 12, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.7 }}>
+              <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.7 }}>
                 {formatDate(article.published_at)}
               </div>
             )}
@@ -256,7 +256,7 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
                     key={label}
                     onClick={() => setShowSimplified(label === 'Simplified')}
                     style={{
-                      fontSize: 12,
+                      fontSize: FS_BASE,
                       fontFamily: FONT,
                       letterSpacing: TRACKING,
                       color: active ? ACCENT : TEXT_MUTED,
@@ -276,7 +276,7 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
                   onClick={() => setShowFurigana(f => !f)}
                   style={{
                     marginLeft: 'auto',
-                    fontSize: 12,
+                    fontSize: FS_BASE,
                     fontFamily: FONT,
                     letterSpacing: TRACKING,
                     color: showFurigana ? TEXT : TEXT_MUTED,
@@ -295,7 +295,7 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
           )}
 
           <div style={{
-            fontSize: 18,
+            fontSize: FS_ARTICLE_BODY,
             color: TEXT,
             fontFamily: FONT,
             letterSpacing: TRACKING,
@@ -320,7 +320,7 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
                   border: 'none',
                   cursor: 'pointer',
                   padding: 0,
-                  fontSize: 13,
+                  fontSize: FS_BASE,
                   fontFamily: FONT,
                   letterSpacing: TRACKING,
                   color: TEXT_MUTED,
@@ -332,7 +332,7 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
               {summaryOpen && (
                 <div style={{
                   marginTop: 12,
-                  fontSize: 14,
+                  fontSize: FS_BASE,
                   color: TEXT_MUTED,
                   fontFamily: FONT,
                   letterSpacing: TRACKING,
@@ -346,24 +346,24 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
 
           {questions && (
             <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 24, marginBottom: 40 }}>
-              <div style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, marginBottom: 16 }}>
+              <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, marginBottom: 16 }}>
                 Comprehension check
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {questions.map((item, i) => (
                   <div key={i}>
-                    <div style={{ fontSize: 15, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, lineHeight: 1.5, marginBottom: 6 }}>
+                    <div style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, lineHeight: 1.5, marginBottom: 6 }}>
                       {item.q}
                     </div>
                     {revealedAnswers[i] ? (
-                      <div style={{ fontSize: 14, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, lineHeight: 1.6 }}>
+                      <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, lineHeight: 1.6 }}>
                         {item.a}
                       </div>
                     ) : (
                       <button
                         onClick={() => setRevealedAnswers(prev => ({ ...prev, [i]: true }))}
                         style={{
-                          fontSize: 12,
+                          fontSize: FS_BASE,
                           fontFamily: FONT,
                           letterSpacing: TRACKING,
                           color: TEXT_MUTED,
@@ -386,14 +386,14 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
           <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 24, paddingBottom: 48, display: 'flex', alignItems: 'center', gap: 12 }}>
             {user ? (
               isRead ? (
-                <span style={{ fontSize: 13, color: '#6BCB6B', fontFamily: FONT, letterSpacing: TRACKING, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ fontSize: FS_BASE, color: '#6BCB6B', fontFamily: FONT, letterSpacing: TRACKING, display: 'flex', alignItems: 'center', gap: 6 }}>
                   <span>✓</span> Marked as read
                 </span>
               ) : (
                 <button
                   onClick={onMarkRead}
                   style={{
-                    fontSize: 13,
+                    fontSize: FS_BASE,
                     fontFamily: FONT,
                     letterSpacing: TRACKING,
                     color: TEXT,
@@ -411,7 +411,7 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
               <button
                 onClick={signIn}
                 style={{
-                  fontSize: 13,
+                  fontSize: FS_BASE,
                   fontFamily: FONT,
                   letterSpacing: TRACKING,
                   color: TEXT_MUTED,

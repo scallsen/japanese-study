@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { FONT } from '../data/theme.js'
+import { FONT, FS_BASE, FS_CAPTION } from '../data/theme.js'
 
 const KEYFRAMES_ID     = 'streak-keyframes'
 const WIGGLE_THRESHOLD = 10
@@ -106,7 +106,7 @@ export default function DrillHUD({ streak, bestStreak, correct, troubled, remain
                 }
               </span>
             </span>
-            <span style={{ color: subLabel ? 'rgba(255,255,255,0.5)' : 'transparent', fontSize: 13, fontFamily: FONT, userSelect: 'none', lineHeight: 1 }}>
+            <span style={{ color: subLabel ? 'rgba(255,255,255,0.5)' : 'transparent', fontSize: FS_CAPTION, fontFamily: FONT, userSelect: 'none', lineHeight: 1 }}>
               {subLabel ?? `Best streak: 0`}
             </span>
           </>
@@ -127,7 +127,7 @@ export default function DrillHUD({ streak, bestStreak, correct, troubled, remain
               border: 'none',
               borderRadius: 8,
               color: 'rgba(255,255,255,0.55)',
-              fontSize: 14,
+              fontSize: FS_BASE,
               fontFamily: 'inherit',
               letterSpacing: '0.05em',
               cursor: 'pointer',
@@ -139,7 +139,7 @@ export default function DrillHUD({ streak, bestStreak, correct, troubled, remain
         )}
       </div>
 
-      <div style={{ display: 'flex', gap: 8, fontSize: 13, fontFamily: FONT, alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: 8, fontSize: FS_BASE, fontFamily: FONT, alignItems: 'center' }}>
         <span style={{ color: correct > 0 ? '#4ade80' : 'rgba(255,255,255,0.5)' }}>{correct} Correct</span>
         <span style={{ color: 'rgba(255,255,255,0.25)' }}>·</span>
         <span style={{ color: troubled > 0 ? '#fbbf24' : 'rgba(255,255,255,0.5)' }}>{troubled} Troubled</span>

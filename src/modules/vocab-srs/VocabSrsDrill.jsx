@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import FlipCard from '../../FlipCard.jsx'
 import PageHeader from '../../components/PageHeader.jsx'
-import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_DISPLAY_HEADING, FS_STAT_VALUE, FS_CAPTION } from '../../data/theme.js'
 import { Rating, State, previewIntervals } from './srs.js'
 import { answerCard, undoLastAnswer, isComplete, getSessionStats, getCurrentCard, getWaitMs } from './session.js'
 import { useTTS } from '../../hooks/useTTS.js'
@@ -130,7 +130,7 @@ function AudioButton({ label, onClick }) {
       onMouseLeave={() => setHovered(false)}
       style={{
         padding: '4px 10px',
-        fontSize: 12,
+        fontSize: FS_BASE,
         fontFamily: 'inherit',
         letterSpacing: TRACKING,
         background: hovered ? 'rgba(255,255,255,0.1)' : 'transparent',
@@ -154,7 +154,7 @@ function RatingButton({ label, hint, interval, color, onClick, flex = 1 }) {
       style={{
         flex,
         padding: '8px 0',
-        fontSize: 13,
+        fontSize: FS_BASE,
         fontFamily: 'inherit',
         letterSpacing: TRACKING,
         background: color,
@@ -168,8 +168,8 @@ function RatingButton({ label, hint, interval, color, onClick, flex = 1 }) {
         gap: 2,
       }}
     >
-      <span>{label} {hint && <span style={{ opacity: 0.6, fontSize: 11 }}>[{hint}]</span>}</span>
-      {interval && <span style={{ fontSize: 11, opacity: 0.65 }}>{interval}</span>}
+      <span>{label} {hint && <span style={{ opacity: 0.6, fontSize: FS_CAPTION }}>[{hint}]</span>}</span>
+      {interval && <span style={{ fontSize: FS_CAPTION, opacity: 0.65 }}>{interval}</span>}
     </button>
   )
 }
@@ -177,7 +177,7 @@ function RatingButton({ label, hint, interval, color, onClick, flex = 1 }) {
 function DoneScreen({ stats, onDone }) {
   const btnBase = {
     padding: '10px 28px',
-    fontSize: 14,
+    fontSize: FS_BASE,
     fontFamily: FONT,
     letterSpacing: TRACKING,
     borderRadius: 8,
@@ -185,25 +185,25 @@ function DoneScreen({ stats, onDone }) {
   }
   return (
     <div style={{ textAlign: 'center', fontFamily: FONT, letterSpacing: TRACKING }}>
-      <div style={{ color: TEXT, fontSize: 28, marginBottom: 16 }}>Session complete</div>
+      <div style={{ color: TEXT, fontSize: FS_DISPLAY_HEADING, marginBottom: 16 }}>Session complete</div>
       <div style={{ display: 'flex', gap: 20, justifyContent: 'center', marginBottom: 16 }}>
         <div>
-          <div style={{ color: TEXT_MUTED, fontSize: 11, marginBottom: 4 }}>REVIEWED</div>
-          <div style={{ color: TEXT, fontSize: 24 }}>{stats.goodCount}</div>
+          <div style={{ color: TEXT_MUTED, fontSize: FS_CAPTION, marginBottom: 4 }}>REVIEWED</div>
+          <div style={{ color: TEXT, fontSize: FS_STAT_VALUE }}>{stats.goodCount}</div>
         </div>
-        <div style={{ color: 'rgba(255,255,255,0.15)', fontSize: 24, alignSelf: 'center' }}>·</div>
+        <div style={{ color: 'rgba(255,255,255,0.15)', fontSize: FS_STAT_VALUE, alignSelf: 'center' }}>·</div>
         <div>
-          <div style={{ color: stats.againCount > 0 ? '#fbbf24' : TEXT_MUTED, fontSize: 11, marginBottom: 4 }}>AGAIN</div>
-          <div style={{ color: stats.againCount > 0 ? '#fbbf24' : TEXT_MUTED, fontSize: 24 }}>{stats.againCount}</div>
+          <div style={{ color: stats.againCount > 0 ? '#fbbf24' : TEXT_MUTED, fontSize: FS_CAPTION, marginBottom: 4 }}>AGAIN</div>
+          <div style={{ color: stats.againCount > 0 ? '#fbbf24' : TEXT_MUTED, fontSize: FS_STAT_VALUE }}>{stats.againCount}</div>
         </div>
-        <div style={{ color: 'rgba(255,255,255,0.15)', fontSize: 24, alignSelf: 'center' }}>·</div>
+        <div style={{ color: 'rgba(255,255,255,0.15)', fontSize: FS_STAT_VALUE, alignSelf: 'center' }}>·</div>
         <div>
-          <div style={{ color: TEXT_MUTED, fontSize: 11, marginBottom: 4 }}>TIME</div>
-          <div style={{ color: TEXT, fontSize: 24 }}>{formatTime(stats.elapsedSeconds)}</div>
+          <div style={{ color: TEXT_MUTED, fontSize: FS_CAPTION, marginBottom: 4 }}>TIME</div>
+          <div style={{ color: TEXT, fontSize: FS_STAT_VALUE }}>{formatTime(stats.elapsedSeconds)}</div>
         </div>
       </div>
       {stats.againCount > 0 && (
-        <div style={{ fontSize: 13, color: TEXT_MUTED, marginBottom: 24 }}>
+        <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginBottom: 24 }}>
           You missed {stats.againCount} {stats.againCount === 1 ? 'card' : 'cards'} — all cleared by end of session
         </div>
       )}
@@ -442,7 +442,7 @@ export default function VocabSrsDrill({
               onMouseEnter={() => setOptionsHovered(true)}
               onMouseLeave={() => setOptionsHovered(false)}
               style={{
-                height: 34, padding: '0 12px', fontSize: 13,
+                height: 34, padding: '0 12px', fontSize: FS_BASE,
                 fontFamily: 'inherit',
                 background: optionsHovered ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)',
                 color: 'rgba(255,255,255,0.7)',
@@ -472,7 +472,7 @@ export default function VocabSrsDrill({
 
   const rightSlot = (
     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-      <span style={{ fontSize: 13, color: TEXT_MUTED }}>
+      <span style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>
         {stats.goodCount} / {stats.total}
         {stats.waitingCount > 0 && <span style={{ marginLeft: 6, color: '#fbbf24' }}>{stats.waitingCount} waiting</span>}
       </span>
@@ -482,7 +482,7 @@ export default function VocabSrsDrill({
           onMouseEnter={() => setOptionsHovered(true)}
           onMouseLeave={() => setOptionsHovered(false)}
           style={{
-            height: 34, padding: '0 12px', fontSize: 13,
+            height: 34, padding: '0 12px', fontSize: FS_BASE,
             fontFamily: 'inherit',
             background: optionsHovered ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)',
             color: 'rgba(255,255,255,0.7)',
@@ -534,7 +534,7 @@ export default function VocabSrsDrill({
           borderRadius: 6,
           margin: '8px 16px 0',
           padding: '8px 12px',
-          fontSize: 12,
+          fontSize: FS_BASE,
           color: '#fbbf24',
           flexShrink: 0,
         }}>
@@ -555,11 +555,11 @@ export default function VocabSrsDrill({
 
         {isWaiting ? (
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 15, color: TEXT, marginBottom: 8 }}>Relearning</div>
-            <div style={{ fontSize: 13, color: TEXT_MUTED, marginBottom: 4 }}>
+            <div style={{ fontSize: FS_BASE, color: TEXT, marginBottom: 8 }}>Relearning</div>
+            <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginBottom: 4 }}>
               Next card in {formatCountdown(waitMs)}
             </div>
-            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.2)' }}>
+            <div style={{ fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.2)' }}>
               {stats.waitingCount} card{stats.waitingCount !== 1 ? 's' : ''} waiting
             </div>
           </div>
@@ -622,7 +622,7 @@ export default function VocabSrsDrill({
                 width: 'min(380px, calc(100vw - 32px))',
                 textAlign: 'center',
                 color: 'rgba(255,255,255,0.25)',
-                fontSize: 13,
+                fontSize: FS_BASE,
                 padding: '10px 0',
               }}>
                 Space or tap to flip
@@ -668,7 +668,7 @@ export default function VocabSrsDrill({
                 onClick={() => handleUndoRef.current()}
                 style={{
                   padding: '6px 16px',
-                  fontSize: 12,
+                  fontSize: FS_BASE,
                   fontFamily: 'inherit',
                   letterSpacing: TRACKING,
                   background: 'transparent',
@@ -684,7 +684,7 @@ export default function VocabSrsDrill({
           </>
         )}
 
-        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.2)' }}>
+        <div style={{ fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.2)' }}>
           {stats.remaining} remaining
         </div>
 

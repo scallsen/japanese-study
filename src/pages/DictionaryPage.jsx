@@ -3,7 +3,7 @@ import { toKana } from 'wanakana'
 import PageHeader from '../components/PageHeader.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
 import { supabase } from '../lib/supabase.js'
-import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_NAV, FS_BADGE, FS_CAPTION, FS_ENTRY_KANJI, FS_ENTRY_WORD, FS_CONTENT_HEADING } from '../data/theme.js'
 
 const BG = '#1E1E1E'
 const SURFACE = '#2A2A2A'
@@ -202,35 +202,35 @@ function KanjiRow({ entry }) {
 
   return (
     <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-      <span style={{ fontSize: 36, color: TEXT, fontFamily: FONT, lineHeight: 1, flexShrink: 0, letterSpacing: 0, minWidth: 40, textAlign: 'center' }}>
+      <span style={{ fontSize: FS_ENTRY_KANJI, color: TEXT, fontFamily: FONT, lineHeight: 1, flexShrink: 0, letterSpacing: 0, minWidth: 40, textAlign: 'center' }}>
         {entry.literal}
       </span>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 5 }}>
           {entry.on_readings.length > 0 && (
-            <span style={{ fontSize: 13, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>
+            <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>
               {entry.on_readings.join('、')}
             </span>
           )}
           {entry.kun_readings.length > 0 && (
-            <span style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+            <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
               {entry.kun_readings.join('、')}
             </span>
           )}
           {jlptLabel && (
-            <span style={{ fontSize: 10, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>{jlptLabel}</span>
+            <span style={{ fontSize: FS_BADGE, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>{jlptLabel}</span>
           )}
           {gradeLabel && !jlptLabel && (
-            <span style={{ fontSize: 10, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{gradeLabel}</span>
+            <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{gradeLabel}</span>
           )}
           {entry.stroke_count && (
-            <span style={{ fontSize: 10, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.6 }}>
+            <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.6 }}>
               {entry.stroke_count} strokes
             </span>
           )}
         </div>
         {entry.meanings && (
-          <span style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+          <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
             {entry.meanings.split('; ').slice(0, 4).join('; ')}
           </span>
         )}
@@ -281,14 +281,14 @@ function KanjiSection({ entries, hasWords }) {
                     borderRight: '1px solid rgba(255,255,255,0.05)',
                   }}
                 >
-                  <span style={{ fontSize: 22, color: TEXT, fontFamily: FONT, letterSpacing: 0 }}>
+                  <span style={{ fontSize: FS_CONTENT_HEADING, color: TEXT, fontFamily: FONT, letterSpacing: 0 }}>
                     {entry.literal}
                   </span>
                 </div>
               ))}
             </div>
             <div style={{ padding: '0 16px', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
-              <span style={{ fontSize: 20, lineHeight: 1, color: TEXT_MUTED, opacity: 0.5, fontFamily: 'system-ui' }}>›</span>
+              <span style={{ fontSize: FS_ENTRY_WORD, lineHeight: 1, color: TEXT_MUTED, opacity: 0.5, fontFamily: 'system-ui' }}>›</span>
             </div>
           </div>
         ) : (
@@ -302,7 +302,7 @@ function KanjiSection({ entries, hasWords }) {
                 padding: '10px 16px',
                 textAlign: 'center',
                 cursor: 'pointer',
-                fontSize: 12,
+                fontSize: FS_CAPTION,
                 color: TEXT_MUTED,
                 fontFamily: FONT,
                 letterSpacing: TRACKING,
@@ -330,7 +330,7 @@ function SectionLabel({ label }) {
       marginBottom: 8,
       marginTop: 4,
     }}>
-      <span style={{ fontSize: 10, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: '0.1em', opacity: 0.5, textTransform: 'uppercase' }}>
+      <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: '0.1em', opacity: 0.5, textTransform: 'uppercase' }}>
         {label}
       </span>
       <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.06)' }} />
@@ -347,18 +347,18 @@ function EntryRow({ entry }) {
   return (
     <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 5 }}>
-        <span style={{ fontSize: 20, color: TEXT, fontFamily: FONT, letterSpacing: 0 }}>{entry.primary_form}</span>
+        <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: FONT, letterSpacing: 0 }}>{entry.primary_form}</span>
         {showKana && (
-          <span style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{kana}</span>
+          <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{kana}</span>
         )}
         {entry.common && (
-          <span style={{ fontSize: 10, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>common</span>
+          <span style={{ fontSize: FS_BADGE, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>common</span>
         )}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         {posLabel && (
           <span style={{
-            fontSize: 10,
+            fontSize: FS_BADGE,
             color: TEXT_MUTED,
             background: 'rgba(255,255,255,0.07)',
             borderRadius: 3,
@@ -369,7 +369,7 @@ function EntryRow({ entry }) {
           }}>{posLabel}</span>
         )}
         {meaning && (
-          <span style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{meaning}</span>
+          <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{meaning}</span>
         )}
       </div>
     </div>
@@ -472,7 +472,7 @@ export default function DictionaryPage() {
               border: `1px solid ${inputFocused ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.1)'}`,
               borderRadius: 8,
               padding: '12px 16px',
-              fontSize: 16,
+              fontSize: FS_NAV,
               fontFamily: FONT,
               letterSpacing: TRACKING,
               color: TEXT,
@@ -484,7 +484,7 @@ export default function DictionaryPage() {
 
           {romajiHint && (
             <div style={{
-              fontSize: 11,
+              fontSize: FS_CAPTION,
               color: TEXT_MUTED,
               fontFamily: FONT,
               letterSpacing: TRACKING,
@@ -503,37 +503,37 @@ export default function DictionaryPage() {
                 onChange={e => setCommonOnly(e.target.checked)}
                 style={{ cursor: 'pointer', accentColor: '#3ABDA4' }}
               />
-              <span style={{ fontSize: 12, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+              <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
                 Common words only
               </span>
             </label>
             {showResults && (
-              <span style={{ fontSize: 12, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, marginLeft: 'auto', opacity: 0.55 }}>
+              <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, marginLeft: 'auto', opacity: 0.55 }}>
                 {results.length}{hasMore ? '+' : ''} results
               </span>
             )}
           </div>
 
           {loading && (
-            <div style={{ textAlign: 'center', padding: '48px 0', color: TEXT_MUTED, fontFamily: FONT, fontSize: 13, letterSpacing: TRACKING }}>
+            <div style={{ textAlign: 'center', padding: '48px 0', color: TEXT_MUTED, fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING }}>
               Searching...
             </div>
           )}
 
           {!loading && error && (
-            <div style={{ textAlign: 'center', padding: '48px 0', color: '#E05A4E', fontFamily: FONT, fontSize: 13, letterSpacing: TRACKING }}>
+            <div style={{ textAlign: 'center', padding: '48px 0', color: '#E05A4E', fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING }}>
               {error}
             </div>
           )}
 
           {!loading && showEmpty && (
-            <div style={{ textAlign: 'center', padding: '48px 0', color: TEXT_MUTED, fontFamily: FONT, fontSize: 13, letterSpacing: TRACKING }}>
+            <div style={{ textAlign: 'center', padding: '48px 0', color: TEXT_MUTED, fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING }}>
               No results for &ldquo;{query}&rdquo;
             </div>
           )}
 
           {!loading && showPrompt && (
-            <div style={{ textAlign: 'center', padding: '48px 0', color: TEXT_MUTED, fontFamily: FONT, fontSize: 13, letterSpacing: TRACKING, opacity: 0.5 }}>
+            <div style={{ textAlign: 'center', padding: '48px 0', color: TEXT_MUTED, fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING, opacity: 0.5 }}>
               217,625 entries · JMdict
             </div>
           )}
@@ -564,7 +564,7 @@ export default function DictionaryPage() {
                     onClick={() => runSearch(query, offset, true, commonOnly)}
                     disabled={loadingMore}
                     style={{
-                      fontSize: 13,
+                      fontSize: FS_BASE,
                       fontFamily: FONT,
                       letterSpacing: TRACKING,
                       color: TEXT_MUTED,

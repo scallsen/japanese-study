@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { FONT, TRACKING, BORDER } from '../data/theme.js'
+import { FONT, TRACKING, BORDER, FS_NAV } from '../data/theme.js'
 
 const NARROW_BP = 540
 
@@ -16,7 +16,7 @@ export default function PageHeader({ crumbs = [], rightSlot, noBorder, children 
 
   const crumbStyle = (hovered) => ({
     color: hovered ? 'rgba(255,255,255,0.65)' : 'rgba(255,255,255,0.35)',
-    fontSize: 16,
+    fontSize: FS_NAV,
     textDecoration: 'none',
     letterSpacing: TRACKING,
     transition: 'color 130ms',
@@ -24,7 +24,7 @@ export default function PageHeader({ crumbs = [], rightSlot, noBorder, children 
   })
 
   const sep = (key) => (
-    <span key={key} style={{ color: 'rgba(255,255,255,0.2)', fontSize: 16, margin: '0 6px' }}>/</span>
+    <span key={key} style={{ color: 'rgba(255,255,255,0.2)', fontSize: FS_NAV, margin: '0 6px' }}>/</span>
   )
 
   let crumbNodes
@@ -55,7 +55,7 @@ export default function PageHeader({ crumbs = [], rightSlot, noBorder, children 
     crumbNodes = [
       backNode,
       sep('sep'),
-      <span key="current" style={{ color: 'rgba(255,255,255,0.85)', fontSize: 16 }}>
+      <span key="current" style={{ color: 'rgba(255,255,255,0.85)', fontSize: FS_NAV }}>
         {current.label}
       </span>,
     ]
@@ -88,7 +88,7 @@ export default function PageHeader({ crumbs = [], rightSlot, noBorder, children 
             </span>
           )
         ) : (
-          <span key={`crumb-${i}`} style={{ color: 'rgba(255,255,255,0.85)', fontSize: 16 }}>
+          <span key={`crumb-${i}`} style={{ color: 'rgba(255,255,255,0.85)', fontSize: FS_NAV }}>
             {crumb.label}
           </span>
         )

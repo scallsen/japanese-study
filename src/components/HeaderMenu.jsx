@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { FONT, TRACKING } from '../data/theme.js'
+import { FONT, TRACKING, FS_BASE, FS_NAV } from '../data/theme.js'
 
 const NARROW_BP = 540
 
@@ -55,7 +55,7 @@ export default function HeaderMenu({ primary, items = [] }) {
             style={{
               ...ghostBtn,
               background: hoveredIdx === i ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)',
-              ...(item.icon ? { width: 34, height: 34, padding: 0 } : { height: 34, padding: '0 12px', fontSize: 13 }),
+              ...(item.icon ? { width: 34, height: 34, padding: 0 } : { height: 34, padding: '0 12px', fontSize: FS_BASE }),
               ...(item.dim ? { opacity: 0.35 } : {}),
             }}
           >
@@ -77,7 +77,7 @@ export default function HeaderMenu({ primary, items = [] }) {
           style={{
             ...ghostBtn,
             background: open || hoveredIdx === 'dots' ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)',
-            width: 34, height: 34, padding: 0, fontSize: 16,
+            width: 34, height: 34, padding: 0, fontSize: FS_NAV,
           }}
         >
           …
@@ -108,7 +108,7 @@ export default function HeaderMenu({ primary, items = [] }) {
                 borderTop: i > 0 ? '1px solid rgba(255,255,255,0.08)' : 'none',
                 padding: '12px 16px',
                 fontFamily: FONT, letterSpacing: TRACKING,
-                fontSize: 14,
+                fontSize: FS_BASE,
                 color: 'rgba(255,255,255,0.75)',
                 cursor: 'pointer',
                 textAlign: 'left',
