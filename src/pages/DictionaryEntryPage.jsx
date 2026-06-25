@@ -107,7 +107,7 @@ function SensesSection({ senses }) {
                   <div style={{ marginTop: 3, fontSize: 11, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.7 }}>
                     {sense.languageSource.map((ls, i) => (
                       <span key={i}>
-                        {ls.wasei ? 'Wasei' : `From ${langName(ls.lang)}`}{ls.word ? `: ${ls.word}` : ''}
+                        {ls.wasei ? 'Wasei' : `From ${langName(ls.lang)}`}{ls.text ? `: ${ls.text}` : ''}
                         {i < sense.languageSource.length - 1 ? ' · ' : ''}
                       </span>
                     ))}

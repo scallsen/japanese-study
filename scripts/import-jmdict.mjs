@@ -92,7 +92,7 @@ function transformEntry(entry) {
     if (s.dialect?.length) sense.dialect = s.dialect
     if (s.languageSource?.length) sense.languageSource = s.languageSource.map(ls => ({
       lang: ls.lang,
-      ...(ls.word ? { word: ls.word } : {}),
+      ...(ls.text ? { text: ls.text } : {}),
       ...(ls.wasei ? { wasei: true } : {}),
     }))
     if (s.related?.length) sense.related = s.related.map(r => r[0])
