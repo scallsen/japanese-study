@@ -3,7 +3,7 @@ import { ReactFlow, Background, Controls, MarkerType } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import PageHeader from '../../components/PageHeader.jsx'
 import DrawerSectionHeader from '../../components/DrawerSectionHeader.jsx'
-import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_CONTENT_HEADING } from '../../data/theme.js'
 import { GRAMMAR_NODES } from './grammarNodes.js'
 import { computeGroupedLayout } from './layout.js'
 import GrammarNode from './GrammarNode.jsx'
@@ -169,16 +169,16 @@ export default function GrammarMapModule() {
         <div style={{ padding: `16px ${px}px` }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
             <div>
-              <div style={{ fontSize: 22, color: TEXT, marginBottom: 4 }}>{selectedNode.label}</div>
+              <div style={{ fontSize: FS_CONTENT_HEADING, color: TEXT, marginBottom: 4 }}>{selectedNode.label}</div>
               {selectedNode.sublabel && (
-                <div style={{ fontSize: 12, color: ACCENT }}>{selectedNode.sublabel}</div>
+                <div style={{ fontSize: FS_CAPTION, color: ACCENT }}>{selectedNode.sublabel}</div>
               )}
             </div>
             <button
               onClick={() => setSelectedId(null)}
               style={{
                 background: 'none', border: 'none', color: TEXT_MUTED,
-                fontSize: 18, cursor: 'pointer', padding: '0 0 0 8px',
+                fontSize: FS_BASE, cursor: 'pointer', padding: '0 0 0 8px',
                 fontFamily: FONT, lineHeight: 1, flexShrink: 0,
               }}
             >✕</button>
@@ -190,7 +190,7 @@ export default function GrammarMapModule() {
               background: 'rgba(139,124,248,0.06)',
               border: '1px solid rgba(139,124,248,0.15)',
               borderRadius: 6,
-              fontSize: 13,
+              fontSize: FS_BASE,
               color: TEXT,
               lineHeight: 1.65,
               marginBottom: selectedNode.example ? 0 : 20,
@@ -206,7 +206,7 @@ export default function GrammarMapModule() {
               border: '1px solid rgba(255,255,255,0.06)',
               borderTop: selectedNode.description ? 'none' : undefined,
               borderRadius: selectedNode.description ? '0 0 6px 6px' : 6,
-              fontSize: 12,
+              fontSize: FS_CAPTION,
               color: TEXT_MUTED,
               lineHeight: 1.65,
               marginBottom: 20,
@@ -227,7 +227,7 @@ export default function GrammarMapModule() {
                 border: `1px solid ${isKnownSelected ? `${ACCENT}88` : 'rgba(255,255,255,0.12)'}`,
                 borderRadius: 6,
                 color: isKnownSelected ? ACCENT : TEXT_MUTED,
-                fontSize: 13,
+                fontSize: FS_BASE,
                 cursor: 'pointer',
                 fontFamily: FONT,
                 letterSpacing: TRACKING,
@@ -252,10 +252,10 @@ export default function GrammarMapModule() {
                   }}
                 >
                   <div>
-                    <span style={{ fontSize: 13, color: known.has(pNode.id) ? ACCENT : TEXT }}>{pNode.label}</span>
-                    {pNode.sublabel && <span style={{ fontSize: 11, color: TEXT_MUTED, marginLeft: 8 }}>{pNode.sublabel}</span>}
+                    <span style={{ fontSize: FS_BASE, color: known.has(pNode.id) ? ACCENT : TEXT }}>{pNode.label}</span>
+                    {pNode.sublabel && <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginLeft: 8 }}>{pNode.sublabel}</span>}
                   </div>
-                  {known.has(pNode.id) && <span style={{ fontSize: 11, color: ACCENT }}>✓</span>}
+                  {known.has(pNode.id) && <span style={{ fontSize: FS_CAPTION, color: ACCENT }}>✓</span>}
                 </div>
               ))}
               <div style={{ marginBottom: 20 }} />
@@ -276,10 +276,10 @@ export default function GrammarMapModule() {
                   }}
                 >
                   <div>
-                    <span style={{ fontSize: 13, color: TEXT }}>{dNode.label}</span>
-                    {dNode.sublabel && <span style={{ fontSize: 11, color: TEXT_MUTED, marginLeft: 8 }}>{dNode.sublabel}</span>}
+                    <span style={{ fontSize: FS_BASE, color: TEXT }}>{dNode.label}</span>
+                    {dNode.sublabel && <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginLeft: 8 }}>{dNode.sublabel}</span>}
                   </div>
-                  {known.has(dNode.id) && <span style={{ fontSize: 11, color: ACCENT }}>✓</span>}
+                  {known.has(dNode.id) && <span style={{ fontSize: FS_CAPTION, color: ACCENT }}>✓</span>}
                 </div>
               ))}
             </>
@@ -298,7 +298,7 @@ export default function GrammarMapModule() {
             { label: 'Unlocked', value: `${unlockedCount} / ${total}` },
             { label: 'Locked', value: `${total - unlockedCount} / ${total}` },
           ].map(({ label, value }) => (
-            <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', fontSize: 13 }}>
+            <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', fontSize: FS_BASE }}>
               <span style={{ color: TEXT_MUTED }}>{label}</span>
               <span style={{ color: TEXT }}>{value}</span>
             </div>
@@ -313,7 +313,7 @@ export default function GrammarMapModule() {
             padding: '7px 0', cursor: 'pointer', marginBottom: 4,
           }}
         >
-          <span style={{ fontSize: 13, color: TEXT }}>Core grammar only</span>
+          <span style={{ fontSize: FS_BASE, color: TEXT }}>Core grammar only</span>
           <div style={{
             width: 32, height: 18, borderRadius: 9,
             background: coreOnly ? ACCENT : 'rgba(255,255,255,0.12)',
@@ -326,14 +326,14 @@ export default function GrammarMapModule() {
             }} />
           </div>
         </div>
-        <div style={{ fontSize: 11, color: TEXT_MUTED, lineHeight: 1.55, marginBottom: 20 }}>
+        <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, lineHeight: 1.55, marginBottom: 20 }}>
           {coreOnly
             ? `Showing ${visibleGrammarNodes.length} core grammar points (N5 + N4)`
             : `Showing all ${GRAMMAR_NODES.length} grammar points`}
         </div>
 
         <DrawerSectionHeader title="How to use" />
-        <div style={{ fontSize: 12, color: TEXT_MUTED, lineHeight: 1.65 }}>
+        <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, lineHeight: 1.65 }}>
           Click any node to view its details. Mark nodes as known to unlock dependent grammar points.
         </div>
       </div>
@@ -358,7 +358,7 @@ export default function GrammarMapModule() {
             { label: 'Grammar Map' },
           ]}
           rightSlot={
-            <span style={{ fontSize: 13, color: TEXT_MUTED }}>
+            <span style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>
               {known.size} / {GRAMMAR_NODES.length} known
             </span>
           }
@@ -406,7 +406,7 @@ export default function GrammarMapModule() {
             <button style={{
               width: CHEVRON_W, height: 44,
               background: 'none', border: 'none',
-              color: 'rgba(255,255,255,0.5)', fontSize: 14,
+              color: 'rgba(255,255,255,0.5)', fontSize: FS_BASE,
               cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontFamily: 'inherit', padding: 0,
             }}>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE } from '../data/theme.js'
 
 function ExternalLinkIcon() {
   return (
@@ -10,7 +10,7 @@ function ExternalLinkIcon() {
 }
 
 export default function ModuleCard({ module, disabled }) {
-  const { label, sublabel, href, external } = module
+  const { label, sublabel, icon, href, external } = module
   const [hovered, setHovered] = useState(false)
 
   const Tag = disabled ? 'div' : 'a'
@@ -23,7 +23,8 @@ export default function ModuleCard({ module, disabled }) {
     <Tag
       {...linkProps}
       style={{
-        display: 'block',
+        display: 'flex',
+        flexDirection: 'column',
         background: hovered && !disabled ? 'rgba(255,255,255,0.06)' : 'transparent',
         border: `1px solid ${disabled ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.18)'}`,
         borderRadius: 6,
@@ -39,14 +40,21 @@ export default function ModuleCard({ module, disabled }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-        <div style={{ fontSize: 16, color: hovered && !disabled ? 'rgba(255,255,255,0.85)' : TEXT, transition: 'color 130ms' }}>
-          {label}
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+            <div style={{ fontSize: FS_BASE, color: hovered && !disabled ? 'rgba(255,255,255,0.85)' : TEXT, transition: 'color 130ms' }}>
+              {label}
+            </div>
+            {external && !icon && <ExternalLinkIcon />}
+          </div>
+          <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginTop: 4 }}>
+            {sublabel}
+          </div>
         </div>
-        {external && <ExternalLinkIcon />}
-      </div>
-      <div style={{ fontSize: 12, color: TEXT_MUTED, marginTop: 4 }}>
-        {disabled && hovered ? `Sign in to access ${label}` : sublabel}
+        {icon && (
+          <img src={icon} alt="" style={{ width: 36, height: 36, flexShrink: 0 }} />
+        )}
       </div>
     </Tag>
   )

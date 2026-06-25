@@ -4,7 +4,7 @@ import AuthSlot from '../../components/AuthSlot.jsx'
 import ImmersionReader from './ImmersionReader.jsx'
 import { supabase } from '../../lib/supabase.js'
 import { useProgress } from '../../hooks/useProgress.js'
-import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_LIST_TITLE } from '../../data/theme.js'
 
 const ACCENT = '#E05A4E'
 
@@ -36,7 +36,7 @@ function ArticleCard({ article, onClick, isRead }) {
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
         <span style={{
-          fontSize: 11,
+          fontSize: FS_BADGE,
           fontFamily: FONT,
           letterSpacing: TRACKING,
           color: ACCENT,
@@ -49,7 +49,7 @@ function ArticleCard({ article, onClick, isRead }) {
         </span>
         {article.difficulty && (
           <span style={{
-            fontSize: 11,
+            fontSize: FS_BADGE,
             fontFamily: FONT,
             letterSpacing: TRACKING,
             color: TEXT_MUTED,
@@ -62,7 +62,7 @@ function ArticleCard({ article, onClick, isRead }) {
           </span>
         )}
         <span style={{
-          fontSize: 11,
+          fontSize: FS_CAPTION,
           color: TEXT_MUTED,
           fontFamily: FONT,
           letterSpacing: TRACKING,
@@ -71,15 +71,15 @@ function ArticleCard({ article, onClick, isRead }) {
           alignItems: 'center',
           gap: 6,
         }}>
-          {isRead && <span style={{ color: '#6BCB6B', fontSize: 10 }}>✓</span>}
+          {isRead && <span style={{ color: '#6BCB6B', fontSize: FS_CAPTION }}>✓</span>}
           {formatDate(article.published_at)}
         </span>
       </div>
-      <div style={{ fontSize: 17, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, lineHeight: 1.5 }}>
+      <div style={{ fontSize: FS_LIST_TITLE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, lineHeight: 1.5 }}>
         {article.title}
       </div>
       {article.title_en && (
-        <div style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+        <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
           {article.title_en}
         </div>
       )}
@@ -152,21 +152,21 @@ export default function ImmersionModule() {
       <div style={{ flex: 1, overflowY: 'auto', padding: '32px 24px' }}>
         <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 12 }}>
           {loading ? (
-            <div style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+            <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
               Loading...
             </div>
           ) : error ? (
-            <div style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+            <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
               {error}
             </div>
           ) : articles.length === 0 ? (
-            <div style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+            <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
               No articles yet.
             </div>
           ) : (
             <>
               <div style={{ marginBottom: 8 }}>
-                <div style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+                <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
                   Recent reading — {articles.length} {articles.length === 1 ? 'item' : 'items'}
                 </div>
               </div>

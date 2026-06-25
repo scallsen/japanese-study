@@ -48,6 +48,7 @@ async function resolveSource() {
   const arg = process.argv[2]
   if (arg) {
     console.log(`Using local file: ${arg}`)
+    if (arg.endsWith('.zip')) return execSync(`unzip -p "${arg}"`, { maxBuffer: 50 * 1024 * 1024 }).toString()
     return readFileSync(arg, 'utf-8')
   }
   console.log('No file argument — fetching latest release from GitHub...')
@@ -78,19 +79,29 @@ function stripOkurigana(kun) {
 }
 
 function transformEntry(entry) {
-  const onHira = (entry.on ?? []).map(katakanaToHiragana)
-  const kunBase = (entry.kun ?? []).map(stripOkurigana).filter(Boolean)
+  const rm = entry.readingMeaning ?? {}
+  const allReadings = (rm.groups ?? []).flatMap(g => g.readings ?? [])
+  const allMeanings = (rm.groups ?? []).flatMap(g => g.meanings ?? [])
+
+  const on = allReadings.filter(r => r.type === 'ja_on').map(r => r.value)
+  const kun = allReadings.filter(r => r.type === 'ja_kun').map(r => r.value)
+  const meanings = allMeanings.filter(m => m.lang === 'en').map(m => m.value)
+
+  const onHira = on.map(katakanaToHiragana)
+  const kunBase = kun.map(stripOkurigana).filter(Boolean)
   const readingsHira = [...new Set([...onHira, ...kunBase])]
+
+  // misc.jlptLevel is old JLPT scale (1–4); old level 4 = N5, so N-value = level + 1
   return {
     literal: entry.literal,
-    on_readings: entry.on ?? [],
-    kun_readings: entry.kun ?? [],
+    on_readings: on,
+    kun_readings: kun,
     readings_hira: readingsHira,
-    meanings: (entry.meanings ?? []).join('; '),
-    jlpt: entry.jlpt_new ?? null,
-    grade: entry.grade ?? null,
-    stroke_count: entry.stroke_count ?? null,
-    frequency: entry.frequency ?? null,
+    meanings: meanings.join('; '),
+    jlpt: entry.misc?.jlptLevel ? entry.misc.jlptLevel + 1 : null,
+    grade: entry.misc?.grade ?? null,
+    stroke_count: entry.misc?.strokeCounts?.[0] ?? null,
+    frequency: entry.misc?.frequency ?? null,
   }
 }
 

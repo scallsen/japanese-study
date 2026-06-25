@@ -3,7 +3,7 @@ import { toKana } from 'wanakana'
 import PageHeader from '../components/PageHeader.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
 import { supabase } from '../lib/supabase.js'
-import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_NAV, FS_BADGE, FS_CAPTION, FS_ENTRY_KANJI, FS_ENTRY_WORD, FS_CONTENT_HEADING } from '../data/theme.js'
 
 const BG = '#1E1E1E'
 const SURFACE = '#2A2A2A'
@@ -26,12 +26,19 @@ function romajiToKana(term) {
   return /^[ぁ-ヿ]+$/.test(converted) ? converted : null
 }
 
-function relevanceScore(row, term) {
-  const kata = hiraganaToKatakana(term)
-  let score = 0
-  if (row.common) score += 100
-  if (row.primary_form === term || row.primary_form === kata) score += 50
-  if (row.kana_forms?.includes(term) || row.kana_forms?.includes(kata)) score += 30
+function relevanceScore(row, term, effectiveTerm) {
+  const eff = effectiveTerm ?? term
+  const kata = hiraganaToKatakana(eff)
+  let score = row.common ? 100 : 0
+  if (row.primary_form === term || row.primary_form === eff || row.primary_form === kata) score += 80
+  if (row.kana_forms?.includes(eff) || row.kana_forms?.includes(kata)) score += 60
+  if (row.primary_form.startsWith(eff) || row.primary_form.startsWith(term) || row.primary_form.startsWith(kata)) score += 25
+  const glosses = row.gloss_en?.split('; ') ?? []
+  const lowerTerm = term.toLowerCase()
+  const firstGloss = glosses[0]?.toLowerCase() ?? ''
+  if (firstGloss === lowerTerm) score += 40
+  else if (glosses.some(g => g.toLowerCase() === lowerTerm)) score += 30
+  else if (firstGloss.startsWith(lowerTerm)) score += 20
   score -= Math.min(row.primary_form.length, 20)
   return score
 }
@@ -105,14 +112,11 @@ async function doSearch(term, offset, commonOnly) {
   const trimmed = term.trim()
   if (!trimmed) return { rows: [], hasMore: false }
 
-  // Convert romaji to kana if the input fully maps (e.g. "hon" → "ほん")
   const kanaForm = romajiToKana(trimmed)
   const effectiveTerm = kanaForm ?? trimmed
-
   const jp = isJapanese(effectiveTerm) || !!kanaForm
-  const kana = jp && isKanaOnly(effectiveTerm)
-  // When romaji converted to hiragana, also search the katakana equivalent (e.g. terebi → てれび → テレビ)
-  const katakanaForm = kanaForm ? hiraganaToKatakana(effectiveTerm) : null
+  // When romaji converts to hiragana, also search the katakana equivalent (e.g. terebi → てれび → テレビ)
+  const katakanaForm = kanaForm ? hiraganaToKatakana(kanaForm) : null
 
   const buildBase = () => {
     let q = supabase
@@ -123,17 +127,31 @@ async function doSearch(term, offset, commonOnly) {
     return q
   }
 
-  if (kana && offset === 0) {
-    // Merge prefix match on primary_form + exact match in kana_forms array
-    // Also search katakana form when input came from romaji conversion
-    const queries = [
+  if (isJapanese(trimmed) && offset === 0) {
+    // User typed Japanese directly — two-query merge: prefix + kana_forms containment
+    const [r1, r2] = await Promise.all([
       buildBase().ilike('primary_form', effectiveTerm + '%').limit(PAGE_SIZE),
-      supabase
-        .from('dictionary')
-        .select('id, primary_form, kana_forms, gloss_en, pos, common')
-        .filter('kana_forms', 'cs', `{${effectiveTerm}}`)
-        .order('common', { ascending: false })
-        .limit(PAGE_SIZE),
+      buildBase().filter('kana_forms', 'cs', `{${effectiveTerm}}`).limit(PAGE_SIZE),
+    ])
+    if (r1.error) throw r1.error
+    if (r2.error) throw r2.error
+    const seen = new Set()
+    const merged = []
+    for (const row of [...(r1.data ?? []), ...(r2.data ?? [])]) {
+      if (!seen.has(row.id)) { seen.add(row.id); merged.push(row) }
+    }
+    merged.sort((a, b) => relevanceScore(b, trimmed, effectiveTerm) - relevanceScore(a, trimmed, effectiveTerm))
+    const rows = merged.slice(0, PAGE_SIZE)
+    return { rows, hasMore: rows.length === PAGE_SIZE }
+  }
+
+  if (kanaForm && offset === 0) {
+    // Romaji → kana: kana_forms exact match + katakana primary_form prefix + English gloss word-boundary queries
+    const queries = [
+      buildBase().filter('kana_forms', 'cs', `{${kanaForm}}`).limit(PAGE_SIZE),
+      buildBase().ilike('gloss_en', trimmed + '; %').limit(PAGE_SIZE),
+      buildBase().ilike('gloss_en', '%; ' + trimmed + '; %').limit(PAGE_SIZE),
+      buildBase().ilike('gloss_en', '%; ' + trimmed).limit(PAGE_SIZE),
     ]
     if (katakanaForm) {
       queries.push(buildBase().ilike('primary_form', katakanaForm + '%').limit(PAGE_SIZE))
@@ -147,11 +165,32 @@ async function doSearch(term, offset, commonOnly) {
         if (!seen.has(row.id)) { seen.add(row.id); merged.push(row) }
       }
     }
-    merged.sort((a, b) => relevanceScore(b, effectiveTerm) - relevanceScore(a, effectiveTerm))
+    merged.sort((a, b) => relevanceScore(b, trimmed, kanaForm) - relevanceScore(a, trimmed, kanaForm))
     const rows = merged.slice(0, PAGE_SIZE)
     return { rows, hasMore: rows.length === PAGE_SIZE }
   }
 
+  if (!jp && offset === 0) {
+    // Pure English: 3 word-boundary gloss queries — first, middle, last position.
+    const [r1, r2, r3] = await Promise.all([
+      buildBase().ilike('gloss_en', effectiveTerm + '; %').limit(PAGE_SIZE),
+      buildBase().ilike('gloss_en', '%; ' + effectiveTerm + '; %').limit(PAGE_SIZE),
+      buildBase().ilike('gloss_en', '%; ' + effectiveTerm).limit(PAGE_SIZE),
+    ])
+    if (r1.error) throw r1.error
+    if (r2.error) throw r2.error
+    if (r3.error) throw r3.error
+    const seen = new Set()
+    const merged = []
+    for (const row of [...(r1.data ?? []), ...(r2.data ?? []), ...(r3.data ?? [])]) {
+      if (!seen.has(row.id)) { seen.add(row.id); merged.push(row) }
+    }
+    merged.sort((a, b) => relevanceScore(b, trimmed, effectiveTerm) - relevanceScore(a, trimmed, effectiveTerm))
+    const rows = merged.slice(0, PAGE_SIZE)
+    return { rows, hasMore: rows.length === PAGE_SIZE }
+  }
+
+  // Pagination (offset > 0) — DB ordering only
   let q = buildBase().range(offset, offset + PAGE_SIZE - 1)
   if (jp) {
     const prefix = katakanaForm
@@ -164,8 +203,7 @@ async function doSearch(term, offset, commonOnly) {
 
   const { data, error } = await q
   if (error) throw error
-  const rows = (data ?? []).sort((a, b) => relevanceScore(b, effectiveTerm) - relevanceScore(a, effectiveTerm))
-  return { rows, hasMore: rows.length === PAGE_SIZE }
+  return { rows: data ?? [], hasMore: (data ?? []).length === PAGE_SIZE }
 }
 
 function kanjiGradeLabel(grade) {
@@ -181,35 +219,35 @@ function KanjiRow({ entry }) {
 
   return (
     <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-      <span style={{ fontSize: 36, color: TEXT, fontFamily: KANJI_FONT, lineHeight: 1, flexShrink: 0, letterSpacing: 0, minWidth: 40, textAlign: 'center' }}>
+      <span style={{ fontSize: FS_ENTRY_KANJI, color: TEXT, fontFamily: KANJI_FONT, lineHeight: 1, flexShrink: 0, letterSpacing: 0, minWidth: 40, textAlign: 'center' }}>
         {entry.literal}
       </span>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 5 }}>
           {entry.on_readings.length > 0 && (
-            <span style={{ fontSize: 13, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
+            <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
               {entry.on_readings.join('、')}
             </span>
           )}
           {entry.kun_readings.length > 0 && (
-            <span style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
+            <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
               {entry.kun_readings.join('、')}
             </span>
           )}
           {jlptLabel && (
-            <span style={{ fontSize: 10, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>{jlptLabel}</span>
+            <span style={{ fontSize: FS_BADGE, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>{jlptLabel}</span>
           )}
           {gradeLabel && (
-            <span style={{ fontSize: 10, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{gradeLabel}</span>
+            <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{gradeLabel}</span>
           )}
           {entry.stroke_count && (
-            <span style={{ fontSize: 10, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.6 }}>
+            <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.6 }}>
               {entry.stroke_count} strokes
             </span>
           )}
         </div>
         {entry.meanings && (
-          <span style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+          <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
             {entry.meanings.split('; ').slice(0, 4).join('; ')}
           </span>
         )}
@@ -255,14 +293,14 @@ function KanjiSection({ entries, hasWords }) {
                     borderRight: '1px solid rgba(255,255,255,0.05)',
                   }}
                 >
-                  <span style={{ fontSize: 22, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
+                  <span style={{ fontSize: FS_CONTENT_HEADING, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
                     {entry.literal}
                   </span>
                 </div>
               ))}
             </div>
             <div style={{ padding: '0 16px', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
-              <span style={{ fontSize: 20, lineHeight: 1, color: TEXT_MUTED, opacity: 0.5, fontFamily: 'system-ui' }}>›</span>
+              <span style={{ fontSize: FS_ENTRY_WORD, lineHeight: 1, color: TEXT_MUTED, opacity: 0.5, fontFamily: 'system-ui' }}>›</span>
             </div>
           </div>
         ) : (
@@ -275,7 +313,7 @@ function KanjiSection({ entries, hasWords }) {
                 padding: '10px 16px',
                 textAlign: 'center',
                 cursor: 'pointer',
-                fontSize: 12,
+                fontSize: FS_CAPTION,
                 color: TEXT_MUTED,
                 fontFamily: FONT,
                 letterSpacing: TRACKING,
@@ -301,7 +339,7 @@ function SectionLabel({ label }) {
       marginBottom: 8,
       marginTop: 4,
     }}>
-      <span style={{ fontSize: 10, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: '0.1em', opacity: 0.5, textTransform: 'uppercase' }}>
+      <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: '0.1em', opacity: 0.5, textTransform: 'uppercase' }}>
         {label}
       </span>
       <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.06)' }} />
@@ -328,18 +366,18 @@ function EntryRow({ entry }) {
       }}
     >
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 5 }}>
-        <span style={{ fontSize: 20, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{entry.primary_form}</span>
+        <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{entry.primary_form}</span>
         {showKana && (
-          <span style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{kana}</span>
+          <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{kana}</span>
         )}
         {entry.common && (
-          <span style={{ fontSize: 10, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>common</span>
+          <span style={{ fontSize: FS_BADGE, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>common</span>
         )}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         {posLabel && (
           <span style={{
-            fontSize: 10,
+            fontSize: FS_BADGE,
             color: TEXT_MUTED,
             background: 'rgba(255,255,255,0.07)',
             borderRadius: 3,
@@ -350,7 +388,7 @@ function EntryRow({ entry }) {
           }}>{posLabel}</span>
         )}
         {meaning && (
-          <span style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{meaning}</span>
+          <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{meaning}</span>
         )}
       </div>
     </a>
@@ -494,7 +532,7 @@ export default function DictionaryPage() {
               border: `1px solid ${inputFocused ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.1)'}`,
               borderRadius: 8,
               padding: '12px 16px',
-              fontSize: 16,
+              fontSize: FS_NAV,
               fontFamily: FONT,
               letterSpacing: TRACKING,
               color: TEXT,
@@ -506,7 +544,7 @@ export default function DictionaryPage() {
 
           {romajiHint && (
             <div style={{
-              fontSize: 11,
+              fontSize: FS_CAPTION,
               color: TEXT_MUTED,
               fontFamily: FONT,
               letterSpacing: TRACKING,
@@ -525,37 +563,37 @@ export default function DictionaryPage() {
                 onChange={e => setCommonOnly(e.target.checked)}
                 style={{ cursor: 'pointer', accentColor: '#3ABDA4' }}
               />
-              <span style={{ fontSize: 12, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+              <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
                 Common words only
               </span>
             </label>
             {showResults && (
-              <span style={{ fontSize: 12, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, marginLeft: 'auto', opacity: 0.55 }}>
+              <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, marginLeft: 'auto', opacity: 0.55 }}>
                 {results.length}{hasMore ? '+' : ''} results
               </span>
             )}
           </div>
 
           {loading && (
-            <div style={{ textAlign: 'center', padding: '48px 0', color: TEXT_MUTED, fontFamily: FONT, fontSize: 13, letterSpacing: TRACKING }}>
+            <div style={{ textAlign: 'center', padding: '48px 0', color: TEXT_MUTED, fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING }}>
               Searching...
             </div>
           )}
 
           {!loading && error && (
-            <div style={{ textAlign: 'center', padding: '48px 0', color: '#E05A4E', fontFamily: FONT, fontSize: 13, letterSpacing: TRACKING }}>
+            <div style={{ textAlign: 'center', padding: '48px 0', color: '#E05A4E', fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING }}>
               {error}
             </div>
           )}
 
           {!loading && showEmpty && (
-            <div style={{ textAlign: 'center', padding: '48px 0', color: TEXT_MUTED, fontFamily: FONT, fontSize: 13, letterSpacing: TRACKING }}>
+            <div style={{ textAlign: 'center', padding: '48px 0', color: TEXT_MUTED, fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING }}>
               No results for &ldquo;{query}&rdquo;
             </div>
           )}
 
           {!loading && showPrompt && (
-            <div style={{ textAlign: 'center', padding: '48px 0', color: TEXT_MUTED, fontFamily: FONT, fontSize: 13, letterSpacing: TRACKING, opacity: 0.5 }}>
+            <div style={{ textAlign: 'center', padding: '48px 0', color: TEXT_MUTED, fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING, opacity: 0.5 }}>
               217,625 entries · JMdict
             </div>
           )}
@@ -586,7 +624,7 @@ export default function DictionaryPage() {
                     onClick={() => runSearch(query, offset, true, commonOnly)}
                     disabled={loadingMore}
                     style={{
-                      fontSize: 13,
+                      fontSize: FS_BASE,
                       fontFamily: FONT,
                       letterSpacing: TRACKING,
                       color: TEXT_MUTED,

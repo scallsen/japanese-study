@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import ModuleCard from '../components/ModuleCard.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
-import { FONT, TRACKING, TEXT } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, FS_BASE } from '../data/theme.js'
 import { MODULES } from '../data/modules.js'
+
 
 function useIsMobile(breakpoint = 768) {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= breakpoint)
@@ -17,27 +18,25 @@ function useIsMobile(breakpoint = 768) {
   return isMobile
 }
 
-function AddModuleCard() {
-  return (
-    <div style={{
-      border: '1px dashed rgba(255,255,255,0.12)',
-      borderRadius: 6,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '20px',
-      color: 'rgba(255,255,255,0.2)',
-      fontFamily: FONT,
-      fontSize: 13,
-      letterSpacing: TRACKING,
-    }}>
-      + Add Module
-    </div>
-  )
-}
 
 export default function DashboardPage() {
+  const gridRef = useRef(null)
   const isMobile = useIsMobile()
+
+  useEffect(() => {
+    const grid = gridRef.current
+    if (!grid) return
+    const equalise = () => {
+      Array.from(grid.children).forEach(c => c.style.height = '')
+      const max = Math.max(...Array.from(grid.children).map(c => c.getBoundingClientRect().height))
+      Array.from(grid.children).forEach(c => c.style.height = `${max}px`)
+    }
+    equalise()
+
+    document.fonts.ready.then(equalise)
+    window.addEventListener('resize', equalise)
+    return () => window.removeEventListener('resize', equalise)
+  }, [])
   const { user, loading } = useAuth()
   const signedOut = !loading && !user
 
@@ -56,7 +55,7 @@ export default function DashboardPage() {
             background: 'rgba(37, 99, 235, 0.1)',
             borderTop: '1px solid rgba(59, 130, 246, 0.2)',
             padding: '8px 24px',
-            fontSize: 13,
+            fontSize: FS_BASE,
             color: '#93C5FD',
           }}>
             Sign in to unlock all features
@@ -70,11 +69,12 @@ export default function DashboardPage() {
         padding: isMobile ? '20px 16px' : '28px 28px',
       }}>
 
-        <div style={{
+        <div ref={gridRef} style={{
           display: 'grid',
           gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
           gap: 10,
           maxWidth: 900,
+          margin: '0 auto',
         }}>
           {MODULES.map(mod => (
             <ModuleCard
@@ -83,7 +83,7 @@ export default function DashboardPage() {
               disabled={signedOut && mod.requiresAuth}
             />
           ))}
-          <AddModuleCard />
+
         </div>
       </main>
     </div>

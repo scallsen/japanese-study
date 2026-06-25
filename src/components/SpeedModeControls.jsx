@@ -1,3 +1,5 @@
+import { FS_BASE } from '../data/theme.js'
+
 export default function SpeedModeControls({ isFlipped, transitioning, onVerdict }) {
   if (!isFlipped) {
     return (
@@ -5,7 +7,7 @@ export default function SpeedModeControls({ isFlipped, transitioning, onVerdict 
         width: 'min(380px, calc(100vw - 32px))',
         textAlign: 'center',
         color: 'rgba(255,255,255,0.25)',
-        fontSize: 13,
+        fontSize: FS_BASE,
         fontFamily: 'inherit',
         letterSpacing: '0.05em',
         padding: '10px 0',
@@ -24,7 +26,7 @@ export default function SpeedModeControls({ isFlipped, transitioning, onVerdict 
         style={{
           flex: 1,
           padding: '10px 0',
-          fontSize: 14,
+          fontSize: FS_BASE,
           fontFamily: 'inherit',
           background: 'rgba(192,57,43,0.85)',
           color: '#fff',
@@ -43,7 +45,7 @@ export default function SpeedModeControls({ isFlipped, transitioning, onVerdict 
         style={{
           flex: 1,
           padding: '10px 0',
-          fontSize: 14,
+          fontSize: FS_BASE,
           fontFamily: 'inherit',
           background: 'rgba(39,174,96,0.85)',
           color: '#fff',

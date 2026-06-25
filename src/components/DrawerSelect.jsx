@@ -1,3 +1,5 @@
+import { FS_BASE } from '../data/theme.js'
+
 export default function DrawerSelect({ value, onChange, options, label, subtext }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -14,7 +16,7 @@ export default function DrawerSelect({ value, onChange, options, label, subtext 
             border: '1px solid rgba(255,255,255,0.18)',
             borderRadius: 6,
             color: 'rgba(255,255,255,0.65)',
-            fontSize: 13,
+            fontSize: FS_BASE,
             fontFamily: 'inherit',
             padding: '5px 28px 5px 10px',
             cursor: 'pointer',
