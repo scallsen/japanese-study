@@ -47,7 +47,7 @@ export default function ModuleCard({ module, disabled }) {
             <div style={{ fontSize: 16, color: hovered && !disabled ? 'rgba(255,255,255,0.85)' : TEXT, transition: 'color 130ms' }}>
               {label}
             </div>
-            {external && <ExternalLinkIcon />}
+            {external && !icon && <ExternalLinkIcon />}
           </div>
           <div style={{ fontSize: 16, color: TEXT_MUTED, marginTop: 4 }}>
             {sublabel}
