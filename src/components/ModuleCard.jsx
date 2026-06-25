@@ -25,7 +25,6 @@ export default function ModuleCard({ module, disabled }) {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        minHeight: 110,
         background: hovered && !disabled ? 'rgba(255,255,255,0.06)' : 'transparent',
         border: `1px solid ${disabled ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.18)'}`,
         borderRadius: 6,
