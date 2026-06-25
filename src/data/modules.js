@@ -2,7 +2,7 @@ export const MODULES = [
   {
     id: 'school-vocab',
     label: 'Vocabulary Training',
-    sublabel: 'School Vocab',
+    sublabel: 'Drill vocabulary words manually',
     stats: null,
     href: '#/vocab',
     external: false,
@@ -12,7 +12,8 @@ export const MODULES = [
   {
     id: 'katsuyou',
     label: 'Conjugation Drill',
-    sublabel: 'Verb Forms',
+    sublabel: 'Practice conjugating verb forms and adjectives',
+    icon: '/katsuyou-icon.svg',
     stats: null,
     href: 'https://scallsen.ca/katsuyou-drill/',
     external: true,
@@ -22,7 +23,7 @@ export const MODULES = [
   {
     id: 'vocab-srs',
     label: 'SRS',
-    sublabel: 'Spaced Repetition',
+    sublabel: 'A simple spaced repetition tool for vocabulary',
     stats: null,
     href: '#/vocab-srs',
     external: false,
@@ -31,8 +32,8 @@ export const MODULES = [
   },
   {
     id: 'grammar-map',
-    label: 'Grammar Map',
-    sublabel: 'Skill Tree',
+    label: 'Grammar Map (Experimental)',
+    sublabel: 'Visualize grammar connections and dependencies',
     stats: null,
     href: '#/grammar-map',
     external: false,
@@ -42,7 +43,7 @@ export const MODULES = [
   {
     id: 'immersion',
     label: 'Immersion',
-    sublabel: 'Daily Reading',
+    sublabel: 'Practice reading up-to-date Japanese content at your level',
     stats: null,
     href: '#/immersion',
     external: false,
@@ -52,7 +53,7 @@ export const MODULES = [
   {
     id: 'dictionary',
     label: 'Dictionary',
-    sublabel: 'JMdict Lookup',
+    sublabel: 'Look up kanji and vocabulary',
     stats: null,
     href: '#/dictionary',
     external: false,

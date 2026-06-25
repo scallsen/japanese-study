@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext.jsx'
 import { FONT, TRACKING, TEXT } from '../data/theme.js'
 import { MODULES } from '../data/modules.js'
 
+
 function useIsMobile(breakpoint = 768) {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= breakpoint)
   useEffect(() => {
@@ -17,24 +18,6 @@ function useIsMobile(breakpoint = 768) {
   return isMobile
 }
 
-function AddModuleCard() {
-  return (
-    <div style={{
-      border: '1px dashed rgba(255,255,255,0.12)',
-      borderRadius: 6,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '20px',
-      color: 'rgba(255,255,255,0.2)',
-      fontFamily: FONT,
-      fontSize: 13,
-      letterSpacing: TRACKING,
-    }}>
-      + Add Module
-    </div>
-  )
-}
 
 export default function DashboardPage() {
   const isMobile = useIsMobile()
@@ -83,7 +66,7 @@ export default function DashboardPage() {
               disabled={signedOut && mod.requiresAuth}
             />
           ))}
-          <AddModuleCard />
+
         </div>
       </main>
     </div>
