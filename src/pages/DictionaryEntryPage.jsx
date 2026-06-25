@@ -31,11 +31,14 @@ async function fetchKanjiDetails(chars) {
   if (!supabase || !chars.length) return []
   const { data, error } = await supabase
     .from('kanji')
-    .select('literal, on_readings, kun_readings, meanings, jlpt, grade, stroke_count')
+    .select('literal, on_readings, kun_readings, meanings, jlpt, grade, stroke_count, frequency')
     .in('literal', chars)
   if (error) throw error
   return chars.map(ch => (data ?? []).find(r => r.literal === ch)).filter(Boolean)
 }
+
+const LANG_NAMES = { eng: 'English', fre: 'French', ger: 'German', deu: 'German', por: 'Portuguese', ita: 'Italian', spa: 'Spanish', chi: 'Chinese', zho: 'Chinese', kor: 'Korean', nld: 'Dutch', rus: 'Russian', ara: 'Arabic', per: 'Persian', hin: 'Hindi' }
+function langName(code) { return LANG_NAMES[code] ?? code }
 
 function PosTag({ label }) {
   return (
@@ -92,12 +95,23 @@ function SensesSection({ senses }) {
             {group.senses.map((sense, si) => (
               <li key={si} style={{ color: TEXT, fontFamily: FONT, fontSize: 14, letterSpacing: TRACKING, lineHeight: 1.55 }}>
                 {sense.gloss.join('; ')}
-                {(sense.field?.length > 0 || sense.misc?.length > 0 || sense.info?.length > 0) && (
+                {(sense.field?.length > 0 || sense.misc?.length > 0 || sense.info?.length > 0 || sense.dialect?.length > 0) && (
                   <span style={{ display: 'inline-flex', gap: 6, marginLeft: 8, verticalAlign: 'middle', flexWrap: 'wrap' }}>
                     {sense.field?.map((f, i) => <MetaTag key={i} label={f} color="#7EB8D4" />)}
+                    {sense.dialect?.map((d, i) => <MetaTag key={i} label={d} color="#B39DDB" />)}
                     {sense.misc?.map((m, i) => <MetaTag key={i} label={m} />)}
                     {sense.info?.map((n, i) => <MetaTag key={i} label={n} />)}
                   </span>
+                )}
+                {sense.languageSource?.length > 0 && (
+                  <div style={{ marginTop: 3, fontSize: 11, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.7 }}>
+                    {sense.languageSource.map((ls, i) => (
+                      <span key={i}>
+                        {ls.wasei ? 'Wasei' : `From ${langName(ls.lang)}`}{ls.word ? `: ${ls.word}` : ''}
+                        {i < sense.languageSource.length - 1 ? ' · ' : ''}
+                      </span>
+                    ))}
+                  </div>
                 )}
                 {(sense.related?.length > 0 || sense.antonym?.length > 0) && (
                   <div style={{ marginTop: 2, fontSize: 11, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.7 }}>
@@ -114,9 +128,16 @@ function SensesSection({ senses }) {
   )
 }
 
+function gradeLabel(grade) {
+  if (!grade) return null
+  if (grade <= 6) return `G${grade}`
+  if (grade <= 8) return 'Secondary'
+  return 'Jinmeiyō'
+}
+
 function KanjiCard({ entry }) {
-  const jlptLabel = entry.jlpt ? `N${entry.jlpt}` : null
-  const gradeLabel = entry.grade && entry.grade <= 6 ? `G${entry.grade}` : null
+  const jlpt = entry.jlpt ? `N${entry.jlpt}` : null
+  const grade = gradeLabel(entry.grade)
 
   return (
     <div style={{
@@ -143,15 +164,20 @@ function KanjiCard({ entry }) {
               {entry.kun_readings.join('、')}
             </span>
           )}
-          {jlptLabel && (
-            <span style={{ fontSize: 10, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>{jlptLabel}</span>
+          {jlpt && (
+            <span style={{ fontSize: 10, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>{jlpt}</span>
           )}
-          {gradeLabel && !jlptLabel && (
-            <span style={{ fontSize: 10, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{gradeLabel}</span>
+          {grade && (
+            <span style={{ fontSize: 10, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{grade}</span>
           )}
           {entry.stroke_count && (
             <span style={{ fontSize: 10, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.6 }}>
               {entry.stroke_count} strokes
+            </span>
+          )}
+          {entry.frequency && (
+            <span style={{ fontSize: 10, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.6 }}>
+              freq #{entry.frequency}
             </span>
           )}
         </div>

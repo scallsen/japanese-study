@@ -151,9 +151,16 @@ async function doSearch(term, offset, commonOnly) {
   return { rows, hasMore: rows.length === PAGE_SIZE }
 }
 
+function kanjiGradeLabel(grade) {
+  if (!grade) return null
+  if (grade <= 6) return `G${grade}`
+  if (grade <= 8) return 'Secondary'
+  return 'Jinmeiyō'
+}
+
 function KanjiRow({ entry }) {
   const jlptLabel = entry.jlpt ? `N${entry.jlpt}` : null
-  const gradeLabel = entry.grade && entry.grade <= 6 ? `G${entry.grade}` : null
+  const gradeLabel = kanjiGradeLabel(entry.grade)
 
   return (
     <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', gap: 16, alignItems: 'flex-start' }}>
@@ -175,7 +182,7 @@ function KanjiRow({ entry }) {
           {jlptLabel && (
             <span style={{ fontSize: 10, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>{jlptLabel}</span>
           )}
-          {gradeLabel && !jlptLabel && (
+          {gradeLabel && (
             <span style={{ fontSize: 10, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{gradeLabel}</span>
           )}
           {entry.stroke_count && (

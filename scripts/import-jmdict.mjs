@@ -89,6 +89,12 @@ function transformEntry(entry) {
     if (s.field?.length) sense.field = s.field
     if (s.misc?.length) sense.misc = s.misc
     if (s.info?.length) sense.info = s.info
+    if (s.dialect?.length) sense.dialect = s.dialect
+    if (s.languageSource?.length) sense.languageSource = s.languageSource.map(ls => ({
+      lang: ls.lang,
+      ...(ls.word ? { word: ls.word } : {}),
+      ...(ls.wasei ? { wasei: true } : {}),
+    }))
     if (s.related?.length) sense.related = s.related.map(r => r[0])
     if (s.antonym?.length) sense.antonym = s.antonym.map(r => r[0])
     return sense
