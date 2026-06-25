@@ -6,6 +6,7 @@ import DrawerCheckbox from '../components/DrawerCheckbox.jsx'
 import DrawerSelect from '../components/DrawerSelect.jsx'
 import SpeedModeControls from '../components/SpeedModeControls.jsx'
 import PageHeader from '../components/PageHeader.jsx'
+import SpeakerIcon from '../components/SpeakerIcon.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../data/theme.js'
 import { WORD_SOURCES } from '../data/wordLists.js'
@@ -775,10 +776,9 @@ export default function VocabPage() {
                   borderRadius: 8, cursor: 'pointer',
                   opacity: audioEnabled ? 1 : 0.35, padding: 0,
                   transition: 'background 130ms', color: 'rgba(255,255,255,0.8)',
-                  fontSize: 16,
                 }}
               >
-                {audioEnabled ? '🔊' : '🔇'}
+                <SpeakerIcon muted={!audioEnabled} size={20} />
               </button>
               <button
                 onClick={() => setShowOptions(v => !v)}

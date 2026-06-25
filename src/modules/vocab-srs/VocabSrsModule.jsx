@@ -7,6 +7,7 @@ import { initSession } from './session.js'
 import { migrateProgress, initializeDeckCards } from './migrate.js'
 import VocabSrsDrill from './VocabSrsDrill.jsx'
 import PageHeader from '../../components/PageHeader.jsx'
+import SpeakerIcon from '../../components/SpeakerIcon.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../../data/theme.js'
 import DrawerSectionHeader from '../../components/DrawerSectionHeader.jsx'
 import DrawerCheckbox from '../../components/DrawerCheckbox.jsx'
@@ -712,10 +713,9 @@ export default function VocabSrsModule() {
                     borderRadius: 8, cursor: 'pointer',
                     opacity: audioEnabled ? 1 : 0.35, padding: 0,
                     transition: 'background 130ms', color: 'rgba(255,255,255,0.8)',
-                    fontSize: 16,
                   }}
                 >
-                  {audioEnabled ? '🔊' : '🔇'}
+                  <SpeakerIcon muted={!audioEnabled} size={20} />
                 </button>
                 <button
                   onClick={() => setShowOptions(v => !v)}
