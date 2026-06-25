@@ -269,7 +269,7 @@ function KanjiSection({ entries, hasWords }) {
             }}
           >
             <div style={{ display: 'flex', overflowX: 'auto', flex: 1 }}>
-              {entries.map((entry, i) => (
+              {entries.map((entry) => (
                 <div
                   key={entry.literal}
                   style={{
