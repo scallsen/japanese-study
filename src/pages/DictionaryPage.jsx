@@ -7,6 +7,7 @@ import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../data/theme.js'
 
 const BG = '#1E1E1E'
 const SURFACE = '#2A2A2A'
+const SURFACE_HOVER = '#313131'
 
 const PAGE_SIZE = 20
 
@@ -25,11 +26,18 @@ function romajiToKana(term) {
   return /^[ぁ-ヿ]+$/.test(converted) ? converted : null
 }
 
-function relevanceScore(row, term) {
-  let score = 0
-  if (row.common) score += 100
-  if (row.primary_form === term) score += 50
-  if (row.kana_forms?.includes(term)) score += 30
+function relevanceScore(row, term, effectiveTerm) {
+  const eff = effectiveTerm ?? term
+  let score = row.common ? 100 : 0
+  if (row.primary_form === term || row.primary_form === eff) score += 80
+  if (row.kana_forms?.includes(eff)) score += 60
+  if (row.primary_form.startsWith(eff) || row.primary_form.startsWith(term)) score += 25
+  const glosses = row.gloss_en?.split('; ') ?? []
+  const lowerTerm = term.toLowerCase()
+  const firstGloss = glosses[0]?.toLowerCase() ?? ''
+  if (firstGloss === lowerTerm) score += 40
+  else if (glosses.some(g => g.toLowerCase() === lowerTerm)) score += 30
+  else if (firstGloss.startsWith(lowerTerm)) score += 20
   score -= Math.min(row.primary_form.length, 20)
   return score
 }
@@ -104,7 +112,6 @@ async function doSearch(term, offset, commonOnly) {
   const effectiveTerm = kanaForm ?? trimmed
 
   const jp = isJapanese(effectiveTerm) || !!kanaForm
-  const kana = jp && isKanaOnly(effectiveTerm)
 
   const buildBase = () => {
     let q = supabase
@@ -115,28 +122,68 @@ async function doSearch(term, offset, commonOnly) {
     return q
   }
 
-  if (kana && offset === 0) {
-    // Merge prefix match on primary_form + exact match in kana_forms array
+  if (isJapanese(trimmed) && offset === 0) {
+    // User typed Japanese directly — two-query merge: prefix + kana_forms containment
     const [r1, r2] = await Promise.all([
       buildBase().ilike('primary_form', effectiveTerm + '%').limit(PAGE_SIZE),
-      supabase
-        .from('dictionary')
-        .select('id, primary_form, kana_forms, gloss_en, pos, common')
-        .filter('kana_forms', 'cs', `{${effectiveTerm}}`)
-        .order('common', { ascending: false })
-        .limit(PAGE_SIZE),
+      buildBase().filter('kana_forms', 'cs', `{${effectiveTerm}}`).limit(PAGE_SIZE),
     ])
     if (r1.error) throw r1.error
+    if (r2.error) throw r2.error
     const seen = new Set()
     const merged = []
     for (const row of [...(r1.data ?? []), ...(r2.data ?? [])]) {
       if (!seen.has(row.id)) { seen.add(row.id); merged.push(row) }
     }
-    merged.sort((a, b) => relevanceScore(b, effectiveTerm) - relevanceScore(a, effectiveTerm))
+    merged.sort((a, b) => relevanceScore(b, trimmed, effectiveTerm) - relevanceScore(a, trimmed, effectiveTerm))
     const rows = merged.slice(0, PAGE_SIZE)
     return { rows, hasMore: rows.length === PAGE_SIZE }
   }
 
+  if (kanaForm && offset === 0) {
+    // Romaji: kana readings + 3 word-boundary English gloss queries (first, middle, last).
+    // Word-boundary patterns prevent "car" from matching "carriage", "carpet", etc.
+    const [r1, r2, r3, r4] = await Promise.all([
+      buildBase().filter('kana_forms', 'cs', `{${kanaForm}}`).limit(PAGE_SIZE),
+      buildBase().ilike('gloss_en', trimmed + '; %').limit(PAGE_SIZE),
+      buildBase().ilike('gloss_en', '%; ' + trimmed + '; %').limit(PAGE_SIZE),
+      buildBase().ilike('gloss_en', '%; ' + trimmed).limit(PAGE_SIZE),
+    ])
+    if (r1.error) throw r1.error
+    if (r2.error) throw r2.error
+    if (r3.error) throw r3.error
+    if (r4.error) throw r4.error
+    const seen = new Set()
+    const merged = []
+    for (const row of [...(r1.data ?? []), ...(r2.data ?? []), ...(r3.data ?? []), ...(r4.data ?? [])]) {
+      if (!seen.has(row.id)) { seen.add(row.id); merged.push(row) }
+    }
+    merged.sort((a, b) => relevanceScore(b, trimmed, kanaForm) - relevanceScore(a, trimmed, kanaForm))
+    const rows = merged.slice(0, PAGE_SIZE)
+    return { rows, hasMore: rows.length === PAGE_SIZE }
+  }
+
+  if (!jp && offset === 0) {
+    // Pure English: 3 word-boundary gloss queries — first, middle, last position.
+    const [r1, r2, r3] = await Promise.all([
+      buildBase().ilike('gloss_en', effectiveTerm + '; %').limit(PAGE_SIZE),
+      buildBase().ilike('gloss_en', '%; ' + effectiveTerm + '; %').limit(PAGE_SIZE),
+      buildBase().ilike('gloss_en', '%; ' + effectiveTerm).limit(PAGE_SIZE),
+    ])
+    if (r1.error) throw r1.error
+    if (r2.error) throw r2.error
+    if (r3.error) throw r3.error
+    const seen = new Set()
+    const merged = []
+    for (const row of [...(r1.data ?? []), ...(r2.data ?? []), ...(r3.data ?? [])]) {
+      if (!seen.has(row.id)) { seen.add(row.id); merged.push(row) }
+    }
+    merged.sort((a, b) => relevanceScore(b, trimmed, effectiveTerm) - relevanceScore(a, trimmed, effectiveTerm))
+    const rows = merged.slice(0, PAGE_SIZE)
+    return { rows, hasMore: rows.length === PAGE_SIZE }
+  }
+
+  // Pagination (offset > 0) — DB ordering only
   let q = buildBase().range(offset, offset + PAGE_SIZE - 1)
   if (jp) {
     q = q.ilike('primary_form', effectiveTerm + '%')
@@ -146,8 +193,7 @@ async function doSearch(term, offset, commonOnly) {
 
   const { data, error } = await q
   if (error) throw error
-  const rows = (data ?? []).sort((a, b) => relevanceScore(b, effectiveTerm) - relevanceScore(a, effectiveTerm))
-  return { rows, hasMore: rows.length === PAGE_SIZE }
+  return { rows: data ?? [], hasMore: (data ?? []).length === PAGE_SIZE }
 }
 
 function KanjiRow({ entry }) {
@@ -190,6 +236,88 @@ function KanjiRow({ entry }) {
         )}
       </div>
     </div>
+  )
+}
+
+function KanjiSection({ entries, hasWords }) {
+  const [expanded, setExpanded] = useState(false)
+  const [hovered, setHovered] = useState(false)
+  const [collapseHovered, setCollapseHovered] = useState(false)
+
+  return (
+    <>
+      <SectionLabel label="Kanji" />
+      <div style={{
+        background: SURFACE,
+        borderRadius: 8,
+        border: '1px solid rgba(255,255,255,0.06)',
+        overflow: expanded ? 'hidden' : 'visible',
+        marginBottom: hasWords ? 20 : 0,
+      }}>
+        {!expanded ? (
+          <div
+            onClick={() => setExpanded(true)}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              cursor: 'pointer',
+              background: hovered ? SURFACE_HOVER : 'transparent',
+              borderRadius: 8,
+              transition: 'background 100ms',
+            }}
+          >
+            <div style={{ display: 'flex', overflowX: 'auto', flex: 1 }}>
+              {entries.map((entry) => (
+                <div
+                  key={entry.literal}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '12px 20px',
+                    flexShrink: 0,
+                    borderRight: '1px solid rgba(255,255,255,0.05)',
+                  }}
+                >
+                  <span style={{ fontSize: 22, color: TEXT, fontFamily: FONT, letterSpacing: 0 }}>
+                    {entry.literal}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div style={{ padding: '0 16px', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+              <span style={{ fontSize: 20, lineHeight: 1, color: TEXT_MUTED, opacity: 0.5, fontFamily: 'system-ui' }}>›</span>
+            </div>
+          </div>
+        ) : (
+          <>
+            {entries.map(entry => <KanjiRow key={entry.literal} entry={entry} />)}
+            <div
+              onClick={() => setExpanded(false)}
+              onMouseEnter={() => setCollapseHovered(true)}
+              onMouseLeave={() => setCollapseHovered(false)}
+              style={{
+                padding: '10px 16px',
+                textAlign: 'center',
+                cursor: 'pointer',
+                fontSize: 12,
+                color: TEXT_MUTED,
+                fontFamily: FONT,
+                letterSpacing: TRACKING,
+                opacity: 0.6,
+                borderTop: '1px solid rgba(255,255,255,0.05)',
+                background: collapseHovered ? SURFACE_HOVER : 'transparent',
+                transition: 'background 100ms',
+              }}
+            >
+              Collapse Kanji
+            </div>
+          </>
+        )}
+      </div>
+    </>
   )
 }
 
@@ -411,18 +539,11 @@ export default function DictionaryPage() {
           )}
 
           {!loading && kanjiResults.length > 0 && (
-            <>
-              <SectionLabel label="Kanji" />
-              <div style={{
-                background: SURFACE,
-                borderRadius: 8,
-                overflow: 'hidden',
-                border: '1px solid rgba(255,255,255,0.06)',
-                marginBottom: showResults ? 20 : 0,
-              }}>
-                {kanjiResults.map(entry => <KanjiRow key={entry.literal} entry={entry} />)}
-              </div>
-            </>
+            <KanjiSection
+              key={kanjiResults.map(r => r.literal).join('')}
+              entries={kanjiResults}
+              hasWords={showResults}
+            />
           )}
 
           {showResults && !loading && (
