@@ -71,6 +71,8 @@ Each entry in `src/data/modules.js`:
 
 ## Design tokens (`src/data/theme.js`)
 
+**Color / typography base**
+
 | Token | Value | Usage |
 |---|---|---|
 | `FONT` | `'DotGothic16', system-ui, sans-serif` | All text |
@@ -81,6 +83,43 @@ Each entry in `src/data/modules.js`:
 | `BORDER` | `#2E2E2E` | Header bottom separator |
 | `TEXT` | `#E8E8E8` | Primary text |
 | `TEXT_MUTED` | `#888888` | Secondary / label text |
+
+**Font size tokens** — every `fontSize` in the codebase uses one of these; no hardcoded numbers.
+
+Base sizes:
+
+| Token | Value | Usage |
+|---|---|---|
+| `FS_SM` | `13` | Reserved — not currently used |
+| `FS_BASE` | `15` | Default UI text |
+| `FS_NAV` | `16` | Navigation bar / breadcrumb |
+
+Semantic sizes (all equal `FS_BASE` for now — adjust as a group by changing the alias):
+
+| Token | Usage |
+|---|---|
+| `FS_BADGE` | Inline pill labels: source, difficulty, JLPT, POS, "common" |
+| `FS_CAPTION` | Dates, hints, secondary metadata below controls |
+| `FS_HEADING` | Screen/section headings ("No active decks", panel headings) |
+| `FS_ENTRY` | Dictionary word form, word popup content |
+
+Style objects:
+
+| Token | Usage |
+|---|---|
+| `SUBHEADING_STYLE` | Uppercase section labels in settings panels — spreads `fontSize`, `textTransform`, `letterSpacing` |
+
+Exception constants — intentionally outside the semantic token system (purposeful display sizes):
+
+| Token | Value | Usage |
+|---|---|---|
+| `FS_DISPLAY_HEADING` | `28` | Done-screen "Session complete" heading |
+| `FS_STAT_VALUE` | `24` | Done-screen reviewed / again / time numbers |
+| `FS_CONTENT_HEADING` | `22` | Article title in reader, SRS module stat summary, grammar node heading |
+| `FS_LIST_TITLE` | `17` | Article card title in list view |
+| `FS_ENTRY_WORD` | `20` | Word form in dictionary results & word popup |
+| `FS_ENTRY_KANJI` | `36` | Dictionary large kanji display |
+| `FS_ARTICLE_BODY` | `18` | Article body text (reading-optimised — do not normalise) |
 
 ## Shared components (`src/components/`)
 
