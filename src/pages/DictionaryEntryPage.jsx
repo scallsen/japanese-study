@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import PageHeader from '../components/PageHeader.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
 import { supabase } from '../lib/supabase.js'
-import { FONT, TRACKING, TEXT, TEXT_MUTED } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_ENTRY_KANJI, FS_ENTRY_HEADING, FS_ENTRY_ALT, SUBHEADING_STYLE } from '../data/theme.js'
 
 const BG = '#1E1E1E'
 const SURFACE = '#2A2A2A'
@@ -43,7 +43,7 @@ function langName(code) { return LANG_NAMES[code] ?? code }
 function PosTag({ label }) {
   return (
     <span style={{
-      fontSize: 10,
+      fontSize: FS_BADGE,
       color: TEXT_MUTED,
       background: 'rgba(255,255,255,0.07)',
       borderRadius: 3,
@@ -58,7 +58,7 @@ function PosTag({ label }) {
 function MetaTag({ label, color }) {
   return (
     <span style={{
-      fontSize: 10,
+      fontSize: FS_BADGE,
       color: color ?? TEXT_MUTED,
       fontFamily: FONT,
       letterSpacing: TRACKING,
@@ -93,7 +93,7 @@ function SensesSection({ senses }) {
           )}
           <ol style={{ margin: 0, padding: '0 0 0 20px', display: 'flex', flexDirection: 'column', gap: 6 }}>
             {group.senses.map((sense, si) => (
-              <li key={si} style={{ color: TEXT, fontFamily: FONT, fontSize: 14, letterSpacing: TRACKING, lineHeight: 1.55 }}>
+              <li key={si} style={{ color: TEXT, fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING, lineHeight: 1.55 }}>
                 {sense.gloss.join('; ')}
                 {(sense.field?.length > 0 || sense.misc?.length > 0 || sense.info?.length > 0 || sense.dialect?.length > 0) && (
                   <span style={{ display: 'inline-flex', gap: 6, marginLeft: 8, verticalAlign: 'middle', flexWrap: 'wrap' }}>
@@ -104,7 +104,7 @@ function SensesSection({ senses }) {
                   </span>
                 )}
                 {sense.languageSource?.length > 0 && (
-                  <div style={{ marginTop: 3, fontSize: 11, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.7 }}>
+                  <div style={{ marginTop: 3, fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.7 }}>
                     {sense.languageSource.map((ls, i) => (
                       <span key={i}>
                         {ls.wasei ? 'Wasei' : `From ${langName(ls.lang)}`}{ls.text ? `: ${ls.text}` : ''}
@@ -114,7 +114,7 @@ function SensesSection({ senses }) {
                   </div>
                 )}
                 {(sense.related?.length > 0 || sense.antonym?.length > 0) && (
-                  <div style={{ marginTop: 2, fontSize: 11, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.7 }}>
+                  <div style={{ marginTop: 2, fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.7 }}>
                     {sense.related?.length > 0 && <span>See also: {sense.related.join(', ')} </span>}
                     {sense.antonym?.length > 0 && <span>Antonym: {sense.antonym.join(', ')}</span>}
                   </div>
@@ -149,40 +149,40 @@ function KanjiCard({ entry }) {
       gap: 16,
       alignItems: 'flex-start',
     }}>
-      <span style={{ fontSize: 38, color: TEXT, fontFamily: KANJI_FONT, lineHeight: 1, letterSpacing: 0, flexShrink: 0, minWidth: 44, textAlign: 'center' }}>
+      <span style={{ fontSize: FS_ENTRY_KANJI, color: TEXT, fontFamily: KANJI_FONT, lineHeight: 1, letterSpacing: 0, flexShrink: 0, minWidth: 44, textAlign: 'center' }}>
         {entry.literal}
       </span>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 5 }}>
           {entry.on_readings?.length > 0 && (
-            <span style={{ fontSize: 13, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
+            <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
               {entry.on_readings.join('、')}
             </span>
           )}
           {entry.kun_readings?.length > 0 && (
-            <span style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
+            <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
               {entry.kun_readings.join('、')}
             </span>
           )}
           {jlpt && (
-            <span style={{ fontSize: 10, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>{jlpt}</span>
+            <span style={{ fontSize: FS_BADGE, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>{jlpt}</span>
           )}
           {grade && (
-            <span style={{ fontSize: 10, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{grade}</span>
+            <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{grade}</span>
           )}
           {entry.stroke_count && (
-            <span style={{ fontSize: 10, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.6 }}>
+            <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.6 }}>
               {entry.stroke_count} strokes
             </span>
           )}
           {entry.frequency && (
-            <span style={{ fontSize: 10, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.6 }}>
+            <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.6 }}>
               freq #{entry.frequency}
             </span>
           )}
         </div>
         {entry.meanings && (
-          <span style={{ fontSize: 13, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+          <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
             {entry.meanings}
           </span>
         )}
@@ -194,7 +194,7 @@ function KanjiCard({ entry }) {
 function SectionLabel({ label }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12, marginTop: 28 }}>
-      <span style={{ fontSize: 10, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: '0.1em', opacity: 0.5, textTransform: 'uppercase' }}>
+      <span style={{ ...SUBHEADING_STYLE, color: TEXT_MUTED, fontFamily: FONT, opacity: 0.5 }}>
         {label}
       </span>
       <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.06)' }} />
@@ -251,13 +251,13 @@ export default function DictionaryEntryPage({ entryId }) {
       <div style={{ flex: 1, overflowY: 'auto', padding: '32px 16px 64px' }}>
         <div style={{ maxWidth: 600, margin: '0 auto' }}>
           {loading && (
-            <div style={{ textAlign: 'center', padding: '64px 0', color: TEXT_MUTED, fontFamily: FONT, fontSize: 13, letterSpacing: TRACKING }}>
+            <div style={{ textAlign: 'center', padding: '64px 0', color: TEXT_MUTED, fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING }}>
               Loading...
             </div>
           )}
 
           {!loading && error && (
-            <div style={{ textAlign: 'center', padding: '64px 0', color: '#E05A4E', fontFamily: FONT, fontSize: 13, letterSpacing: TRACKING }}>
+            <div style={{ textAlign: 'center', padding: '64px 0', color: '#E05A4E', fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING }}>
               {error}
             </div>
           )}
@@ -267,18 +267,18 @@ export default function DictionaryEntryPage({ entryId }) {
               {/* Header */}
               <div style={{ marginBottom: 28 }}>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, flexWrap: 'wrap', marginBottom: 10 }}>
-                  <span style={{ fontSize: 52, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, lineHeight: 1.1 }}>
+                  <span style={{ fontSize: FS_ENTRY_HEADING, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, lineHeight: 1.1 }}>
                     {entry.primary_form}
                   </span>
                   {entry.common && (
-                    <span style={{ fontSize: 11, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>common</span>
+                    <span style={{ fontSize: FS_BADGE, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>common</span>
                   )}
                 </div>
 
                 {altForms.length > 0 && (
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
                     {altForms.map((f, i) => (
-                      <span key={i} style={{ fontSize: 18, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
+                      <span key={i} style={{ fontSize: FS_ENTRY_ALT, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
                         {f}
                       </span>
                     ))}
@@ -292,7 +292,7 @@ export default function DictionaryEntryPage({ entryId }) {
                   <SensesSection senses={entry.senses} />
                 ) : (
                   /* fallback for rows imported before senses column */
-                  <div style={{ color: TEXT, fontFamily: FONT, fontSize: 14, letterSpacing: TRACKING, lineHeight: 1.65 }}>
+                  <div style={{ color: TEXT, fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING, lineHeight: 1.65 }}>
                     {entry.gloss_en}
                   </div>
                 )}
