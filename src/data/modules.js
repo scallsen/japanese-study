@@ -13,6 +13,7 @@ export const MODULES = [
     id: 'katsuyou',
     label: 'Conjugation Drill',
     sublabel: 'Practice conjugating verb forms and adjectives',
+    icon: '/katsuyou-icon.png',
     stats: null,
     href: 'https://scallsen.ca/katsuyou-drill/',
     external: true,

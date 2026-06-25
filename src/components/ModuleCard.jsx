@@ -10,7 +10,7 @@ function ExternalLinkIcon() {
 }
 
 export default function ModuleCard({ module, disabled }) {
-  const { label, sublabel, href, external } = module
+  const { label, sublabel, icon, href, external } = module
   const [hovered, setHovered] = useState(false)
 
   const Tag = disabled ? 'div' : 'a'
@@ -41,6 +41,9 @@ export default function ModuleCard({ module, disabled }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
+      {icon && (
+        <img src={icon} alt="" style={{ width: 36, height: 36, marginBottom: 10, imageRendering: 'pixelated' }} />
+      )}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
         <div style={{ fontSize: 16, color: hovered && !disabled ? 'rgba(255,255,255,0.85)' : TEXT, transition: 'color 130ms' }}>
           {label}
