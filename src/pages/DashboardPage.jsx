@@ -58,6 +58,7 @@ export default function DashboardPage() {
           gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
           gap: 10,
           maxWidth: 900,
+          margin: '0 auto',
         }}>
           {MODULES.map(mod => (
             <ModuleCard
