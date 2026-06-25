@@ -139,18 +139,19 @@ async function doSearch(term, offset, commonOnly) {
   }
 
   if (kanaForm && offset === 0) {
-    // Romaji that converts to kana — search both kana readings AND English gloss.
-    // "hon"→"ほん": kana search finds 本 (+60 kana bonus); "house"→"ほうせ": kana finds
-    // nothing, English gloss finds 家 (+40 first-sense bonus). Relevance picks the winner.
-    const [r1, r2] = await Promise.all([
+    // Romaji: kana readings + English gloss prefix + English gloss broad (3 queries).
+    // Prefix query guarantees high-precision gloss matches (車 for "car") are always fetched.
+    const [r1, r2, r3] = await Promise.all([
       buildBase().filter('kana_forms', 'cs', `{${kanaForm}}`).limit(PAGE_SIZE),
+      buildBase().ilike('gloss_en', trimmed + '%').limit(PAGE_SIZE),
       buildBase().ilike('gloss_en', '%' + trimmed + '%').limit(PAGE_SIZE),
     ])
     if (r1.error) throw r1.error
     if (r2.error) throw r2.error
+    if (r3.error) throw r3.error
     const seen = new Set()
     const merged = []
-    for (const row of [...(r1.data ?? []), ...(r2.data ?? [])]) {
+    for (const row of [...(r1.data ?? []), ...(r2.data ?? []), ...(r3.data ?? [])]) {
       if (!seen.has(row.id)) { seen.add(row.id); merged.push(row) }
     }
     merged.sort((a, b) => relevanceScore(b, trimmed, kanaForm) - relevanceScore(a, trimmed, kanaForm))
@@ -159,14 +160,20 @@ async function doSearch(term, offset, commonOnly) {
   }
 
   if (!jp && offset === 0) {
-    // Pure English (doesn't convert to kana) — English gloss + client sort
-    const { data, error } = await buildBase()
-      .ilike('gloss_en', '%' + effectiveTerm + '%')
-      .limit(PAGE_SIZE)
-    if (error) throw error
-    const rows = (data ?? [])
-      .sort((a, b) => relevanceScore(b, trimmed, effectiveTerm) - relevanceScore(a, trimmed, effectiveTerm))
-      .slice(0, PAGE_SIZE)
+    // Pure English: gloss prefix + gloss broad to guarantee high-precision matches are fetched.
+    const [r1, r2] = await Promise.all([
+      buildBase().ilike('gloss_en', effectiveTerm + '%').limit(PAGE_SIZE),
+      buildBase().ilike('gloss_en', '%' + effectiveTerm + '%').limit(PAGE_SIZE),
+    ])
+    if (r1.error) throw r1.error
+    if (r2.error) throw r2.error
+    const seen = new Set()
+    const merged = []
+    for (const row of [...(r1.data ?? []), ...(r2.data ?? [])]) {
+      if (!seen.has(row.id)) { seen.add(row.id); merged.push(row) }
+    }
+    merged.sort((a, b) => relevanceScore(b, trimmed, effectiveTerm) - relevanceScore(a, trimmed, effectiveTerm))
+    const rows = merged.slice(0, PAGE_SIZE)
     return { rows, hasMore: rows.length === PAGE_SIZE }
   }
 
