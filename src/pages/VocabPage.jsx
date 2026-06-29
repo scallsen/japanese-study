@@ -20,6 +20,7 @@ import { safeLocalStorageGet, safeLocalStorageSet } from '../utils/storage.js'
 import * as SimpleQueue from '../engines/simpleQueue.js'
 import NSM_N3 from '../data/words/nsm_n3_vocab.json'
 import NSM_N3_I4_RAW from '../data/words/nsm_n3_i4_vocab.json'
+import NSM_N3_I5 from '../data/words/nsm_n3_i5_vocab.json'
 
 const NSM_N3_I4 = NSM_N3_I4_RAW.map(w => ({
   ...w,
@@ -27,7 +28,7 @@ const NSM_N3_I4 = NSM_N3_I4_RAW.map(w => ({
   listKey: w.listKey.replace('nsm-n3-', 'nsm-n3-i4-'),
 }))
 
-const WORD_DATA = [...NSM_N3, ...NSM_N3_I4]
+const WORD_DATA = [...NSM_N3, ...NSM_N3_I4, ...NSM_N3_I5]
 
 const PANEL_W = 420
 const CHEVRON_W = 28
