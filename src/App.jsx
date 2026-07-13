@@ -4,6 +4,8 @@ import VocabPage from './pages/VocabPage.jsx'
 import VocabSrsModule from './modules/vocab-srs/VocabSrsModule.jsx'
 import ImmersionModule from './modules/immersion/ImmersionModule.jsx'
 import GrammarMapModule from './modules/grammar-map/GrammarMapModule.jsx'
+import StoryModule from './modules/story/StoryModule.jsx'
+import StoryReviewPage from './modules/story/StoryReviewPage.jsx'
 import DictionaryPage from './pages/DictionaryPage.jsx'
 import DictionaryEntryPage from './pages/DictionaryEntryPage.jsx'
 
@@ -33,6 +35,8 @@ export default function App() {
   if (route === '/vocab-srs') return <VocabSrsModule />
   if (route === '/immersion') return <ImmersionModule />
   if (route === '/grammar-map') return <GrammarMapModule />
+  if (route === '/story') return <StoryModule />
+  if (route.startsWith('/story/')) return <StoryReviewPage storyId={route.slice('/story/'.length)} />
   if (route === '/dictionary') return <DictionaryPage />
   if (route.startsWith('/dictionary/entry/')) return <DictionaryEntryPage entryId={route.slice('/dictionary/entry/'.length)} />
   return <DashboardPage />

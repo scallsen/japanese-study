@@ -4,3 +4,6 @@ dist
 .env
 .env.local
 verify-tmp.js
+.claude/worktrees/
+.claude/settings.local.json
+supabase/.temp/

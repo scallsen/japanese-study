@@ -1,11 +1,13 @@
-import { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import PageHeader from '../../components/PageHeader.jsx'
 import AuthSlot from '../../components/AuthSlot.jsx'
+import { TokenizedBody, WordPopup } from '../../components/JapaneseReader.jsx'
+import { buildVocabMap } from '../../utils/vocabMap.js'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useProgress } from '../../hooks/useProgress.js'
 // Cross-module write: creates cards in vocab-srs progress namespace
 import { createCard } from '../vocab-srs/srs.js'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CONTENT_HEADING, FS_CAPTION, FS_ARTICLE_BODY, FS_ENTRY_WORD } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CONTENT_HEADING, FS_CAPTION, FS_ARTICLE_BODY } from '../../data/theme.js'
 
 const ACCENT = '#E05A4E'
 
@@ -14,141 +16,6 @@ function formatDate(iso) {
 }
 
 const IMMERSION_DECK_ID = 'immersion-words'
-
-function buildVocabMap(vocabulary) {
-  const map = {}
-  if (!Array.isArray(vocabulary)) return map
-  for (const entry of vocabulary) {
-    if (entry.word) map[entry.word] = entry
-  }
-  return map
-}
-
-function TokenizedBody({ tokens, vocabMap, onWordClick, showFurigana, activeIdx }) {
-  const [hoveredIdx, setHoveredIdx] = useState(null)
-
-  useEffect(() => {
-    if (activeIdx === null) setHoveredIdx(null)
-  }, [activeIdx])
-
-  if (!Array.isArray(tokens) || tokens.length === 0) return null
-  return (
-    <span>
-      {tokens.map((tok, i) => {
-        if (!tok.w) return <span key={i}>{tok.t}</span>
-        const isActive = hoveredIdx === i || activeIdx === i
-        const inVocab = !!vocabMap[tok.t]
-        return (
-          <span
-            key={i}
-            onMouseEnter={() => setHoveredIdx(i)}
-            onMouseLeave={() => setHoveredIdx(null)}
-            onClick={e => { e.stopPropagation(); onWordClick(tok, e, i) }}
-            style={{
-              cursor: 'pointer',
-              borderRadius: 3,
-              background: isActive
-                ? inVocab ? 'rgba(224,90,78,0.22)' : 'rgba(255,255,255,0.1)'
-                : 'transparent',
-              padding: '0 1px',
-              transition: 'background 80ms',
-            }}
-          >
-            {showFurigana && tok.r
-              ? (
-                <ruby>
-                  {tok.t}
-                  <rt style={{ fontSize: '0.55em', color: TEXT_MUTED, letterSpacing: 0 }}>{tok.r}</rt>
-                </ruby>
-              )
-              : tok.t}
-          </span>
-        )
-      })}
-    </span>
-  )
-}
-
-function WordPopup({ token, vocabEntry, onAddToSrs, onClose, anchorRect }) {
-  const popupRef = useRef(null)
-
-  useEffect(() => {
-    function handleClick(e) {
-      if (popupRef.current && !popupRef.current.contains(e.target)) onClose()
-    }
-    document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
-  }, [onClose])
-
-  useLayoutEffect(() => {
-    if (!popupRef.current || !anchorRect) return
-    const el = popupRef.current
-    const { width, height } = el.getBoundingClientRect()
-    const vw = window.innerWidth
-    const vh = window.innerHeight
-
-    let top = anchorRect.bottom + 6
-    let left = anchorRect.left
-
-    if (left + width + 8 > vw) left = vw - width - 8
-    left = Math.max(8, left)
-
-    if (top + height + 8 > vh) top = anchorRect.top - height - 6
-    top = Math.max(8, top)
-
-    el.style.top = top + 'px'
-    el.style.left = left + 'px'
-  }, [anchorRect])
-
-  return (
-    <div
-      ref={popupRef}
-      style={{
-        position: 'fixed',
-        top: anchorRect ? anchorRect.bottom + 6 : 0,
-        left: anchorRect ? anchorRect.left : 0,
-        zIndex: 200,
-        background: '#2A2A2A',
-        border: '1px solid rgba(255,255,255,0.15)',
-        borderRadius: 8,
-        padding: '10px 14px',
-        minWidth: 160,
-        maxWidth: 260,
-        boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
-        fontFamily: FONT,
-        letterSpacing: TRACKING,
-      }}
-    >
-      <div style={{ fontSize: FS_ENTRY_WORD, color: TEXT, marginBottom: 2 }}>{token.t}</div>
-      {token.r && (
-        <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginBottom: (vocabEntry?.pos || vocabEntry?.meaning) ? 4 : 10 }}>{token.r}</div>
-      )}
-      {vocabEntry?.pos && (
-        <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: vocabEntry.meaning ? 4 : 10, opacity: 0.7 }}>{vocabEntry.pos}</div>
-      )}
-      {vocabEntry?.meaning && (
-        <div style={{ fontSize: FS_BASE, color: TEXT, marginBottom: 10 }}>{vocabEntry.meaning}</div>
-      )}
-      <button
-        onClick={() => onAddToSrs(token, vocabEntry)}
-        style={{
-          fontSize: FS_BASE,
-          fontFamily: FONT,
-          letterSpacing: TRACKING,
-          color: TEXT,
-          background: 'rgba(255,255,255,0.08)',
-          border: '1px solid rgba(255,255,255,0.15)',
-          borderRadius: 5,
-          padding: '4px 12px',
-          cursor: 'pointer',
-          width: '100%',
-        }}
-      >
-        Add to SRS
-      </button>
-    </div>
-  )
-}
 
 export default function ImmersionReader({ article, onBack, isRead, onMarkRead }) {
   const { user, signIn } = useAuth()
