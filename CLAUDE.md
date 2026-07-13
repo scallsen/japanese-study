@@ -57,6 +57,8 @@ Two patterns for internal modules. Pick the right one before looking for code:
 | `#/immersion` | `ImmersionModule` | `src/modules/immersion/ImmersionModule.jsx` |
 | `#/grammar-map` | `GrammarMapModule` | `src/modules/grammar-map/GrammarMapModule.jsx` |
 | `#/dictionary` | `DictionaryPage` | `src/pages/DictionaryPage.jsx` |
+| `#/story` | `StoryModule` | `src/modules/story/StoryModule.jsx` |
+| `#/story/:id` | `StoryReviewPage` | `src/modules/story/StoryReviewPage.jsx` |
 
 To add a route: add a branch in `App.jsx`. Page-based → create `src/pages/YourPage.jsx`. Self-contained → create `src/modules/<name>/` and import the root component in `App.jsx`.
 
@@ -657,7 +659,7 @@ create table if not exists kanji (
   stroke_count smallint,
   jlpt        smallint,
   frequency   smallint,
-  meanings    text[] not null default '{}',
+  meanings    text not null default '',  -- English meanings joined with '; ' (plain text, not array)
   on_readings text[] not null default '{}',
   kun_readings text[] not null default '{}',
   common      boolean not null default false
@@ -667,3 +669,113 @@ grant all on kanji to service_role;
 ```
 
 Populated by `scripts/import-kanjidic2.mjs` (accepts raw XML zip or pre-converted JSON).
+
+## Story generator (`#/story`, `#/story/:id`)
+
+**Self-contained module** — `src/modules/story/`. Generates original Japanese written content (stories, fake news articles, dialogue transcripts) constrained to vocabulary the learner already knows, with Japanese comprehension questions graded leniently by a second model call.
+
+Two routes, two components:
+- `#/story` → `StoryModule.jsx` — the overview: vocabulary source / format / length / grammar picker, "Generate", and a "Recent stories" section listing the most recently generated stories **across all users** (public feed, visible whether signed in or not).
+- `#/story/:id` → `StoryReviewPage.jsx` — the reading + comprehension-question view for one generated story. Breadcrumb is `Japanese Study / Story generator / Review story`.
+
+**Generation requires sign-in** — the Generate button is disabled (with an inline "Sign in to generate stories" hint) until `useAuth()` returns a `user`; everything else on the page (source/format pickers, context preview, browsing recent stories) works signed out. On generate, `StoryModule` inserts the result directly into the `stories` table (see below) with `user_id: user.id` and a client-generated `crypto.randomUUID()`, then navigates to `#/story/<id>` (`window.location.hash = ...`, the same cross-page navigation pattern used by breadcrumb links — `App.jsx`'s `hashchange` listener picks it up). `StoryReviewPage` fetches the story by id directly from `stories` (`supabase.from('stories').select(...).eq('id', storyId).maybeSingle()`) — it does not refetch or regenerate anything, and works for any visitor regardless of who generated the story. "New content" on the review page navigates back to `#/story`.
+
+### Formats
+
+`FORMATS` in `StoryModule.jsx` and `FORMAT_HINTS` in `supabase/functions/story-generate/index.ts` must stay in sync (one entry per format id). Current formats: `story`, `news`, `dialogue`, `diary`, `interview`, `letter`, `postcard`. Every format still returns the same `{ title, story, questions, tokens }` shape — new formats are just a different `FORMAT_HINTS` prompt (register/genre/structural convention) plus, optionally, a dedicated layout component. No new format should require a second LLM call or a schema change; if one seems to, that's a sign to lean on a prompt convention + client-side parsing instead (as `dialogue`/`interview` do with 名前「セリフ」 and `diary` does with the date-line header).
+
+`StoryReviewPage.jsx` dispatches on `story.format` via a `FORMAT_LAYOUTS` lookup object (`{ news: NewspaperLayout, dialogue: ChatLayout, diary: DiaryLayout, interview: InterviewLayout, letter: LetterLayout, postcard: PostcardLayout }`); formats not in the map (`story`) fall back to a plain `TokenizedBody` block. A format with a mapped layout is expected to render its own title internally — the page only renders the generic `<h2>` title when there's no matching layout.
+
+- **`diary`** — the prompt requires the very first line to be only the date (e.g. `6月3日（火）`) followed by a single `\n`, then the entry body with no blank line in between. `DiaryLayout` finds the first token with `t === '\n'` (exact single newline, distinct from the `'\n\n'` paragraph-break token) to split header tokens from body tokens, preserving global token indices for popup/highlight correctness (same offset-tracking pattern as `ChatLayout`). If the model doesn't follow the convention, `breakIdx` comes back `-1` and the whole thing renders as body with no header — safe degradation, no crash.
+- **`interview`** — reuses the exact `dialogue` convention and `parseDialogue()`, just a different register prompt (two named speakers, interviewer/subject) and a different layout: a printed Q&A column (colored left-border per speaker) instead of chat bubbles. First speaker encountered is treated as the interviewer for accent-color purposes.
+- **`letter`** — no structural parsing at all; the whole `story` field renders as continuous prose in an envelope-styled card (mincho serif). No stamp — that visual belongs to `postcard` now; `letter` is just a plain paper letter, horizontal writing.
+- **`postcard`** — the one format using vertical writing (`writing-mode: vertical-rl` + `text-orientation: mixed` on the message container). `PostcardLayout` is a fixed-portrait card (~380px wide) with a horizontal header row (7-box postal code grid, 3+4 split, plus a CSS-only perforated stamp — see below) and the message below in vertical columns flowing right-to-left. The prompt tells the model to keep postcard content brief regardless of the selected length, specifically so the fixed-height message area (`height: 300–340px`, `overflowX: auto`) rarely needs to scroll. Vertical writing needed **no changes** to `TokenizedBody`, `WordPopup`, click handling, or furigana rendering — `getBoundingClientRect()`-based popup positioning and ruby annotations both honor the ancestor's `writing-mode` automatically; furigana actually reads more authentically here (it lands to the right of each character column, matching real vertical typesetting) than it does in the horizontal layouts. The only real constraint vertical writing imposes: a bounded-height container with horizontal scroll instead of the page's usual vertical scroll — scoped entirely to this one component, not a page-wide change.
+  - **Stamp**: `Stamp()` in `StoryLayouts.jsx` draws a perforated edge with four absolutely-positioned strips, each a repeating `radial-gradient` of the card's own background color, straddling the face's true boundary (half outside the box, half overlapping the colored face) so the visible "bite" is whichever half overlaps. Deliberately abstract/non-representational — no resemblance to any real, copyrighted Japan Post stamp design, consistent with how we've treated other "real-world asset" requests (see the LINE-sticker discussion — same reasoning, not implemented, but the precedent holds here too).
+
+### Supabase `stories` table
+
+Stories are **not** stored via `useProgress` — they're a shared, public resource (any visitor can read any story), unlike every other module's private per-user `progress` payload. Only the owner (`user_id`) can insert; there is no update/delete policy (no edit/delete UI).
+
+```sql
+create table if not exists stories (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users not null,
+  title text not null,
+  story text not null,
+  tokens jsonb,
+  questions jsonb not null,
+  format text not null,
+  created_at timestamptz not null default now()
+);
+
+alter table stories enable row level security;
+
+create policy "select all stories" on stories for select
+  using (true);
+
+create policy "insert own stories" on stories for insert
+  with check (auth.uid() = user_id);
+
+grant select on stories to anon, authenticated;
+grant insert on stories to authenticated;
+
+create index if not exists stories_created_at_idx on stories (created_at desc);
+```
+
+`StoryModule.jsx` fetches the newest `MAX_RECENT_STORIES` (20) rows (`id, title, format, created_at` only — full content is fetched lazily per-story by `StoryReviewPage`) ordered by `created_at desc`, mirroring the `articles` list-fetch pattern in `ImmersionModule.jsx`. Older stories are simply excluded from the feed, not deleted — there is no cleanup job (same reasoning as `articles`, see Immersion section).
+
+### Key files
+
+| File | Purpose |
+|---|---|
+| `src/lib/learnerContext.js` | **Shared, not story-specific** — `buildLearnerContext(sourceType, sourceId, options)` → `{ text, wordCount, words }`. Pure data retrieval + formatting; no LLM calls, no UI coupling. Other modules (chat, news simplification) should call this same function. |
+| `src/lib/learnerContext.test.js` | Vitest unit tests for learnerContext |
+| `src/data/wordData.js` | Shared `WORD_DATA` aggregation (extracted from VocabPage) — used by VocabPage and learnerContext |
+| `src/modules/story/StoryModule.jsx` | Overview page — source picker, options, context preview, generate, recent-stories list |
+| `src/modules/story/StoryReviewPage.jsx` | Review page — tokenized reader, format-specific layout, inline Q&A with grading, for one saved story looked up by id |
+| `src/modules/story/storyUI.jsx` | Shared visual primitives between the two pages — `Button`, `KANJI_FONT`, `ACCENT`, `BG`, `SURFACE` |
+| `src/modules/story/storyFieldStyles.js` | Shared `labelStyle` / `fieldStyle` / `selectFieldStyle` for form fields — matches the source-selector pattern established in `VocabPage.jsx` (custom appearance, chevron background-image). Kept out of `storyUI.jsx` (a `.jsx` file) to satisfy react-refresh lint, same reasoning as `vocabMap.js` below. |
+| `src/modules/story/api.js` | `generateStory()` / `gradeAnswer()` — wrappers over `supabase.functions.invoke` |
+| `src/modules/story/lookupVocabulary.js` | Client-side JMdict lookup for clicked words — two-stage `dictionary` table query (primary_form, then kana_forms overlap), returns `vocabulary_ja`-shaped entries keyed by surface form |
+| `src/components/JapaneseReader.jsx` | **Shared** `TokenizedBody` + `WordPopup` — extracted from ImmersionReader; both Immersion and Story use them (furigana toggle, clickable words, dictionary popup, Add to SRS) |
+| `src/utils/vocabMap.js` | Shared `buildVocabMap(vocabulary)` (kept out of the .jsx to satisfy react-refresh lint) |
+| `src/modules/story/StoryLayouts.jsx` | Format-specific reading layouts — `NewspaperLayout` (paper card, mincho serif, 2-column desktop / 1-column mobile), `ChatLayout` (LINE-style bubbles with avatars; narration lines render as centered pills; body text uses a system sans-serif stack, not the app's pixel font — see below), `DiaryLayout` (notebook-lined page; splits the date-line header from the entry body), `InterviewLayout` (printed Q&A column reusing `parseDialogue`, colored left-border per speaker instead of bubbles), `LetterLayout` (cream card, mincho serif, no stamp), `PostcardLayout` (portrait card, CSS-perforated stamp, 7-box postal code grid, vertical `writing-mode: vertical-rl` message area — see below) |
+| `src/modules/story/parseDialogue.js` | Splits the flat token stream into 名前「セリフ」 speaker lines, preserving global token indices so popup/highlight indexing stays correct across bubbles |
+| `src/modules/story/parseDialogue.test.js` | Vitest unit tests for the dialogue parser |
+| `supabase/functions/story-generate/index.ts` | Edge function — story generation (default model `claude-sonnet-5`, override via `STORY_MODEL` secret or request `model`) |
+| `supabase/functions/story-grade/index.ts` | Edge function — lenient answer grading (default model `claude-haiku-4-5`, override via `GRADE_MODEL` secret) |
+
+### learnerContext contract
+
+- `sourceType: 'vocab-list'` — `sourceId` is a `WORD_SOURCES` source id (expands to all sublists) or a single listKey. Reads bundled word JSON.
+- `sourceType: 'srs-deck'` — `sourceId` is a deckId. Caller must pass `options.cards` as **resolved** cards (run bundled cards through `resolveCard` first — scheduling-only state has no front/back). Options: `maturity: 'all' | 'seen' | 'graduated'`, `minStabilityDays`.
+- `options.grammarLevel` ('N5'–'N1', default 'N3') appends a grammar directive line; `null` omits it.
+- Output is dense one-word-per-line text (`魚 (さかな) — fish`) to control prompt token cost. Core 2000 / Keigo bundled decks have no kana field, so SRS-sourced lines are `front — back`.
+
+### Edge functions
+
+The Anthropic API key never reaches the client — all calls go through Supabase Edge Functions. The learner-context system block carries `cache_control: {type: 'ephemeral'}` so repeated generations in a session reuse the prompt cache (very small word lists may fall below the minimum cacheable prefix and silently not cache — harmless). Structured output via `output_config.format` json_schema — responses are parsed JSON, never prose.
+
+Deploy (one-time setup):
+
+```
+brew install supabase/tap/supabase
+supabase login
+supabase link --project-ref <project-ref>   # ref is in the Supabase dashboard URL
+supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
+supabase functions deploy story-generate story-grade
+```
+
+Generation response shape: `{ title, story, tokens, questions: [{ id, question, correct_answer, acceptable_variations }] }`. Grading: `{ pass, feedback }` — questions and answers are in Japanese; feedback is English.
+
+Generation is **streamed** server-side (`client.messages.stream` + `finalMessage`) with `max_tokens: 16000` and `output_config.effort: 'medium'`. The model outputs only `{ title, story, questions }` (~900 output tokens, ~20s wall clock); the tokens array is built server-side with Kuromoji, NOT by the model — an earlier version had the model emit it, which ballooned output to ~16k tokens and ~130s per generation. Do not add `tokens` back to STORY_SCHEMA.
+
+**Kuromoji in the edge function:** `npm:@patdx/kuromoji` (ESM fork with a fetch-based custom loader) reading uncompressed dictionary files from jsDelivr (`@aiktb/kuromoji@1.0.2/dict/`, ~18 MB) at cold start, cached per warm instance. The tokenizer build starts before the Claude call, so the dictionary download overlaps generation and adds no latency. The token mapping mirrors `tokenizeTextRich` in `scripts/fetch-nhk.mjs`, except `r` is set only for tokens containing kanji (no redundant furigana over kana-only words) and `b` is null for w:false tokens. Tokenization failure is non-fatal: `tokens` comes back null and the reader falls back to a plain text block.
+
+**story-generate response is a heartbeat stream, not plain JSON.** The edge gateway kills any request that sends no bytes for 150s (IDLE_TIMEOUT), so the function returns `text/plain` and streams a space every 10s while Claude works, then the JSON payload as the final line. Typical generations now finish in ~20-40s, but the heartbeat stays as insurance. Consequences: HTTP status is 200 even for post-header failures (errors arrive as `{ error }` in the payload), and `generateStory()` in `api.js` trims the heartbeats and parses the text — keep both sides in sync if the wire format changes. story-grade is fast and stays plain JSON.
+
+`tokens` is Kuromoji segmentation: `[{ t, r, w, b }]` — surface, hiragana reading (kanji tokens only, else null), content-word flag, and dictionary base form (e.g. 向かいました → 向かう; null for w:false). Newlines are their own tokens (required by `parseDialogue`). Concatenated `t` values reproduce `story` exactly. The reader renders tokens through the shared `TokenizedBody` (now themeable: `vocabHighlight`, `hoverBg`, `rtColor` props — needed for the light newspaper background); clicking a word looks up its base form via `lookupVocabulary` and shows the JMdict gloss in `WordPopup`. The reading layout switches on the generation format: `news` → NewspaperLayout, `dialogue` → ChatLayout, anything else (or missing tokens) → plain text block. Hover/focus styles for Story buttons, fields, and recent-story cards live in `global.css` (`.story-btn`, `.story-field`, `.story-recent-card`) per the no-useState-hover rule. "Add to SRS" writes to a `story-words` imported deck in the vocab-srs namespace (second cross-module write, same pattern as immersion-words).
+
+### Story settings (localStorage)
+
+`story-source`, `story-maturity`, `story-grammar`, `story-format` — note `safeLocalStorageGet(key)` takes no fallback argument; use `?? default`.

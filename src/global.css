@@ -44,3 +44,54 @@ button, input, select, textarea {
 .kanji-section-collapse:hover {
   background: #313131;
 }
+
+.vocab-glance-row {
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+.vocab-glance-row:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+.vocab-glance-btn {
+  background: rgba(255,255,255,0.04);
+}
+
+.vocab-glance-btn:hover {
+  background: rgba(255,255,255,0.09);
+}
+
+.story-btn {
+  transition: filter 120ms, background 120ms, border-color 120ms;
+}
+
+.story-btn:hover:not(:disabled) {
+  filter: brightness(1.2);
+}
+
+.story-btn:active:not(:disabled) {
+  filter: brightness(0.92);
+}
+
+.story-field {
+  transition: border-color 120ms, background 120ms;
+}
+
+.story-field:hover:not(:disabled) {
+  border-color: #4a4a4a;
+}
+
+.story-field:focus {
+  border-color: #cc8a3d;
+  outline: none;
+}
+
+.story-recent-card {
+  transition: background 120ms;
+}
+
+.story-recent-card:hover {
+  background: #313131;
+}

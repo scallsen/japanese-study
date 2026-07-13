@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from 'react'
+import { useState, useMemo, useEffect, useRef, Component } from 'react'
 import VocabCard from '../components/VocabCard.jsx'
 import DrillHUD from '../components/DrillHUD.jsx'
 import DrawerSectionHeader from '../components/DrawerSectionHeader.jsx'
@@ -8,7 +8,7 @@ import SpeedModeControls from '../components/SpeedModeControls.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import SpeakerIcon from '../components/SpeakerIcon.jsx'
 import HeaderMenu from '../components/HeaderMenu.jsx'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_BADGE, FS_STAT_VALUE, FS_DISPLAY_HEADING } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_BADGE, FS_ENTRY_WORD, FS_STAT_VALUE, FS_DISPLAY_HEADING } from '../data/theme.js'
 import { WORD_SOURCES } from '../data/wordLists.js'
 import { useDrill } from '../hooks/useDrill.js'
 import { useTTS, useJaVoices } from '../hooks/useTTS.js'
@@ -17,32 +17,40 @@ import { useGamepad } from '../hooks/useGamepad.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useProgress } from '../hooks/useProgress.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../utils/storage.js'
+import { supabase } from '../lib/supabase.js'
 import * as SimpleQueue from '../engines/simpleQueue.js'
-import NSM_N3 from '../data/words/nsm_n3_vocab.json'
-import NSM_N3_I4_RAW from '../data/words/nsm_n3_i4_vocab.json'
-import NSM_N3_I5 from '../data/words/nsm_n3_i5_vocab.json'
-
-const NSM_N3_I4 = NSM_N3_I4_RAW.map(w => ({
-  ...w,
-  id: `i4-${w.id}`,
-  listKey: w.listKey.replace('nsm-n3-', 'nsm-n3-i4-'),
-}))
-
-const WORD_DATA = [...NSM_N3, ...NSM_N3_I4, ...NSM_N3_I5]
+import { WORD_DATA } from '../data/wordData.js'
 
 const PANEL_W = 420
 const CHEVRON_W = 28
 const PANEL_CONTENT_W = PANEL_W - CHEVRON_W
 const ACCENT = '#3ABDA4'
+const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
 
-const ALL_SOURCE_IDS = WORD_SOURCES.map(s => s.id)
+function shortPos(raw) {
+  if (!raw) return null
+  if (raw.startsWith('Godan verb')) return 'v5'
+  if (raw.startsWith('Ichidan verb')) return 'v1'
+  if (raw.startsWith('suru verb')) return 'vs'
+  if (raw.startsWith('adjectival nouns') || raw.startsWith('quasi-adj')) return 'adj-na'
+  if (raw.startsWith('adjective')) return 'adj-i'
+  if (raw.startsWith('adverb')) return 'adv'
+  if (raw.startsWith('noun')) return 'noun'
+  if (raw.startsWith('expression')) return 'exp'
+  if (raw.startsWith('conjunction')) return 'conj'
+  if (raw.startsWith('interjection')) return 'int'
+  if (raw.startsWith('auxiliary')) return 'aux'
+  if (raw.startsWith('particle')) return 'part'
+  if (raw.startsWith('prefix')) return 'pfx'
+  if (raw.startsWith('suffix')) return 'sfx'
+  if (raw.startsWith('pronoun')) return 'pron'
+  if (raw.startsWith('counter')) return 'ctr'
+  if (raw.startsWith('numeric')) return 'num'
+  return raw.split(' ')[0].slice(0, 6).toLowerCase()
+}
 
-function defaultActiveSources() {
-  try {
-    const raw = safeLocalStorageGet('vocab-active-sources')
-    if (raw) return JSON.parse(raw)
-  } catch (_) { /* ignore parse errors */ }
-  return ALL_SOURCE_IDS
+function defaultSelectedSource() {
+  return safeLocalStorageGet('vocab-selected-source') ?? WORD_SOURCES[0].id
 }
 
 function useIsMobile(breakpoint = 768) {
@@ -80,57 +88,6 @@ function relativeTime(isoStr) {
   if (hrs < 24) return `${hrs}h ago`
   const days = Math.floor(hrs / 24)
   return `${days}d ago`
-}
-
-// ── SourceRow ─────────────────────────────────────────────────────────────────
-
-function SourceRow({ source, active, onToggle }) {
-  const [hovered, setHovered] = useState(false)
-  return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: 10,
-      padding: '8px 0',
-      borderBottom: '1px solid rgba(255,255,255,0.05)',
-    }}>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ fontSize: 9, color: active ? ACCENT : 'rgba(255,255,255,0.2)' }}>
-            {active ? '●' : '○'}
-          </span>
-          <span style={{ fontSize: FS_BASE, color: TEXT }}>{source.label}</span>
-        </div>
-        {source.lists && (
-          <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: 2 }}>
-            {source.lists.length} sub-lists
-          </div>
-        )}
-      </div>
-      <button
-        onClick={onToggle}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        style={{
-          flexShrink: 0,
-          padding: '4px 10px',
-          fontSize: FS_BASE,
-          fontFamily: 'inherit',
-          letterSpacing: TRACKING,
-          background: active
-            ? hovered ? 'rgba(58,189,164,0.2)' : 'rgba(58,189,164,0.12)'
-            : hovered ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.06)',
-          color: active ? ACCENT : TEXT_MUTED,
-          border: `1px solid ${active ? 'rgba(58,189,164,0.35)' : 'rgba(255,255,255,0.15)'}`,
-          borderRadius: 5,
-          cursor: 'pointer',
-          transition: 'background 130ms',
-        }}
-      >
-        {active ? 'On' : 'Off'}
-      </button>
-    </div>
-  )
 }
 
 // ── ActiveDrill ───────────────────────────────────────────────────────────────
@@ -357,24 +314,245 @@ function DoneScreen({ correct, troubled, onRestart, onRedoTroubled, onBack }) {
   )
 }
 
+// ── GlanceScreen ─────────────────────────────────────────────────────────────
+
+class GlanceErrorBoundary extends Component {
+  constructor(props) { super(props); this.state = { error: null } }
+  static getDerivedStateFromError(error) { return { error } }
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{ padding: 32, color: '#ff6b6b', fontFamily: FONT, fontSize: FS_BASE }}>
+          Preview error: {this.state.error.message}
+          <pre style={{ marginTop: 8, fontSize: 12, color: TEXT_MUTED, whiteSpace: 'pre-wrap' }}>{this.state.error.stack}</pre>
+        </div>
+      )
+    }
+    return this.props.children
+  }
+}
+
+function GlanceScreen({ words, availableSubLists, selectedSubLists }) {
+  const [dictMap, setDictMap] = useState({})
+  const [expandedId, setExpandedId] = useState(null)
+  const [expandedKanji, setExpandedKanji] = useState([])
+  const kanjiCache = useRef({})
+
+  useEffect(() => {
+    if (!supabase || words.length === 0) return
+    const kanjiForms = [...new Set(words.map(w => w.kanji).filter(Boolean))]
+    if (kanjiForms.length === 0) return
+    supabase
+      .from('dictionary')
+      .select('id, primary_form, kana_forms, gloss_en, pos, common')
+      .in('primary_form', kanjiForms)
+      .then(({ data }) => {
+        if (!data) return
+        const map = {}
+        for (const entry of data) map[entry.primary_form] = entry
+        setDictMap(map)
+      })
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  async function handleToggleRow(word) {
+    const next = expandedId === word.id ? null : word.id
+    setExpandedId(next)
+    setExpandedKanji([])
+    if (!next) return
+
+    const chars = (word.kanji ?? '').split('').filter(ch => /\p{Script=Han}/u.test(ch))
+    const missing = chars.filter(ch => !kanjiCache.current[ch])
+    if (missing.length > 0 && supabase) {
+      const { data } = await supabase
+        .from('kanji')
+        .select('literal, on_readings, kun_readings, meanings, jlpt, grade, stroke_count')
+        .in('literal', missing)
+      if (data) {
+        for (const k of data) kanjiCache.current[k.literal] = k
+      }
+    }
+    setExpandedKanji(chars.map(ch => kanjiCache.current[ch]).filter(Boolean))
+  }
+
+  const grouped = useMemo(() => {
+    const order = selectedSubLists.length > 0 ? selectedSubLists : availableSubLists.map(l => l.id)
+    return order
+      .map(listId => ({
+        listId,
+        label: availableSubLists.find(l => l.id === listId)?.label ?? listId,
+        words: words.filter(w => w.listKey === listId),
+      }))
+      .filter(g => g.words.length > 0)
+  }, [words, selectedSubLists, availableSubLists])
+
+  return (
+    <div style={{ width: '100%', maxWidth: 680, margin: '0 auto', padding: '32px 24px 48px' }}>
+      {grouped.map(group => (
+        <div key={group.listId} style={{ marginBottom: 40 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+            <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, letterSpacing: '0.08em', whiteSpace: 'nowrap' }}>
+              {group.label.toUpperCase()}
+            </span>
+            <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.08)' }} />
+          </div>
+          <div style={{ background: '#2A2A2A', borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
+          {group.words.map(word => {
+            const dictEntry = dictMap[word.kanji]
+            const isExpanded = expandedId === word.id
+            const kanjiChars = (word.kanji ?? '').split('').filter(ch => /\p{Script=Han}/u.test(ch))
+            return (
+              <div key={word.id}>
+                <button
+                  type="button"
+                  className="vocab-glance-row"
+                  onClick={() => handleToggleRow(word)}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    padding: '12px 16px',
+                    borderBottom: isExpanded ? 'none' : '1px solid rgba(255,255,255,0.05)',
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    letterSpacing: TRACKING,
+                    textAlign: 'left',
+                    color: 'inherit',
+                    transition: 'background 130ms',
+                  }}
+                >
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 5 }}>
+                      <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
+                        {word.kanji || word.kana}
+                      </span>
+                      {(() => {
+                        const kana = dictEntry?.kana_forms?.[0] ?? word.kana
+                        return kana && kana !== (word.kanji || word.kana) ? (
+                          <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{kana}</span>
+                        ) : null
+                      })()}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      {(() => {
+                        const posLabel = shortPos(Array.isArray(dictEntry?.pos) ? dictEntry.pos[0] : null)
+                        return posLabel ? (
+                          <span style={{
+                            fontSize: FS_BADGE,
+                            color: TEXT_MUTED,
+                            background: 'rgba(255,255,255,0.07)',
+                            borderRadius: 3,
+                            padding: '1px 6px',
+                            fontFamily: FONT,
+                            letterSpacing: TRACKING,
+                            flexShrink: 0,
+                          }}>{posLabel}</span>
+                        ) : null
+                      })()}
+                      <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+                        {dictEntry?.gloss_en?.split('; ').slice(0, 2).join('; ') ?? word.english}
+                      </span>
+                    </div>
+                  </div>
+                  <span style={{
+                    color: TEXT_MUTED,
+                    fontSize: '1.1rem',
+                    flexShrink: 0,
+                    display: 'inline-block',
+                    transform: isExpanded ? 'rotate(90deg)' : 'none',
+                    transition: 'transform 150ms',
+                  }}>›</span>
+                </button>
+
+                {isExpanded && (
+                  <div style={{
+                    padding: '8px 8px 16px',
+                    borderBottom: '1px solid rgba(255,255,255,0.06)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 8,
+                  }}>
+                    {kanjiChars.length > 0 && (
+                      expandedKanji.length > 0 ? (
+                        expandedKanji.map(k => (
+                          <div key={k.literal} style={{
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: 14,
+                            padding: '10px 12px',
+                            background: 'rgba(255,255,255,0.03)',
+                            borderRadius: 6,
+                            border: '1px solid rgba(255,255,255,0.07)',
+                          }}>
+                            <div style={{ fontSize: '2rem', color: TEXT, minWidth: 44, textAlign: 'center', lineHeight: 1.1 }}>
+                              {k.literal}
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              {k.on_readings?.length > 0 && (
+                                <div style={{ fontSize: FS_BASE, color: TEXT, marginBottom: 2 }}>
+                                  {k.on_readings.join('　')}
+                                </div>
+                              )}
+                              {k.kun_readings?.length > 0 && (
+                                <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginBottom: 4 }}>
+                                  {k.kun_readings.join('　')}
+                                </div>
+                              )}
+                              <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>
+                                {(k.meanings ?? '').split('; ').slice(0, 4).join(', ')}
+                              </div>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4, flexShrink: 0 }}>
+                              {k.jlpt != null && (
+                                <span style={{
+                                  fontSize: FS_BADGE,
+                                  padding: '2px 6px',
+                                  background: 'rgba(58,189,164,0.12)',
+                                  color: ACCENT,
+                                  border: '1px solid rgba(58,189,164,0.2)',
+                                  borderRadius: 3,
+                                }}>N{k.jlpt}</span>
+                              )}
+                              {k.stroke_count != null && (
+                                <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED }}>{k.stroke_count} strokes</span>
+                              )}
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, padding: '6px 0' }}>Loading…</div>
+                      )
+                    )}
+                    {word.sentence && (
+                      <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontStyle: 'italic', padding: '2px 0' }}>
+                        {word.sentence}
+                      </div>
+                    )}
+                    {dictEntry && (
+                      <a
+                        href={`#/dictionary/entry/${dictEntry.id}`}
+                        style={{ fontSize: FS_CAPTION, color: ACCENT, textDecoration: 'none', alignSelf: 'flex-start', marginTop: 2 }}
+                      >
+                        View full entry →
+                      </a>
+                    )}
+                  </div>
+                )}
+              </div>
+            )
+          })}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 // ── HomeScreen ────────────────────────────────────────────────────────────────
 
-function HomeScreen({ availableSubLists, selectedSubLists, onToggleSubList, wordCountByList, vocabProgress, onStart, sourcesByListId }) {
+function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selectedSubLists, onToggleSubList, wordCountByList, vocabProgress, onStart, onGlance }) {
   const [startHovered, setStartHovered] = useState(false)
-
   const canStart = selectedSubLists.length > 0
-  const noSources = availableSubLists.length === 0
-
-  const groupedSources = []
-  const seenSourceIds = new Set()
-  for (const list of availableSubLists) {
-    const sourceId = sourcesByListId[list.id]
-    if (!seenSourceIds.has(sourceId)) {
-      seenSourceIds.add(sourceId)
-      groupedSources.push({ sourceId, lists: [] })
-    }
-    groupedSources[groupedSources.length - 1].lists.push(list)
-  }
 
   return (
     <div style={{
@@ -387,90 +565,125 @@ function HomeScreen({ availableSubLists, selectedSubLists, onToggleSubList, word
       gap: 24,
     }}>
 
-      {noSources ? (
-        <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: FS_BASE, textAlign: 'center', paddingTop: 40 }}>
-          Enable a word list in the sidebar to begin
-        </div>
-      ) : (
-        <>
-          {groupedSources.map(({ sourceId, lists }) => {
-            const source = WORD_SOURCES.find(s => s.id === sourceId)
-            return (
-              <div key={sourceId}>
-                {groupedSources.length > 1 && (
-                  <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, letterSpacing: '0.08em', marginBottom: 10 }}>
-                    {source?.label?.toUpperCase() ?? sourceId.toUpperCase()}
-                  </div>
-                )}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 6 }}>
-                  {lists.map(list => {
-                    const count = wordCountByList[list.id] ?? 0
-                    const prog = vocabProgress?.sublists?.[list.id]
-                    const isSelected = selectedSubLists.includes(list.id)
-                    return (
-                      <SubListTile
-                        key={list.id}
-                        label={list.label}
-                        wordCount={count}
-                        progress={prog}
-                        selected={isSelected}
-                        onClick={() => onToggleSubList(list.id)}
-                      />
-                    )
-                  })}
-                </div>
-              </div>
-            )
-          })}
+      {/* Source selector */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <label style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, letterSpacing: '0.08em' }}>
+          WORD LIST
+        </label>
+      <select
+        value={selectedSourceId}
+        onChange={e => onSelectSource(e.target.value)}
+        style={{
+          width: '100%',
+          padding: '8px 36px 8px 12px',
+          fontSize: FS_BASE,
+          fontFamily: 'inherit',
+          letterSpacing: TRACKING,
+          background: 'rgba(255,255,255,0.06)',
+          color: TEXT,
+          border: '1px solid rgba(255,255,255,0.15)',
+          borderRadius: 6,
+          cursor: 'pointer',
+          outline: 'none',
+          appearance: 'none',
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'right 12px center',
+        }}
+      >
+        {WORD_SOURCES.map(source => (
+          <option key={source.id} value={source.id}>{source.label}</option>
+        ))}
+      </select>
+      </div>
 
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 8 }}>
-            <button
-              onClick={canStart ? onStart : undefined}
-              onMouseEnter={() => setStartHovered(true)}
-              onMouseLeave={() => setStartHovered(false)}
-              style={{
-                padding: '11px 28px',
-                fontSize: FS_BASE,
-                fontFamily: 'inherit',
-                letterSpacing: TRACKING,
-                borderRadius: 8,
-                cursor: canStart ? 'pointer' : 'not-allowed',
-                background: canStart
-                  ? startHovered ? 'rgba(58,189,164,0.25)' : 'rgba(58,189,164,0.15)'
-                  : 'rgba(255,255,255,0.04)',
-                color: canStart ? ACCENT : 'rgba(255,255,255,0.2)',
-                border: `1px solid ${canStart ? 'rgba(58,189,164,0.4)' : 'rgba(255,255,255,0.1)'}`,
-                transition: 'background 130ms, color 130ms, border-color 130ms',
-              }}
-            >
-              Start review
-              {selectedSubLists.length > 0 && (
-                <span style={{ marginLeft: 8, fontSize: FS_CAPTION, opacity: 0.7 }}>
-                  ({selectedSubLists.reduce((sum, id) => sum + (wordCountByList[id] ?? 0), 0)} words)
-                </span>
-              )}
-            </button>
+      {/* Sublist grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 6 }}>
+        {availableSubLists.map(list => {
+          const count = wordCountByList[list.id] ?? 0
+          const prog = vocabProgress?.sublists?.[list.id]
+          const isSelected = selectedSubLists.includes(list.id)
+          return (
+            <SubListTile
+              key={list.id}
+              label={list.label}
+              wordCount={count}
+              progress={prog}
+              selected={isSelected}
+              onClick={() => onToggleSubList(list.id)}
+            />
+          )
+        })}
+      </div>
 
-            <button
-              disabled
-              style={{
-                padding: '11px 28px',
-                fontSize: FS_BASE,
-                fontFamily: 'inherit',
-                letterSpacing: TRACKING,
-                borderRadius: 8,
-                cursor: 'not-allowed',
-                background: 'rgba(255,255,255,0.03)',
-                color: 'rgba(255,255,255,0.2)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                opacity: 0.5,
-              }}
-            >
-              Send to SRS
-            </button>
-          </div>
-        </>
-      )}
+      {/* Actions */}
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        <button
+          onClick={canStart ? onStart : undefined}
+          onMouseEnter={() => setStartHovered(true)}
+          onMouseLeave={() => setStartHovered(false)}
+          style={{
+            padding: '11px 28px',
+            fontSize: FS_BASE,
+            fontFamily: 'inherit',
+            letterSpacing: TRACKING,
+            borderRadius: 8,
+            cursor: canStart ? 'pointer' : 'not-allowed',
+            background: canStart
+              ? startHovered ? 'rgba(58,189,164,0.25)' : 'rgba(58,189,164,0.15)'
+              : 'rgba(255,255,255,0.04)',
+            color: canStart ? ACCENT : 'rgba(255,255,255,0.2)',
+            border: `1px solid ${canStart ? 'rgba(58,189,164,0.4)' : 'rgba(255,255,255,0.1)'}`,
+            transition: 'background 130ms, color 130ms, border-color 130ms',
+          }}
+        >
+          Start review
+          {selectedSubLists.length > 0 && (
+            <span style={{ marginLeft: 8, fontSize: FS_CAPTION, opacity: 0.7 }}>
+              ({selectedSubLists.reduce((sum, id) => sum + (wordCountByList[id] ?? 0), 0)} words)
+            </span>
+          )}
+        </button>
+
+        <button
+          className={canStart ? 'vocab-glance-btn' : undefined}
+          onClick={canStart ? onGlance : undefined}
+          style={{
+            padding: '11px 28px',
+            fontSize: FS_BASE,
+            fontFamily: 'inherit',
+            letterSpacing: TRACKING,
+            borderRadius: 8,
+            cursor: canStart ? 'pointer' : 'not-allowed',
+            background: canStart ? undefined : 'rgba(255,255,255,0.03)',
+            color: canStart ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.2)',
+            border: `1px solid ${canStart ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.08)'}`,
+            transition: 'background 130ms',
+            opacity: canStart ? 1 : 0.5,
+            pointerEvents: canStart ? 'auto' : 'none',
+          }}
+        >
+          Preview
+        </button>
+
+        <button
+          disabled
+          style={{
+            padding: '11px 28px',
+            fontSize: FS_BASE,
+            fontFamily: 'inherit',
+            letterSpacing: TRACKING,
+            borderRadius: 8,
+            cursor: 'not-allowed',
+            background: 'rgba(255,255,255,0.03)',
+            color: 'rgba(255,255,255,0.2)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            opacity: 0.5,
+          }}
+        >
+          Send to SRS
+        </button>
+      </div>
     </div>
   )
 }
@@ -534,10 +747,11 @@ export default function VocabPage() {
   const { user, signIn, signOut, loading: authLoading } = useAuth()
   const { data: vocabProgress, save: saveVocabProgress } = useProgress('vocab-flashcard')
 
-  const [showOptions,      setShowOptions]      = useState(() => window.innerWidth > 768)
-  const [activeSources,    setActiveSources]    = useState(defaultActiveSources)
-  const [selectedSubLists, setSelectedSubLists] = useState([])
+  const [showOptions,       setShowOptions]       = useState(() => window.innerWidth > 768)
+  const [selectedSourceId,  setSelectedSourceId]  = useState(defaultSelectedSource)
+  const [selectedSubLists,  setSelectedSubLists]  = useState([])
   const [isDrilling,       setIsDrilling]       = useState(false)
+  const [isGlancing,       setIsGlancing]       = useState(false)
   const [audioEnabled,     setAudioEnabled]     = useState(() => {
     const s = safeLocalStorageGet('vocab-audio-enabled'); return s === null ? true : s === 'true'
   })
@@ -575,7 +789,7 @@ export default function VocabPage() {
   const isShort  = useIsShort()
   const jaVoices = useJaVoices()
 
-  useEffect(() => { safeLocalStorageSet('vocab-active-sources',  JSON.stringify(activeSources)) }, [activeSources])
+  useEffect(() => { safeLocalStorageSet('vocab-selected-source', selectedSourceId) }, [selectedSourceId])
   useEffect(() => { safeLocalStorageSet('vocab-audio-enabled',  audioEnabled) },     [audioEnabled])
   useEffect(() => { safeLocalStorageSet('vocab-tts-enabled',    ttsEnabled) },       [ttsEnabled])
   useEffect(() => { safeLocalStorageSet('vocab-sfx-enabled',    sfxEnabled) },       [sfxEnabled])
@@ -595,23 +809,10 @@ export default function VocabPage() {
     return () => ro.disconnect()
   }, [])
 
-  const availableSubLists = useMemo(() =>
-    WORD_SOURCES
-      .filter(s => activeSources.includes(s.id))
-      .flatMap(s => s.lists ?? [{ id: s.id, label: s.label }]),
-    [activeSources]
-  )
-
-  const sourcesByListId = useMemo(() => {
-    const map = {}
-    for (const source of WORD_SOURCES) {
-      const lists = source.lists ?? [{ id: source.id }]
-      for (const list of lists) {
-        map[list.id] = source.id
-      }
-    }
-    return map
-  }, [])
+  const availableSubLists = useMemo(() => {
+    const source = WORD_SOURCES.find(s => s.id === selectedSourceId)
+    return source?.lists ?? [{ id: source?.id, label: source?.label }]
+  }, [selectedSourceId])
 
   const wordCountByList = useMemo(() => {
     const map = {}
@@ -621,10 +822,14 @@ export default function VocabPage() {
     return map
   }, [])
 
+  const glanceWords = useMemo(() =>
+    WORD_DATA.filter(w => selectedSubLists.includes(w.listKey)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedSubLists.join(',')]
+  )
+
   const pool = useMemo(() =>
-    WORD_DATA
-      .filter(w => selectedSubLists.includes(w.listKey))
-      .map(w => ({ id: w.id, word: w })),
+    glanceWords.map(w => ({ id: w.id, word: w })),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedSubLists.join(',')]
   )
@@ -648,8 +853,6 @@ export default function VocabPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [drill.done, isDrilling, user])
 
-  const hairline = { height: 1, background: 'rgba(255,255,255,0.08)', margin: '20px 0' }
-
   function handleSidebarFocus(e) {
     const container = e.currentTarget
     const target = e.target
@@ -659,38 +862,17 @@ export default function VocabPage() {
     else if (tRect.bottom > cRect.bottom - 8) container.scrollTop += tRect.bottom - cRect.bottom + 8
   }
 
-  function handleToggleSource(sourceId) {
-    setActiveSources(prev => {
-      const next = toggle(prev, sourceId)
-      if (!next.includes(sourceId)) {
-        const source = WORD_SOURCES.find(s => s.id === sourceId)
-        const removedKeys = new Set((source?.lists ?? [{ id: sourceId }]).map(l => l.id))
-        setSelectedSubLists(sl => sl.filter(id => !removedKeys.has(id)))
-      }
-      return next
-    })
+  function handleSelectSource(sourceId) {
+    if (sourceId === selectedSourceId) return
+    setSelectedSourceId(sourceId)
+    setSelectedSubLists([])
   }
 
   function renderPanelContent(paddingH) {
     return (
       <div style={{ padding: `16px ${paddingH}px 16px` }}>
 
-        {/* ── Word Lists ── */}
-        <DrawerSectionHeader title="Word Lists" />
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {WORD_SOURCES.map(source => (
-            <SourceRow
-              key={source.id}
-              source={source}
-              active={activeSources.includes(source.id)}
-              onToggle={() => handleToggleSource(source.id)}
-            />
-          ))}
-        </div>
-
-        {/* ── Separator + Additional Settings ── */}
-        <div style={hairline} />
-        <DrawerSectionHeader title="Additional Settings" />
+        <DrawerSectionHeader title="Settings" />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <DrawerCheckbox checked={showStreak}        onChange={() => setShowStreak(v => !v)}        label="Show streak" />
           <DrawerCheckbox checked={showFurigana}      onChange={() => setShowFurigana(v => !v)}      label="Show furigana" />
@@ -760,9 +942,12 @@ export default function VocabPage() {
         {/* Header */}
         <div ref={headerRef} style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 }}>
           <PageHeader
-            crumbs={isDrilling && !drill.done
-              ? [{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary Training', onClick: () => setIsDrilling(false) }, { label: 'Reviewing' }]
-              : [{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary Training' }]
+            crumbs={
+              isDrilling && !drill.done
+                ? [{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary Training', onClick: () => setIsDrilling(false) }, { label: 'Reviewing' }]
+                : isGlancing
+                ? [{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary Training', onClick: () => setIsGlancing(false) }, { label: 'Preview' }]
+                : [{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary Training' }]
             }
             rightSlot={<HeaderMenu
               primary={
@@ -848,15 +1033,25 @@ export default function VocabPage() {
                   isShort={isShort}
                 />
               )
+            ) : isGlancing ? (
+              <GlanceErrorBoundary>
+                <GlanceScreen
+                  words={glanceWords}
+                  availableSubLists={availableSubLists}
+                  selectedSubLists={selectedSubLists}
+                />
+              </GlanceErrorBoundary>
             ) : (
               <HomeScreen
+                selectedSourceId={selectedSourceId}
+                onSelectSource={handleSelectSource}
                 availableSubLists={availableSubLists}
                 selectedSubLists={selectedSubLists}
                 onToggleSubList={id => setSelectedSubLists(prev => toggle(prev, id))}
                 wordCountByList={wordCountByList}
                 vocabProgress={vocabProgress}
                 onStart={() => setIsDrilling(true)}
-                sourcesByListId={sourcesByListId}
+                onGlance={() => setIsGlancing(true)}
               />
             )}
           </div>

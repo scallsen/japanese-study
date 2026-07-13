@@ -51,6 +51,16 @@ export const MODULES = [
     requiresAuth: false,
   },
   {
+    id: 'story',
+    label: 'Story generator',
+    sublabel: 'Read generated content built from words you know',
+    stats: null,
+    href: '#/story',
+    external: false,
+    accent: '#CC8A3D',
+    requiresAuth: false,
+  },
+  {
     id: 'dictionary',
     label: 'Dictionary',
     sublabel: 'Look up kanji and vocabulary',
