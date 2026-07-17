@@ -20,12 +20,22 @@ import { safeLocalStorageGet, safeLocalStorageSet } from '../utils/storage.js'
 import { supabase } from '../lib/supabase.js'
 import * as SimpleQueue from '../engines/simpleQueue.js'
 import { WORD_DATA } from '../data/wordData.js'
+import { createCard } from '../modules/vocab-srs/srs.js'
 
 const PANEL_W = 420
 const CHEVRON_W = 28
 const PANEL_CONTENT_W = PANEL_W - CHEVRON_W
 const ACCENT = '#3ABDA4'
 const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
+
+const VOCAB_DRILL_DECK_ID = 'vocab-drill-words'
+const MISTAKE_TIER_COLOR = { none: '#4ade80', one: '#fbbf24', many: '#f87171' }
+
+function mistakeTier(count) {
+  if (!count) return 'none'
+  if (count === 1) return 'one'
+  return 'many'
+}
 
 function shortPos(raw) {
   if (!raw) return null
@@ -265,7 +275,16 @@ function ActiveDrill({ drill, ttsEnabled, sfxEnabled, ttsVoice, showStreak, show
   )
 }
 
-function DoneScreen({ correct, troubled, onRestart, onRedoTroubled, onBack }) {
+function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoTroubled, onBack, onAddToSrs }) {
+  const rows = useMemo(() =>
+    pool
+      .map(({ id, word }) => ({ id, word, mistakes: mistakeCounts[id] ?? 0 }))
+      .sort((a, b) => b.mistakes - a.mistakes),
+    [pool, mistakeCounts]
+  )
+  const [selected, setSelected] = useState(() => new Set(rows.filter(r => r.mistakes > 0).map(r => r.id)))
+  const [addedCount, setAddedCount] = useState(null)
+
   const btnBase = {
     padding: '10px 28px',
     fontSize: FS_BASE,
@@ -274,8 +293,23 @@ function DoneScreen({ correct, troubled, onRestart, onRedoTroubled, onBack }) {
     cursor: 'pointer',
     letterSpacing: '0.05em',
   }
+
+  function toggleRow(id) {
+    setSelected(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id); else next.add(id)
+      return next
+    })
+  }
+
+  function handleAdd() {
+    const words = rows.filter(r => selected.has(r.id)).map(r => r.word)
+    if (words.length === 0) return
+    setAddedCount(onAddToSrs(words))
+  }
+
   return (
-    <div style={{ textAlign: 'center', fontFamily: FONT }}>
+    <div style={{ textAlign: 'center', fontFamily: FONT, width: '100%', maxWidth: 560, padding: '0 24px 48px' }}>
       <div style={{ color: '#fff', fontSize: FS_DISPLAY_HEADING, letterSpacing: '0.05em', marginBottom: 16 }}>Session complete</div>
       <div style={{ display: 'flex', gap: 20, justifyContent: 'center', marginBottom: 32 }}>
         <div>
@@ -310,6 +344,70 @@ function DoneScreen({ correct, troubled, onRestart, onRedoTroubled, onBack }) {
           Back to lists
         </button>
       </div>
+
+      {rows.length > 0 && (
+        <div style={{ marginTop: 36, textAlign: 'left' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 8 }}>
+            <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, letterSpacing: '0.08em' }}>REVIEW WORDS</span>
+            <button
+              onClick={handleAdd}
+              disabled={selected.size === 0}
+              style={{
+                ...btnBase,
+                padding: '6px 16px',
+                fontSize: FS_CAPTION,
+                background: selected.size > 0 ? 'rgba(58,189,164,0.15)' : 'rgba(255,255,255,0.04)',
+                color: selected.size > 0 ? ACCENT : 'rgba(255,255,255,0.2)',
+                border: `1px solid ${selected.size > 0 ? 'rgba(58,189,164,0.4)' : 'rgba(255,255,255,0.1)'}`,
+                cursor: selected.size > 0 ? 'pointer' : 'not-allowed',
+              }}
+            >
+              Add {selected.size} to SRS
+            </button>
+          </div>
+          {addedCount !== null && (
+            <div style={{ fontSize: FS_CAPTION, color: ACCENT, marginBottom: 8 }}>
+              {addedCount > 0 ? `Added ${addedCount} word${addedCount === 1 ? '' : 's'} to Vocab Drill Words.` : 'Selected words are already in Vocab Drill Words.'}
+            </div>
+          )}
+          <div style={{ background: '#2A2A2A', borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
+            {rows.map(row => (
+              <label
+                key={row.id}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  padding: '10px 14px',
+                  borderBottom: '1px solid rgba(255,255,255,0.05)',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                  letterSpacing: TRACKING,
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={selected.has(row.id)}
+                  onChange={() => toggleRow(row.id)}
+                  style={{ flexShrink: 0, width: 16, height: 16, accentColor: ACCENT }}
+                />
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: MISTAKE_TIER_COLOR[mistakeTier(row.mistakes)], flexShrink: 0 }} />
+                <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, flexShrink: 0 }}>
+                  {row.word.kanji || row.word.kana}
+                </span>
+                <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {row.word.english}
+                </span>
+                {row.mistakes > 0 && (
+                  <span style={{ fontSize: FS_BADGE, color: MISTAKE_TIER_COLOR[mistakeTier(row.mistakes)], flexShrink: 0 }}>
+                    {row.mistakes}×
+                  </span>
+                )}
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -746,6 +844,7 @@ function SubListTile({ label, wordCount, progress, selected, onClick }) {
 export default function VocabPage() {
   const { user, signIn, signOut, loading: authLoading } = useAuth()
   const { data: vocabProgress, save: saveVocabProgress } = useProgress('vocab-flashcard')
+  const { data: srsData, save: saveSrs } = useProgress('vocab-srs')
 
   const [showOptions,       setShowOptions]       = useState(() => window.innerWidth > 768)
   const [selectedSourceId,  setSelectedSourceId]  = useState(defaultSelectedSource)
@@ -852,6 +951,36 @@ export default function VocabPage() {
     saveVocabProgress({ ...(vocabProgress ?? {}), sublists: updatedSublists })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [drill.done, isDrilling, user])
+
+  function handleAddToSrs(words) {
+    const current = srsData ?? { decks: {}, cards: {}, lastSession: null, totalReviews: 0, newCardDay: { date: '', count: 0 } }
+    const decks = { ...current.decks }
+    if (!decks[VOCAB_DRILL_DECK_ID]) {
+      decks[VOCAB_DRILL_DECK_ID] = { id: VOCAB_DRILL_DECK_ID, name: 'Vocab Drill Words', active: true, source: 'imported', addedAt: Date.now() }
+    }
+    const existingFronts = new Set(
+      Object.values(current.cards)
+        .filter(c => c.deckId === VOCAB_DRILL_DECK_ID)
+        .map(c => c.front)
+    )
+    const newCards = {}
+    let addedCount = 0
+    words.forEach((word, i) => {
+      const front = word.kanji || word.kana
+      if (existingFronts.has(front)) return
+      existingFronts.add(front)
+      const cardId = `${VOCAB_DRILL_DECK_ID}-${Date.now()}-${i}`
+      const extras = {}
+      if (word.kana) extras.kana = word.kana
+      if (word.sentence) extras.sentence = word.sentence
+      newCards[cardId] = createCard(front, word.english, cardId, VOCAB_DRILL_DECK_ID, extras)
+      addedCount++
+    })
+    if (addedCount > 0) {
+      saveSrs({ ...current, decks, cards: { ...current.cards, ...newCards } })
+    }
+    return addedCount
+  }
 
   function handleSidebarFocus(e) {
     const container = e.currentTarget
@@ -1011,11 +1140,14 @@ export default function VocabPage() {
             {isDrilling ? (
               drill.done ? (
                 <DoneScreen
+                  pool={pool}
+                  mistakeCounts={drill.mistakeCounts}
                   correct={drill.correct}
                   troubled={drill.troubled}
                   onRestart={drill.restart}
                   onRedoTroubled={drill.redoTroubled}
                   onBack={() => setIsDrilling(false)}
+                  onAddToSrs={handleAddToSrs}
                 />
               ) : (
                 <ActiveDrill

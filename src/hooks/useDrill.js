@@ -41,6 +41,7 @@ export function useDrill(pool, { engine = SimpleQueue, floatSize = 7, seekCardId
     troubledPool: state.troubled,
     remaining:    state.float.length + state.pool.length,
     done:         state.float.length === 0,
+    mistakeCounts: state.mistakeCounts ?? {},
     canUndo:      state.prevSnapshot !== null,
     prevCard:     state.prevSnapshot?.float[0] ?? null,
     onCorrect,
