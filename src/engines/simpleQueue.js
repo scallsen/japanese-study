@@ -1,5 +1,5 @@
 // Engine contract: export { label, description, init, onCorrect, onWrong }
-// State shape: { float, pool, retired, streak, totalCorrect, totalWrong }
+// State shape: { float, pool, retired, troubled, mistakeCounts, streak, bestStreak, prevSnapshot }
 //
 // float    — active card specs; float[0] is always current
 // pool     — unplayed specs waiting to enter float
@@ -33,14 +33,14 @@ function nextPoolIndex(pool, float) {
 export function init(pool, floatSize = 7) {
   const shuffled = shuffle(pool)
   return {
-    float:        shuffled.slice(0, floatSize),
-    pool:         shuffled.slice(floatSize),
-    retired:      [],
-    troubled:     [],
-    everWrong:    {},
-    streak:       0,
-    bestStreak:   0,
-    prevSnapshot: null,
+    float:          shuffled.slice(0, floatSize),
+    pool:           shuffled.slice(floatSize),
+    retired:        [],
+    troubled:       [],
+    mistakeCounts:  {},
+    streak:         0,
+    bestStreak:     0,
+    prevSnapshot:   null,
   }
 }
 
@@ -51,7 +51,7 @@ export function onCorrect(state) {
   const next = idx >= 0 ? state.pool[idx] : null
   const newPool = next ? state.pool.filter((_, i) => i !== idx) : state.pool
   const newStreak = state.streak + 1
-  const isTroubled = !!state.everWrong[current.id]
+  const isTroubled = !!state.mistakeCounts[current.id]
 
   return {
     ...state,
@@ -72,10 +72,10 @@ export function onWrong(state) {
 
   return {
     ...state,
-    float:     newFloat,
-    everWrong: { ...state.everWrong, [current.id]: true },
-    streak:    0,
-    prevSnapshot: { ...state, prevSnapshot: null },
+    float:         newFloat,
+    mistakeCounts: { ...state.mistakeCounts, [current.id]: (state.mistakeCounts[current.id] ?? 0) + 1 },
+    streak:        0,
+    prevSnapshot:  { ...state, prevSnapshot: null },
   }
 }
 

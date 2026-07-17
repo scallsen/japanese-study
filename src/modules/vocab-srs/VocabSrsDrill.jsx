@@ -6,6 +6,7 @@ import { Rating, State, previewIntervals } from './srs.js'
 import { answerCard, undoLastAnswer, isComplete, getSessionStats, getCurrentCard, getWaitMs } from './session.js'
 import { useTTS } from '../../hooks/useTTS.js'
 import { useSFX } from '../../hooks/useSFX.js'
+import { useGamepad } from '../../hooks/useGamepad.js'
 
 const CARD_BG = '#E8E4DE'
 const RELEARN_STEP_LABEL = '10m'
@@ -364,6 +365,42 @@ export default function VocabSrsDrill({
     setSession(prevSession)
     setFlipped(false)
   }
+
+  const handleReplayRef = useRef()
+  handleReplayRef.current = () => {
+    const currentCard = getCurrentCard(sessionRef.current)
+    if (!currentCard || !audioEnabled) return
+    if (currentCard.wordAudio) {
+      if (flippedRef.current) {
+        playSequenceRef.current(currentCard.wordAudio, currentCard.sentenceAudio)
+      } else {
+        playAudioRef.current(currentCard.wordAudio)
+      }
+    } else if (ttsEnabled) {
+      tts.speak(currentCard.front ?? '')
+    }
+  }
+
+  useGamepad({
+    onA: () => {
+      if (!flippedRef.current) {
+        handleFlipRef.current()
+      } else {
+        handleAnswerRef.current(Rating.Good)
+      }
+    },
+    onB: () => {
+      if (flippedRef.current) handleAnswerRef.current(Rating.Again)
+    },
+    onX: () => {
+      if (flippedRef.current && showHardEasy) handleAnswerRef.current(Rating.Easy)
+    },
+    onY: () => {
+      if (flippedRef.current && showHardEasy) handleAnswerRef.current(Rating.Hard)
+    },
+    onLeftShoulder: () => handleUndoRef.current(),
+    onRightShoulder: () => handleReplayRef.current(),
+  })
 
   useEffect(() => {
     function onKey(e) {
