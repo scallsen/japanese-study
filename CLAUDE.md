@@ -255,9 +255,9 @@ grant select on audio_generation_status to anon, authenticated;
 grant all on audio_generation_status to service_role;
 ```
 
-**Attribution**: Voicevox's license requires a discoverable text credit for each character voice used. Both settings drawers show `Vocab audio: VOICEVOX:四国めたん / VOICEVOX:玄野武宏` beneath the audio settings whenever audio is enabled.
+**Attribution**: Voicevox's license requires a discoverable text credit for each character voice used. Each voice's credit string (`VOICEVOX:四国めたん` / `VOICEVOX:玄野武宏`, in `VOICEVOX_VOICES` in `src/utils/voicevoxAudio.js`) is shown directly below the "Audio source" picker only while that voice is the selected option (`getVoicevoxCredit(audioSource)`) — hidden entirely when "Browser TTS" is selected.
 
-**Playback priority** (both Vocab drill and Vocab SRS): recorded file audio (Core 2000's Anki audio, SRS-only) → Voicevox audio for the selected voice, if generated → browser TTS. The audio-source picker (`AUDIO_SOURCE_OPTIONS` in `src/utils/voicevoxAudio.js`) offers "Voicevox — Shikoku Metan", "Voicevox — Kurono Takehiro", and "Browser TTS"; picking a Voicevox voice still silently falls back to browser TTS for any entry that voice hasn't been generated for yet.
+**Playback priority** (both Vocab drill and Vocab SRS): recorded file audio (Core 2000's Anki audio, SRS-only) → Voicevox audio for the selected voice, if generated → browser TTS. The audio-source picker (`AUDIO_SOURCE_OPTIONS` in `src/utils/voicevoxAudio.js`) offers "Voicevox — Shikoku Metan (female)", "Voicevox — Kurono Takehiro (male)", and "Browser TTS"; picking a Voicevox voice still silently falls back to browser TTS for any entry that voice hasn't been generated for yet.
 
 ### Layout
 - Desktop: main content area + chevron toggle + collapsible sidebar (420px wide)

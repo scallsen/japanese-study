@@ -2,8 +2,8 @@
 // id <-> audio-source-setting mapping and Supabase Storage URL construction in one place.
 
 export const VOICEVOX_VOICES = [
-  { id: 2, name: 'shikoku-metan', label: 'Voicevox — Shikoku Metan' },
-  { id: 11, name: 'kurono-takehiro', label: 'Voicevox — Kurono Takehiro' },
+  { id: 2, name: 'shikoku-metan', label: 'Voicevox — Shikoku Metan (female)', credit: 'VOICEVOX:四国めたん' },
+  { id: 11, name: 'kurono-takehiro', label: 'Voicevox — Kurono Takehiro (male)', credit: 'VOICEVOX:玄野武宏' },
 ]
 
 export const AUDIO_SOURCE_OPTIONS = [
@@ -25,4 +25,10 @@ export function getVoicevoxAudioUrl(speakerId, entryId) {
 export function speakerIdFromAudioSource(audioSource) {
   const match = audioSource?.match(/^voicevox-(\d+)$/)
   return match ? Number(match[1]) : null
+}
+
+// Credit text for the currently selected voice, or null for 'browser'/'none'.
+export function getVoicevoxCredit(audioSource) {
+  const speakerId = speakerIdFromAudioSource(audioSource)
+  return VOICEVOX_VOICES.find(v => v.id === speakerId)?.credit ?? null
 }

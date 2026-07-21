@@ -22,7 +22,7 @@ import { supabase } from '../lib/supabase.js'
 import * as SimpleQueue from '../engines/simpleQueue.js'
 import { WORD_DATA } from '../data/wordData.js'
 import { createCard } from '../modules/vocab-srs/srs.js'
-import { AUDIO_SOURCE_OPTIONS, DEFAULT_AUDIO_SOURCE, getVoicevoxAudioUrl, speakerIdFromAudioSource } from '../utils/voicevoxAudio.js'
+import { AUDIO_SOURCE_OPTIONS, DEFAULT_AUDIO_SOURCE, getVoicevoxAudioUrl, getVoicevoxCredit, speakerIdFromAudioSource } from '../utils/voicevoxAudio.js'
 
 const PANEL_W = 420
 const CHEVRON_W = 28
@@ -1045,6 +1045,9 @@ export default function VocabPage() {
                 {audioProcessing && (
                   <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>Audio is being generated</span>
                 )}
+                {getVoicevoxCredit(audioSource) && (
+                  <span style={{ fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.25)' }}>{getVoicevoxCredit(audioSource)}</span>
+                )}
                 {audioSource === 'browser' && jaVoices.length > 0 && (
                   <DrawerSelect
                     value={ttsVoice}
@@ -1065,12 +1068,6 @@ export default function VocabPage() {
             </>
           )}
         </div>
-
-        {audioEnabled && (
-          <div style={{ marginTop: 16, fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.25)' }}>
-            Vocab audio: VOICEVOX:四国めたん / VOICEVOX:玄野武宏
-          </div>
-        )}
 
       </div>
     )

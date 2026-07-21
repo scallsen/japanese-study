@@ -16,7 +16,7 @@ import DrawerSelect from '../../components/DrawerSelect.jsx'
 import { useJaVoices } from '../../hooks/useTTS.js'
 import { useAudioGenerationStatus } from '../../hooks/useAudioGenerationStatus.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
-import { AUDIO_SOURCE_OPTIONS, DEFAULT_AUDIO_SOURCE } from '../../utils/voicevoxAudio.js'
+import { AUDIO_SOURCE_OPTIONS, DEFAULT_AUDIO_SOURCE, getVoicevoxCredit } from '../../utils/voicevoxAudio.js'
 
 const ACCENT = '#3ABDA4'
 const PANEL_W = 420
@@ -554,6 +554,9 @@ export default function VocabSrsModule() {
                 {audioProcessing && (
                   <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>Audio is being generated</span>
                 )}
+                {getVoicevoxCredit(audioSource) && (
+                  <span style={{ fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.25)' }}>{getVoicevoxCredit(audioSource)}</span>
+                )}
                 {audioSource === 'browser' && jaVoices.length > 0 && (
                   <DrawerSelect
                     value={ttsVoice}
@@ -574,12 +577,6 @@ export default function VocabSrsModule() {
             </>
           )}
         </div>
-
-        {audioEnabled && (
-          <div style={{ marginTop: 16, fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.25)' }}>
-            Vocab audio: VOICEVOX:四国めたん / VOICEVOX:玄野武宏
-          </div>
-        )}
 
         {/* ── Dev (DEV only) ── */}
         {import.meta.env.DEV && globalStats.totalCards > 0 && (
