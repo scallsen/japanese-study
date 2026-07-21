@@ -1,10 +1,10 @@
-import { FS_BASE } from '../data/theme.js'
+import { FS_BASE, FS_CAPTION } from '../data/theme.js'
 
 export default function DrawerSelect({ value, onChange, options, label, subtext }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       {label && <span style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}>{label}</span>}
-      {subtext && <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12, fontFamily: 'inherit' }}>{subtext}</span>}
+      {subtext && <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: FS_CAPTION, fontFamily: 'inherit' }}>{subtext}</span>}
       <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
         <select
           value={value}

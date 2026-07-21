@@ -1035,18 +1035,16 @@ export default function VocabPage() {
           {audioEnabled && (
             <>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
-                <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Audio source</span>
+                <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Text to speech</span>
                 <DrawerSelect
                   value={audioSource}
                   onChange={setAudioSource}
                   options={AUDIO_SOURCE_OPTIONS}
-                  label="Audio source"
+                  label="Text to speech"
+                  subtext={getVoicevoxCredit(audioSource)}
                 />
                 {audioProcessing && (
                   <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>Audio is being generated</span>
-                )}
-                {getVoicevoxCredit(audioSource) && (
-                  <span style={{ fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.25)' }}>{getVoicevoxCredit(audioSource)}</span>
                 )}
                 {audioSource === 'browser' && jaVoices.length > 0 && (
                   <DrawerSelect
