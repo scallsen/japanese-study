@@ -1,32 +1,302 @@
 [
-  { "id": "keigo-001", "front": "いただく",           "back": "to receive; to eat/drink (humble)",                    "deckId": "keigo" },
-  { "id": "keigo-002", "front": "おっしゃる",         "back": "to say (respectful)",                                  "deckId": "keigo" },
-  { "id": "keigo-003", "front": "ございます",         "back": "to be, to exist (polite copula)",                      "deckId": "keigo" },
-  { "id": "keigo-004", "front": "参る",               "back": "まいる · to go, to come (humble)",                    "deckId": "keigo" },
-  { "id": "keigo-005", "front": "申す",               "back": "もうす · to say; to be called (humble)",              "deckId": "keigo" },
-  { "id": "keigo-006", "front": "なさる",             "back": "to do (respectful)",                                   "deckId": "keigo" },
-  { "id": "keigo-007", "front": "いらっしゃる",       "back": "to be; to go; to come (respectful)",                  "deckId": "keigo" },
-  { "id": "keigo-008", "front": "くださる",           "back": "to give (to me/us) (respectful)",                     "deckId": "keigo" },
-  { "id": "keigo-009", "front": "承る",               "back": "うけたまわる · to receive, to be told (humble)",      "deckId": "keigo" },
-  { "id": "keigo-010", "front": "伺う",               "back": "うかがう · to visit; to ask; to hear (humble)",       "deckId": "keigo" },
-  { "id": "keigo-011", "front": "差し上げる",         "back": "さしあげる · to give (humble)",                       "deckId": "keigo" },
-  { "id": "keigo-012", "front": "召し上がる",         "back": "めしあがる · to eat; to drink (respectful)",          "deckId": "keigo" },
-  { "id": "keigo-013", "front": "ご覧になる",         "back": "ごらんになる · to see, to look at (respectful)",      "deckId": "keigo" },
-  { "id": "keigo-014", "front": "拝見する",           "back": "はいけんする · to see, to read (humble)",             "deckId": "keigo" },
-  { "id": "keigo-015", "front": "存じる",             "back": "ぞんじる · to know, to think (humble)",               "deckId": "keigo" },
-  { "id": "keigo-016", "front": "お目にかかる",       "back": "おめにかかる · to meet (humble)",                     "deckId": "keigo" },
-  { "id": "keigo-017", "front": "拝借する",           "back": "はいしゃくする · to borrow (humble)",                 "deckId": "keigo" },
-  { "id": "keigo-018", "front": "かしこまりました",   "back": "certainly, understood (very formal)",                  "deckId": "keigo" },
-  { "id": "keigo-019", "front": "恐れ入ります",       "back": "おそれいります · excuse me; I'm much obliged",        "deckId": "keigo" },
-  { "id": "keigo-020", "front": "よろしくお願いします", "back": "よろしくおねがいします · pleased to meet you; I'm counting on you", "deckId": "keigo" },
-  { "id": "keigo-021", "front": "お世話になります",   "back": "おせわになります · thank you for your support",       "deckId": "keigo" },
-  { "id": "keigo-022", "front": "何卒",               "back": "なにとぞ · please, kindly (formal request)",          "deckId": "keigo" },
-  { "id": "keigo-023", "front": "誠に",               "back": "まことに · truly, sincerely (formal)",                "deckId": "keigo" },
-  { "id": "keigo-024", "front": "お手数をおかけします", "back": "おてすうをおかけします · sorry to trouble you",     "deckId": "keigo" },
-  { "id": "keigo-025", "front": "ご多忙のところ",     "back": "ごたぼうのところ · while you are busy (formal phrase)", "deckId": "keigo" },
-  { "id": "keigo-026", "front": "ご検討ください",     "back": "ごけんとうください · please consider",                "deckId": "keigo" },
-  { "id": "keigo-027", "front": "お待ちしております", "back": "おまちしております · I will be waiting for you (humble)", "deckId": "keigo" },
-  { "id": "keigo-028", "front": "ご連絡差し上げます", "back": "ごれんらくさしあげます · I will contact you (humble)", "deckId": "keigo" },
-  { "id": "keigo-029", "front": "ご不便をおかけします", "back": "ごふべんをおかけします · sorry for the inconvenience", "deckId": "keigo" },
-  { "id": "keigo-030", "front": "拝啓",               "back": "はいけい · Dear (formal letter salutation)",          "deckId": "keigo" }
+  {
+    "id": "keigo-001",
+    "front": "いただく",
+    "back": "to receive; to eat/drink (humble)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-002",
+    "front": "おっしゃる",
+    "back": "to say (respectful)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-003",
+    "front": "ございます",
+    "back": "to be, to exist (polite copula)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-004",
+    "front": "参る",
+    "back": "まいる · to go, to come (humble)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-005",
+    "front": "申す",
+    "back": "もうす · to say; to be called (humble)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-006",
+    "front": "なさる",
+    "back": "to do (respectful)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-007",
+    "front": "いらっしゃる",
+    "back": "to be; to go; to come (respectful)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-008",
+    "front": "くださる",
+    "back": "to give (to me/us) (respectful)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-009",
+    "front": "承る",
+    "back": "うけたまわる · to receive, to be told (humble)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-010",
+    "front": "伺う",
+    "back": "うかがう · to visit; to ask; to hear (humble)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-011",
+    "front": "差し上げる",
+    "back": "さしあげる · to give (humble)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-012",
+    "front": "召し上がる",
+    "back": "めしあがる · to eat; to drink (respectful)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-013",
+    "front": "ご覧になる",
+    "back": "ごらんになる · to see, to look at (respectful)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-014",
+    "front": "拝見する",
+    "back": "はいけんする · to see, to read (humble)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-015",
+    "front": "存じる",
+    "back": "ぞんじる · to know, to think (humble)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-016",
+    "front": "お目にかかる",
+    "back": "おめにかかる · to meet (humble)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-017",
+    "front": "拝借する",
+    "back": "はいしゃくする · to borrow (humble)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-018",
+    "front": "かしこまりました",
+    "back": "certainly, understood (very formal)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-019",
+    "front": "恐れ入ります",
+    "back": "おそれいります · excuse me; I'm much obliged",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-020",
+    "front": "よろしくお願いします",
+    "back": "よろしくおねがいします · pleased to meet you; I'm counting on you",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-021",
+    "front": "お世話になります",
+    "back": "おせわになります · thank you for your support",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-022",
+    "front": "何卒",
+    "back": "なにとぞ · please, kindly (formal request)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-023",
+    "front": "誠に",
+    "back": "まことに · truly, sincerely (formal)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-024",
+    "front": "お手数をおかけします",
+    "back": "おてすうをおかけします · sorry to trouble you",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-025",
+    "front": "ご多忙のところ",
+    "back": "ごたぼうのところ · while you are busy (formal phrase)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-026",
+    "front": "ご検討ください",
+    "back": "ごけんとうください · please consider",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-027",
+    "front": "お待ちしております",
+    "back": "おまちしております · I will be waiting for you (humble)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-028",
+    "front": "ご連絡差し上げます",
+    "back": "ごれんらくさしあげます · I will contact you (humble)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-029",
+    "front": "ご不便をおかけします",
+    "back": "ごふべんをおかけします · sorry for the inconvenience",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  },
+  {
+    "id": "keigo-030",
+    "front": "拝啓",
+    "back": "はいけい · Dear (formal letter salutation)",
+    "deckId": "keigo",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
+  }
 ]
