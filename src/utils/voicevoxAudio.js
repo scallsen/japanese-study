@@ -2,8 +2,8 @@
 // id <-> audio-source-setting mapping and Supabase Storage URL construction in one place.
 
 export const VOICEVOX_VOICES = [
-  { id: 2, name: 'shikoku-metan', label: 'Shikoku Metan (female)', credit: 'Shikoku Metan by Voicevox' },
-  { id: 11, name: 'kurono-takehiro', label: 'Kurono Takehiro (male)', credit: 'Kurono Takehiro by Voicevox' },
+  { id: 2, name: 'shikoku-metan', label: 'Shikoku Metan (female)', credit: '四国めたん by Voicevox' },
+  { id: 11, name: 'kurono-takehiro', label: 'Kurono Takehiro (male)', credit: '玄野武宏 by Voicevox' },
 ]
 
 export const AUDIO_SOURCE_OPTIONS = [

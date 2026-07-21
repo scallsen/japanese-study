@@ -550,8 +550,10 @@ export default function VocabSrsModule() {
                   onChange={setAudioSource}
                   options={AUDIO_SOURCE_OPTIONS}
                   label="Text to speech"
-                  subtext={getVoicevoxCredit(audioSource)}
                 />
+                {getVoicevoxCredit(audioSource) && (
+                  <span style={{ fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.35)' }}>{getVoicevoxCredit(audioSource)}</span>
+                )}
                 {audioProcessing && (
                   <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>Audio is being generated</span>
                 )}
