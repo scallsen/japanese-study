@@ -1,0 +1,64 @@
+name: Generate Vocab Audio
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/data/words/**'
+      - 'src/modules/vocab-srs/decks/keigo.json'
+  workflow_dispatch:
+
+jobs:
+  generate-audio:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Start Voicevox engine
+        run: |
+          docker run -d --name voicevox -p 50021:50021 voicevox/voicevox_engine:cpu-latest
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:50021/version && break
+            sleep 2
+          done
+
+      - name: Generate audio
+        run: node scripts/generate-audio.mjs
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          VOICEVOX_URL: http://localhost:50021
+
+      - name: Commit generated audio filenames
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/data/words/*.json src/modules/vocab-srs/decks/keigo.json
+          git diff --cached --quiet || git commit -m "Generate Voicevox audio for vocab words"
+          git push
+
+      # Belt-and-suspenders: the script itself resets status in a try/finally, but
+      # this covers runner-level failures (timeout, OOM) that skip that finally block.
+      - name: Ensure processing status is reset
+        if: always()
+        run: |
+          curl -s -X POST "${SUPABASE_URL}/rest/v1/audio_generation_status?on_conflict=id" \
+            -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: resolution=merge-duplicates" \
+            -d '{"id":"vocab-audio","status":"idle"}'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}

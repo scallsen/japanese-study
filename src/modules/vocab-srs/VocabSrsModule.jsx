@@ -14,7 +14,9 @@ import DrawerSectionHeader from '../../components/DrawerSectionHeader.jsx'
 import DrawerCheckbox from '../../components/DrawerCheckbox.jsx'
 import DrawerSelect from '../../components/DrawerSelect.jsx'
 import { useJaVoices } from '../../hooks/useTTS.js'
+import { useAudioGenerationStatus } from '../../hooks/useAudioGenerationStatus.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
+import { AUDIO_SOURCE_OPTIONS, DEFAULT_AUDIO_SOURCE } from '../../utils/voicevoxAudio.js'
 
 const ACCENT = '#3ABDA4'
 const PANEL_W = 420
@@ -171,9 +173,7 @@ export default function VocabSrsModule() {
   const [autoplayBack, setAutoplayBack] = useState(() => {
     const s = safeLocalStorageGet('srs-autoplay-back'); return s === null ? true : s === 'true'
   })
-  const [ttsEnabled, setTtsEnabled] = useState(() => {
-    const s = safeLocalStorageGet('srs-tts-enabled'); return s === null ? false : s === 'true'
-  })
+  const [audioSource, setAudioSource] = useState(() => safeLocalStorageGet('srs-audio-source') ?? DEFAULT_AUDIO_SOURCE)
   const [sfxEnabled, setSfxEnabled] = useState(() => {
     const s = safeLocalStorageGet('srs-sfx-enabled'); return s === null ? true : s === 'true'
   })
@@ -197,7 +197,7 @@ export default function VocabSrsModule() {
   useEffect(() => { safeLocalStorageSet('srs-autoplay-audio', autoplayAudio) }, [autoplayAudio])
   useEffect(() => { safeLocalStorageSet('srs-autoplay-front', autoplayFront) }, [autoplayFront])
   useEffect(() => { safeLocalStorageSet('srs-autoplay-back', autoplayBack) }, [autoplayBack])
-  useEffect(() => { safeLocalStorageSet('srs-tts-enabled', ttsEnabled) }, [ttsEnabled])
+  useEffect(() => { safeLocalStorageSet('srs-audio-source', audioSource) }, [audioSource])
   useEffect(() => { safeLocalStorageSet('srs-sfx-enabled', sfxEnabled) }, [sfxEnabled])
   useEffect(() => { safeLocalStorageSet('srs-tts-voice', ttsVoice) }, [ttsVoice])
   useEffect(() => { safeLocalStorageSet('srs-daily-new-cards', dailyNewCards) }, [dailyNewCards])
@@ -228,6 +228,7 @@ export default function VocabSrsModule() {
 
   const isMobile = useIsMobile()
   const jaVoices = useJaVoices()
+  const { isProcessing: audioProcessing } = useAudioGenerationStatus()
 
   if (loading && !progress) return null
 
@@ -542,13 +543,18 @@ export default function VocabSrsModule() {
                   />
                 </>
               )}
-              <DrawerCheckbox
-                checked={ttsEnabled}
-                onChange={() => setTtsEnabled(v => !v)}
-                label="Text to speech"
-                indent={1}
-              >
-                {ttsEnabled && jaVoices.length > 0 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
+                <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Audio source</span>
+                <DrawerSelect
+                  value={audioSource}
+                  onChange={setAudioSource}
+                  options={AUDIO_SOURCE_OPTIONS}
+                  label="Audio source"
+                />
+                {audioProcessing && (
+                  <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>Audio is being generated</span>
+                )}
+                {audioSource === 'browser' && jaVoices.length > 0 && (
                   <DrawerSelect
                     value={ttsVoice}
                     onChange={setTtsVoice}
@@ -557,7 +563,7 @@ export default function VocabSrsModule() {
                     subtext="Availability based on your device or browser"
                   />
                 )}
-              </DrawerCheckbox>
+              </div>
               <DrawerCheckbox
                 checked={sfxEnabled}
                 onChange={() => setSfxEnabled(v => !v)}
@@ -568,6 +574,12 @@ export default function VocabSrsModule() {
             </>
           )}
         </div>
+
+        {audioEnabled && (
+          <div style={{ marginTop: 16, fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.25)' }}>
+            Vocab audio: VOICEVOX:四国めたん / VOICEVOX:玄野武宏
+          </div>
+        )}
 
         {/* ── Dev (DEV only) ── */}
         {import.meta.env.DEV && globalStats.totalCards > 0 && (
@@ -684,7 +696,7 @@ export default function VocabSrsModule() {
             audioEnabled={audioEnabled}
             autoplayFront={audioEnabled && autoplayAudio && autoplayFront}
             autoplayBack={audioEnabled && autoplayAudio && autoplayBack}
-            ttsEnabled={audioEnabled && ttsEnabled}
+            audioSource={audioSource}
             sfxEnabled={audioEnabled && sfxEnabled}
             ttsVoice={ttsVoice}
             showHardEasy={showHardEasy}
