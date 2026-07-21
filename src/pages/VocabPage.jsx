@@ -16,11 +16,13 @@ import { useSFX } from '../hooks/useSFX.js'
 import { useGamepad } from '../hooks/useGamepad.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useProgress } from '../hooks/useProgress.js'
+import { useAudioGenerationStatus } from '../hooks/useAudioGenerationStatus.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../utils/storage.js'
 import { supabase } from '../lib/supabase.js'
 import * as SimpleQueue from '../engines/simpleQueue.js'
 import { WORD_DATA } from '../data/wordData.js'
 import { createCard } from '../modules/vocab-srs/srs.js'
+import { AUDIO_SOURCE_OPTIONS, DEFAULT_AUDIO_SOURCE, getVoicevoxAudioUrl, getVoicevoxCredit, speakerIdFromAudioSource } from '../utils/voicevoxAudio.js'
 
 const PANEL_W = 420
 const CHEVRON_W = 28
@@ -102,7 +104,7 @@ function relativeTime(isoStr) {
 
 // ── ActiveDrill ───────────────────────────────────────────────────────────────
 
-function ActiveDrill({ drill, ttsEnabled, sfxEnabled, ttsVoice, showStreak, showFurigana, showTranslation, showSentence, pixelFont, showVisualEffects, onPulse, isShort }) {
+function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, showFurigana, showTranslation, showSentence, pixelFont, showVisualEffects, onPulse, isShort }) {
   const [flippedCardId, setFlippedCardId] = useState(null)
   const [transitioning, setTransitioning] = useState(false)
   const [exitDir, setExitDir] = useState(null)
@@ -110,6 +112,23 @@ function ActiveDrill({ drill, ttsEnabled, sfxEnabled, ttsVoice, showStreak, show
   const { currentCard, streak, bestStreak, correct, troubled, remaining, canUndo, onUndo } = drill
   const isFlipped = flippedCardId === currentCard.id
   const tts = useTTS(ttsVoice)
+  const voicevoxAudioRef = useRef(null)
+
+  function playWordAudio(word) {
+    const speakerId = speakerIdFromAudioSource(audioSource)
+    if (voicevoxAudioRef.current) voicevoxAudioRef.current.pause()
+    if (speakerId && word.voicevoxVoices?.includes(speakerId)) {
+      voicevoxAudioRef.current = new Audio(getVoicevoxAudioUrl(speakerId, word.id))
+      voicevoxAudioRef.current.play().catch(() => {})
+    } else if (audioSource === 'browser') {
+      tts.speak(word.kana)
+    }
+  }
+
+  function stopWordAudio() {
+    tts.cancel()
+    if (voicevoxAudioRef.current) voicevoxAudioRef.current.pause()
+  }
 
   const [localStreak,     setLocalStreak]     = useState(streak)
   const [localBestStreak, setLocalBestStreak] = useState(bestStreak)
@@ -161,14 +180,14 @@ function ActiveDrill({ drill, ttsEnabled, sfxEnabled, ttsVoice, showStreak, show
   }
 
   useEffect(() => {
-    if (isFlipped && ttsEnabled) {
-      tts.speak(currentCard.word.kana)
+    if (isFlipped) {
+      playWordAudio(currentCard.word)
     } else {
-      tts.cancel()
+      stopWordAudio()
     }
-    return () => tts.cancel()
+    return () => stopWordAudio()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFlipped, currentCard.id, ttsEnabled])
+  }, [isFlipped, currentCard.id, audioSource])
 
   useEffect(() => { setFlippedCardId(null) }, [currentCard.id])
 
@@ -226,7 +245,7 @@ function ActiveDrill({ drill, ttsEnabled, sfxEnabled, ttsVoice, showStreak, show
       handleVerdictRef.current(false)
     },
     onLeftShoulder: () => handleUndo(),
-    onRightShoulder: () => { if (ttsEnabled) tts.speak(currentCard.word.kana) },
+    onRightShoulder: () => playWordAudio(currentCard.word),
   })
 
   let cardClass = ''
@@ -854,9 +873,7 @@ export default function VocabPage() {
   const [audioEnabled,     setAudioEnabled]     = useState(() => {
     const s = safeLocalStorageGet('vocab-audio-enabled'); return s === null ? true : s === 'true'
   })
-  const [ttsEnabled,       setTtsEnabled]       = useState(() => {
-    const s = safeLocalStorageGet('vocab-tts-enabled'); return s === null ? false : s === 'true'
-  })
+  const [audioSource,      setAudioSource]      = useState(() => safeLocalStorageGet('vocab-audio-source') ?? DEFAULT_AUDIO_SOURCE)
   const [sfxEnabled,       setSfxEnabled]       = useState(() => {
     const s = safeLocalStorageGet('vocab-sfx-enabled'); return s === null ? true : s === 'true'
   })
@@ -887,10 +904,11 @@ export default function VocabPage() {
   const isMobile = useIsMobile()
   const isShort  = useIsShort()
   const jaVoices = useJaVoices()
+  const { isProcessing: audioProcessing } = useAudioGenerationStatus()
 
   useEffect(() => { safeLocalStorageSet('vocab-selected-source', selectedSourceId) }, [selectedSourceId])
   useEffect(() => { safeLocalStorageSet('vocab-audio-enabled',  audioEnabled) },     [audioEnabled])
-  useEffect(() => { safeLocalStorageSet('vocab-tts-enabled',    ttsEnabled) },       [ttsEnabled])
+  useEffect(() => { safeLocalStorageSet('vocab-audio-source',   audioSource) },      [audioSource])
   useEffect(() => { safeLocalStorageSet('vocab-sfx-enabled',    sfxEnabled) },       [sfxEnabled])
   useEffect(() => { safeLocalStorageSet('vocab-tts-voice',      ttsVoice) },         [ttsVoice])
   useEffect(() => { safeLocalStorageSet('vocab-show-streak',    showStreak) },       [showStreak])
@@ -1016,13 +1034,21 @@ export default function VocabPage() {
           />
           {audioEnabled && (
             <>
-              <DrawerCheckbox
-                checked={ttsEnabled}
-                onChange={() => setTtsEnabled(v => !v)}
-                label="Text to speech"
-                indent={1}
-              >
-                {ttsEnabled && jaVoices.length > 0 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
+                <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Text to speech</span>
+                <DrawerSelect
+                  value={audioSource}
+                  onChange={setAudioSource}
+                  options={AUDIO_SOURCE_OPTIONS}
+                  label="Text to speech"
+                />
+                {getVoicevoxCredit(audioSource) && (
+                  <span style={{ fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.35)' }}>{getVoicevoxCredit(audioSource)}</span>
+                )}
+                {audioProcessing && (
+                  <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>Audio is being generated</span>
+                )}
+                {audioSource === 'browser' && jaVoices.length > 0 && (
                   <DrawerSelect
                     value={ttsVoice}
                     onChange={setTtsVoice}
@@ -1031,7 +1057,7 @@ export default function VocabPage() {
                     subtext="Availability based on your device or browser"
                   />
                 )}
-              </DrawerCheckbox>
+              </div>
               <DrawerCheckbox
                 checked={sfxEnabled}
                 onChange={() => setSfxEnabled(v => !v)}
@@ -1152,7 +1178,7 @@ export default function VocabPage() {
               ) : (
                 <ActiveDrill
                   drill={drill}
-                  ttsEnabled={audioEnabled && ttsEnabled}
+                  audioSource={audioEnabled ? audioSource : 'none'}
                   sfxEnabled={audioEnabled && sfxEnabled}
                   ttsVoice={ttsVoice}
                   showStreak={showStreak}

@@ -160,14 +160,18 @@ Mirrors katsuyou-drill's UI exactly. Speed-mode only (no text input). Card front
 | `src/components/DrawerCheckbox.jsx` | Checkbox setting row |
 | `src/components/DrawerSelect.jsx` | Dropdown setting row (TTS voice) |
 | `src/hooks/useDrill.js` | Drill state machine hook (VocabPage-only) |
-| `src/hooks/useTTS.js` | Browser Speech Synthesis TTS |
+| `src/hooks/useTTS.js` | Browser Speech Synthesis TTS — fallback when Voicevox audio isn't available |
+| `src/hooks/useAudioGenerationStatus.js` | Polls the `audio_generation_status` row — drives the "Audio is being generated" note |
 | `src/hooks/useSFX.js` | Web Audio API sound effects (no asset files) |
 | `src/hooks/useGamepad.js` | Gamepad controller support (VocabPage-only) |
+| `src/utils/voicevoxAudio.js` | Voicevox voice list, audio-source picker options, Storage URL helper — shared with Vocab SRS |
 | `src/engines/simpleQueue.js` | Card queue engine — wrong cards reinsert after 3 |
 | `src/utils/furigana.js` | `buildFurigana(kanji, kana)` → decomposed furigana parts |
 | `src/utils/storage.js` | Safe localStorage get/set wrappers |
 | `src/data/wordLists.js` | Word source/list metadata: `WORD_SOURCES` array |
 | `src/data/words/sample.json` | Placeholder word data |
+| `scripts/generate-audio.mjs` | Generates Voicevox audio for word lists + `keigo.json`, uploads to Storage, prunes orphaned files (see Vocab audio section below) |
+| `.github/workflows/generate-vocab-audio.yml` | Runs the above automatically on every push touching word-list/keigo JSON, or via manual dispatch |
 | `src/global.css` | sidebar-scroll scrollbar styles; letter-spacing reset for form elements |
 
 ### Word source / list structure (`src/data/wordLists.js`)
@@ -203,7 +207,8 @@ Each word object in a `src/data/words/*.json` file:
   "kana": "さかな",           // full hiragana/katakana reading — spoken by TTS on flip
   "english": "fish",          // meaning — shown on back of card (concise, 1–5 words)
   "sentence": "...",          // optional example sentence — shown on back when "Show sentence" is on
-  "listKey": "nsm-n3-w1d1"   // must match a source id (flat) or sublist id (hierarchical)
+  "listKey": "nsm-n3-w1d1",  // must match a source id (flat) or sublist id (hierarchical)
+  "voicevoxVoices": [2, 11]  // set by scripts/generate-audio.mjs — speaker ids with generated audio; absent/empty until generated
 }
 ```
 
@@ -222,7 +227,37 @@ Each word object in a `src/data/words/*.json` file:
    - If adding a new sublist to an existing source, append to its `lists` array and add the import.
 
 ### Settings persistence
-All VocabPage settings are stored in localStorage with `vocab-` prefix (e.g. `vocab-show-furigana`) to avoid colliding with katsuyou-drill's keys.
+All VocabPage settings are stored in localStorage with `vocab-` prefix (e.g. `vocab-show-furigana`) to avoid colliding with katsuyou-drill's keys. `vocab-audio-source` stores the audio-source picker value (see below).
+
+### Vocab audio (Voicevox)
+
+Word audio is pre-generated via [Voicevox](https://voicevox.hiroshiba.jp/) (neural Japanese TTS) rather than relying solely on the browser's Speech Synthesis API, which varies wildly in quality by OS/browser. This applies to the Vocab drill word lists and the `keigo` bundled SRS deck (see Vocab SRS section) — not to Core 2000 (already has real human-recorded Anki audio), Immersion, Story, or Dictionary (all dynamic/on-demand content a local Voicevox instance can't serve live).
+
+**Voices** (`VOICEVOX_VOICES` in `src/utils/voicevoxAudio.js`, kept in sync with `VOICES` in `scripts/generate-audio.mjs`):
+- Speaker id `2` — 四国めたん (Shikoku Metan), Normal style
+- Speaker id `11` — 玄野武宏 (Kurono Takehiro), Normal style
+
+**Storage layout**: `audio/voicevox/<speakerId>/<entryId>.mp3` in the same public Supabase Storage `audio` bucket used by Vocab SRS's `audio/imported/` (Anki-uploaded audio) — kept in a separate prefix so the two can never collide or interfere with each other's cleanup.
+
+**Generation** (`scripts/generate-audio.mjs`): reads `src/data/words/*.json` and `src/modules/vocab-srs/decks/keigo.json`, generates audio for any entry missing a voice in its `voicevoxVoices` array (using `kana` as the TTS text for word-list entries, `front` for `keigo.json` entries which have no separate kana field), uploads to Storage, and writes the updated `voicevoxVoices` array back into the source JSON. Every run also **reconciles** each voice folder against the current entries and deletes any orphaned file — this is what makes removing a word/card from the JSON automatically delete its audio too, no separate cleanup step needed. Requires a running Voicevox engine (desktop app, or the headless `voicevox/voicevox_engine` Docker image) reachable at `VOICEVOX_URL` (default `http://localhost:50021`).
+
+**Automation** (`.github/workflows/generate-vocab-audio.yml`): runs the script automatically on every push to `main` touching `src/data/words/**` or the keigo deck (plus manual `workflow_dispatch`), using the official headless Voicevox Docker image spun up just for the job. Commits the updated JSON straight back to `main` with a bot identity — no PR step. The repo is public, so GitHub Actions minutes are free regardless of run frequency.
+
+**Processing status**: the workflow flips a single-row Supabase table, `audio_generation_status` (`id='vocab-audio'`, `status: 'idle'|'processing'`), to `'processing'` while it runs and back to `'idle'` when done (both in the script's own `try/finally` and, as a backstop against runner-level failures, an `if: always()` workflow step). `useAudioGenerationStatus()` polls this row and drives the "Audio is being generated" note shown under the audio-source picker in both the Vocab and SRS settings drawers.
+
+```sql
+create table if not exists audio_generation_status (
+  id text primary key default 'vocab-audio',
+  status text not null default 'idle', -- 'idle' | 'processing'
+  updated_at timestamptz not null default now()
+);
+grant select on audio_generation_status to anon, authenticated;
+grant all on audio_generation_status to service_role;
+```
+
+**Attribution**: Voicevox's license requires a discoverable text credit for each character voice used. Each voice's credit string (`"四国めたん by Voicevox"` / `"玄野武宏 by Voicevox"`, in `VOICEVOX_VOICES` in `src/utils/voicevoxAudio.js` — an intentional exception to the "no Japanese in the UI" convention, since the license's own examples credit the Japanese character name) renders as its own line directly below the "Text to speech" select (`getVoicevoxCredit(audioSource)`) — not as the select's `subtext` (that renders above the control, which would read as a field description rather than a credit) — and only while that voice is the selected option, hidden entirely when "Browser TTS" is selected.
+
+**Playback priority** (both Vocab drill and Vocab SRS): recorded file audio (Core 2000's Anki audio, SRS-only) → Voicevox audio for the selected voice, if generated → browser TTS. The audio-source picker (`AUDIO_SOURCE_OPTIONS` in `src/utils/voicevoxAudio.js`, labeled "Text to speech" in both settings drawers) offers "Shikoku Metan (female)", "Kurono Takehiro (male)", and "Browser TTS"; picking a Voicevox voice still silently falls back to browser TTS for any entry that voice hasn't been generated for yet.
 
 ### Layout
 - Desktop: main content area + chevron toggle + collapsible sidebar (420px wide)
@@ -301,7 +336,7 @@ Anki-style spaced repetition using [ts-fsrs](https://github.com/open-spaced-repe
 | `src/modules/vocab-srs/VocabSrsModule.jsx` | Home screen + sidebar: deck management, stats, settings, Start Review |
 | `src/modules/vocab-srs/VocabSrsDrill.jsx` | Drill UI — FlipCard, rating buttons, audio, relearn countdown, session complete |
 | `src/modules/vocab-srs/decks/core2000.json` | Bundled deck — 2007 Core 2000 cards with word + sentence audio |
-| `src/modules/vocab-srs/decks/keigo.json` | Bundled deck — 30 keigo/formal-register words |
+| `src/modules/vocab-srs/decks/keigo.json` | Bundled deck — 30 keigo/formal-register words; audio generated via Voicevox (see Vocab audio section under Vocabulary Drill), no Anki recordings |
 | `src/modules/vocab-srs/srs.test.js` | Vitest unit tests for srs.js |
 | `src/modules/vocab-srs/session.test.js` | Vitest unit tests for session.js |
 | `src/modules/vocab-srs/import.test.js` | Vitest unit tests for import.js |
@@ -509,8 +544,8 @@ All keys use `srs-` prefix. The VocabSrsModule reads these on mount; VocabSrsDri
 | `srs-autoplay-audio` | `true` | Parent toggle for front/back autoplay |
 | `srs-autoplay-front` | `true` | Autoplay word audio when card loads |
 | `srs-autoplay-back` | `true` | Autoplay word → sentence audio on flip |
-| `srs-tts-enabled` | `false` | TTS fallback when no audio file |
-| `srs-tts-voice` | `''` | TTS voice name |
+| `srs-audio-source` | `'voicevox-2'` | Audio source picker — `'voicevox-2'` \| `'voicevox-11'` \| `'browser'`, see Vocab audio section |
+| `srs-tts-voice` | `''` | Browser TTS voice name (used when audio source is `'browser'`) |
 | `srs-sfx-enabled` | `true` | Sound effects (correct/wrong beeps) |
 | `srs-show-furigana` | `true` | Show kana reading on card front; always shown on back |
 | `srs-show-translation` | `true` | Show English translation on card back |
