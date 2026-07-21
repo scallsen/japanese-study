@@ -34,6 +34,7 @@ export function useDrill(pool, { engine = SimpleQueue, floatSize = 7, seekCardId
 
   return {
     currentCard:  state.float[0] ?? null,
+    upcoming:     state.float.slice(1),
     streak:       state.streak,
     bestStreak:   state.bestStreak ?? 0,
     correct:      state.retired.length,
