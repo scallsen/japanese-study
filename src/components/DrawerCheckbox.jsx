@@ -6,7 +6,7 @@ export default function DrawerCheckbox({ checked, onChange, label, subtext, inde
       <label
         tabIndex={disabled ? -1 : 0}
         onKeyDown={e => { if (!disabled && (e.key === ' ' || e.key === 'Enter')) { e.preventDefault(); onChange() } }}
-        style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: disabled ? 'default' : 'pointer', userSelect: 'none', opacity: disabled ? 0.4 : 1 }}
+        style={{ position: 'relative', display: 'flex', alignItems: 'flex-start', gap: 10, cursor: disabled ? 'default' : 'pointer', userSelect: 'none', opacity: disabled ? 0.4 : 1 }}
       >
         <input
           type="checkbox"

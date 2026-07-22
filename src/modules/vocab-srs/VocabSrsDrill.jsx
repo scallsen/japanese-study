@@ -7,7 +7,9 @@ import { answerCard, undoLastAnswer, isComplete, getSessionStats, getCurrentCard
 import { useTTS } from '../../hooks/useTTS.js'
 import { useSFX } from '../../hooks/useSFX.js'
 import { useGamepad } from '../../hooks/useGamepad.js'
+import { useKanjiMeanings } from '../../hooks/useKanjiMeanings.js'
 import { getVoicevoxAudioUrl, speakerIdFromAudioSource } from '../../utils/voicevoxAudio.js'
+import { kanjiCharsOf } from '../../utils/kanjiMeaningLookup.js'
 
 const CARD_BG = '#E8E4DE'
 const RELEARN_STEP_LABEL = '10m'
@@ -47,78 +49,108 @@ function formatTime(secs) {
   return m > 0 ? `${m}m ${s}s` : `${s}s`
 }
 
-function SrsCardFace({ text, kana, isBack, backText, sentence, sentenceEnglish, showFurigana, showTranslation, showSentence, pixelFont }) {
+function KanjiMeaningBar({ chars, meanings, jaFont }) {
+  return (
+    <div style={{ display: 'flex', borderTop: '1px solid rgba(0,0,0,0.14)', backgroundColor: 'rgba(0,0,0,0.035)' }}>
+      {chars.map((ch, i) => (
+        <div key={`${ch}-${i}`} style={{
+          flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          padding: '1.8cqw 1cqw', gap: 2,
+          borderLeft: i > 0 ? '1px solid rgba(0,0,0,0.1)' : 'none',
+        }}>
+          <span style={{ fontFamily: jaFont, fontSize: '5cqw', color: '#333' }}>{ch}</span>
+          <div style={{
+            fontFamily: FONT, fontSize: '2.6cqw', color: '#777', textAlign: 'center',
+            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%',
+          }}>
+            {meanings[ch]}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function SrsCardFace({ text, kana, isBack, backText, sentence, sentenceEnglish, showFurigana, showTranslation, showSentence, showKanjiMeaning, pixelFont }) {
   const cardFont = pixelFont ? FONT : 'system-ui, sans-serif'
   const showReading = kana && kana !== text && (isBack || showFurigana)
+
+  const kanjiMeaningsEnabled = isBack && showKanjiMeaning
+  const kanjiMeanings = useKanjiMeanings(text, kanjiMeaningsEnabled)
+  const kanjiChars = kanjiMeaningsEnabled ? kanjiCharsOf(text) : []
+  const meaningBarReady = kanjiChars.length > 0 && kanjiChars.every(ch => ch in kanjiMeanings)
+
   return (
-    <div style={{
-      backgroundColor: CARD_BG,
-      width: '100%',
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: 10,
-      padding: '0 20px',
-    }}>
-      <div style={{ textAlign: 'center' }}>
-        <div style={{
-          fontFamily: cardFont,
-          fontSize: isBack ? '10cqw' : '12.63cqw',
-          color: '#222',
-          letterSpacing: 'normal',
-          lineHeight: 1.3,
-          textShadow: '2px 2px 0 rgba(0,0,0,0.25)',
-        }}>
-          {text}
-        </div>
-        {showReading && (
-          <div style={{
-            fontFamily: cardFont,
-            fontSize: '5.26cqw',
-            color: '#666',
-            marginTop: 4,
-          }}>
-            {kana}
-          </div>
-        )}
-      </div>
-      {isBack && backText && showTranslation && (
-        <div style={{
-          fontFamily: cardFont,
-          fontSize: '5.26cqw',
-          color: '#555',
-          textAlign: 'center',
-          lineHeight: 1.5,
-        }}>
-          {backText}
-        </div>
-      )}
-      {isBack && sentence && showSentence && (
+    <div style={{ backgroundColor: CARD_BG, width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <div style={{
+        flex: 1,
+        minHeight: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 10,
+        padding: '0 20px',
+      }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{
             fontFamily: cardFont,
-            fontSize: '4.2cqw',
-            color: '#666',
-            lineHeight: 1.5,
+            fontSize: isBack ? '10cqw' : '12.63cqw',
+            color: '#222',
+            letterSpacing: 'normal',
+            lineHeight: 1.3,
+            textShadow: '2px 2px 0 rgba(0,0,0,0.25)',
           }}>
-            {sentence}
+            {text}
           </div>
-          {sentenceEnglish && (
+          {showReading && (
             <div style={{
               fontFamily: cardFont,
-              fontSize: '3.5cqw',
-              color: '#888',
-              lineHeight: 1.5,
-              fontStyle: 'italic',
-              marginTop: 2,
+              fontSize: '5.26cqw',
+              color: '#666',
+              marginTop: 4,
             }}>
-              {sentenceEnglish}
+              {kana}
             </div>
           )}
         </div>
-      )}
+        {isBack && backText && showTranslation && (
+          <div style={{
+            fontFamily: cardFont,
+            fontSize: '5.26cqw',
+            color: '#555',
+            textAlign: 'center',
+            lineHeight: 1.5,
+          }}>
+            {backText}
+          </div>
+        )}
+        {isBack && sentence && showSentence && (
+          <div style={{ textAlign: 'center' }}>
+            <div style={{
+              fontFamily: cardFont,
+              fontSize: '4.2cqw',
+              color: '#666',
+              lineHeight: 1.5,
+            }}>
+              {sentence}
+            </div>
+            {sentenceEnglish && (
+              <div style={{
+                fontFamily: cardFont,
+                fontSize: '3.5cqw',
+                color: '#888',
+                lineHeight: 1.5,
+                fontStyle: 'italic',
+                marginTop: 2,
+              }}>
+                {sentenceEnglish}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+      {isBack && meaningBarReady && <KanjiMeaningBar chars={kanjiChars} meanings={kanjiMeanings} jaFont={cardFont} />}
     </div>
   )
 }
@@ -226,7 +258,7 @@ function DoneScreen({ stats, onDone }) {
 
 export default function VocabSrsDrill({
   initialCards, initialSession, onCardSave, onDone,
-  showTranslation = true, showFurigana = true, showSentence = true,
+  showTranslation = true, showFurigana = true, showSentence = true, showKanjiMeaning = false,
   pixelFont = true, showVisualEffects = true,
   audioEnabled = true, autoplayFront = true, autoplayBack = true,
   audioSource = 'voicevox-2', sfxEnabled = true, ttsVoice = '',
@@ -551,10 +583,10 @@ export default function VocabSrsDrill({
   const isRequeue = currentCard && seenRef.current.has(currentCard.id)
 
   const front = currentCard
-    ? <SrsCardFace text={currentCard.front} kana={currentCard.kana} isBack={false} showFurigana={showFurigana} backText={currentCard.back} sentence={currentCard.sentence} sentenceEnglish={currentCard.sentenceEnglish} showTranslation={showTranslation} showSentence={showSentence} pixelFont={pixelFont} />
+    ? <SrsCardFace text={currentCard.front} kana={currentCard.kana} isBack={false} showFurigana={showFurigana} backText={currentCard.back} sentence={currentCard.sentence} sentenceEnglish={currentCard.sentenceEnglish} showTranslation={showTranslation} showSentence={showSentence} showKanjiMeaning={showKanjiMeaning} pixelFont={pixelFont} />
     : null
   const back = currentCard
-    ? <SrsCardFace text={currentCard.front} kana={currentCard.kana} isBack={true} showFurigana={showFurigana} backText={currentCard.back} sentence={currentCard.sentence} sentenceEnglish={currentCard.sentenceEnglish} showTranslation={showTranslation} showSentence={showSentence} pixelFont={pixelFont} />
+    ? <SrsCardFace text={currentCard.front} kana={currentCard.kana} isBack={true} showFurigana={showFurigana} backText={currentCard.back} sentence={currentCard.sentence} sentenceEnglish={currentCard.sentenceEnglish} showTranslation={showTranslation} showSentence={showSentence} showKanjiMeaning={showKanjiMeaning} pixelFont={pixelFont} />
     : null
 
   return (

@@ -161,6 +161,9 @@ export default function VocabSrsModule() {
   const [showSentence, setShowSentence] = useState(() => {
     const s = safeLocalStorageGet('srs-show-sentence'); return s === null ? true : s === 'true'
   })
+  const [showKanjiMeaning, setShowKanjiMeaning] = useState(() => {
+    const s = safeLocalStorageGet('srs-show-kanji-meaning'); return s === null ? false : s === 'true'
+  })
   const [audioEnabled, setAudioEnabled] = useState(() => {
     const s = safeLocalStorageGet('srs-audio-enabled'); return s === null ? true : s === 'true'
   })
@@ -193,6 +196,7 @@ export default function VocabSrsModule() {
   useEffect(() => { safeLocalStorageSet('srs-show-translation', showTranslation) }, [showTranslation])
   useEffect(() => { safeLocalStorageSet('srs-show-furigana', showFurigana) }, [showFurigana])
   useEffect(() => { safeLocalStorageSet('srs-show-sentence', showSentence) }, [showSentence])
+  useEffect(() => { safeLocalStorageSet('srs-show-kanji-meaning', showKanjiMeaning) }, [showKanjiMeaning])
   useEffect(() => { safeLocalStorageSet('srs-audio-enabled', audioEnabled) }, [audioEnabled])
   useEffect(() => { safeLocalStorageSet('srs-autoplay-audio', autoplayAudio) }, [autoplayAudio])
   useEffect(() => { safeLocalStorageSet('srs-autoplay-front', autoplayFront) }, [autoplayFront])
@@ -514,6 +518,7 @@ export default function VocabSrsModule() {
           <DrawerCheckbox checked={showTranslation} onChange={() => setShowTranslation(v => !v)} label="Show translation" />
           <DrawerCheckbox checked={showFurigana} onChange={() => setShowFurigana(v => !v)} label="Show furigana on front" />
           <DrawerCheckbox checked={showSentence} onChange={() => setShowSentence(v => !v)} label="Show sentence" />
+          <DrawerCheckbox checked={showKanjiMeaning} onChange={() => setShowKanjiMeaning(v => !v)} label="Show kanji meaning" />
           <DrawerCheckbox
             checked={audioEnabled}
             onChange={() => setAudioEnabled(v => !v)}
@@ -688,6 +693,7 @@ export default function VocabSrsModule() {
             showTranslation={showTranslation}
             showFurigana={showFurigana}
             showSentence={showSentence}
+            showKanjiMeaning={showKanjiMeaning}
             pixelFont={pixelFont}
             showVisualEffects={showVisualEffects}
             audioEnabled={audioEnabled}
