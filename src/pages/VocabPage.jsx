@@ -106,7 +106,7 @@ function relativeTime(isoStr) {
 
 const AUDIO_PRELOAD_COUNT = 3
 
-function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, showFurigana, showTranslation, showSentence, pixelFont, showVisualEffects, onPulse, isShort }) {
+function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, showFurigana, showTranslation, showSentence, showKanjiMeaning, pixelFont, showVisualEffects, onPulse, isShort }) {
   const [flippedCardId, setFlippedCardId] = useState(null)
   const [transitioning, setTransitioning] = useState(false)
   const [exitDir, setExitDir] = useState(null)
@@ -317,6 +317,7 @@ function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, sho
             showFurigana={showFurigana}
             showTranslation={showTranslation}
             showSentence={showSentence}
+            showKanjiMeaning={showKanjiMeaning}
             pixelFont={pixelFont}
           />
         </div>
@@ -932,6 +933,9 @@ export default function VocabPage() {
   const [showSentence,     setShowSentence]     = useState(() => {
     const s = safeLocalStorageGet('vocab-show-sentence'); return s === null ? false : s === 'true'
   })
+  const [showKanjiMeaning, setShowKanjiMeaning] = useState(() => {
+    const s = safeLocalStorageGet('vocab-show-kanji-meaning'); return s === null ? false : s === 'true'
+  })
   const [pulseColor,       setPulseColor]       = useState(null)
   const [headerHeight,     setHeaderHeight]     = useState(72)
   const headerRef   = useRef(null)
@@ -953,6 +957,7 @@ export default function VocabPage() {
   useEffect(() => { safeLocalStorageSet('vocab-pixel-font',     pixelFont) },        [pixelFont])
   useEffect(() => { safeLocalStorageSet('vocab-show-translation', showTranslation) },[showTranslation])
   useEffect(() => { safeLocalStorageSet('vocab-show-sentence',    showSentence) },   [showSentence])
+  useEffect(() => { safeLocalStorageSet('vocab-show-kanji-meaning', showKanjiMeaning) }, [showKanjiMeaning])
 
   useEffect(() => {
     const el = headerRef.current
@@ -1063,6 +1068,7 @@ export default function VocabPage() {
           <DrawerCheckbox checked={pixelFont}         onChange={() => setPixelFont(v => !v)}         label="Use pixel font" />
           <DrawerCheckbox checked={showTranslation}   onChange={() => setShowTranslation(v => !v)}   label="Show translation" />
           <DrawerCheckbox checked={showSentence}      onChange={() => setShowSentence(v => !v)}       label="Show sentence" />
+          <DrawerCheckbox checked={showKanjiMeaning}  onChange={() => setShowKanjiMeaning(v => !v)}   label="Show kanji meaning" />
           <DrawerCheckbox
             checked={audioEnabled}
             onChange={() => setAudioEnabled(v => !v)}
@@ -1221,6 +1227,7 @@ export default function VocabPage() {
                   showFurigana={showFurigana}
                   showTranslation={showTranslation}
                   showSentence={showSentence}
+                  showKanjiMeaning={showKanjiMeaning}
                   pixelFont={pixelFont}
                   showVisualEffects={showVisualEffects}
                   onPulse={setPulseColor}
