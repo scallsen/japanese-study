@@ -317,6 +317,7 @@ create policy "update own rows" on progress for update
   with check (auth.uid() = user_id);
 
 grant select, insert, update on progress to authenticated;
+grant select, update on progress to service_role;
 ```
 
 ## Vocab SRS (`#/vocab-srs`)
@@ -487,6 +488,8 @@ Configured via `leechThreshold` (default 8, localStorage key `srs-leech-threshol
       sentence?: string,
       sentenceEnglish?: string,
       jmdictId?: string,             // set on immersion-words cards when word matched JMdict
+      voicevoxVoices?: number[],     // set on vocab-drill-words cards — speaker ids with generated audio, copied from the source word
+      voicevoxId?: string,           // set alongside voicevoxVoices — original word id, since cardId is a synthetic vocab-drill-words-<ts>-<i> string and Voicevox storage paths are keyed by the original word id
       // FSRS scheduling fields (stability, difficulty, due, state, lapses, …):
       ...fsrsFields
     }

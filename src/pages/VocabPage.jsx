@@ -1032,6 +1032,10 @@ export default function VocabPage() {
       const extras = {}
       if (word.kana) extras.kana = word.kana
       if (word.sentence) extras.sentence = word.sentence
+      if (word.voicevoxVoices?.length) {
+        extras.voicevoxVoices = word.voicevoxVoices
+        extras.voicevoxId = word.id
+      }
       newCards[cardId] = createCard(front, word.english, cardId, VOCAB_DRILL_DECK_ID, extras)
       addedCount++
     })

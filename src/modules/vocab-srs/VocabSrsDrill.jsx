@@ -288,7 +288,7 @@ export default function VocabSrsDrill({
     if (card.wordAudio) return { word: getAudioUrl(card.wordAudio), sentence: getAudioUrl(card.sentenceAudio) }
     const speakerId = speakerIdFromAudioSource(audioSource)
     if (speakerId && card.voicevoxVoices?.includes(speakerId)) {
-      return { word: getVoicevoxAudioUrl(speakerId, card.id), sentence: null }
+      return { word: getVoicevoxAudioUrl(speakerId, card.voicevoxId ?? card.id), sentence: null }
     }
     return { word: null, sentence: null }
   }
