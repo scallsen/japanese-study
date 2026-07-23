@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useProgress } from '../../hooks/useProgress.js'
-import { getDeckStats, getGlobalStats, getCardStateCounts, getTodaysQueue, resolveCard, resetCardProgress } from './srs.js'
+import { getDeckStats, getGlobalStats, getCardStateCounts, getTodaysQueue, resolveCard, resetCardProgress, State } from './srs.js'
 import { parseAnkiExport } from './import.js'
 import { initSession } from './session.js'
 import { migrateProgress, initializeDeckCards } from './migrate.js'
@@ -138,6 +138,11 @@ export default function VocabSrsModule() {
   const [progress, setProgress] = useState(null)
   const [session, setSession] = useState(null)
   const [sessionCards, setSessionCards] = useState([])
+  // Tracks the new cards pulled into the active session so the daily new-card
+  // count reflects cards actually introduced (answered out of State.New), not
+  // cards merely queued. Bumping the count at session start let an abandoned
+  // session consume the day's new-card allowance without any card being studied.
+  const sessionNewCardsRef = useRef(null)
   const [importMsg, setImportMsg] = useState(null)
   const [ankiSyncMsg, setAnkiSyncMsg] = useState(null)
   const [advanceDays, setAdvanceDays] = useState(3)
@@ -269,14 +274,27 @@ export default function VocabSrsModule() {
   const canStart = due.length > 0 || newCards.length > 0 || rescheduled.length > 0
   const activeDecks = deckList.filter(d => d.active)
 
+  // Recomputes today's new-card count from cards actually introduced this
+  // session — a session card that has left State.New has been studied. Returns
+  // null when no session is tracked, so callers leave newCardDay untouched.
+  function computeNewCardDay(cardsObject) {
+    const tracker = sessionNewCardsRef.current
+    if (!tracker) return null
+    let introduced = 0
+    for (const id of tracker.ids) {
+      const card = cardsObject[id]
+      if (card && card.state !== State.New) introduced++
+    }
+    return { date: todayStr, count: tracker.baseline + introduced }
+  }
+
   function handleStartReview(newPerDay) {
     const { due: d, newCards: n, rescheduled } = getTodaysQueue(cardsObj, decks, { newPerDay })
 
-    const prevCount = newCardDay.date === todayStr ? newCardDay.count : 0
-    let currentProgress = {
-      ...progress,
-      newCardDay: { date: todayStr, count: prevCount + n.length },
-    }
+    const baseline = newCardDay.date === todayStr ? newCardDay.count : 0
+    sessionNewCardsRef.current = { ids: new Set(n.map(c => c.id)), baseline }
+
+    let currentProgress = { ...progress }
 
     const allDue = [...d]
     if (rescheduled.length > 0) {
@@ -300,22 +318,32 @@ export default function VocabSrsModule() {
   function handleCardSave(updatedSessionCards) {
     const newCardsObj = { ...cardsObj, ...resolvedArrayToCardsObj(updatedSessionCards, decks) }
     const newProgress = { ...progress, cards: newCardsObj }
+    const newCardDayUpdate = computeNewCardDay(newCardsObj)
+    if (newCardDayUpdate) newProgress.newCardDay = newCardDayUpdate
     setProgress(newProgress)
     save(newProgress)
   }
 
   function handleDrillDone(updatedSessionCards, goodCount) {
     const newCardsObj = { ...cardsObj, ...resolvedArrayToCardsObj(updatedSessionCards, decks) }
+    const newCardDayUpdate = computeNewCardDay(newCardsObj)
     const newProgress = {
       ...progress,
       cards: newCardsObj,
       lastSession: new Date().toISOString(),
       totalReviews: (progress.totalReviews ?? 0) + goodCount,
+      ...(newCardDayUpdate ? { newCardDay: newCardDayUpdate } : {}),
     }
+    sessionNewCardsRef.current = null
     setProgress(newProgress)
     save(newProgress)
     setSession(null)
     setSessionCards([])
+  }
+
+  function handleExitSession() {
+    sessionNewCardsRef.current = null
+    setSession(null)
   }
 
   function handleToggleDeck(deckId) {
@@ -706,7 +734,7 @@ export default function VocabSrsModule() {
             leechThreshold={leechThreshold}
             isMobile={isMobile}
             onShowOptions={() => setShowOptions(v => !v)}
-            crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'SRS', onClick: () => setSession(null) }]}
+            crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'SRS', onClick: handleExitSession }]}
           />
         ) : (
           <div style={{ height: '100%', display: 'flex', flexDirection: 'column', color: TEXT }}>
