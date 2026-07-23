@@ -516,14 +516,14 @@ const newCardsIntroducedToday = newCardDay.date === todayStr ? newCardDay.count 
 const effectiveNewPerDay = Math.max(0, dailyNewCards - newCardsIntroducedToday)
 ```
 
-When a session starts, `newCardDay` is updated immediately before the drill renders.
+`newCardDay.count` reflects new cards **actually introduced** — cards that have been answered out of `State.New` — not cards merely pulled into a session. It is **not** bumped when a review starts: `handleStartReview` records the session's new-card ids and the day's baseline count in `sessionNewCardsRef`, and `computeNewCardDay` recounts on every card save (and on session done) as `baseline + (session new cards no longer in State.New)`. This way, starting a review of N new cards and quitting without studying them does not consume the daily allowance, and undo lowers the count back. (Historically the count was incremented up-front at session start, which made an abandoned session report "no new left".)
 
 ### Session flow
 
 1. Compute `effectiveNewPerDay = max(0, dailyNewCards - newCardsIntroducedToday)`.
 2. `getTodaysQueue(cardsObj, decks, { newPerDay: effectiveNewPerDay })` returns `{ due, newCards, rescheduled }`.
 3. `canStart = due.length > 0 || newCards.length > 0 || rescheduled.length > 0`. Rescheduled cards are included so advancing many days doesn't produce "Nothing due".
-4. On "Start review": `newCardDay` saved with updated count; rescheduled cards merged into `due` (their updated due dates saved); all cards resolved via `resolveCard`.
+4. On "Start review": the session's new-card ids + day baseline are stashed in `sessionNewCardsRef` (count is **not** bumped yet — see Daily new card limit); rescheduled cards merged into `due` (their updated due dates saved); all cards resolved via `resolveCard`.
 5. `initSession(resolvedDue, resolvedNewCards)` creates the session object.
 6. Drill calls `getCurrentCard(session)` each render — skips cards with a future `waitUntil`.
 7. `answerCard(session, card, rating, { leechThreshold })` returns `{ session, updatedCard, isLeech }`.
