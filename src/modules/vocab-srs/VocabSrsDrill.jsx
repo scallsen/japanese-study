@@ -13,9 +13,14 @@ import { kanjiCharsOf } from '../../utils/kanjiMeaningLookup.js'
 
 const CARD_BG = '#E8E4DE'
 const RELEARN_STEP_LABEL = '10m'
-// Must match FlipCard.css's .fc-inner transition duration — content is swapped only
-// after the flip-back animation finishes, so the next card's face never appears mid-rotation.
-const FLIP_ANIMATION_MS = 450
+// Advance timings mirror VocabPage's verdict handler: the answered card slides/fades out
+// via FlipCard.css's cardExit* keyframes, then the next card's own content mounts fresh
+// (no 3D flip-back) via cardEnter — a single continuous motion instead of un-flipping the
+// current card back to its own front before jump-cutting to the next one.
+const EXIT_MS = 280
+const CLEAR_MS = 600
+const UNDO_EXIT_MS = 200
+const UNDO_CLEAR_MS = 580
 
 const AUDIO_BASE = import.meta.env.VITE_SUPABASE_URL
   ? `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/audio/imported`
@@ -183,10 +188,11 @@ function AudioButton({ label, onClick }) {
   )
 }
 
-function RatingButton({ label, hint, interval, color, onClick, flex = 1 }) {
+function RatingButton({ label, hint, interval, color, onClick, flex = 1, disabled = false }) {
   return (
     <button
       onClick={onClick}
+      disabled={disabled}
       className="verdict-btn"
       style={{
         flex,
@@ -198,7 +204,8 @@ function RatingButton({ label, hint, interval, color, onClick, flex = 1 }) {
         color: '#fff',
         border: 'none',
         borderRadius: 8,
-        cursor: 'pointer',
+        cursor: disabled ? 'default' : 'pointer',
+        opacity: disabled ? 0.6 : 1,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -274,6 +281,9 @@ export default function VocabSrsDrill({
   const [flipped, setFlipped] = useState(false)
   const [optionsHovered, setOptionsHovered] = useState(false)
   const [leechNotice, setLeechNotice] = useState(null)
+  const [transitioning, setTransitioning] = useState(false)
+  const [exitDir, setExitDir] = useState(null)
+  const [undoEntering, setUndoEntering] = useState(false)
 
   // Force re-render every second so waitUntil countdowns and card availability update.
   const [, setTick] = useState(0)
@@ -300,23 +310,7 @@ export default function VocabSrsDrill({
   const flippedRef = useRef(false)
   flippedRef.current = flipped
   const transitioningRef = useRef(false)
-
-  // Unflips immediately, but only swaps in the new session/card content once the
-  // flip-back animation (if any is actually playing) has finished — otherwise the
-  // next card's front face becomes visible partway through the rotation.
-  function runAdvance(apply) {
-    const wasFlipped = flippedRef.current
-    setFlipped(false)
-    if (wasFlipped && showVisualEffects) {
-      transitioningRef.current = true
-      setTimeout(() => {
-        apply()
-        transitioningRef.current = false
-      }, FLIP_ANIMATION_MS)
-    } else {
-      apply()
-    }
-  }
+  useEffect(() => { transitioningRef.current = transitioning }, [transitioning])
 
   const audioCurrentRef = useRef(null)
   const audioPreloadRef = useRef({ audio: null, filename: null })
@@ -391,16 +385,23 @@ export default function VocabSrsDrill({
     const { session: newSession, updatedCard, isLeech } = answerCard(
       sessionRef.current, currentCard, rating, { leechThreshold }
     )
-    runAdvance(() => {
+    setTransitioning(true)
+    setExitDir(rating === Rating.Again ? 'down' : 'up')
+    const exitDelay = showVisualEffects ? EXIT_MS : 0
+    const clearDelay = showVisualEffects ? CLEAR_MS : 0
+    setTimeout(() => {
       const updatedCards = localCardsRef.current.map(c => c.id === updatedCard.id ? updatedCard : c)
       setLocalCards(updatedCards)
       setSession(newSession)
+      setFlipped(false)
       onCardSave(updatedCards)
       if (isLeech) {
         setLeechNotice(currentCard.front)
         setTimeout(() => setLeechNotice(null), 4000)
       }
-    })
+      setExitDir(null)
+    }, exitDelay)
+    setTimeout(() => setTransitioning(false), clearDelay)
   }
 
   const handleFlipRef = useRef()
@@ -425,7 +426,11 @@ export default function VocabSrsDrill({
     const { session: prevSession, revertedCard } = undoLastAnswer(sessionRef.current)
     if (prevSession === sessionRef.current) return
     stopAudioRef.current()
-    runAdvance(() => {
+    setTransitioning(true)
+    setExitDir('undo')
+    const exitDelay = showVisualEffects ? UNDO_EXIT_MS : 0
+    const clearDelay = showVisualEffects ? UNDO_CLEAR_MS : 0
+    setTimeout(() => {
       if (revertedCard) {
         seenRef.current.delete(revertedCard.id)
         const revertedCards = localCardsRef.current.map(c => c.id === revertedCard.id ? revertedCard : c)
@@ -433,7 +438,11 @@ export default function VocabSrsDrill({
         onCardSave(revertedCards)
       }
       setSession(prevSession)
-    })
+      setFlipped(false)
+      setExitDir(null)
+      setUndoEntering(true)
+    }, exitDelay)
+    setTimeout(() => { setTransitioning(false); setUndoEntering(false) }, clearDelay)
   }
 
   const handleReplayRef = useRef()
@@ -615,6 +624,15 @@ export default function VocabSrsDrill({
     ? <SrsCardFace text={currentCard.front} kana={currentCard.kana} isBack={true} showFurigana={showFurigana} backText={currentCard.back} sentence={currentCard.sentence} sentenceEnglish={currentCard.sentenceEnglish} showTranslation={showTranslation} showSentence={showSentence} showKanjiMeaning={showKanjiMeaning} pixelFont={pixelFont} />
     : null
 
+  let cardClass = ''
+  if (showVisualEffects) {
+    if (exitDir === 'up') cardClass = 'card-exit-up'
+    else if (exitDir === 'down') cardClass = 'card-exit-down'
+    else if (exitDir === 'undo') cardClass = 'card-exit-undo'
+    else if (undoEntering) cardClass = 'card-entering-undo'
+    else if (transitioning) cardClass = 'card-entering'
+  }
+
   return (
     <div style={{
       height: '100%',
@@ -674,7 +692,7 @@ export default function VocabSrsDrill({
           </div>
         ) : (
           <>
-            <div style={{ position: 'relative' }}>
+            <div key={currentCard.id} className={cardClass} style={{ position: 'relative' }}>
               <div style={{
                 width: 'min(380px, calc(100vw - 32px), calc(var(--card-max-h, 9999px) * 380 / 280))',
                 aspectRatio: '380 / 280',
@@ -744,6 +762,7 @@ export default function VocabSrsDrill({
                   interval={againInterval ?? (intervals ? formatInterval(intervals[Rating.Again]) : null)}
                   color="rgba(192,57,43,0.75)"
                   onClick={() => handleAnswerRef.current(Rating.Again)}
+                  disabled={transitioning}
                 />
                 {showHardEasy && (
                   <RatingButton
@@ -752,6 +771,7 @@ export default function VocabSrsDrill({
                     interval={intervals ? formatInterval(intervals[Rating.Hard]) : null}
                     color="rgba(180,120,40,0.75)"
                     onClick={() => handleAnswerRef.current(Rating.Hard)}
+                    disabled={transitioning}
                   />
                 )}
                 <RatingButton
@@ -760,6 +780,7 @@ export default function VocabSrsDrill({
                   interval={intervals ? formatInterval(intervals[Rating.Good]) : null}
                   color="rgba(39,174,96,0.75)"
                   onClick={() => handleAnswerRef.current(Rating.Good)}
+                  disabled={transitioning}
                 />
                 {showHardEasy && (
                   <RatingButton
@@ -768,6 +789,7 @@ export default function VocabSrsDrill({
                     interval={intervals ? formatInterval(intervals[Rating.Easy]) : null}
                     color="rgba(41,128,185,0.75)"
                     onClick={() => handleAnswerRef.current(Rating.Easy)}
+                    disabled={transitioning}
                   />
                 )}
               </div>
@@ -775,6 +797,7 @@ export default function VocabSrsDrill({
             {stats.canUndo && (
               <button
                 onClick={() => handleUndoRef.current()}
+                disabled={transitioning}
                 style={{
                   padding: '6px 16px',
                   fontSize: FS_BASE,
@@ -784,7 +807,8 @@ export default function VocabSrsDrill({
                   color: 'rgba(255,255,255,0.35)',
                   border: '1px solid rgba(255,255,255,0.12)',
                   borderRadius: 6,
-                  cursor: 'pointer',
+                  cursor: transitioning ? 'default' : 'pointer',
+                  opacity: transitioning ? 0.5 : 1,
                 }}
               >
                 Undo [Z]
