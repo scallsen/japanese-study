@@ -13,6 +13,9 @@ import { kanjiCharsOf } from '../../utils/kanjiMeaningLookup.js'
 
 const CARD_BG = '#E8E4DE'
 const RELEARN_STEP_LABEL = '10m'
+// Must match FlipCard.css's .fc-inner transition duration — content is swapped only
+// after the flip-back animation finishes, so the next card's face never appears mid-rotation.
+const FLIP_ANIMATION_MS = 450
 
 const AUDIO_BASE = import.meta.env.VITE_SUPABASE_URL
   ? `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/audio/imported`
@@ -296,6 +299,24 @@ export default function VocabSrsDrill({
   const seenRef = useRef(new Set())
   const flippedRef = useRef(false)
   flippedRef.current = flipped
+  const transitioningRef = useRef(false)
+
+  // Unflips immediately, but only swaps in the new session/card content once the
+  // flip-back animation (if any is actually playing) has finished — otherwise the
+  // next card's front face becomes visible partway through the rotation.
+  function runAdvance(apply) {
+    const wasFlipped = flippedRef.current
+    setFlipped(false)
+    if (wasFlipped && showVisualEffects) {
+      transitioningRef.current = true
+      setTimeout(() => {
+        apply()
+        transitioningRef.current = false
+      }, FLIP_ANIMATION_MS)
+    } else {
+      apply()
+    }
+  }
 
   const audioCurrentRef = useRef(null)
   const audioPreloadRef = useRef({ audio: null, filename: null })
@@ -360,6 +381,7 @@ export default function VocabSrsDrill({
 
   const handleAnswerRef = useRef()
   handleAnswerRef.current = (rating) => {
+    if (transitioningRef.current) return
     const currentCard = getCurrentCard(sessionRef.current)
     if (!currentCard) return
     if (sfxEnabled) sfx.play(rating === Rating.Again ? 'flip_card_wrong' : 'flip_card_correct')
@@ -369,19 +391,21 @@ export default function VocabSrsDrill({
     const { session: newSession, updatedCard, isLeech } = answerCard(
       sessionRef.current, currentCard, rating, { leechThreshold }
     )
-    const updatedCards = localCardsRef.current.map(c => c.id === updatedCard.id ? updatedCard : c)
-    setLocalCards(updatedCards)
-    setSession(newSession)
-    setFlipped(false)
-    onCardSave(updatedCards)
-    if (isLeech) {
-      setLeechNotice(currentCard.front)
-      setTimeout(() => setLeechNotice(null), 4000)
-    }
+    runAdvance(() => {
+      const updatedCards = localCardsRef.current.map(c => c.id === updatedCard.id ? updatedCard : c)
+      setLocalCards(updatedCards)
+      setSession(newSession)
+      onCardSave(updatedCards)
+      if (isLeech) {
+        setLeechNotice(currentCard.front)
+        setTimeout(() => setLeechNotice(null), 4000)
+      }
+    })
   }
 
   const handleFlipRef = useRef()
   handleFlipRef.current = () => {
+    if (transitioningRef.current) return
     if (sfxEnabled) sfx.play('flip_card')
     const currentCard = getCurrentCard(sessionRef.current)
     if (audioEnabled && autoplayBack && currentCard) {
@@ -397,17 +421,19 @@ export default function VocabSrsDrill({
 
   const handleUndoRef = useRef()
   handleUndoRef.current = () => {
+    if (transitioningRef.current) return
     const { session: prevSession, revertedCard } = undoLastAnswer(sessionRef.current)
     if (prevSession === sessionRef.current) return
     stopAudioRef.current()
-    if (revertedCard) {
-      seenRef.current.delete(revertedCard.id)
-      const revertedCards = localCardsRef.current.map(c => c.id === revertedCard.id ? revertedCard : c)
-      setLocalCards(revertedCards)
-      onCardSave(revertedCards)
-    }
-    setSession(prevSession)
-    setFlipped(false)
+    runAdvance(() => {
+      if (revertedCard) {
+        seenRef.current.delete(revertedCard.id)
+        const revertedCards = localCardsRef.current.map(c => c.id === revertedCard.id ? revertedCard : c)
+        setLocalCards(revertedCards)
+        onCardSave(revertedCards)
+      }
+      setSession(prevSession)
+    })
   }
 
   const handleReplayRef = useRef()
@@ -661,6 +687,7 @@ export default function VocabSrsDrill({
                   height="100%"
                   flipped={flipped}
                   onFlip={(next) => {
+                    if (transitioningRef.current) return
                     setFlipped(next)
                     if (next) {
                       if (sfxEnabled) sfx.play('flip_card')
