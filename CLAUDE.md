@@ -38,6 +38,7 @@ Two patterns for internal modules. Pick the right one before looking for code:
 | Dashboard layout / module cards | `src/pages/DashboardPage.jsx`, `src/data/modules.js`, `src/components/ModuleCard.jsx` |
 | Vocabulary drill (`#/vocab`) | `src/pages/VocabPage.jsx` + its components listed below |
 | Vocab SRS (`#/vocab-srs`) | `src/modules/vocab-srs/` only |
+| Grammar Map (`#/grammar-map`) | `src/modules/grammar-map/` only |
 | Auth / sign-in flow | `src/context/AuthContext.jsx`, `src/components/AuthSlot.jsx` |
 | Progress sync (Supabase / localStorage) | `src/hooks/useProgress.js` |
 | Shared UI components | `src/components/` |
@@ -57,6 +58,7 @@ Two patterns for internal modules. Pick the right one before looking for code:
 | `#/immersion` | `ImmersionModule` | `src/modules/immersion/ImmersionModule.jsx` |
 | `#/grammar-map` | `GrammarMapModule` | `src/modules/grammar-map/GrammarMapModule.jsx` |
 | `#/dictionary` | `DictionaryPage` | `src/pages/DictionaryPage.jsx` |
+| `#/dictionary/entry/:id` | `DictionaryEntryPage` | `src/pages/DictionaryEntryPage.jsx` |
 | `#/story` | `StoryModule` | `src/modules/story/StoryModule.jsx` |
 | `#/story/:id` | `StoryReviewPage` | `src/modules/story/StoryReviewPage.jsx` |
 
@@ -76,6 +78,7 @@ Each entry in `src/data/modules.js`:
   external: boolean,    // true → opens in new tab; false → hash navigation
   accent: string,       // CSS color string (currently unused in card design)
   requiresAuth: boolean,// true → dashboard card shows auth-gated state
+  icon: string,          // optional — path to an icon image, used instead of accent (see 'katsuyou' entry)
 }
 ```
 
@@ -109,6 +112,8 @@ Used by multiple modules/pages:
 | `DrawerCheckbox.jsx` | Checkbox setting row |
 | `DrawerSelect.jsx` | Dropdown setting row |
 | `ModuleCard.jsx` | Dashboard module card |
+| `HeaderMenu.jsx` | Icon-button row that collapses into a dropdown below a width breakpoint — used for module header actions (e.g. Vocab drill, SRS) |
+| `SpeakerIcon.jsx` | Muted/unmuted speaker SVG icon |
 
 ### PageHeader
 
@@ -164,6 +169,8 @@ Mirrors katsuyou-drill's UI exactly. Speed-mode only (no text input). Card front
 | `src/hooks/useAudioGenerationStatus.js` | Polls the `audio_generation_status` row — drives the "Audio is being generated" note |
 | `src/hooks/useSFX.js` | Web Audio API sound effects (no asset files) |
 | `src/hooks/useGamepad.js` | Gamepad controller support (VocabPage-only) |
+| `src/hooks/useKanjiMeanings.js` | `useKanjiMeanings(text, enabled)` → `{ [kanjiChar]: firstGloss }` — resolves per-kanji meanings for the "Show kanji meanings" bar; shared with Vocab SRS |
+| `src/utils/kanjiMeaningLookup.js` | `kanjiCharsOf(str)` (extracts Han-script chars) + `fetchKanjiMeanings(chars)` (queries the `kanji` table, module-level cache) — backs `useKanjiMeanings` |
 | `src/utils/voicevoxAudio.js` | Voicevox voice list, audio-source picker options, Storage URL helper — shared with Vocab SRS |
 | `src/engines/simpleQueue.js` | Card queue engine — wrong cards reinsert after 3 |
 | `src/utils/furigana.js` | `buildFurigana(kanji, kana)` → decomposed furigana parts |
@@ -212,6 +219,10 @@ Each word object in a `src/data/words/*.json` file:
 }
 ```
 
+### Per-kanji meanings
+
+`vocab-show-kanji-meaning` (default `false`) toggles a `KanjiMeaningBar` row on the card back showing each kanji character in the word alongside its first `kanji` table gloss (via `useKanjiMeanings`/`kanjiMeaningLookup.js`, see Key files above). `KanjiMeaningBar` is defined locally in both `VocabCard.jsx` and `VocabSrsDrill.jsx` (not extracted to a shared component). The SRS module has the equivalent `srs-show-kanji-meaning` setting (see SRS settings table below).
+
 ### Adding a word list
 
 **Flat source (no sublists):**
@@ -258,6 +269,8 @@ grant all on audio_generation_status to service_role;
 **Attribution**: Voicevox's license requires a discoverable text credit for each character voice used. Each voice's credit string (`"四国めたん by Voicevox"` / `"玄野武宏 by Voicevox"`, in `VOICEVOX_VOICES` in `src/utils/voicevoxAudio.js` — an intentional exception to the "no Japanese in the UI" convention, since the license's own examples credit the Japanese character name) renders as its own line directly below the "Text to speech" select (`getVoicevoxCredit(audioSource)`) — not as the select's `subtext` (that renders above the control, which would read as a field description rather than a credit) — and only while that voice is the selected option, hidden entirely when "Browser TTS" is selected.
 
 **Playback priority** (both Vocab drill and Vocab SRS): recorded file audio (Core 2000's Anki audio, SRS-only) → Voicevox audio for the selected voice, if generated → browser TTS. The audio-source picker (`AUDIO_SOURCE_OPTIONS` in `src/utils/voicevoxAudio.js`, labeled "Text to speech" in both settings drawers) offers "Shikoku Metan (female)", "Kurono Takehiro (male)", and "Browser TTS"; picking a Voicevox voice still silently falls back to browser TTS for any entry that voice hasn't been generated for yet.
+
+**Audio preload** (Vocab drill only): a `useEffect` in `VocabPage.jsx` preloads the current card's Voicevox audio plus the next few upcoming cards (`AUDIO_PRELOAD_COUNT`) into an `Audio` object cache keyed by URL, so flipping to a card doesn't wait on a network fetch. The cache is trimmed to the current window (current + upcoming) on every card change/audio-source change.
 
 ### Layout
 - Desktop: main content area + chevron toggle + collapsible sidebar (420px wide)
@@ -341,6 +354,9 @@ Anki-style spaced repetition using [ts-fsrs](https://github.com/open-spaced-repe
 | `src/modules/vocab-srs/srs.test.js` | Vitest unit tests for srs.js |
 | `src/modules/vocab-srs/session.test.js` | Vitest unit tests for session.js |
 | `src/modules/vocab-srs/import.test.js` | Vitest unit tests for import.js |
+| `scripts/generate-deck-json.mjs` | One-off — converts an Anki Core 2000 TSV export to `decks/core2000.json` |
+| `scripts/upload-audio.mjs` | One-off — uploads Core 2000 Anki audio files to Supabase Storage `audio/imported/` |
+| `scripts/anki-sync.py` | One-off — exports FSRS scheduling state from a local Anki Core 2000 deck to a JSON file importable into this app's SRS module, for migrating existing Anki progress |
 
 **Note:** `config.js` exists in the directory but is not imported anywhere — it is vestigial and can be ignored.
 
@@ -370,6 +386,7 @@ resolveCard(cardState)
 previewIntervals(card, now?) → { [Rating.Again|Hard|Good|Easy]: Date }
 
 // Stats
+getStats(cards)                  // → { dueToday, newAvailable, learned } for a flat card array — only used internally by the vestigial config.js, see note above
 getDeckStats(cardsObj, deckId)   → { total, dueToday, newAvailable, learned }
 getGlobalStats(cardsObj, decks)  → { totalCards, dueToday, newAvailable, learned, estimatedMinutes, activeDecks }
 getCardStateCounts(cardsObj, decks) → { unlearned, learning, graduated, relearning }
@@ -553,6 +570,7 @@ All keys use `srs-` prefix. The VocabSrsModule reads these on mount; VocabSrsDri
 | `srs-show-furigana` | `true` | Show kana reading on card front; always shown on back |
 | `srs-show-translation` | `true` | Show English translation on card back |
 | `srs-show-sentence` | `true` | Show example sentence on card back |
+| `srs-show-kanji-meaning` | `false` | Show per-kanji meaning bar on card back (see Per-kanji meanings under Vocabulary Drill) |
 | `srs-pixel-font` | `true` | Use DotGothic16 pixel font on cards |
 | `srs-visual-effects` | `true` | Enable card visual effects |
 
@@ -611,10 +629,12 @@ Central dictionary backed by [jmdict-simplified](https://github.com/scriptin/jmd
 create table if not exists dictionary (
   id           text primary key,       -- JMdict entry id
   primary_form text not null,          -- first kanji form, or first kana form if no kanji
+  kanji_forms  text[] not null default '{}',
   kana_forms   text[] not null default '{}',
-  gloss_en     text,                   -- all English glosses joined with '; '
+  gloss_en     text,                   -- all English glosses joined with '; ' (flattened, for search/preview)
   pos          text[],                 -- partOfSpeech codes across all senses
-  common       boolean not null default false
+  common       boolean not null default false,
+  senses       jsonb                   -- full per-sense breakdown, see below
 );
 create index dictionary_primary_form_idx on dictionary (primary_form);
 create index dictionary_kana_forms_gin   on dictionary using gin (kana_forms);
@@ -622,6 +642,8 @@ create index dictionary_common_idx       on dictionary (common);
 grant select on dictionary to anon, authenticated;
 grant all on dictionary to service_role;
 ```
+
+`senses` is an array of `{ gloss[], pos?[], field?[], misc?[], info?[], dialect?[], languageSource?[{lang, text?, wasei?}], related?[], antonym?[] }` — one entry per JMdict sense, built by `transformEntry()` in `scripts/import-jmdict.mjs`. It powers the full-detail view in `DictionaryEntryPage.jsx` (grouped by part-of-speech, with field/misc/dialect tags and cross-references); rows imported before this column existed fall back to rendering `gloss_en` as a flat block.
 
 Lookup in the pipeline uses a two-stage query: stage 1 matches `primary_form` against Kuromoji `basic_form`; stage 2 uses GIN array overlap on `kana_forms` for entries where the basic form is kana but the JMdict primary form is kanji (e.g. `ある` → `有る`).
 
@@ -641,17 +663,75 @@ Articles accumulate indefinitely — there is no cleanup job. The reader fetches
 
 ### SRS bridge
 
-`ImmersionReader` imports `createCard` from `../vocab-srs/srs.js` and writes directly to the `vocab-srs` progress namespace, appending words to an `immersion-words` imported deck (created on first add). This is the only cross-module write in the codebase.
+`ImmersionReader` imports `createCard` from `../vocab-srs/srs.js` and writes directly to the `vocab-srs` progress namespace, appending words to an `immersion-words` imported deck (created on first add). Story generator does the same thing with a `story-words` deck (see Story generator section) — together these are the only cross-module writes in the codebase.
+
+## Grammar Map (`#/grammar-map`, experimental)
+
+**Self-contained module** — `src/modules/grammar-map/`. A dependency graph of Japanese grammar points rendered with [`@xyflow/react`](https://reactflow.dev/) (React Flow). Grammar points that share the same prerequisite set are laid out as columns inside a shared group box; points are visually "locked" until their prerequisites are marked known, gamifying the learning order. Progress (which points are marked known) is local-only — `localStorage` key `grammar-map-known`, no `useProgress`/Supabase involvement, no sign-in required.
+
+### Key files
+
+| File | Purpose |
+|---|---|
+| `src/modules/grammar-map/GrammarMapModule.jsx` | The whole module — graph state, side panel (progress stats + selected-node detail), core-only filter, known/unknown toggling |
+| `src/modules/grammar-map/GrammarNode.jsx` | React Flow node renderer for a single grammar point (locked/unlocked/known/selected visual states) |
+| `src/modules/grammar-map/GrammarGroupNode.jsx` | React Flow node renderer for a group box (the column of nodes sharing one prerequisite set) |
+| `src/modules/grammar-map/grammarNodes.js` | Joins `grammar-list.json` (content) with `grammar-deps.json` (prereqs) into `GRAMMAR_NODES` — the data the module renders |
+| `src/modules/grammar-map/layout.js` | `computeGroupedLayout(nodes)` — groups nodes by identical prereq set, lays out each group as a 3-column grid via `dagre`, positions groups relative to each other |
+| `src/modules/grammar-map/grammar-list.json` | Grammar point content — `{ id, term, level, description, meaning, example, jlptLevel, category }[]`. Duplicated at the repo root; see Data pipeline below |
+| `src/modules/grammar-map/grammar-deps.json` | Grammar point prerequisites — `{ term, level, prereqs[], jlptLevel, category }[]`. Duplicated at the repo root |
+
+### Data pipeline (one-off, run manually)
+
+The grammar data was built once via a chain of scripts, each reading/writing the **root-level** `grammar-list.json`/`grammar-deps.json` (the module's copies under `src/modules/grammar-map/` are the ones actually imported by the app and must be kept in sync — some scripts write both copies, some only the root):
+
+1. `scripts/extract-dojg-grammar.mjs` — extracts JLPT grammar entries from the DOJG Yomichan dictionary → writes root `grammar-list.json`.
+2. `scripts/generate-grammar-deps.mjs` — asks Claude to infer prerequisite relationships between grammar points in `grammar-list.json` → writes root `grammar-deps.json`. Requires `ANTHROPIC_API_KEY`.
+3. `scripts/enrich-grammar-jlpt.mjs` — asks Claude to assign a JLPT level (N5–N1) to each point → writes `jlptLevel` back into **both copies** of both JSON files. Requires `ANTHROPIC_API_KEY`.
+4. `scripts/enrich-grammar-category.mjs` — asks Claude to classify each point into one of six functional categories → writes `category` back into **both copies** of `grammar-list.json`. Requires `ANTHROPIC_API_KEY`.
+
+There is no automation (no GitHub Actions workflow) re-running this pipeline — it's a manual, occasional process for adding/correcting grammar data.
+
+### `GRAMMAR_NODES` shape (`grammarNodes.js`)
+
+```js
+{
+  id: string,          // = term
+  label: string,        // = term
+  sublabel: string,     // = meaning
+  description: string,
+  example: string | null,
+  level: string,         // 'basic' | 'intermediate' (from DOJG)
+  jlptLevel: string | null, // 'N5'–'N1'
+  category: string | null,
+  prereqs: string[],    // term ids of prerequisite grammar points
+  position: { x: 0, y: 0 }, // placeholder — real position computed by layout.js
+}
+```
+
+### Layout algorithm (`layout.js`)
+
+`computeGroupedLayout(nodes)` groups nodes that share an identical (sorted) prereq set into one group box, laid out as a `dagre`-positioned 3-column grid inside the box; nodes with a unique prereq set become standalone ("solo") nodes. Groups themselves are then arranged via `dagre`. A synthetic `grp:gateways` group holds all zero-prereq ("foundation") nodes.
+
+### UI behavior
+
+- **Core-only filter**: toggling "Core grammar only" in the side panel filters to N5+N4 nodes only (`CORE_LEVELS`), recomputing the layout and edge set against just the visible subset.
+- **Unlocking**: a node is "unlocked" when every one of its prereqs (that's still visible under the current filter) is in the `known` set. Locked/unlocked/known are three distinct visual states on `GrammarNode`.
+- **Side panel**: shows global progress stats (known/unlocked/locked counts) by default; clicking a node switches it to that node's detail (description, example, "Mark as known" button when unlocked, clickable prerequisite/dependent lists that re-select).
+- Desktop: collapsible side panel with chevron toggle (mirrors the Vocab drill sidebar pattern). Mobile (`useIsMobile(768)`, defined inline): side panel is hidden entirely — the module is desktop-oriented.
 
 ## Dictionary (`#/dictionary`)
 
-**Page-based** (`src/pages/DictionaryPage.jsx`). JMdict-backed dictionary with inline kanji lookup. Searches the Supabase `dictionary` table (JMdict) and the `kanji` table (KANJIDIC2).
+**Page-based** — two routes: `#/dictionary` → `DictionaryPage.jsx` (search) and `#/dictionary/entry/:id` → `DictionaryEntryPage.jsx` (full entry detail). JMdict-backed dictionary with inline kanji lookup. Searches the Supabase `dictionary` table (JMdict) and the `kanji` table (KANJIDIC2).
+
+Each word result row on `DictionaryPage` (`EntryRow`) is a link to `#/dictionary/entry/${entry.id}`, not an inline expansion. `DictionaryEntryPage` re-fetches the full row (including `senses` and `kanji_forms`) plus `kanji` table rows for every kanji character in `primary_form`, and renders: the word with alternate forms, a grouped-by-part-of-speech sense list (via `SensesSection`, using the `senses` jsonb column — falls back to the flat `gloss_en` string for pre-`senses` rows), and a "Kanji" breakdown section listing each component kanji's readings/meanings/grade/JLPT/stroke count/frequency (reusing the same visual card style as the search page's kanji carousel).
 
 ### Key files
 
 | File | Purpose |
 |---|---|
 | `src/pages/DictionaryPage.jsx` | Search UI, query logic, result rendering, kanji carousel |
+| `src/pages/DictionaryEntryPage.jsx` | Full entry detail page — grouped senses, alternate forms, per-kanji breakdown |
 | `scripts/import-jmdict.mjs` | One-time import — populates `dictionary` table from jmdict-simplified JSON |
 | `scripts/import-kanjidic2.mjs` | One-time import — populates `kanji` table from KANJIDIC2 JSON or zip |
 
