@@ -704,7 +704,7 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists }) {
 
 // ── HomeScreen ────────────────────────────────────────────────────────────────
 
-function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selectedSubLists, onToggleSubList, wordCountByList, vocabProgress, onStart, onGlance }) {
+function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selectedSubLists, onToggleSubList, wordCountByList, hasReviewWords, includeReview, onToggleIncludeReview, vocabProgress, onStart, onGlance }) {
   const [startHovered, setStartHovered] = useState(false)
   const canStart = selectedSubLists.length > 0
 
@@ -749,6 +749,11 @@ function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selec
           <option key={source.id} value={source.id}>{source.label}</option>
         ))}
       </select>
+      {hasReviewWords && (
+        <div style={{ marginTop: 4 }}>
+          <DrawerCheckbox checked={includeReview} onChange={onToggleIncludeReview} label="Include review words" />
+        </div>
+      )}
       </div>
 
       {/* Sublist grid */}
@@ -936,6 +941,9 @@ export default function VocabPage() {
   const [showKanjiMeaning, setShowKanjiMeaning] = useState(() => {
     const s = safeLocalStorageGet('vocab-show-kanji-meaning'); return s === null ? false : s === 'true'
   })
+  const [includeReview, setIncludeReview] = useState(() => {
+    const s = safeLocalStorageGet('vocab-include-review'); return s === null ? true : s === 'true'
+  })
   const [pulseColor,       setPulseColor]       = useState(null)
   const [headerHeight,     setHeaderHeight]     = useState(72)
   const headerRef   = useRef(null)
@@ -958,6 +966,7 @@ export default function VocabPage() {
   useEffect(() => { safeLocalStorageSet('vocab-show-translation', showTranslation) },[showTranslation])
   useEffect(() => { safeLocalStorageSet('vocab-show-sentence',    showSentence) },   [showSentence])
   useEffect(() => { safeLocalStorageSet('vocab-show-kanji-meaning', showKanjiMeaning) }, [showKanjiMeaning])
+  useEffect(() => { safeLocalStorageSet('vocab-include-review', includeReview) }, [includeReview])
 
   useEffect(() => {
     const el = headerRef.current
@@ -972,24 +981,30 @@ export default function VocabPage() {
     return source?.lists ?? [{ id: source?.id, label: source?.label }]
   }, [selectedSourceId])
 
+  const hasReviewWords = useMemo(() => {
+    const sourceListKeys = new Set(availableSubLists.map(l => l.id))
+    return WORD_DATA.some(w => sourceListKeys.has(w.listKey) && w.isReview)
+  }, [availableSubLists])
+
   const wordCountByList = useMemo(() => {
     const map = {}
     for (const w of WORD_DATA) {
+      if (!includeReview && w.isReview) continue
       map[w.listKey] = (map[w.listKey] ?? 0) + 1
     }
     return map
-  }, [])
+  }, [includeReview])
 
   const glanceWords = useMemo(() =>
-    WORD_DATA.filter(w => selectedSubLists.includes(w.listKey)),
+    WORD_DATA.filter(w => selectedSubLists.includes(w.listKey) && (includeReview || !w.isReview)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedSubLists.join(',')]
+    [selectedSubLists.join(','), includeReview]
   )
 
   const pool = useMemo(() =>
     glanceWords.map(w => ({ id: w.id, word: w })),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedSubLists.join(',')]
+    [selectedSubLists.join(','), includeReview]
   )
 
   const drill = useDrill(pool, { engine: SimpleQueue })
@@ -1254,6 +1269,9 @@ export default function VocabPage() {
                 selectedSubLists={selectedSubLists}
                 onToggleSubList={id => setSelectedSubLists(prev => toggle(prev, id))}
                 wordCountByList={wordCountByList}
+                hasReviewWords={hasReviewWords}
+                includeReview={includeReview}
+                onToggleIncludeReview={() => setIncludeReview(v => !v)}
                 vocabProgress={vocabProgress}
                 onStart={() => setIsDrilling(true)}
                 onGlance={() => setIsGlancing(true)}

@@ -1,0 +1,4154 @@
+[
+  {
+    "id": "n2-w1d1-001",
+    "kanji": "禁止",
+    "kana": "きんし",
+    "english": "prohibition, forbidden",
+    "sentence": "ここから先は関係者以外立ち入り禁止です。",
+    "listKey": "n2-w1d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d1-002",
+    "kanji": "禁煙",
+    "kana": "きんえん",
+    "english": "no smoking",
+    "sentence": "この建物は全館禁煙です。",
+    "listKey": "n2-w1d1"
+  },
+  {
+    "id": "n2-w1d1-003",
+    "kanji": "煙",
+    "kana": "けむり",
+    "english": "smoke",
+    "sentence": "火事の時は煙を吸わないように注意して逃げましょう。",
+    "listKey": "n2-w1d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d1-004",
+    "kanji": "安静（な）",
+    "kana": "あんせい（な）",
+    "english": "rest quietly, bed rest",
+    "sentence": "しばらく安静に過ごしてください。",
+    "listKey": "n2-w1d1"
+  },
+  {
+    "id": "n2-w1d1-005",
+    "kanji": "静か（な）",
+    "kana": "しずか（な）",
+    "english": "quiet",
+    "sentence": "ここは静かでいい環境ですね。",
+    "listKey": "n2-w1d1"
+  },
+  {
+    "id": "n2-w1d1-006",
+    "kanji": "静まる",
+    "kana": "しずまる",
+    "english": "to calm down, quiet down",
+    "sentence": "ひどい風でしたが、少し静まったようですね。",
+    "listKey": "n2-w1d1"
+  },
+  {
+    "id": "n2-w1d1-007",
+    "kanji": "危機",
+    "kana": "きき",
+    "english": "crisis",
+    "sentence": "会社は経営の危機からようやく抜け出しました。",
+    "listKey": "n2-w1d1"
+  },
+  {
+    "id": "n2-w1d1-008",
+    "kanji": "危ない",
+    "kana": "あぶない",
+    "english": "dangerous",
+    "sentence": "危ないので、動物に近付きすぎないでください。",
+    "listKey": "n2-w1d1"
+  },
+  {
+    "id": "n2-w1d1-009",
+    "kanji": "危うい",
+    "kana": "あやうい",
+    "english": "precarious, risky",
+    "sentence": "スキャンダルによって、彼の地位は危うくなりました。",
+    "listKey": "n2-w1d1"
+  },
+  {
+    "id": "n2-w1d1-010",
+    "kanji": "危険（な）",
+    "kana": "きけん（な）",
+    "english": "dangerous",
+    "sentence": "歩きスマホは危険ですから、おやめください。",
+    "listKey": "n2-w1d1"
+  },
+  {
+    "id": "n2-w1d1-011",
+    "kanji": "険しい",
+    "kana": "けわしい",
+    "english": "steep, harsh",
+    "sentence": "プロジェクトが成功するまでの道は険しそうです。",
+    "listKey": "n2-w1d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d1-012",
+    "kanji": "関心",
+    "kana": "かんしん",
+    "english": "interest, concern",
+    "sentence": "健康への関心が高まっています。",
+    "listKey": "n2-w1d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d1-013",
+    "kanji": "（～に）関する",
+    "kana": "（～に）かんする",
+    "english": "related to",
+    "sentence": "食品の安全に関するレポートを読みました。",
+    "listKey": "n2-w1d1"
+  },
+  {
+    "id": "n2-w1d1-014",
+    "kanji": "関わる",
+    "kana": "かかわる",
+    "english": "to be involved with",
+    "sentence": "命に関わる病気じゃなくて、安心しました。",
+    "listKey": "n2-w1d1"
+  },
+  {
+    "id": "n2-w1d1-015",
+    "kanji": "関係",
+    "kana": "かんけい",
+    "english": "relationship",
+    "sentence": "関係のない質問は後にしてください。",
+    "listKey": "n2-w1d1"
+  },
+  {
+    "id": "n2-w1d1-016",
+    "kanji": "係",
+    "kana": "かかり",
+    "english": "person in charge",
+    "sentence": "係の者におつなぎします。",
+    "listKey": "n2-w1d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d1-017",
+    "kanji": "係員",
+    "kana": "かかりいん",
+    "english": "staff member, attendant",
+    "sentence": "お困りの場合は、係員をお呼びください。",
+    "listKey": "n2-w1d1"
+  },
+  {
+    "id": "n2-w1d1-018",
+    "kanji": "転落",
+    "kana": "てんらく",
+    "english": "fall, tumble",
+    "sentence": "山道で車の転落事故がありました。",
+    "listKey": "n2-w1d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d1-019",
+    "kanji": "落第",
+    "kana": "らくだい",
+    "english": "failing (exam/grade)",
+    "sentence": "大学生の時、1回だけ落第したことがあります。",
+    "listKey": "n2-w1d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d1-020",
+    "kanji": "落ちる",
+    "kana": "おちる",
+    "english": "to fall, drop",
+    "sentence": "マラソンの後半はペースが落ちてしまいました。",
+    "listKey": "n2-w1d1"
+  },
+  {
+    "id": "n2-w1d1-021",
+    "kanji": "落とす",
+    "kana": "おとす",
+    "english": "to drop (something)",
+    "sentence": "山道ではスピードを落としてください。",
+    "listKey": "n2-w1d1"
+  },
+  {
+    "id": "n2-w1d1-022",
+    "kanji": "落石",
+    "kana": "らくせき",
+    "english": "falling rocks",
+    "sentence": "昨日、ここで落石事故がありました。",
+    "listKey": "n2-w1d1"
+  },
+  {
+    "id": "n2-w1d1-023",
+    "kanji": "磁石",
+    "kana": "じしゃく",
+    "english": "magnet",
+    "sentence": "小学校で磁石の実験をしました。",
+    "listKey": "n2-w1d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d1-024",
+    "kanji": "石",
+    "kana": "いし",
+    "english": "stone",
+    "sentence": "よく川に石を投げて遊びました。",
+    "listKey": "n2-w1d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d1-025",
+    "kanji": "飛行場",
+    "kana": "ひこうじょう",
+    "english": "airfield",
+    "sentence": "この近くに飛行場があります。",
+    "listKey": "n2-w1d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d1-026",
+    "kanji": "飛ぶ",
+    "kana": "とぶ",
+    "english": "to fly",
+    "sentence": "ドローンが飛んでいるのを見ました。",
+    "listKey": "n2-w1d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d1-027",
+    "kanji": "飛び出す",
+    "kana": "とびだす",
+    "english": "to jump out, dash out",
+    "sentence": "危ないから道に飛び出したらだめだよ。",
+    "listKey": "n2-w1d1"
+  },
+  {
+    "id": "n2-w1d1-028",
+    "kanji": "駐車場",
+    "kana": "ちゅうしゃじょう",
+    "english": "parking lot",
+    "sentence": "近くに無料の駐車場はありませんか？",
+    "listKey": "n2-w1d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d1-029",
+    "kanji": "駐車",
+    "kana": "ちゅうしゃ",
+    "english": "parking",
+    "sentence": "家の前に駐車しないでください。",
+    "listKey": "n2-w1d1"
+  },
+  {
+    "id": "n2-w1d1-030",
+    "kanji": "四捨五入",
+    "kana": "ししゃごにゅう",
+    "english": "rounding (numbers)",
+    "sentence": "このデータは千の位で四捨五入しています。",
+    "listKey": "n2-w1d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d1-031",
+    "kanji": "捨てる",
+    "kana": "すてる",
+    "english": "to throw away",
+    "sentence": "ゴミはルール通りに捨ててください。",
+    "listKey": "n2-w1d1"
+  },
+  {
+    "id": "n2-w1d1-032",
+    "kanji": "遊泳",
+    "kana": "ゆうえい",
+    "english": "swimming (formal)",
+    "sentence": "ここは流れが速いから、遊泳禁止です。",
+    "listKey": "n2-w1d1"
+  },
+  {
+    "id": "n2-w1d1-033",
+    "kanji": "遊ぶ",
+    "kana": "あそぶ",
+    "english": "to play",
+    "sentence": "子供の時、よくゲームで遊びました。",
+    "listKey": "n2-w1d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d1-034",
+    "kanji": "水泳",
+    "kana": "すいえい",
+    "english": "swimming",
+    "sentence": "彼は水泳の選手です。",
+    "listKey": "n2-w1d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d1-035",
+    "kanji": "泳ぐ",
+    "kana": "およぐ",
+    "english": "to swim",
+    "sentence": "毎週、近所のプールで泳いでいます。",
+    "listKey": "n2-w1d1"
+  },
+  {
+    "id": "n2-w1d2-001",
+    "kanji": "喫茶店",
+    "kana": "きっさてん",
+    "english": "coffee shop",
+    "sentence": "ちょっと喫茶店で休みませんか？",
+    "listKey": "n2-w1d2"
+  },
+  {
+    "id": "n2-w1d2-002",
+    "kanji": "喫煙所",
+    "kana": "きつえんじょ",
+    "english": "smoking area",
+    "sentence": "このビルに喫煙所はありますか？",
+    "listKey": "n2-w1d2"
+  },
+  {
+    "id": "n2-w1d2-003",
+    "kanji": "非～",
+    "kana": "ひ～",
+    "english": "non-, un- (prefix)",
+    "sentence": "そのやり方は非効率ですよ。",
+    "listKey": "n2-w1d2"
+  },
+  {
+    "id": "n2-w1d2-004",
+    "kanji": "非常口",
+    "kana": "ひじょうぐち",
+    "english": "emergency exit",
+    "sentence": "火事の時は非常口から逃げてください。",
+    "listKey": "n2-w1d2"
+  },
+  {
+    "id": "n2-w1d2-005",
+    "kanji": "非常に",
+    "kana": "ひじょうに",
+    "english": "extremely",
+    "sentence": "非常に強い台風が近づいています。",
+    "listKey": "n2-w1d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d2-006",
+    "kanji": "御～",
+    "kana": "ご／お～",
+    "english": "honorific prefix",
+    "sentence": "新年の御挨拶を申し上げます。",
+    "listKey": "n2-w1d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d2-007",
+    "kanji": "御手洗い",
+    "kana": "おてあらい",
+    "english": "restroom",
+    "sentence": "御手洗いはあちらでございます。",
+    "listKey": "n2-w1d2"
+  },
+  {
+    "id": "n2-w1d2-008",
+    "kanji": "御中",
+    "kana": "おんちゅう",
+    "english": "\"attn:\" / to whom it may concern (mail)",
+    "sentence": "会社に手紙を出す時は、宛名の後に「御中」と書きます。",
+    "listKey": "n2-w1d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d2-009",
+    "kanji": "日常",
+    "kana": "にちじょう",
+    "english": "everyday life",
+    "sentence": "日常生活を忘れて南の島でゆっくりしたいです。",
+    "listKey": "n2-w1d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d2-010",
+    "kanji": "常識",
+    "kana": "じょうしき",
+    "english": "common sense",
+    "sentence": "自分の国では常識でも、外国では違うかもしれません。",
+    "listKey": "n2-w1d2"
+  },
+  {
+    "id": "n2-w1d2-011",
+    "kanji": "常に",
+    "kana": "つねに",
+    "english": "always, constantly",
+    "sentence": "いい結果を出すために、常に努力しています。",
+    "listKey": "n2-w1d2"
+  },
+  {
+    "id": "n2-w1d2-012",
+    "kanji": "受験",
+    "kana": "じゅけん",
+    "english": "taking an exam",
+    "sentence": "受験生は大変ですが、親も大変ですね。",
+    "listKey": "n2-w1d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d2-013",
+    "kanji": "受ける",
+    "kana": "うける",
+    "english": "to receive, take (an exam)",
+    "sentence": "明日、仕事の面接を受けます。",
+    "listKey": "n2-w1d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d2-014",
+    "kanji": "付近",
+    "kana": "ふきん",
+    "english": "vicinity",
+    "sentence": "新宿付近は道が混んでいます。",
+    "listKey": "n2-w1d2"
+  },
+  {
+    "id": "n2-w1d2-015",
+    "kanji": "～付き",
+    "kana": "～つき",
+    "english": "included, with",
+    "sentence": "朝食付きのプランはありますか？",
+    "listKey": "n2-w1d2"
+  },
+  {
+    "id": "n2-w1d2-016",
+    "kanji": "受付",
+    "kana": "うけつけ",
+    "english": "reception desk",
+    "sentence": "受付で手続きをしてください。",
+    "listKey": "n2-w1d2"
+  },
+  {
+    "id": "n2-w1d2-017",
+    "kanji": "日付",
+    "kana": "ひづけ",
+    "english": "date",
+    "sentence": "日付も忘れずに記入してください。",
+    "listKey": "n2-w1d2"
+  },
+  {
+    "id": "n2-w1d2-018",
+    "kanji": "案内",
+    "kana": "あんない",
+    "english": "guidance, information",
+    "sentence": "お部屋にご案内いたします。",
+    "listKey": "n2-w1d2"
+  },
+  {
+    "id": "n2-w1d2-019",
+    "kanji": "案",
+    "kana": "あん",
+    "english": "idea, plan",
+    "sentence": "いい案が浮かびましたよ！",
+    "listKey": "n2-w1d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d2-020",
+    "kanji": "以内",
+    "kana": "いない",
+    "english": "within",
+    "sentence": "1週間以内にお返事します。",
+    "listKey": "n2-w1d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d2-021",
+    "kanji": "社内",
+    "kana": "しゃない",
+    "english": "within the company",
+    "sentence": "この会社は、毎年社内旅行があります。",
+    "listKey": "n2-w1d2"
+  },
+  {
+    "id": "n2-w1d2-022",
+    "kanji": "～内",
+    "kana": "～ない",
+    "english": "inside, within",
+    "sentence": "館内での喫煙はご遠慮ください。",
+    "listKey": "n2-w1d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d2-023",
+    "kanji": "内",
+    "kana": "うち",
+    "english": "inside",
+    "sentence": "彼は心の内を話してくれました。",
+    "listKey": "n2-w1d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d2-024",
+    "kanji": "会議室",
+    "kana": "かいぎしつ",
+    "english": "meeting room",
+    "sentence": "第2会議室を予約しておきました。",
+    "listKey": "n2-w1d2"
+  },
+  {
+    "id": "n2-w1d2-025",
+    "kanji": "不思議（な）",
+    "kana": "ふしぎ（な）",
+    "english": "mysterious",
+    "sentence": "昨夜、不思議な夢を見ました。",
+    "listKey": "n2-w1d2"
+  },
+  {
+    "id": "n2-w1d2-026",
+    "kanji": "議論",
+    "kana": "ぎろん",
+    "english": "discussion, debate",
+    "sentence": "何時間も議論して、やっと決まりました。",
+    "listKey": "n2-w1d2"
+  },
+  {
+    "id": "n2-w1d2-027",
+    "kanji": "議員",
+    "kana": "ぎいん",
+    "english": "member of parliament/assembly",
+    "sentence": "今度の議員選挙に出ようと思っています。",
+    "listKey": "n2-w1d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d2-028",
+    "kanji": "文化",
+    "kana": "ぶんか",
+    "english": "culture",
+    "sentence": "日本の伝統文化に興味があります。",
+    "listKey": "n2-w1d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d2-029",
+    "kanji": "化学",
+    "kana": "かがく",
+    "english": "chemistry",
+    "sentence": "この大学は化学の分野で有名です。",
+    "listKey": "n2-w1d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d2-030",
+    "kanji": "～化",
+    "kana": "～か",
+    "english": "-ization (suffix)",
+    "sentence": "このアニメは映画化されることが決まりました。",
+    "listKey": "n2-w1d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d2-031",
+    "kanji": "化粧室",
+    "kana": "けしょうしつ",
+    "english": "restroom, powder room",
+    "sentence": "化粧室はこの奥にあります。",
+    "listKey": "n2-w1d2"
+  },
+  {
+    "id": "n2-w1d2-032",
+    "kanji": "階段",
+    "kana": "かいだん",
+    "english": "stairs",
+    "sentence": "エレベーター故障のため、階段を使ってください。",
+    "listKey": "n2-w1d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d2-033",
+    "kanji": "～階",
+    "kana": "～かい",
+    "english": "floor (counter)",
+    "sentence": "マンションの10階に住んでいます。",
+    "listKey": "n2-w1d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d2-034",
+    "kanji": "段階",
+    "kana": "だんかい",
+    "english": "stage, phase",
+    "sentence": "自動運転車は、まだテストの段階です。",
+    "listKey": "n2-w1d2"
+  },
+  {
+    "id": "n2-w1d2-035",
+    "kanji": "段",
+    "kana": "だん",
+    "english": "step",
+    "sentence": "そこ、段があるから気を付けてください。",
+    "listKey": "n2-w1d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d2-036",
+    "kanji": "手段",
+    "kana": "しゅだん",
+    "english": "means, method",
+    "sentence": "目的のためには手段を選びません。",
+    "listKey": "n2-w1d2"
+  },
+  {
+    "id": "n2-w1d2-037",
+    "kanji": "一段と",
+    "kana": "いちだんと",
+    "english": "even more, further",
+    "sentence": "2月になって一段と寒くなりました。",
+    "listKey": "n2-w1d2"
+  },
+  {
+    "id": "n2-w1d2-038",
+    "kanji": "石段",
+    "kana": "いしだん",
+    "english": "stone steps",
+    "sentence": "神社の前に長い石段があります。",
+    "listKey": "n2-w1d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d3-001",
+    "kanji": "営業",
+    "kana": "えいぎょう",
+    "english": "business operations",
+    "sentence": "10年以上営業の仕事をしています。",
+    "listKey": "n2-w1d3"
+  },
+  {
+    "id": "n2-w1d3-002",
+    "kanji": "放送",
+    "kana": "ほうそう",
+    "english": "broadcast",
+    "sentence": "オリンピックの試合がテレビで放送されます。",
+    "listKey": "n2-w1d3"
+  },
+  {
+    "id": "n2-w1d3-003",
+    "kanji": "開放",
+    "kana": "かいほう",
+    "english": "opening up, releasing",
+    "sentence": "この大学の図書館は、一般の人にも開放されています。",
+    "listKey": "n2-w1d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d3-004",
+    "kanji": "開放厳禁",
+    "kana": "かいほうげんきん",
+    "english": "\"keep closed\" (strictly)",
+    "sentence": "このドアは開放厳禁です。",
+    "listKey": "n2-w1d3"
+  },
+  {
+    "id": "n2-w1d3-005",
+    "kanji": "放す",
+    "kana": "はなす",
+    "english": "to let go, release",
+    "sentence": "危ないから、子供の手を放さないでください。",
+    "listKey": "n2-w1d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d3-006",
+    "kanji": "押す",
+    "kana": "おす",
+    "english": "to push",
+    "sentence": "満員電車で後ろから押されました。",
+    "listKey": "n2-w1d3"
+  },
+  {
+    "id": "n2-w1d3-007",
+    "kanji": "押し入れ",
+    "kana": "おしいれ",
+    "english": "closet (Japanese-style)",
+    "sentence": "押し入れに布団をしまいます。",
+    "listKey": "n2-w1d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d3-008",
+    "kanji": "押さえる",
+    "kana": "おさえる",
+    "english": "to hold down, press",
+    "sentence": "風で飛ばないように、手で帽子を押さえました。",
+    "listKey": "n2-w1d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d3-009",
+    "kanji": "準備",
+    "kana": "じゅんび",
+    "english": "preparation",
+    "sentence": "旅行の準備はもうできましたか？",
+    "listKey": "n2-w1d3"
+  },
+  {
+    "id": "n2-w1d3-010",
+    "kanji": "水準",
+    "kana": "すいじゅん",
+    "english": "level, standard",
+    "sentence": "この技術は世界最高水準です。",
+    "listKey": "n2-w1d3"
+  },
+  {
+    "id": "n2-w1d3-011",
+    "kanji": "準急",
+    "kana": "じゅんきゅう",
+    "english": "semi-express (train)",
+    "sentence": "この駅には準急は停まりません。",
+    "listKey": "n2-w1d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d3-012",
+    "kanji": "準決勝",
+    "kana": "じゅんけっしょう",
+    "english": "semifinal",
+    "sentence": "準決勝で負けてしまいました。",
+    "listKey": "n2-w1d3"
+  },
+  {
+    "id": "n2-w1d3-013",
+    "kanji": "備品",
+    "kana": "びひん",
+    "english": "equipment, supplies",
+    "sentence": "オフィスで使う備品を買いました。",
+    "listKey": "n2-w1d3"
+  },
+  {
+    "id": "n2-w1d3-014",
+    "kanji": "備える",
+    "kana": "そなえる",
+    "english": "to prepare for, equip",
+    "sentence": "災害に備えて、逃げる場所を確認しておきます。",
+    "listKey": "n2-w1d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d3-015",
+    "kanji": "備え付け(の)",
+    "kana": "そなえつけ（の）",
+    "english": "built-in, furnished",
+    "sentence": "備え付けの家具は大切に使ってください。",
+    "listKey": "n2-w1d3"
+  },
+  {
+    "id": "n2-w1d3-016",
+    "kanji": "定員",
+    "kana": "ていいん",
+    "english": "capacity, quota",
+    "sentence": "セミナーの定員は50名です。",
+    "listKey": "n2-w1d3"
+  },
+  {
+    "id": "n2-w1d3-017",
+    "kanji": "定休日",
+    "kana": "ていきゅうび",
+    "english": "regular holiday",
+    "sentence": "定休日は毎月第3水曜日です。",
+    "listKey": "n2-w1d3"
+  },
+  {
+    "id": "n2-w1d3-018",
+    "kanji": "定食",
+    "kana": "ていしょく",
+    "english": "set meal",
+    "sentence": "今日の日替わり定食は何ですか？",
+    "listKey": "n2-w1d3"
+  },
+  {
+    "id": "n2-w1d3-019",
+    "kanji": "定規",
+    "kana": "じょうぎ",
+    "english": "ruler",
+    "sentence": "定規を使って直線を引いてください。",
+    "listKey": "n2-w1d3"
+  },
+  {
+    "id": "n2-w1d3-020",
+    "kanji": "流行",
+    "kana": "りゅうこう",
+    "english": "trend, fashion",
+    "sentence": "冬になると、インフルエンザが流行します。",
+    "listKey": "n2-w1d3"
+  },
+  {
+    "id": "n2-w1d3-021",
+    "kanji": "流れる",
+    "kana": "ながれる",
+    "english": "to flow",
+    "sentence": "値上げしたら、他の店に客が流れてしまいました。",
+    "listKey": "n2-w1d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d3-022",
+    "kanji": "流す",
+    "kana": "ながす",
+    "english": "to let flow, circulate",
+    "sentence": "うその情報を流さないでください。",
+    "listKey": "n2-w1d3"
+  },
+  {
+    "id": "n2-w1d3-023",
+    "kanji": "清書",
+    "kana": "せいしょ",
+    "english": "fair copy, clean draft",
+    "sentence": "レポートに間違いがたくさんあったので、清書しました。",
+    "listKey": "n2-w1d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d3-024",
+    "kanji": "清流",
+    "kana": "せいりゅう",
+    "english": "clear stream",
+    "sentence": "ハイキングの時、清流のそばで休みました。",
+    "listKey": "n2-w1d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d3-025",
+    "kanji": "清い",
+    "kana": "きよい",
+    "english": "pure, clean",
+    "sentence": "清い流れには、いろいろな魚が住んでいます。",
+    "listKey": "n2-w1d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d3-026",
+    "kanji": "清掃",
+    "kana": "せいそう",
+    "english": "cleaning",
+    "sentence": "トイレはただ今清掃中です。",
+    "listKey": "n2-w1d3"
+  },
+  {
+    "id": "n2-w1d3-027",
+    "kanji": "掃く",
+    "kana": "はく",
+    "english": "to sweep",
+    "sentence": "そこのゴミを掃いてください。",
+    "listKey": "n2-w1d3"
+  },
+  {
+    "id": "n2-w1d3-028",
+    "kanji": "閉会",
+    "kana": "へいかい",
+    "english": "closing (of meeting/event)",
+    "sentence": "オリンピックの閉会式に参加しました。",
+    "listKey": "n2-w1d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d3-029",
+    "kanji": "閉店",
+    "kana": "へいてん",
+    "english": "closing (shop)",
+    "sentence": "当店は今月末に閉店いたします。",
+    "listKey": "n2-w1d3"
+  },
+  {
+    "id": "n2-w1d3-030",
+    "kanji": "閉まる",
+    "kana": "しまる",
+    "english": "to close (intransitive)",
+    "sentence": "この店は何時に閉まりますか？",
+    "listKey": "n2-w1d3"
+  },
+  {
+    "id": "n2-w1d3-031",
+    "kanji": "閉める",
+    "kana": "しめる",
+    "english": "to close (transitive)",
+    "sentence": "冷蔵庫のドアをきちんと閉めてください。",
+    "listKey": "n2-w1d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d3-032",
+    "kanji": "閉じる",
+    "kana": "とじる",
+    "english": "to close, shut",
+    "sentence": "テストをしますから、教科書を閉じてください。",
+    "listKey": "n2-w1d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d3-033",
+    "kanji": "点",
+    "kana": "てん",
+    "english": "point",
+    "sentence": "この会社のいい点は、休みが取りやすいことです。",
+    "listKey": "n2-w1d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d3-034",
+    "kanji": "～点",
+    "kana": "～てん",
+    "english": "point(s), aspect",
+    "sentence": "テストで満点を取りました。",
+    "listKey": "n2-w1d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d3-035",
+    "kanji": "欠点",
+    "kana": "けってん",
+    "english": "flaw, weak point",
+    "sentence": "誰にでも欠点はあります。",
+    "listKey": "n2-w1d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w1d3-036",
+    "kanji": "点検",
+    "kana": "てんけん",
+    "english": "inspection",
+    "sentence": "5時からエレベーターの点検を行います。",
+    "listKey": "n2-w1d3"
+  },
+  {
+    "id": "n2-w1d3-037",
+    "kanji": "検問",
+    "kana": "けんもん",
+    "english": "checkpoint",
+    "sentence": "ここに来る時、飲酒運転の検問がありました。",
+    "listKey": "n2-w1d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d1-001",
+    "kanji": "地下鉄",
+    "kana": "ちかてつ",
+    "english": "subway",
+    "sentence": "JRと地下鉄で通勤しています。",
+    "listKey": "n2-w2d1"
+  },
+  {
+    "id": "n2-w2d1-002",
+    "kanji": "私鉄",
+    "kana": "してつ",
+    "english": "private railway",
+    "sentence": "この春、私鉄各社は値上げをするそうです。",
+    "listKey": "n2-w2d1"
+  },
+  {
+    "id": "n2-w2d1-003",
+    "kanji": "同窓会",
+    "kana": "どうそうかい",
+    "english": "alumni reunion",
+    "sentence": "同窓会で久しぶりに学生時代の友達に会いました。",
+    "listKey": "n2-w2d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d1-004",
+    "kanji": "窓",
+    "kana": "まど",
+    "english": "window",
+    "sentence": "天気がいい時は、窓から富士山が見えます。",
+    "listKey": "n2-w2d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d1-005",
+    "kanji": "窓口",
+    "kana": "まどぐち",
+    "english": "service window, counter",
+    "sentence": "銀行の窓口は3時に閉まります。",
+    "listKey": "n2-w2d1"
+  },
+  {
+    "id": "n2-w2d1-006",
+    "kanji": "切符",
+    "kana": "きっぷ",
+    "english": "ticket",
+    "sentence": "最近はICカードがあるから、切符を買わなくなりました。",
+    "listKey": "n2-w2d1"
+  },
+  {
+    "id": "n2-w2d1-007",
+    "kanji": "精算",
+    "kana": "せいさん",
+    "english": "fare adjustment, settlement",
+    "sentence": "乗り越したから精算してきます。",
+    "listKey": "n2-w2d1"
+  },
+  {
+    "id": "n2-w2d1-008",
+    "kanji": "精神",
+    "kana": "せいしん",
+    "english": "spirit, mind",
+    "sentence": "最近、精神的に疲れています。",
+    "listKey": "n2-w2d1"
+  },
+  {
+    "id": "n2-w2d1-009",
+    "kanji": "計算",
+    "kana": "けいさん",
+    "english": "calculation",
+    "sentence": "子供の計算の宿題をチェックしてあげました。",
+    "listKey": "n2-w2d1"
+  },
+  {
+    "id": "n2-w2d1-010",
+    "kanji": "引き算",
+    "kana": "ひきざん",
+    "english": "subtraction",
+    "sentence": "引き算のテストは満点でした。",
+    "listKey": "n2-w2d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d1-011",
+    "kanji": "足し算",
+    "kana": "たしざん",
+    "english": "addition",
+    "sentence": "足し算と引き算は小学校で習います。",
+    "listKey": "n2-w2d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d1-012",
+    "kanji": "改正",
+    "kana": "かいせい",
+    "english": "revision, amendment (law)",
+    "sentence": "法律が改正されて、たばこを吸える場所が減りました。",
+    "listKey": "n2-w2d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d1-013",
+    "kanji": "改める",
+    "kana": "あらためる",
+    "english": "to correct, reform",
+    "sentence": "彼は仕事で大きい失敗をした後、態度を改めました。",
+    "listKey": "n2-w2d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d1-014",
+    "kanji": "改札口",
+    "kana": "かいさつぐち",
+    "english": "ticket gate",
+    "sentence": "改札口を出たところで待ち合わせしましょう。",
+    "listKey": "n2-w2d1"
+  },
+  {
+    "id": "n2-w2d1-015",
+    "kanji": "1万円札",
+    "kana": "1まんえんさつ",
+    "english": "10,000 yen bill",
+    "sentence": "1万円札を千円札10枚に両替してください。",
+    "listKey": "n2-w2d1"
+  },
+  {
+    "id": "n2-w2d1-016",
+    "kanji": "札",
+    "kana": "ふだ",
+    "english": "tag, bill (money)",
+    "sentence": "これ、値札が付いていませんが、いくらですか？",
+    "listKey": "n2-w2d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d1-017",
+    "kanji": "下線",
+    "kana": "かせん",
+    "english": "underline",
+    "sentence": "下線部の言葉を正しい形に直しなさい。",
+    "listKey": "n2-w2d1"
+  },
+  {
+    "id": "n2-w2d1-018",
+    "kanji": "線路",
+    "kana": "せんろ",
+    "english": "railway track",
+    "sentence": "台風で線路内に木が倒れたそうです。",
+    "listKey": "n2-w2d1"
+  },
+  {
+    "id": "n2-w2d1-019",
+    "kanji": "新幹線",
+    "kana": "しんかんせん",
+    "english": "bullet train",
+    "sentence": "新幹線の切符を予約しました。",
+    "listKey": "n2-w2d1"
+  },
+  {
+    "id": "n2-w2d1-020",
+    "kanji": "時刻",
+    "kana": "じこく",
+    "english": "time, scheduled time",
+    "sentence": "飛行機の到着予定時刻は10時ちょうどです。",
+    "listKey": "n2-w2d1"
+  },
+  {
+    "id": "n2-w2d1-021",
+    "kanji": "刻む",
+    "kana": "きざむ",
+    "english": "to chop finely, mince",
+    "sentence": "玉ねぎを細かく刻んでください。",
+    "listKey": "n2-w2d1"
+  },
+  {
+    "id": "n2-w2d1-022",
+    "kanji": "番号",
+    "kana": "ばんごう",
+    "english": "number",
+    "sentence": "暗証番号を忘れてしまいました。",
+    "listKey": "n2-w2d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d1-023",
+    "kanji": "～番線",
+    "kana": "～ばんせん",
+    "english": "platform number",
+    "sentence": "横浜方面の電車は何番線ですか？",
+    "listKey": "n2-w2d1"
+  },
+  {
+    "id": "n2-w2d1-024",
+    "kanji": "符号",
+    "kana": "ふごう",
+    "english": "symbol, sign",
+    "sentence": "この符号はどんな意味ですか？",
+    "listKey": "n2-w2d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d1-025",
+    "kanji": "～号車",
+    "kana": "～ごうしゃ",
+    "english": "train car number",
+    "sentence": "喫煙ルームは10号車にあります。",
+    "listKey": "n2-w2d1"
+  },
+  {
+    "id": "n2-w2d1-026",
+    "kanji": "信号",
+    "kana": "しんごう",
+    "english": "traffic signal",
+    "sentence": "信号をよく見てから、道を渡りましょう。",
+    "listKey": "n2-w2d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d1-027",
+    "kanji": "快速",
+    "kana": "かいそく",
+    "english": "rapid (train)",
+    "sentence": "次の快速に乗ったほうが早く着きますよ。",
+    "listKey": "n2-w2d1"
+  },
+  {
+    "id": "n2-w2d1-028",
+    "kanji": "快い",
+    "kana": "こころよい",
+    "english": "pleasant, willing",
+    "sentence": "彼は快くその仕事を引き受けてくれました。",
+    "listKey": "n2-w2d1"
+  },
+  {
+    "id": "n2-w2d1-029",
+    "kanji": "時速",
+    "kana": "じそく",
+    "english": "speed per hour",
+    "sentence": "新幹線は時速300キロぐらい出ます。",
+    "listKey": "n2-w2d1"
+  },
+  {
+    "id": "n2-w2d1-030",
+    "kanji": "早速",
+    "kana": "さっそく",
+    "english": "immediately, right away",
+    "sentence": "習った文法を早速使ってみました。",
+    "listKey": "n2-w2d1"
+  },
+  {
+    "id": "n2-w2d1-031",
+    "kanji": "速い",
+    "kana": "はやい",
+    "english": "fast",
+    "sentence": "この川は流れが速いので、泳ぐのは危険です。",
+    "listKey": "n2-w2d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d1-032",
+    "kanji": "道路",
+    "kana": "どうろ",
+    "english": "road",
+    "sentence": "道路に飛び出さないように気を付けなさい。",
+    "listKey": "n2-w2d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d1-033",
+    "kanji": "通路",
+    "kana": "つうろ",
+    "english": "passage, aisle",
+    "sentence": "通路に荷物を置かないでください。",
+    "listKey": "n2-w2d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-001",
+    "kanji": "空港",
+    "kana": "くうこう",
+    "english": "airport",
+    "sentence": "空港行きのバス乗り場はどこですか？",
+    "listKey": "n2-w2d2"
+  },
+  {
+    "id": "n2-w2d2-002",
+    "kanji": "港",
+    "kana": "みなと",
+    "english": "harbor, port",
+    "sentence": "港には多くの船が停まっていました。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-003",
+    "kanji": "理由",
+    "kana": "りゆう",
+    "english": "reason",
+    "sentence": "前の仕事を辞めた理由を教えてください。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-004",
+    "kanji": "不自由（な）",
+    "kana": "ふじゆう（な）",
+    "english": "inconvenienced, disabled",
+    "sentence": "体の不自由な人に席をゆずりましょう。",
+    "listKey": "n2-w2d2"
+  },
+  {
+    "id": "n2-w2d2-005",
+    "kanji": "経由",
+    "kana": "けいゆ",
+    "english": "via, by way of",
+    "sentence": "直行便より経由便のほうが安いです。",
+    "listKey": "n2-w2d2"
+  },
+  {
+    "id": "n2-w2d2-006",
+    "kanji": "深夜",
+    "kana": "しんや",
+    "english": "late night, midnight",
+    "sentence": "深夜まで仕事しました。",
+    "listKey": "n2-w2d2"
+  },
+  {
+    "id": "n2-w2d2-007",
+    "kanji": "深刻（な）",
+    "kana": "しんこく（な）",
+    "english": "serious, grave",
+    "sentence": "深刻な病気じゃなくてよかったです。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-008",
+    "kanji": "深い",
+    "kana": "ふかい",
+    "english": "deep",
+    "sentence": "深く考えすぎないほうがいいですよ。",
+    "listKey": "n2-w2d2"
+  },
+  {
+    "id": "n2-w2d2-009",
+    "kanji": "降車口",
+    "kana": "こうしゃぐち",
+    "english": "exit (train/bus)",
+    "sentence": "降車口はあちらです。",
+    "listKey": "n2-w2d2"
+  },
+  {
+    "id": "n2-w2d2-010",
+    "kanji": "下降",
+    "kana": "かこう",
+    "english": "descent, decline",
+    "sentence": "飛行機が下降する時、耳が痛くなりました。",
+    "listKey": "n2-w2d2"
+  },
+  {
+    "id": "n2-w2d2-011",
+    "kanji": "降りる",
+    "kana": "おりる",
+    "english": "to get off, disembark",
+    "sentence": "電車を降りた時、かさを忘れたことに気付きました。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-012",
+    "kanji": "降る",
+    "kana": "ふる",
+    "english": "to fall (rain/snow)",
+    "sentence": "一日中雨が降っていたので、出かけませんでした。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-013",
+    "kanji": "両親",
+    "kana": "りょうしん",
+    "english": "parents",
+    "sentence": "来月、両親が日本に来ます。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-014",
+    "kanji": "両方",
+    "kana": "りょうほう",
+    "english": "both",
+    "sentence": "どちらがいいか迷ったので、両方買いました。",
+    "listKey": "n2-w2d2"
+  },
+  {
+    "id": "n2-w2d2-015",
+    "kanji": "両～",
+    "kana": "りょう～",
+    "english": "both (prefix)",
+    "sentence": "両手で持てないほどたくさん買いました。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-016",
+    "kanji": "～両目",
+    "kana": "～りょうめ",
+    "english": "car number (train car counter)",
+    "sentence": "3両目は女性専用車です。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-017",
+    "kanji": "両替",
+    "kana": "りょうがえ",
+    "english": "currency exchange",
+    "sentence": "この両替ショップはレートがいいですね。",
+    "listKey": "n2-w2d2"
+  },
+  {
+    "id": "n2-w2d2-018",
+    "kanji": "着替える",
+    "kana": "きがえる",
+    "english": "to change clothes",
+    "sentence": "子供が一人で着替えられるようになりました。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-019",
+    "kanji": "為替",
+    "kana": "かわせ",
+    "english": "exchange rate, foreign exchange",
+    "sentence": "輸入品の値段は為替レートの影響を受けます。",
+    "listKey": "n2-w2d2"
+  },
+  {
+    "id": "n2-w2d2-020",
+    "kanji": "家賃",
+    "kana": "やちん",
+    "english": "rent",
+    "sentence": "家賃は月末までに振り込んでください。",
+    "listKey": "n2-w2d2"
+  },
+  {
+    "id": "n2-w2d2-021",
+    "kanji": "運賃",
+    "kana": "うんちん",
+    "english": "fare",
+    "sentence": "子供の運賃は大人の半額です。",
+    "listKey": "n2-w2d2"
+  },
+  {
+    "id": "n2-w2d2-022",
+    "kanji": "分割",
+    "kana": "ぶんかつ",
+    "english": "installment, division",
+    "sentence": "高い買い物なので、分割払いにしました。",
+    "listKey": "n2-w2d2"
+  },
+  {
+    "id": "n2-w2d2-023",
+    "kanji": "割れる",
+    "kana": "われる",
+    "english": "to break, shatter",
+    "sentence": "持って帰ってくる時に、卵が割れてしまいました。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-024",
+    "kanji": "割引",
+    "kana": "わりびき",
+    "english": "discount",
+    "sentence": "この服、セールで3割引だったんです。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-025",
+    "kanji": "時間割",
+    "kana": "じかんわり",
+    "english": "timetable, schedule",
+    "sentence": "新しい時間割が決まりました。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-026",
+    "kanji": "増加",
+    "kana": "ぞうか",
+    "english": "increase",
+    "sentence": "観光客の増加によって、ホテルが足りなくなっています。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-027",
+    "kanji": "増える",
+    "kana": "ふえる",
+    "english": "to increase",
+    "sentence": "最近、一人で遊ぶ子供が増えています。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-028",
+    "kanji": "割増",
+    "kana": "わりまし",
+    "english": "surcharge, premium rate",
+    "sentence": "タクシーの料金は、22時以降割増になります。",
+    "listKey": "n2-w2d2"
+  },
+  {
+    "id": "n2-w2d2-029",
+    "kanji": "優先",
+    "kana": "ゆうせん",
+    "english": "priority",
+    "sentence": "優先順位を考えて仕事しましょう。",
+    "listKey": "n2-w2d2"
+  },
+  {
+    "id": "n2-w2d2-030",
+    "kanji": "優しい",
+    "kana": "やさしい",
+    "english": "kind, gentle",
+    "sentence": "子供には、人に優しくするように言っています。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-031",
+    "kanji": "優れる",
+    "kana": "すぐれる",
+    "english": "to excel, be superior",
+    "sentence": "コンテストには、優れた作品がたくさん集まりました。",
+    "listKey": "n2-w2d2"
+  },
+  {
+    "id": "n2-w2d2-032",
+    "kanji": "席",
+    "kana": "せき",
+    "english": "seat",
+    "sentence": "電車ではお年寄りに席をゆずりましょう。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-033",
+    "kanji": "出席",
+    "kana": "しゅっせき",
+    "english": "attendance",
+    "sentence": "パーティーに出席する人は、明日までに連絡してください。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-034",
+    "kanji": "指定席",
+    "kana": "していせき",
+    "english": "reserved seat",
+    "sentence": "指定席は満席です。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-035",
+    "kanji": "側面",
+    "kana": "そくめん",
+    "english": "side, aspect",
+    "sentence": "これは新しいビルの正面と側面のデザインです。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-036",
+    "kanji": "両側",
+    "kana": "りょうがわ",
+    "english": "both sides",
+    "sentence": "家の両側はマンションなので、日当たりが悪いです。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-037",
+    "kanji": "～側",
+    "kana": "～がわ",
+    "english": "side (suffix)",
+    "sentence": "病院は駅の反対側ですよ。",
+    "listKey": "n2-w2d2"
+  },
+  {
+    "id": "n2-w2d2-038",
+    "kanji": "座席",
+    "kana": "ざせき",
+    "english": "seat",
+    "sentence": "セミナーがもうすぐ始まるので、座席に着いてください。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-039",
+    "kanji": "銀行口座",
+    "kana": "ぎんこうこうざ",
+    "english": "bank account",
+    "sentence": "新しい銀行口座を作りました。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-040",
+    "kanji": "座る",
+    "kana": "すわる",
+    "english": "to sit",
+    "sentence": "ずっと座って仕事していたら、腰が痛くなりました。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-041",
+    "kanji": "寄付",
+    "kana": "きふ",
+    "english": "donation",
+    "sentence": "新しい図書館を建てるために、学校に寄付しました。",
+    "listKey": "n2-w2d2"
+  },
+  {
+    "id": "n2-w2d2-042",
+    "kanji": "取り寄せる",
+    "kana": "とりよせる",
+    "english": "to order, have something sent",
+    "sentence": "人気のスイーツをインターネットで取り寄せました。",
+    "listKey": "n2-w2d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d2-043",
+    "kanji": "立ち寄る",
+    "kana": "たちよる",
+    "english": "to drop by",
+    "sentence": "仕事で近くまで来たので、友達の家に立ち寄りました。",
+    "listKey": "n2-w2d2"
+  },
+  {
+    "id": "n2-w2d2-044",
+    "kanji": "年寄り",
+    "kana": "としより",
+    "english": "elderly person",
+    "sentence": "最近は元気なお年寄りが増えています。",
+    "listKey": "n2-w2d2"
+  },
+  {
+    "id": "n2-w2d3-001",
+    "kanji": "初診",
+    "kana": "しょしん",
+    "english": "first medical visit",
+    "sentence": "初診の際は、保険証をお持ちください。",
+    "listKey": "n2-w2d3"
+  },
+  {
+    "id": "n2-w2d3-002",
+    "kanji": "初めて",
+    "kana": "はじめて",
+    "english": "for the first time",
+    "sentence": "日本に来て初めて納豆を食べました。",
+    "listKey": "n2-w2d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d3-003",
+    "kanji": "初恋",
+    "kana": "はつこい",
+    "english": "first love",
+    "sentence": "初恋は中学生の時です。",
+    "listKey": "n2-w2d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d3-004",
+    "kanji": "初雪",
+    "kana": "はつゆき",
+    "english": "first snow (of the season)",
+    "sentence": "今年の初雪が降りました。",
+    "listKey": "n2-w2d3"
+  },
+  {
+    "id": "n2-w2d3-005",
+    "kanji": "再診",
+    "kana": "さいしん",
+    "english": "follow-up visit (doctor)",
+    "sentence": "同じ月の再診なら、保険証は要りません。",
+    "listKey": "n2-w2d3"
+  },
+  {
+    "id": "n2-w2d3-006",
+    "kanji": "再生",
+    "kana": "さいせい",
+    "english": "playback, regeneration",
+    "sentence": "この商品は再生紙を使っています。",
+    "listKey": "n2-w2d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d3-007",
+    "kanji": "再来年",
+    "kana": "さらいねん",
+    "english": "the year after next",
+    "sentence": "子供は再来年、大学を卒業する予定です。",
+    "listKey": "n2-w2d3"
+  },
+  {
+    "id": "n2-w2d3-008",
+    "kanji": "再び",
+    "kana": "ふたたび",
+    "english": "again, once more",
+    "sentence": "来年再びチャレンジするつもりです。",
+    "listKey": "n2-w2d3"
+  },
+  {
+    "id": "n2-w2d3-009",
+    "kanji": "診療",
+    "kana": "しんりょう",
+    "english": "medical examination, treatment",
+    "sentence": "土曜日の診療時間は9時から12時までです。",
+    "listKey": "n2-w2d3"
+  },
+  {
+    "id": "n2-w2d3-010",
+    "kanji": "治療",
+    "kana": "ちりょう",
+    "english": "medical treatment",
+    "sentence": "今、治療中なので、お酒が飲めません。",
+    "listKey": "n2-w2d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d3-011",
+    "kanji": "医療",
+    "kana": "いりょう",
+    "english": "medical care",
+    "sentence": "医療技術は大きく進歩しました。",
+    "listKey": "n2-w2d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d3-012",
+    "kanji": "科学",
+    "kana": "かがく",
+    "english": "science",
+    "sentence": "世界中で科学の研究が進んでいます。",
+    "listKey": "n2-w2d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d3-013",
+    "kanji": "外科",
+    "kana": "げか",
+    "english": "surgery (department)",
+    "sentence": "外科手術を受けなければいけません。",
+    "listKey": "n2-w2d3"
+  },
+  {
+    "id": "n2-w2d3-014",
+    "kanji": "内科",
+    "kana": "ないか",
+    "english": "internal medicine",
+    "sentence": "お腹が痛いので、内科に行きました。",
+    "listKey": "n2-w2d3"
+  },
+  {
+    "id": "n2-w2d3-015",
+    "kanji": "産婦人科",
+    "kana": "さんふじんか",
+    "english": "obstetrics and gynecology",
+    "sentence": "妊娠中なので、産婦人科に通っています。",
+    "listKey": "n2-w2d3"
+  },
+  {
+    "id": "n2-w2d3-016",
+    "kanji": "主婦",
+    "kana": "しゅふ",
+    "english": "housewife",
+    "sentence": "最近は専業主婦の女性が減ってきました。",
+    "listKey": "n2-w2d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d3-017",
+    "kanji": "婦人",
+    "kana": "ふじん",
+    "english": "woman, lady",
+    "sentence": "この時計は婦人用です。",
+    "listKey": "n2-w2d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d3-018",
+    "kanji": "皮肉（な）",
+    "kana": "ひにく（な）",
+    "english": "ironic, sarcastic",
+    "sentence": "彼はよく皮肉を言います。",
+    "listKey": "n2-w2d3"
+  },
+  {
+    "id": "n2-w2d3-019",
+    "kanji": "皮",
+    "kana": "かわ",
+    "english": "skin, peel",
+    "sentence": "りんごの皮をむかないで食べる時は、よく洗いましょう。",
+    "listKey": "n2-w2d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d3-020",
+    "kanji": "皮膚",
+    "kana": "ひふ",
+    "english": "skin",
+    "sentence": "アレルギーが出たので、皮膚科に行ってきます。",
+    "listKey": "n2-w2d3"
+  },
+  {
+    "id": "n2-w2d3-021",
+    "kanji": "救急",
+    "kana": "きゅうきゅう",
+    "english": "emergency (medical)",
+    "sentence": "救急箱に薬が入っていますよ。",
+    "listKey": "n2-w2d3"
+  },
+  {
+    "id": "n2-w2d3-022",
+    "kanji": "救う",
+    "kana": "すくう",
+    "english": "to save, rescue",
+    "sentence": "新しい薬によって、多くの人が救われました。",
+    "listKey": "n2-w2d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d3-023",
+    "kanji": "郵便",
+    "kana": "ゆうびん",
+    "english": "mail, postal",
+    "sentence": "この近くに郵便ポストはありますか？",
+    "listKey": "n2-w2d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d3-024",
+    "kanji": "郵送",
+    "kana": "ゆうそう",
+    "english": "to send by mail",
+    "sentence": "商品パンフレットを郵送します。",
+    "listKey": "n2-w2d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d3-025",
+    "kanji": "郵便局",
+    "kana": "ゆうびんきょく",
+    "english": "post office",
+    "sentence": "この郵便局は日曜日も開いています。",
+    "listKey": "n2-w2d3"
+  },
+  {
+    "id": "n2-w2d3-026",
+    "kanji": "薬局",
+    "kana": "やっきょく",
+    "english": "pharmacy",
+    "sentence": "隣の薬局で薬を受け取ってください。",
+    "listKey": "n2-w2d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d3-027",
+    "kanji": "放送局",
+    "kana": "ほうそうきょく",
+    "english": "broadcasting station",
+    "sentence": "放送局でアルバイトをしました。",
+    "listKey": "n2-w2d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d3-028",
+    "kanji": "貯金",
+    "kana": "ちょきん",
+    "english": "savings",
+    "sentence": "毎月少しずつ貯金しています。",
+    "listKey": "n2-w2d3"
+  },
+  {
+    "id": "n2-w2d3-029",
+    "kanji": "包帯",
+    "kana": "ほうたい",
+    "english": "bandage",
+    "sentence": "腕にけがをしたので包帯を巻いています。",
+    "listKey": "n2-w2d3"
+  },
+  {
+    "id": "n2-w2d3-030",
+    "kanji": "包む",
+    "kana": "つつむ",
+    "english": "to wrap",
+    "sentence": "プレゼントをきれいな紙で包みました。",
+    "listKey": "n2-w2d3"
+  },
+  {
+    "id": "n2-w2d3-031",
+    "kanji": "小包",
+    "kana": "こづつみ",
+    "english": "parcel",
+    "sentence": "今朝、両親から小包が届きました。",
+    "listKey": "n2-w2d3"
+  },
+  {
+    "id": "n2-w2d3-032",
+    "kanji": "発達",
+    "kana": "はったつ",
+    "english": "development",
+    "sentence": "日本は交通が発達しています。",
+    "listKey": "n2-w2d3"
+  },
+  {
+    "id": "n2-w2d3-033",
+    "kanji": "速達",
+    "kana": "そくたつ",
+    "english": "express mail",
+    "sentence": "速達で送ったから、明日には届くと思います。",
+    "listKey": "n2-w2d3"
+  },
+  {
+    "id": "n2-w2d3-034",
+    "kanji": "友達",
+    "kana": "ともだち",
+    "english": "friend",
+    "sentence": "久しぶりに学生時代の友達と会いました。",
+    "listKey": "n2-w2d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d3-035",
+    "kanji": "国際",
+    "kana": "こくさい",
+    "english": "international",
+    "sentence": "学生の時、いろいろな国際交流イベントに参加しました。",
+    "listKey": "n2-w2d3"
+  },
+  {
+    "id": "n2-w2d3-036",
+    "kanji": "～の際",
+    "kana": "～のさい",
+    "english": "on the occasion of, when",
+    "sentence": "ご利用の際は、以下の点にご注意ください。",
+    "listKey": "n2-w2d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w2d3-037",
+    "kanji": "実際に",
+    "kana": "じっさいに",
+    "english": "actually, in fact",
+    "sentence": "この映画は、実際にあった話をもとに作られました。",
+    "listKey": "n2-w2d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-001",
+    "kanji": "普通",
+    "kana": "ふつう",
+    "english": "normal, ordinary",
+    "sentence": "この商品は、普通の主婦のアイデアから生まれました。",
+    "listKey": "n2-w3d1"
+  },
+  {
+    "id": "n2-w3d1-002",
+    "kanji": "普段（の）",
+    "kana": "ふだん（の）",
+    "english": "usual, everyday",
+    "sentence": "普段から体に気を付けています。",
+    "listKey": "n2-w3d1"
+  },
+  {
+    "id": "n2-w3d1-003",
+    "kanji": "回数券",
+    "kana": "かいすうけん",
+    "english": "coupon ticket book",
+    "sentence": "昔は回数券を使いましたが、最近は使いません。",
+    "listKey": "n2-w3d1"
+  },
+  {
+    "id": "n2-w3d1-004",
+    "kanji": "乗車券",
+    "kana": "じょうしゃけん",
+    "english": "passenger ticket",
+    "sentence": "この電車は乗車券の他に指定券も必要です。",
+    "listKey": "n2-w3d1"
+  },
+  {
+    "id": "n2-w3d1-005",
+    "kanji": "旅券",
+    "kana": "りょけん",
+    "english": "passport",
+    "sentence": "新宿に旅券事務所があります。",
+    "listKey": "n2-w3d1"
+  },
+  {
+    "id": "n2-w3d1-006",
+    "kanji": "発券",
+    "kana": "はっけん",
+    "english": "ticket issuance",
+    "sentence": "コンビニでチケットの発券ができます。",
+    "listKey": "n2-w3d1"
+  },
+  {
+    "id": "n2-w3d1-007",
+    "kanji": "数字",
+    "kana": "すうじ",
+    "english": "number, numeral",
+    "sentence": "日本では「4」と「9」が悪い数字だと考えられています。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-008",
+    "kanji": "数学",
+    "kana": "すうがく",
+    "english": "mathematics",
+    "sentence": "父は数学の教師です。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-009",
+    "kanji": "点数",
+    "kana": "てんすう",
+    "english": "score, points",
+    "sentence": "テストの点数だけでは、本当の能力はわかりません。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-010",
+    "kanji": "数を数える",
+    "kana": "かずをかぞえる",
+    "english": "to count numbers",
+    "sentence": "羊の数を数えても寝られません。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-011",
+    "kanji": "飛行機",
+    "kana": "ひこうき",
+    "english": "airplane",
+    "sentence": "台風で飛行機が欠航になりました。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-012",
+    "kanji": "交通機関",
+    "kana": "こうつうきかん",
+    "english": "transportation",
+    "sentence": "ご来場の際は、公共交通機関をご利用ください。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-013",
+    "kanji": "自動券売機",
+    "kana": "じどうけんばいき",
+    "english": "automatic ticket machine",
+    "sentence": "自動券売機でICカードのチャージができます。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-014",
+    "kanji": "危機",
+    "kana": "きき",
+    "english": "crisis",
+    "sentence": "社長はもっと危機感を持つべきだと思います。",
+    "listKey": "n2-w3d1"
+  },
+  {
+    "id": "n2-w3d1-015",
+    "kanji": "復習",
+    "kana": "ふくしゅう",
+    "english": "review (of study)",
+    "sentence": "金曜日は復習テストを行います。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-016",
+    "kanji": "往復",
+    "kana": "おうふく",
+    "english": "round trip",
+    "sentence": "往復割引はありますか？",
+    "listKey": "n2-w3d1"
+  },
+  {
+    "id": "n2-w3d1-017",
+    "kanji": "回復",
+    "kana": "かいふく",
+    "english": "recovery",
+    "sentence": "なかなか景気が回復しません。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-018",
+    "kanji": "破片",
+    "kana": "はへん",
+    "english": "fragment, shard",
+    "sentence": "ガラスの破片が落ちているので、気を付けてください。",
+    "listKey": "n2-w3d1"
+  },
+  {
+    "id": "n2-w3d1-019",
+    "kanji": "片道切符",
+    "kana": "かたみちきっぷ",
+    "english": "one-way ticket",
+    "sentence": "片道切符しか買いませんでした。",
+    "listKey": "n2-w3d1"
+  },
+  {
+    "id": "n2-w3d1-020",
+    "kanji": "片付ける",
+    "kana": "かたづける",
+    "english": "to tidy up",
+    "sentence": "子供におもちゃを片付けさせました。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-021",
+    "kanji": "片～",
+    "kana": "かた～",
+    "english": "one (of a pair)",
+    "sentence": "手袋を片方なくしてしまいました。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-022",
+    "kanji": "～枚",
+    "kana": "～まい",
+    "english": "counter for flat objects",
+    "sentence": "申込書は2枚あります。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-023",
+    "kanji": "枚数",
+    "kana": "まいすう",
+    "english": "number of sheets",
+    "sentence": "資料の枚数が少ないので、2人で見てください。",
+    "listKey": "n2-w3d1"
+  },
+  {
+    "id": "n2-w3d1-024",
+    "kanji": "期間",
+    "kana": "きかん",
+    "english": "period, duration",
+    "sentence": "ゴールデンウィークの期間中は混雑が予想されます。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-025",
+    "kanji": "定期",
+    "kana": "ていき",
+    "english": "regular, periodic",
+    "sentence": "会社で定期健康診断があります。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-026",
+    "kanji": "定期券",
+    "kana": "ていきけん",
+    "english": "commuter pass",
+    "sentence": "今月末で定期券が切れます。",
+    "listKey": "n2-w3d1"
+  },
+  {
+    "id": "n2-w3d1-027",
+    "kanji": "販売",
+    "kana": "はんばい",
+    "english": "sales",
+    "sentence": "この商品はインターネット限定販売です。",
+    "listKey": "n2-w3d1"
+  },
+  {
+    "id": "n2-w3d1-028",
+    "kanji": "自動販売機",
+    "kana": "じどうはんばいき",
+    "english": "vending machine",
+    "sentence": "ラウンジに自動販売機がありますよ。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-029",
+    "kanji": "指定席",
+    "kana": "していせき",
+    "english": "reserved seat",
+    "sentence": "指定席は高いから自由席にしましょう。",
+    "listKey": "n2-w3d1"
+  },
+  {
+    "id": "n2-w3d1-030",
+    "kanji": "指",
+    "kana": "ゆび",
+    "english": "finger",
+    "sentence": "指をけがしてしまいました。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-031",
+    "kanji": "指す",
+    "kana": "さす",
+    "english": "to point at",
+    "sentence": "学生を一人ずつ指して質問しました。",
+    "listKey": "n2-w3d1"
+  },
+  {
+    "id": "n2-w3d1-032",
+    "kanji": "調整",
+    "kana": "ちょうせい",
+    "english": "adjustment",
+    "sentence": "会議の日程を調整しましょう。",
+    "listKey": "n2-w3d1"
+  },
+  {
+    "id": "n2-w3d1-033",
+    "kanji": "調子",
+    "kana": "ちょうし",
+    "english": "condition, tone",
+    "sentence": "ちょっとwifiの調子が悪いですね。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-034",
+    "kanji": "調べる",
+    "kana": "しらべる",
+    "english": "to look up, investigate",
+    "sentence": "知らない単語があったら、すぐ調べるようにしています。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-035",
+    "kanji": "整理券",
+    "kana": "せいりけん",
+    "english": "numbered ticket (queue)",
+    "sentence": "整理券を取ってからお待ちください。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-036",
+    "kanji": "整備",
+    "kana": "せいび",
+    "english": "maintenance",
+    "sentence": "自動車整備の仕事をしています。",
+    "listKey": "n2-w3d1"
+  },
+  {
+    "id": "n2-w3d1-037",
+    "kanji": "整う",
+    "kana": "ととのう",
+    "english": "to be arranged, ready",
+    "sentence": "準備が整ったら呼んでください。",
+    "listKey": "n2-w3d1"
+  },
+  {
+    "id": "n2-w3d1-038",
+    "kanji": "表",
+    "kana": "ひょう",
+    "english": "table, chart",
+    "sentence": "お配りした資料の表をご覧ください。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-039",
+    "kanji": "時刻表",
+    "kana": "じこくひょう",
+    "english": "timetable",
+    "sentence": "インターネットでもバスの時刻表が見られます。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-040",
+    "kanji": "発表",
+    "kana": "はっぴょう",
+    "english": "presentation, announcement",
+    "sentence": "明日、会議で発表しなければいけません。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-041",
+    "kanji": "表",
+    "kana": "おもて",
+    "english": "front side",
+    "sentence": "絵が描いてあるほうがコインの表です。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-042",
+    "kanji": "表す",
+    "kana": "あらわす",
+    "english": "to express, represent",
+    "sentence": "この印は何を表しているんですか？",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-043",
+    "kanji": "表示",
+    "kana": "ひょうじ",
+    "english": "display, indication",
+    "sentence": "当店では価格を税込で表示しています。",
+    "listKey": "n2-w3d1"
+  },
+  {
+    "id": "n2-w3d1-044",
+    "kanji": "指示",
+    "kana": "しじ",
+    "english": "instruction",
+    "sentence": "もっとわかりやすく指示してください。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d1-045",
+    "kanji": "掲示",
+    "kana": "けいじ",
+    "english": "posting, notice",
+    "sentence": "掲示板にイベントの案内が貼ってありました。",
+    "listKey": "n2-w3d1"
+  },
+  {
+    "id": "n2-w3d1-046",
+    "kanji": "示す",
+    "kana": "しめす",
+    "english": "to show, indicate",
+    "sentence": "数字を示して説明したほうがわかりやすいですよ。",
+    "listKey": "n2-w3d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d2-001",
+    "kanji": "現金",
+    "kana": "げんきん",
+    "english": "cash",
+    "sentence": "現金がないので、クレジットカードで払えますか？",
+    "listKey": "n2-w3d2"
+  },
+  {
+    "id": "n2-w3d2-002",
+    "kanji": "表現",
+    "kana": "ひょうげん",
+    "english": "expression",
+    "sentence": "これは役に立つ表現ですね。",
+    "listKey": "n2-w3d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d2-003",
+    "kanji": "現れる",
+    "kana": "あらわれる",
+    "english": "to appear",
+    "sentence": "夢に亡くなった祖母が現れました。",
+    "listKey": "n2-w3d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d2-004",
+    "kanji": "支店",
+    "kana": "してん",
+    "english": "branch (office)",
+    "sentence": "大阪支店に転勤になりました。",
+    "listKey": "n2-w3d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d2-005",
+    "kanji": "支持",
+    "kana": "しじ",
+    "english": "support, endorsement",
+    "sentence": "どの政党を支持していますか？",
+    "listKey": "n2-w3d2"
+  },
+  {
+    "id": "n2-w3d2-006",
+    "kanji": "支える",
+    "kana": "ささえる",
+    "english": "to support",
+    "sentence": "大変な時も、家族が支えてくれました。",
+    "listKey": "n2-w3d2"
+  },
+  {
+    "id": "n2-w3d2-007",
+    "kanji": "払う",
+    "kana": "はらう",
+    "english": "to pay",
+    "sentence": "服にほこりが付いていたので、手で払いました。",
+    "listKey": "n2-w3d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d2-008",
+    "kanji": "支払う",
+    "kana": "しはらう",
+    "english": "to pay",
+    "sentence": "あちらのカウンターでお支払いください。",
+    "listKey": "n2-w3d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d2-009",
+    "kanji": "支払機",
+    "kana": "しはらいき",
+    "english": "payment machine",
+    "sentence": "このスーパーには現金自動支払機が置いてありますよ。",
+    "listKey": "n2-w3d2"
+  },
+  {
+    "id": "n2-w3d2-010",
+    "kanji": "預金",
+    "kana": "よきん",
+    "english": "deposit (bank)",
+    "sentence": "今の預金金利はとても低いです。",
+    "listKey": "n2-w3d2"
+  },
+  {
+    "id": "n2-w3d2-011",
+    "kanji": "預ける",
+    "kana": "あずける",
+    "english": "to deposit, entrust",
+    "sentence": "平日は仕事なので、両親に子供を預けています。",
+    "listKey": "n2-w3d2"
+  },
+  {
+    "id": "n2-w3d2-012",
+    "kanji": "預かる",
+    "kana": "あずかる",
+    "english": "to keep, look after",
+    "sentence": "荷物を預かってもらえますか？",
+    "listKey": "n2-w3d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d2-013",
+    "kanji": "払い戻し",
+    "kana": "はらいもどし",
+    "english": "refund",
+    "sentence": "切符の払い戻しには手数料がかかります。",
+    "listKey": "n2-w3d2"
+  },
+  {
+    "id": "n2-w3d2-014",
+    "kanji": "戻る",
+    "kana": "もどる",
+    "english": "to return, go back",
+    "sentence": "部長はいつお戻りになりますか？",
+    "listKey": "n2-w3d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d2-015",
+    "kanji": "残高照会",
+    "kana": "ざんだかしょうかい",
+    "english": "balance inquiry",
+    "sentence": "残高照会したいので、ATMに行ってきます。",
+    "listKey": "n2-w3d2"
+  },
+  {
+    "id": "n2-w3d2-016",
+    "kanji": "残る",
+    "kana": "のこる",
+    "english": "to remain",
+    "sentence": "先週の雪がまだ残っています。",
+    "listKey": "n2-w3d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d2-017",
+    "kanji": "残す",
+    "kana": "のこす",
+    "english": "to leave behind",
+    "sentence": "子供を家に残してきたので、早めに帰ります。",
+    "listKey": "n2-w3d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d2-018",
+    "kanji": "照明",
+    "kana": "しょうめい",
+    "english": "lighting",
+    "sentence": "部屋の照明を変えました。",
+    "listKey": "n2-w3d2"
+  },
+  {
+    "id": "n2-w3d2-019",
+    "kanji": "対照的",
+    "kana": "たいしょうてき",
+    "english": "contrasting",
+    "sentence": "私と妹は対照的な性格です。",
+    "listKey": "n2-w3d2"
+  },
+  {
+    "id": "n2-w3d2-020",
+    "kanji": "照らす",
+    "kana": "てらす",
+    "english": "to illuminate",
+    "sentence": "夕日に照らされた町の景色はとてもきれいでした。",
+    "listKey": "n2-w3d2"
+  },
+  {
+    "id": "n2-w3d2-021",
+    "kanji": "硬貨",
+    "kana": "こうか",
+    "english": "coin",
+    "sentence": "記念硬貨を買いました。",
+    "listKey": "n2-w3d2"
+  },
+  {
+    "id": "n2-w3d2-022",
+    "kanji": "硬い",
+    "kana": "かたい",
+    "english": "hard, stiff",
+    "sentence": "硬いマットレスのほうが好きです。",
+    "listKey": "n2-w3d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d2-023",
+    "kanji": "貨物",
+    "kana": "かもつ",
+    "english": "freight, cargo",
+    "sentence": "年々、国際貨物が増えています。",
+    "listKey": "n2-w3d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d2-024",
+    "kanji": "通貨",
+    "kana": "つうか",
+    "english": "currency",
+    "sentence": "通貨危機の後、その国の経済は悪化しました。",
+    "listKey": "n2-w3d2"
+  },
+  {
+    "id": "n2-w3d2-025",
+    "kanji": "確定",
+    "kana": "かくてい",
+    "english": "confirmation, finalization",
+    "sentence": "スケジュールが確定したらお知らせします。",
+    "listKey": "n2-w3d2"
+  },
+  {
+    "id": "n2-w3d2-026",
+    "kanji": "明確（な）",
+    "kana": "めいかく（な）",
+    "english": "clear, definite",
+    "sentence": "彼から明確な答えは聞けませんでした。",
+    "listKey": "n2-w3d2"
+  },
+  {
+    "id": "n2-w3d2-027",
+    "kanji": "確か（な）",
+    "kana": "たしか（な）",
+    "english": "certain, sure",
+    "sentence": "うわさなので、確かかどうかわからないんですが…",
+    "listKey": "n2-w3d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d2-028",
+    "kanji": "確かめる",
+    "kana": "たしかめる",
+    "english": "to confirm, check",
+    "sentence": "その話が本当かどうか確かめましょう。",
+    "listKey": "n2-w3d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d2-029",
+    "kanji": "確認",
+    "kana": "かくにん",
+    "english": "confirmation",
+    "sentence": "左右をよく確認してから道を渡りましょう。",
+    "listKey": "n2-w3d2"
+  },
+  {
+    "id": "n2-w3d2-030",
+    "kanji": "認める",
+    "kana": "みとめる",
+    "english": "to acknowledge, admit",
+    "sentence": "自分の失敗は認めたくないものです。",
+    "listKey": "n2-w3d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d2-031",
+    "kanji": "違法",
+    "kana": "いほう",
+    "english": "illegal",
+    "sentence": "日本では銃を持つことは違法です。",
+    "listKey": "n2-w3d2"
+  },
+  {
+    "id": "n2-w3d2-032",
+    "kanji": "違い",
+    "kana": "ちがい",
+    "english": "difference",
+    "sentence": "同じ国でも地域によって様々な違いがあります。",
+    "listKey": "n2-w3d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d2-033",
+    "kanji": "間違える",
+    "kana": "まちがえる",
+    "english": "to make a mistake",
+    "sentence": "道を間違えて遅れてしまいました。",
+    "listKey": "n2-w3d2"
+  },
+  {
+    "id": "n2-w3d2-034",
+    "kanji": "間違い",
+    "kana": "まちがい",
+    "english": "mistake",
+    "sentence": "彼は自分の間違いを認めました。",
+    "listKey": "n2-w3d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d2-035",
+    "kanji": "取材",
+    "kana": "しゅざい",
+    "english": "(news) coverage, interview",
+    "sentence": "テレビの取材を受けました。",
+    "listKey": "n2-w3d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d2-036",
+    "kanji": "取る",
+    "kana": "とる",
+    "english": "to take",
+    "sentence": "やっとお客様のアポイントが取れました。",
+    "listKey": "n2-w3d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d2-037",
+    "kanji": "取り消し",
+    "kana": "とりけし",
+    "english": "cancellation",
+    "sentence": "注文の取り消しはできませんので、ご注意ください。",
+    "listKey": "n2-w3d2"
+  },
+  {
+    "id": "n2-w3d2-038",
+    "kanji": "書き取り",
+    "kana": "かきとり",
+    "english": "dictation (writing)",
+    "sentence": "これから書き取りの練習をします。",
+    "listKey": "n2-w3d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d2-039",
+    "kanji": "聞き取り",
+    "kana": "ききとり",
+    "english": "listening comprehension",
+    "sentence": "文法はわかるんですが、聞き取りは苦手です。",
+    "listKey": "n2-w3d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d2-040",
+    "kanji": "消去",
+    "kana": "しょうきょ",
+    "english": "deletion",
+    "sentence": "大切なデータを消去してしまいました。",
+    "listKey": "n2-w3d2"
+  },
+  {
+    "id": "n2-w3d2-041",
+    "kanji": "消える",
+    "kana": "きえる",
+    "english": "to disappear, go out",
+    "sentence": "電気が消えているから、もう寝たみたいです。",
+    "listKey": "n2-w3d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d2-042",
+    "kanji": "消す",
+    "kana": "けす",
+    "english": "to erase, turn off",
+    "sentence": "このペンは消せるから便利ですね。",
+    "listKey": "n2-w3d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d2-043",
+    "kanji": "消しゴム",
+    "kana": "けしゴム",
+    "english": "eraser",
+    "sentence": "この消しゴムは消しにくいです。",
+    "listKey": "n2-w3d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-001",
+    "kanji": "団体",
+    "kana": "だんたい",
+    "english": "group, organization",
+    "sentence": "ボランティア団体に寄付しました。",
+    "listKey": "n2-w3d3"
+  },
+  {
+    "id": "n2-w3d3-002",
+    "kanji": "集団",
+    "kana": "しゅうだん",
+    "english": "group, crowd",
+    "sentence": "猿は集団で生活します。",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-003",
+    "kanji": "団地",
+    "kana": "だんち",
+    "english": "housing complex",
+    "sentence": "子どもの時、団地に住んでいました。",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-004",
+    "kanji": "布団",
+    "kana": "ふとん",
+    "english": "futon",
+    "sentence": "ベッドより布団で寝るほうが好きです。",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-005",
+    "kanji": "全般",
+    "kana": "ぜんぱん",
+    "english": "general, overall",
+    "sentence": "大学では日本史全般を勉強しました。",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-006",
+    "kanji": "幼児",
+    "kana": "ようじ",
+    "english": "young child, toddler",
+    "sentence": "この英会話学校には幼児クラスがあります。",
+    "listKey": "n2-w3d3"
+  },
+  {
+    "id": "n2-w3d3-007",
+    "kanji": "幼い",
+    "kana": "おさない",
+    "english": "young, childish",
+    "sentence": "彼女は若いというより幼いですね。",
+    "listKey": "n2-w3d3"
+  },
+  {
+    "id": "n2-w3d3-008",
+    "kanji": "小児科",
+    "kana": "しょうにか",
+    "english": "pediatrics",
+    "sentence": "子供を小児科に連れて行きました。",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-009",
+    "kanji": "一般",
+    "kana": "いっぱん",
+    "english": "general, public",
+    "sentence": "この建物の中は、一般には公開されていません。",
+    "listKey": "n2-w3d3"
+  },
+  {
+    "id": "n2-w3d3-010",
+    "kanji": "二十歳",
+    "kana": "にじゅっさい／はたち",
+    "english": "20 years old",
+    "sentence": "家族が二十歳のお祝いをしてくれました。",
+    "listKey": "n2-w3d3"
+  },
+  {
+    "id": "n2-w3d3-011",
+    "kanji": "未来",
+    "kana": "みらい",
+    "english": "future",
+    "sentence": "地球の未来のために、環境を大切にしましょう。",
+    "listKey": "n2-w3d3"
+  },
+  {
+    "id": "n2-w3d3-012",
+    "kanji": "児童",
+    "kana": "じどう",
+    "english": "children",
+    "sentence": "よく児童公園で子供と遊びます。",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-013",
+    "kanji": "～歳",
+    "kana": "～さい",
+    "english": "years old (counter)",
+    "sentence": "25歳で結婚しました。",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-014",
+    "kanji": "未定",
+    "kana": "みてい",
+    "english": "undecided",
+    "sentence": "イベントの詳細は未定です。",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-015",
+    "kanji": "未知",
+    "kana": "みち",
+    "english": "unknown",
+    "sentence": "未知の分野に挑戦したいです。",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-016",
+    "kanji": "未～",
+    "kana": "み～",
+    "english": "un-, not yet (prefix)",
+    "sentence": "未経験の方も歓迎します。",
+    "listKey": "n2-w3d3"
+  },
+  {
+    "id": "n2-w3d3-017",
+    "kanji": "未満",
+    "kana": "みまん",
+    "english": "under, less than",
+    "sentence": "10歳未満のお子様は無料です。",
+    "listKey": "n2-w3d3"
+  },
+  {
+    "id": "n2-w3d3-018",
+    "kanji": "満員",
+    "kana": "まんいん",
+    "english": "full (capacity)",
+    "sentence": "コンサート会場は満員でした。",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-019",
+    "kanji": "満足",
+    "kana": "まんぞく",
+    "english": "satisfaction",
+    "sentence": "今の仕事に満足しています。",
+    "listKey": "n2-w3d3"
+  },
+  {
+    "id": "n2-w3d3-020",
+    "kanji": "満ちる",
+    "kana": "みちる",
+    "english": "to be full, fulfilled",
+    "sentence": "彼は自信に満ちた表情をしていました。",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-021",
+    "kanji": "老人",
+    "kana": "ろうじん",
+    "english": "elderly person",
+    "sentence": "ヘミングウェイの『老人と海』は名作です。",
+    "listKey": "n2-w3d3"
+  },
+  {
+    "id": "n2-w3d3-022",
+    "kanji": "年老いた",
+    "kana": "としおいた",
+    "english": "aged, elderly",
+    "sentence": "年老いた両親が心配です。",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-023",
+    "kanji": "温度",
+    "kana": "おんど",
+    "english": "temperature",
+    "sentence": "寒いので、エアコンの温度を少し上げてください。",
+    "listKey": "n2-w3d3"
+  },
+  {
+    "id": "n2-w3d3-024",
+    "kanji": "体温計",
+    "kana": "たいおんけい",
+    "english": "thermometer",
+    "sentence": "熱を測りたいんですが、体温計はありますか？",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-025",
+    "kanji": "温室",
+    "kana": "おんしつ",
+    "english": "greenhouse",
+    "sentence": "温室効果ガスの問題は深刻です。",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-026",
+    "kanji": "温かい",
+    "kana": "あたたかい",
+    "english": "warm",
+    "sentence": "彼は心の温かい人です。",
+    "listKey": "n2-w3d3"
+  },
+  {
+    "id": "n2-w3d3-027",
+    "kanji": "冷静（な）",
+    "kana": "れいせい（な）",
+    "english": "calm, composed",
+    "sentence": "もっと冷静に考えてください。",
+    "listKey": "n2-w3d3"
+  },
+  {
+    "id": "n2-w3d3-028",
+    "kanji": "冷たい",
+    "kana": "つめたい",
+    "english": "cold",
+    "sentence": "そんな冷たいこと言わないで、手伝ってよ。",
+    "listKey": "n2-w3d3"
+  },
+  {
+    "id": "n2-w3d3-029",
+    "kanji": "冷える",
+    "kana": "ひえる",
+    "english": "to get cold",
+    "sentence": "夜は冷えますから、上着を持って出かけましょう。",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-030",
+    "kanji": "冷やす",
+    "kana": "ひやす",
+    "english": "to cool (something)",
+    "sentence": "少し頭を冷やしてきなさい。",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-031",
+    "kanji": "冷める",
+    "kana": "さめる",
+    "english": "to cool down (food)",
+    "sentence": "料理が冷めないうちに食べてください。",
+    "listKey": "n2-w3d3"
+  },
+  {
+    "id": "n2-w3d3-032",
+    "kanji": "冷ます",
+    "kana": "さます",
+    "english": "to let cool",
+    "sentence": "少し冷ましてから、子供にごはんをあげます。",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-033",
+    "kanji": "緑茶",
+    "kana": "りょくちゃ",
+    "english": "green tea",
+    "sentence": "緑茶は体にいいそうですよ。",
+    "listKey": "n2-w3d3"
+  },
+  {
+    "id": "n2-w3d3-034",
+    "kanji": "新緑",
+    "kana": "しんりょく",
+    "english": "fresh greenery",
+    "sentence": "新緑のきれいな季節になりました。",
+    "listKey": "n2-w3d3"
+  },
+  {
+    "id": "n2-w3d3-035",
+    "kanji": "緑（色）",
+    "kana": "みどり（いろ）",
+    "english": "green (color)",
+    "sentence": "部屋のインテリアを明るい緑色に変えました。",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-036",
+    "kanji": "紅茶",
+    "kana": "こうちゃ",
+    "english": "black tea",
+    "sentence": "紅茶はたいていストレートで飲みます。",
+    "listKey": "n2-w3d3"
+  },
+  {
+    "id": "n2-w3d3-037",
+    "kanji": "口紅",
+    "kana": "くちべに",
+    "english": "lipstick",
+    "sentence": "口紅の色を変えてみました。",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-038",
+    "kanji": "水玉",
+    "kana": "みずたま",
+    "english": "polka dot",
+    "sentence": "その水玉のネクタイ、素敵ですね。",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-039",
+    "kanji": "玉",
+    "kana": "たま",
+    "english": "ball, orb",
+    "sentence": "その占い師は水晶の玉を使いました。",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-040",
+    "kanji": "十円玉",
+    "kana": "じゅうえんだま",
+    "english": "10-yen coin",
+    "sentence": "十円玉に描かれているのはお寺ですか？",
+    "listKey": "n2-w3d3"
+  },
+  {
+    "id": "n2-w3d3-041",
+    "kanji": "返事",
+    "kana": "へんじ",
+    "english": "reply",
+    "sentence": "お返事をお待ちしております。",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-042",
+    "kanji": "返却",
+    "kana": "へんきゃく",
+    "english": "return (an item)",
+    "sentence": "食べ終わった食器はカウンターに返却してください。",
+    "listKey": "n2-w3d3"
+  },
+  {
+    "id": "n2-w3d3-043",
+    "kanji": "返金",
+    "kana": "へんきん",
+    "english": "refund",
+    "sentence": "キャンセルの場合は、手数料を引いて残りを返金します。",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w3d3-044",
+    "kanji": "返す",
+    "kana": "かえす",
+    "english": "to return (something)",
+    "sentence": "先週借りた本、明日返しますね。",
+    "listKey": "n2-w3d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-001",
+    "kanji": "設定",
+    "kana": "せってい",
+    "english": "setting, configuration",
+    "sentence": "今、エアコンは何度に設定されていますか？",
+    "listKey": "n2-w4d1"
+  },
+  {
+    "id": "n2-w4d1-002",
+    "kanji": "設計",
+    "kana": "せっけい",
+    "english": "design (engineering/architecture)",
+    "sentence": "オリンピック・スタジアムの設計者は誰ですか？",
+    "listKey": "n2-w4d1"
+  },
+  {
+    "id": "n2-w4d1-003",
+    "kanji": "設備",
+    "kana": "せつび",
+    "english": "facilities, equipment",
+    "sentence": "この病院は最新の設備が整っています。",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-004",
+    "kanji": "換気",
+    "kana": "かんき",
+    "english": "ventilation",
+    "sentence": "少し窓を開けて換気しましょう。",
+    "listKey": "n2-w4d1"
+  },
+  {
+    "id": "n2-w4d1-005",
+    "kanji": "運転切換",
+    "kana": "うんてんきりかえ",
+    "english": "operation mode switch",
+    "sentence": "運転切換で送風だけにできますよ。",
+    "listKey": "n2-w4d1"
+  },
+  {
+    "id": "n2-w4d1-006",
+    "kanji": "乗り換え",
+    "kana": "のりかえ",
+    "english": "transfer (trains)",
+    "sentence": "時間がかかっても乗り換えなしで行けるほうがいいです。",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-007",
+    "kanji": "風向",
+    "kana": "ふうこう",
+    "english": "wind direction",
+    "sentence": "風向はこのボタンで調節できます。",
+    "listKey": "n2-w4d1"
+  },
+  {
+    "id": "n2-w4d1-008",
+    "kanji": "風の向き",
+    "kana": "かぜのむき",
+    "english": "direction of the wind",
+    "sentence": "台風が過ぎた後、風の向きが変わりました。",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-009",
+    "kanji": "向かい",
+    "kana": "むかい",
+    "english": "across from, opposite",
+    "sentence": "両親は向かいの家に住んでいます。",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-010",
+    "kanji": "向こう",
+    "kana": "むこう",
+    "english": "the other side, beyond",
+    "sentence": "川の向こうに公園があります。",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-011",
+    "kanji": "停止",
+    "kana": "ていし",
+    "english": "stop, halt",
+    "sentence": "信号がない交差点では一時停止しましょう。",
+    "listKey": "n2-w4d1"
+  },
+  {
+    "id": "n2-w4d1-012",
+    "kanji": "停電",
+    "kana": "ていでん",
+    "english": "power outage",
+    "sentence": "地震の後、停電になりました。",
+    "listKey": "n2-w4d1"
+  },
+  {
+    "id": "n2-w4d1-013",
+    "kanji": "停車",
+    "kana": "ていしゃ",
+    "english": "stopping (train/vehicle)",
+    "sentence": "この電車は各駅に停車します。",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-014",
+    "kanji": "暖房",
+    "kana": "だんぼう",
+    "english": "heating",
+    "sentence": "寒いので暖房をつけてください。",
+    "listKey": "n2-w4d1"
+  },
+  {
+    "id": "n2-w4d1-015",
+    "kanji": "温暖（な）",
+    "kana": "おんだん（な）",
+    "english": "warm, mild (climate)",
+    "sentence": "地球の温暖化が問題になっています。",
+    "listKey": "n2-w4d1"
+  },
+  {
+    "id": "n2-w4d1-016",
+    "kanji": "暖かい",
+    "kana": "あたたかい",
+    "english": "warm",
+    "sentence": "夜は冷えるので、暖かい服で行ったほうがいいですよ。",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-017",
+    "kanji": "除湿",
+    "kana": "じょしつ",
+    "english": "dehumidification",
+    "sentence": "梅雨の時期は除湿機を使います。",
+    "listKey": "n2-w4d1"
+  },
+  {
+    "id": "n2-w4d1-018",
+    "kanji": "掃除",
+    "kana": "そうじ",
+    "english": "cleaning",
+    "sentence": "年末に大掃除をします。",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-019",
+    "kanji": "除く",
+    "kana": "のぞく",
+    "english": "to exclude, remove",
+    "sentence": "部長を除いて全員が賛成しました。",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-020",
+    "kanji": "湿度",
+    "kana": "しつど",
+    "english": "humidity",
+    "sentence": "湿度が高いから暑く感じますね。",
+    "listKey": "n2-w4d1"
+  },
+  {
+    "id": "n2-w4d1-021",
+    "kanji": "湿気",
+    "kana": "しっけ",
+    "english": "moisture, humidity",
+    "sentence": "クローゼットに湿気取りを置いています。",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-022",
+    "kanji": "湿る",
+    "kana": "しめる",
+    "english": "to become damp",
+    "sentence": "洗濯物はまだ湿っています。",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-023",
+    "kanji": "標準",
+    "kana": "ひょうじゅん",
+    "english": "standard",
+    "sentence": "大阪出身だから、アクセントが標準語と少し違います。",
+    "listKey": "n2-w4d1"
+  },
+  {
+    "id": "n2-w4d1-024",
+    "kanji": "目標",
+    "kana": "もくひょう",
+    "english": "goal, target",
+    "sentence": "今の目標はN1に合格することです。",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-025",
+    "kanji": "標本",
+    "kana": "ひょうほん",
+    "english": "specimen",
+    "sentence": "きれいな花の標本を集めています。",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-026",
+    "kanji": "倍",
+    "kana": "ばい",
+    "english": "double, times (multiplier)",
+    "sentence": "オーガニック食品は普通の値段の倍くらいしますね。",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-027",
+    "kanji": "～倍",
+    "kana": "～ばい",
+    "english": "-fold, times (counter)",
+    "sentence": "大盛りは普通サイズの1.5倍です。",
+    "listKey": "n2-w4d1"
+  },
+  {
+    "id": "n2-w4d1-028",
+    "kanji": "～巻",
+    "kana": "～かん",
+    "english": "volume (counter for books)",
+    "sentence": "まんがの『ドラゴンボール』は全部で42巻あります。",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-029",
+    "kanji": "巻く",
+    "kana": "まく",
+    "english": "to wind, wrap around",
+    "sentence": "寒いので、マフラーをしっかり巻いて出かけました。",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-030",
+    "kanji": "巻き戻し",
+    "kana": "まきもどし",
+    "english": "rewind",
+    "sentence": "好きな映画のシーンを何度も巻き戻して見ました。",
+    "listKey": "n2-w4d1"
+  },
+  {
+    "id": "n2-w4d1-031",
+    "kanji": "録画",
+    "kana": "ろくが",
+    "english": "video recording",
+    "sentence": "忙しくて、録画したドラマがなかなか見られません。",
+    "listKey": "n2-w4d1"
+  },
+  {
+    "id": "n2-w4d1-032",
+    "kanji": "録音",
+    "kana": "ろくおん",
+    "english": "audio recording",
+    "sentence": "発音の練習のために、自分の声を録音して聞いています。",
+    "listKey": "n2-w4d1"
+  },
+  {
+    "id": "n2-w4d1-033",
+    "kanji": "音量",
+    "kana": "おんりょう",
+    "english": "volume (sound)",
+    "sentence": "子供が寝たので、テレビの音量を下げました。",
+    "listKey": "n2-w4d1"
+  },
+  {
+    "id": "n2-w4d1-034",
+    "kanji": "風量",
+    "kana": "ふうりょう",
+    "english": "airflow volume",
+    "sentence": "ちょっと風量を弱くしましょう。",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-035",
+    "kanji": "分量",
+    "kana": "ぶんりょう",
+    "english": "amount, quantity",
+    "sentence": "砂糖の分量は好みに合わせて調節してください。",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-036",
+    "kanji": "数量",
+    "kana": "すうりょう",
+    "english": "quantity, amount",
+    "sentence": "在庫の数量を確認しておきます。",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-037",
+    "kanji": "量る",
+    "kana": "はかる",
+    "english": "to measure, weigh",
+    "sentence": "ちゃんと分量を量らなかったから、失敗してしまいました。",
+    "listKey": "n2-w4d1"
+  },
+  {
+    "id": "n2-w4d1-038",
+    "kanji": "予定",
+    "kana": "よてい",
+    "english": "plan, schedule",
+    "sentence": "もう夏休みの予定を決めましたか？",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-039",
+    "kanji": "予習",
+    "kana": "よしゅう",
+    "english": "preparation (study ahead)",
+    "sentence": "彼女はまじめだから毎日予習してきます。",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-040",
+    "kanji": "予備",
+    "kana": "よび",
+    "english": "spare, reserve",
+    "sentence": "会議の資料は予備も入れて50部用意してください。",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-041",
+    "kanji": "予算",
+    "kana": "よさん",
+    "english": "budget",
+    "sentence": "欲しい車があるんですが、ちょっと予算オーバーなんです。",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-042",
+    "kanji": "予約",
+    "kana": "よやく",
+    "english": "reservation",
+    "sentence": "予約していないんですが、席は空いていますか？",
+    "listKey": "n2-w4d1"
+  },
+  {
+    "id": "n2-w4d1-043",
+    "kanji": "約～",
+    "kana": "やく～",
+    "english": "approximately (prefix)",
+    "sentence": "東京から大阪までは約3時間です。",
+    "listKey": "n2-w4d1",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d1-044",
+    "kanji": "約束",
+    "kana": "やくそく",
+    "english": "promise",
+    "sentence": "約束を忘れていたので、友達に怒られてしまいました。",
+    "listKey": "n2-w4d1"
+  },
+  {
+    "id": "n2-w4d2-001",
+    "kanji": "地帯",
+    "kana": "ちたい",
+    "english": "zone, area",
+    "sentence": "この辺りは工業地帯です。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-002",
+    "kanji": "携帯電話",
+    "kana": "けいたいでんわ",
+    "english": "mobile phone",
+    "sentence": "携帯電話の料金プランはわかりにくいです。",
+    "listKey": "n2-w4d2"
+  },
+  {
+    "id": "n2-w4d2-003",
+    "kanji": "温帯",
+    "kana": "おんたい",
+    "english": "temperate zone",
+    "sentence": "日本は温帯に位置しています。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-004",
+    "kanji": "帯",
+    "kana": "おび",
+    "english": "belt, sash",
+    "sentence": "柔道は帯の色で強さを表します。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-005",
+    "kanji": "保温",
+    "kana": "ほおん",
+    "english": "heat retention",
+    "sentence": "この服は保温性に優れています。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-006",
+    "kanji": "保湿",
+    "kana": "ほしつ",
+    "english": "moisturizing",
+    "sentence": "冬はいつも保湿クリームを使っています。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-007",
+    "kanji": "保険",
+    "kana": "ほけん",
+    "english": "insurance",
+    "sentence": "万一のために保険に入っておいたほうがいいですよ。",
+    "listKey": "n2-w4d2"
+  },
+  {
+    "id": "n2-w4d2-008",
+    "kanji": "保つ",
+    "kana": "たもつ",
+    "english": "to maintain, keep",
+    "sentence": "理想の体型を保つために、毎日運動しています。",
+    "listKey": "n2-w4d2"
+  },
+  {
+    "id": "n2-w4d2-009",
+    "kanji": "保留",
+    "kana": "ほりゅう",
+    "english": "hold, pending",
+    "sentence": "今決められないので、返事は保留させてください。",
+    "listKey": "n2-w4d2"
+  },
+  {
+    "id": "n2-w4d2-010",
+    "kanji": "留学",
+    "kana": "りゅうがく",
+    "english": "studying abroad",
+    "sentence": "海外の大学院に留学したいです。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-011",
+    "kanji": "停留所",
+    "kana": "ていりゅうじょ",
+    "english": "bus stop",
+    "sentence": "ここはバスの停留所なので、一般の車は駐車禁止です。",
+    "listKey": "n2-w4d2"
+  },
+  {
+    "id": "n2-w4d2-012",
+    "kanji": "書留",
+    "kana": "かきとめ",
+    "english": "registered mail",
+    "sentence": "書留に受け取りのサインをお願いします。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-013",
+    "kanji": "保守的(な)",
+    "kana": "ほしゅてき（な）",
+    "english": "conservative",
+    "sentence": "昔より保守的になった気がします。",
+    "listKey": "n2-w4d2"
+  },
+  {
+    "id": "n2-w4d2-014",
+    "kanji": "留守",
+    "kana": "るす",
+    "english": "being away from home",
+    "sentence": "友達が留守の間、子供を預かってあげました。",
+    "listKey": "n2-w4d2"
+  },
+  {
+    "id": "n2-w4d2-015",
+    "kanji": "守る",
+    "kana": "まもる",
+    "english": "to protect, keep (rules)",
+    "sentence": "ルールはきちんと守ってください。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-016",
+    "kanji": "お守り",
+    "kana": "おまもり",
+    "english": "amulet, charm",
+    "sentence": "毎年、初詣に行ってお守りを買います。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-017",
+    "kanji": "伝言",
+    "kana": "でんごん",
+    "english": "message",
+    "sentence": "伝言をお願いできますか？",
+    "listKey": "n2-w4d2"
+  },
+  {
+    "id": "n2-w4d2-018",
+    "kanji": "伝える",
+    "kana": "つたえる",
+    "english": "to convey, tell",
+    "sentence": "ご家族によろしくお伝えください。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-019",
+    "kanji": "手伝う",
+    "kana": "てつだう",
+    "english": "to help",
+    "sentence": "同僚が手伝ってくれたので、仕事が早く終わりました。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-020",
+    "kanji": "返済",
+    "kana": "へんさい",
+    "english": "repayment",
+    "sentence": "やっと家のローン返済が終わりました。",
+    "listKey": "n2-w4d2"
+  },
+  {
+    "id": "n2-w4d2-021",
+    "kanji": "済む",
+    "kana": "すむ",
+    "english": "to be finished, settled",
+    "sentence": "用事が早く済んだので、買い物して帰りました。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-022",
+    "kanji": "～済み",
+    "kana": "～ずみ",
+    "english": "already done, completed",
+    "sentence": "使用済みのインクカートリッジは再利用します。",
+    "listKey": "n2-w4d2"
+  },
+  {
+    "id": "n2-w4d2-023",
+    "kanji": "用件",
+    "kana": "ようけん",
+    "english": "matter of business, errand",
+    "sentence": "用件を早く言ってください。",
+    "listKey": "n2-w4d2"
+  },
+  {
+    "id": "n2-w4d2-024",
+    "kanji": "件名",
+    "kana": "けんめい",
+    "english": "subject (of email)",
+    "sentence": "件名を書き忘れてメールを送ってしまいました。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-025",
+    "kanji": "事件",
+    "kana": "じけん",
+    "english": "incident, case",
+    "sentence": "殺人事件の犯人はまだ捕まっていません。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-026",
+    "kanji": "通信",
+    "kana": "つうしん",
+    "english": "communication",
+    "sentence": "通信技術が発達して便利になりました。",
+    "listKey": "n2-w4d2"
+  },
+  {
+    "id": "n2-w4d2-027",
+    "kanji": "自信",
+    "kana": "じしん",
+    "english": "confidence",
+    "sentence": "ここで勉強して、日本語で話す自信がつきました。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-028",
+    "kanji": "信じる",
+    "kana": "しんじる",
+    "english": "to believe",
+    "sentence": "信じられないけど、本当にあった話です。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-029",
+    "kanji": "着信履歴",
+    "kana": "ちゃくしんりれき",
+    "english": "call history (incoming)",
+    "sentence": "着信履歴を見ましたが、誰からの電話かわかりません。",
+    "listKey": "n2-w4d2"
+  },
+  {
+    "id": "n2-w4d2-030",
+    "kanji": "履歴書",
+    "kana": "りれきしょ",
+    "english": "resume, CV",
+    "sentence": "日本語の履歴書を送ってください。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-031",
+    "kanji": "歴史",
+    "kana": "れきし",
+    "english": "history",
+    "sentence": "これは歴史に残る大きな出来事です。",
+    "listKey": "n2-w4d2"
+  },
+  {
+    "id": "n2-w4d2-032",
+    "kanji": "受信箱",
+    "kana": "じゅしんばこ",
+    "english": "inbox",
+    "sentence": "受信箱を整理したほうがいいですよ。",
+    "listKey": "n2-w4d2"
+  },
+  {
+    "id": "n2-w4d2-033",
+    "kanji": "送信箱",
+    "kana": "そうしんばこ",
+    "english": "sent box",
+    "sentence": "送信箱を空にしました。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-034",
+    "kanji": "ごみ箱",
+    "kana": "ごみばこ",
+    "english": "trash can",
+    "sentence": "ごみはごみ箱にきちんと捨てましょう。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-035",
+    "kanji": "新規",
+    "kana": "しんき",
+    "english": "new, fresh",
+    "sentence": "新規プロジェクトのメンバーに選ばれました。",
+    "listKey": "n2-w4d2"
+  },
+  {
+    "id": "n2-w4d2-036",
+    "kanji": "規定",
+    "kana": "きてい",
+    "english": "regulation, rule",
+    "sentence": "社内規定で副業は禁止されています。",
+    "listKey": "n2-w4d2"
+  },
+  {
+    "id": "n2-w4d2-037",
+    "kanji": "変換",
+    "kana": "へんかん",
+    "english": "conversion, transformation",
+    "sentence": "日本語入力の際は、漢字変換に気を付けましょう。",
+    "listKey": "n2-w4d2"
+  },
+  {
+    "id": "n2-w4d2-038",
+    "kanji": "大変（な）",
+    "kana": "たいへん（な）",
+    "english": "tough, serious",
+    "sentence": "大変だったら手伝いますから言ってください。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-039",
+    "kanji": "変わる",
+    "kana": "かわる",
+    "english": "to change (intransitive)",
+    "sentence": "髪を切って雰囲気が変わりましたね。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-040",
+    "kanji": "変える",
+    "kana": "かえる",
+    "english": "to change (transitive)",
+    "sentence": "気分を変えたいので、ちょっと出かけてきます。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-041",
+    "kanji": "選択",
+    "kana": "せんたく",
+    "english": "choice, selection",
+    "sentence": "テストは選択式です。",
+    "listKey": "n2-w4d2"
+  },
+  {
+    "id": "n2-w4d2-042",
+    "kanji": "選手",
+    "kana": "せんしゅ",
+    "english": "athlete, player",
+    "sentence": "好きなスポーツ選手はいますか？",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-043",
+    "kanji": "選考",
+    "kana": "せんこう",
+    "english": "selection (screening)",
+    "sentence": "書類選考の後、面接があります。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-044",
+    "kanji": "選ぶ",
+    "kana": "えらぶ",
+    "english": "to choose",
+    "sentence": "オリンピックの選手に選ばれました。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-045",
+    "kanji": "決定",
+    "kana": "けってい",
+    "english": "decision",
+    "sentence": "日本の会社は決定に時間がかかりますね。",
+    "listKey": "n2-w4d2"
+  },
+  {
+    "id": "n2-w4d2-046",
+    "kanji": "決める",
+    "kana": "きめる",
+    "english": "to decide",
+    "sentence": "もう少し考えてから決めましょう。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d2-047",
+    "kanji": "決まる",
+    "kana": "きまる",
+    "english": "to be decided",
+    "sentence": "名古屋に転勤することが決まりました。",
+    "listKey": "n2-w4d2",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d3-001",
+    "kanji": "登録",
+    "kana": "とうろく",
+    "english": "registration",
+    "sentence": "登録住所に変更がある場合はお知らせください。",
+    "listKey": "n2-w4d3"
+  },
+  {
+    "id": "n2-w4d3-002",
+    "kanji": "登場",
+    "kana": "とうじょう",
+    "english": "appearance (in a story/scene)",
+    "sentence": "この本は登場人物が多すぎて複雑です。",
+    "listKey": "n2-w4d3"
+  },
+  {
+    "id": "n2-w4d3-003",
+    "kanji": "登山",
+    "kana": "とざん",
+    "english": "mountain climbing",
+    "sentence": "来年こそ富士登山に挑戦します。",
+    "listKey": "n2-w4d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d3-004",
+    "kanji": "山登り",
+    "kana": "やまのぼり",
+    "english": "mountain climbing, hiking",
+    "sentence": "山登りが好きで、週末はたいてい山に行きます。",
+    "listKey": "n2-w4d3"
+  },
+  {
+    "id": "n2-w4d3-005",
+    "kanji": "編集",
+    "kana": "へんしゅう",
+    "english": "editing",
+    "sentence": "雑誌の編集の仕事をしています。",
+    "listKey": "n2-w4d3"
+  },
+  {
+    "id": "n2-w4d3-006",
+    "kanji": "長編",
+    "kana": "ちょうへん",
+    "english": "full-length (novel/film)",
+    "sentence": "この長編映画は全部で3部あります。",
+    "listKey": "n2-w4d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d3-007",
+    "kanji": "短編",
+    "kana": "たんぺん",
+    "english": "short (story/film)",
+    "sentence": "日本語の短編小説を読んでいます。",
+    "listKey": "n2-w4d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d3-008",
+    "kanji": "編み物",
+    "kana": "あみもの",
+    "english": "knitting",
+    "sentence": "母は編み物が好きで、マフラーを編んでくれました。",
+    "listKey": "n2-w4d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d3-009",
+    "kanji": "機能",
+    "kana": "きのう",
+    "english": "function",
+    "sentence": "スマホにはいろいろな機能があります。",
+    "listKey": "n2-w4d3"
+  },
+  {
+    "id": "n2-w4d3-010",
+    "kanji": "可能（な）",
+    "kana": "かのう（な）",
+    "english": "possible",
+    "sentence": "可能な限り、お客様のご要望にお応えします。",
+    "listKey": "n2-w4d3"
+  },
+  {
+    "id": "n2-w4d3-011",
+    "kanji": "能力",
+    "kana": "のうりょく",
+    "english": "ability, capability",
+    "sentence": "この仕事は高いコミュニケーション能力が求められます。",
+    "listKey": "n2-w4d3"
+  },
+  {
+    "id": "n2-w4d3-012",
+    "kanji": "修正",
+    "kana": "しゅうせい",
+    "english": "correction, revision",
+    "sentence": "計画を一部修正しました。",
+    "listKey": "n2-w4d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d3-013",
+    "kanji": "修理",
+    "kana": "しゅうり",
+    "english": "repair",
+    "sentence": "コピー機が壊れたので、修理に来てもらいました。",
+    "listKey": "n2-w4d3"
+  },
+  {
+    "id": "n2-w4d3-014",
+    "kanji": "修士",
+    "kana": "しゅうし",
+    "english": "master's degree",
+    "sentence": "経営学の修士号を持っています。",
+    "listKey": "n2-w4d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d3-015",
+    "kanji": "完了",
+    "kana": "かんりょう",
+    "english": "completion",
+    "sentence": "工事の完了は来月の予定です。",
+    "listKey": "n2-w4d3"
+  },
+  {
+    "id": "n2-w4d3-016",
+    "kanji": "完成",
+    "kana": "かんせい",
+    "english": "completion (of a work)",
+    "sentence": "この作品が完成したら、少し休暇を取ります。",
+    "listKey": "n2-w4d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d3-017",
+    "kanji": "完備",
+    "kana": "かんび",
+    "english": "fully equipped",
+    "sentence": "このマンションはセキュリティ完備です。",
+    "listKey": "n2-w4d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d3-018",
+    "kanji": "終了",
+    "kana": "しゅうりょう",
+    "english": "end, termination",
+    "sentence": "今月末で無料サポートサービスの期間が終了します。",
+    "listKey": "n2-w4d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d3-019",
+    "kanji": "修了",
+    "kana": "しゅうりょう",
+    "english": "completion (of a course)",
+    "sentence": "このコースを修了した人は、仕事の紹介が受けられます。",
+    "listKey": "n2-w4d3"
+  },
+  {
+    "id": "n2-w4d3-020",
+    "kanji": "画像",
+    "kana": "がぞう",
+    "english": "image",
+    "sentence": "今はインターネットでいろいろな画像が検索できます。",
+    "listKey": "n2-w4d3"
+  },
+  {
+    "id": "n2-w4d3-021",
+    "kanji": "映像",
+    "kana": "えいぞう",
+    "english": "video, footage",
+    "sentence": "これは事故の瞬間の映像です。",
+    "listKey": "n2-w4d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d3-022",
+    "kanji": "現像",
+    "kana": "げんぞう",
+    "english": "film developing",
+    "sentence": "アナログカメラは現像する時がおもしろいんです。",
+    "listKey": "n2-w4d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d3-023",
+    "kanji": "書類",
+    "kana": "しょるい",
+    "english": "documents",
+    "sentence": "書類を整理してください。",
+    "listKey": "n2-w4d3"
+  },
+  {
+    "id": "n2-w4d3-024",
+    "kanji": "分類",
+    "kana": "ぶんるい",
+    "english": "classification",
+    "sentence": "プロジェクトごとに書類を分類しました。",
+    "listKey": "n2-w4d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d3-025",
+    "kanji": "人類",
+    "kana": "じんるい",
+    "english": "humankind",
+    "sentence": "人類は約500万年前に誕生しました。",
+    "listKey": "n2-w4d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d3-026",
+    "kanji": "書式",
+    "kana": "しょしき",
+    "english": "format (document)",
+    "sentence": "書式を変えて読みやすくしました。",
+    "listKey": "n2-w4d3"
+  },
+  {
+    "id": "n2-w4d3-027",
+    "kanji": "入学式",
+    "kana": "にゅうがくしき",
+    "english": "entrance ceremony",
+    "sentence": "夫婦で子供の入学式に出席します。",
+    "listKey": "n2-w4d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d3-028",
+    "kanji": "日本式",
+    "kana": "にほんしき",
+    "english": "Japanese style",
+    "sentence": "日本式のコミュニケーションにまだ慣れません。",
+    "listKey": "n2-w4d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d3-029",
+    "kanji": "正式（な）",
+    "kana": "せいしき（な）",
+    "english": "official, formal",
+    "sentence": "社長の交代が正式に発表されました。",
+    "listKey": "n2-w4d3"
+  },
+  {
+    "id": "n2-w4d3-030",
+    "kanji": "中央",
+    "kana": "ちゅうおう",
+    "english": "center",
+    "sentence": "中央アジアの国々を旅行しました。",
+    "listKey": "n2-w4d3"
+  },
+  {
+    "id": "n2-w4d3-031",
+    "kanji": "保存",
+    "kana": "ほぞん",
+    "english": "preservation, saving (data)",
+    "sentence": "データを修正して上書き保存しました。",
+    "listKey": "n2-w4d3"
+  },
+  {
+    "id": "n2-w4d3-032",
+    "kanji": "生存",
+    "kana": "せいぞん",
+    "english": "survival",
+    "sentence": "倒れたビルの中から生存者が見つかりました。",
+    "listKey": "n2-w4d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d3-033",
+    "kanji": "ご存じ",
+    "kana": "ごぞんじ",
+    "english": "know (honorific)",
+    "sentence": "ご存じの通り、来月社長が交代します。",
+    "listKey": "n2-w4d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d3-034",
+    "kanji": "存在",
+    "kana": "そんざい",
+    "english": "existence",
+    "sentence": "彼は私にとって父親のような存在です。",
+    "listKey": "n2-w4d3"
+  },
+  {
+    "id": "n2-w4d3-035",
+    "kanji": "認め印",
+    "kana": "みとめいん",
+    "english": "personal seal, stamp",
+    "sentence": "お荷物です。こちらに認め印かサインをお願いします。",
+    "listKey": "n2-w4d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d3-036",
+    "kanji": "印",
+    "kana": "しるし",
+    "english": "mark, seal",
+    "sentence": "これは感謝の印です。受け取ってください。",
+    "listKey": "n2-w4d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d3-037",
+    "kanji": "目印",
+    "kana": "めじるし",
+    "english": "landmark, marker",
+    "sentence": "赤い看板がお店の目印です。",
+    "listKey": "n2-w4d3",
+    "isReview": true
+  },
+  {
+    "id": "n2-w4d3-038",
+    "kanji": "印刷",
+    "kana": "いんさつ",
+    "english": "printing",
+    "sentence": "プリンターが故障しているので、今印刷できません。",
+    "listKey": "n2-w4d3"
+  },
+  {
+    "id": "n2-w4d3-039",
+    "kanji": "拡大",
+    "kana": "かくだい",
+    "english": "enlargement, expansion",
+    "sentence": "今後アジア地域でのビジネスを拡大する予定です。",
+    "listKey": "n2-w4d3"
+  },
+  {
+    "id": "n2-w4d3-040",
+    "kanji": "縮小",
+    "kana": "しゅくしょう",
+    "english": "reduction, shrinking",
+    "sentence": "B5サイズに縮小してください。",
+    "listKey": "n2-w4d3"
+  }
+]
