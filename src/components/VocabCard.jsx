@@ -6,9 +6,19 @@ import { kanjiCharsOf } from '../utils/kanjiMeaningLookup.js'
 
 const CARD_BG = '#E8E4DE'
 
-function CardShell({ children }) {
+function CardShell({ isReview, children }) {
   return (
     <div style={{ position: 'relative', backgroundColor: CARD_BG, width: '100%', height: '100%' }}>
+      {isReview && (
+        <div style={{
+          position: 'absolute', top: '3cqw', left: '3cqw',
+          fontFamily: FONT, fontSize: '4.5cqw', fontWeight: 700,
+          color: 'rgba(0,0,0,0.16)', lineHeight: 1,
+          pointerEvents: 'none', userSelect: 'none',
+        }}>
+          R
+        </div>
+      )}
       {children}
     </div>
   )
@@ -17,7 +27,7 @@ function CardShell({ children }) {
 function FrontContent({ word, pixelFont }) {
   const jaFont = pixelFont ? FONT : 'system-ui, sans-serif'
   return (
-    <CardShell>
+    <CardShell isReview={word.isReview}>
       <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{
           fontFamily: jaFont,
@@ -79,7 +89,7 @@ function BackContent({ word, showFurigana, showTranslation, showSentence, showKa
   const meaningBarReady = kanjiChars.length > 0 && kanjiChars.every(ch => ch in kanjiMeanings)
 
   return (
-    <CardShell>
+    <CardShell isReview={word.isReview}>
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, padding: '0 16px' }}>
           <div style={{
