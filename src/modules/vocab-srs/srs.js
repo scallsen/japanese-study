@@ -170,6 +170,36 @@ export function getCardStateCounts(cardsObj, decks) {
   return { unlearned, learning, graduated, relearning }
 }
 
+// Card interval (days) at or above which a graduated (Review) card is considered "mature",
+// mirroring Anki's own young/mature convention.
+export const MATURE_THRESHOLD_DAYS = 21
+
+// Distribution of active-deck cards across New/Learning/Young/Mature/Relearning,
+// plus a separate suspended count (suspended is an overlay flag, not an FSRS state,
+// so a suspended card still counts toward whichever state bucket it's actually in).
+export function getStateDistribution(cardsObj, decks) {
+  const activeDeckIds = new Set(
+    Object.values(decks).filter(d => d.active).map(d => d.id)
+  )
+  let newCount = 0, learning = 0, young = 0, mature = 0, relearning = 0, suspended = 0, total = 0
+
+  for (const card of Object.values(cardsObj)) {
+    if (!activeDeckIds.has(card.deckId)) continue
+    total++
+    if (card.suspended) suspended++
+
+    if (card.state === State.New) newCount++
+    else if (card.state === State.Learning) learning++
+    else if (card.state === State.Relearning) relearning++
+    else if (card.state === State.Review) {
+      if (card.scheduled_days >= MATURE_THRESHOLD_DAYS) mature++
+      else young++
+    }
+  }
+
+  return { new: newCount, learning, young, mature, relearning, suspended, total }
+}
+
 // Backward-compat: takes a plain card array (old storage shape).
 export function getStats(cards) {
   const now = new Date()

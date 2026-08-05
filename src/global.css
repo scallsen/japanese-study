@@ -95,3 +95,15 @@ button, input, select, textarea {
 .story-recent-card:hover {
   background: #313131;
 }
+
+.srs-browse-row:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+.srs-browse-link {
+  text-decoration: none;
+}
+
+.srs-browse-link:hover {
+  text-decoration: underline;
+}
