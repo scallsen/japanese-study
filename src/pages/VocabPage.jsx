@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useRef, Component } from 'react'
 import VocabCard from '../components/VocabCard.jsx'
 import DrillHUD from '../components/DrillHUD.jsx'
 import DrawerSectionHeader from '../components/DrawerSectionHeader.jsx'
+import VocabModeToggle from '../components/VocabModeToggle.jsx'
 import DrawerCheckbox from '../components/DrawerCheckbox.jsx'
 import DrawerSelect from '../components/DrawerSelect.jsx'
 import SpeedModeControls from '../components/SpeedModeControls.jsx'
@@ -91,6 +92,16 @@ function toggle(arr, val) {
   return arr.includes(val) ? arr.filter(v => v !== val) : [...arr, val]
 }
 
+// Sublist progress is stored per review direction: { [listId]: { [reviewMode]: { lastReviewed, correct, total } } }.
+// Entries saved before review modes existed are flat ({ lastReviewed, ... }) — treat those as 'kanji-front' progress
+// so old data isn't lost, and 'meaning-front' still reads as unstudied ("New") until reviewed in that direction.
+function getSublistModeProgress(vocabProgress, listId, mode) {
+  const entry = vocabProgress?.sublists?.[listId]
+  if (!entry) return undefined
+  if ('lastReviewed' in entry) return mode === 'kanji-front' ? entry : undefined
+  return entry[mode]
+}
+
 function relativeTime(isoStr) {
   if (!isoStr) return null
   const diff = Date.now() - new Date(isoStr).getTime()
@@ -106,7 +117,7 @@ function relativeTime(isoStr) {
 
 const AUDIO_PRELOAD_COUNT = 3
 
-function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, showFurigana, showTranslation, showSentence, showKanjiMeaning, pixelFont, showVisualEffects, onPulse, isShort }) {
+function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, reviewMode, showFurigana, showTranslation, showSentence, showKanjiMeaning, pixelFont, showVisualEffects, onPulse, isShort }) {
   const [flippedCardId, setFlippedCardId] = useState(null)
   const [transitioning, setTransitioning] = useState(false)
   const [exitDir, setExitDir] = useState(null)
@@ -314,6 +325,7 @@ function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, sho
             flipped={isFlipped}
             onFlip={handleFlip}
             animate={showVisualEffects}
+            reviewMode={reviewMode}
             showFurigana={showFurigana}
             showTranslation={showTranslation}
             showSentence={showSentence}
@@ -704,7 +716,7 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists }) {
 
 // ── HomeScreen ────────────────────────────────────────────────────────────────
 
-function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selectedSubLists, onToggleSubList, wordCountByList, hasReviewWords, includeReview, onToggleIncludeReview, vocabProgress, onStart, onGlance }) {
+function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selectedSubLists, onToggleSubList, wordCountByList, hasReviewWords, includeReview, onToggleIncludeReview, vocabProgress, reviewMode, onChangeReviewMode, onStart, onGlance }) {
   const [startHovered, setStartHovered] = useState(false)
   const canStart = selectedSubLists.length > 0
 
@@ -718,6 +730,14 @@ function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selec
       flexDirection: 'column',
       gap: 24,
     }}>
+
+      {/* Direction */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <label style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, letterSpacing: '0.08em' }}>
+          DRILL MODE
+        </label>
+        <VocabModeToggle mode={reviewMode} onChange={onChangeReviewMode} />
+      </div>
 
       {/* Source selector */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -757,10 +777,10 @@ function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selec
       </div>
 
       {/* Sublist grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 6 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(155px, 1fr))', gap: 6 }}>
         {availableSubLists.map(list => {
           const count = wordCountByList[list.id] ?? 0
-          const prog = vocabProgress?.sublists?.[list.id]
+          const prog = getSublistModeProgress(vocabProgress, list.id, reviewMode)
           const isSelected = selectedSubLists.includes(list.id)
           return (
             <SubListTile
@@ -910,6 +930,7 @@ export default function VocabPage() {
   const [showOptions,       setShowOptions]       = useState(() => window.innerWidth > 768)
   const [selectedSourceId,  setSelectedSourceId]  = useState(defaultSelectedSource)
   const [selectedSubLists,  setSelectedSubLists]  = useState([])
+  const [reviewMode,       setReviewMode]       = useState(() => safeLocalStorageGet('vocab-review-mode') ?? 'kanji-front')
   const [isDrilling,       setIsDrilling]       = useState(false)
   const [isGlancing,       setIsGlancing]       = useState(false)
   const [audioEnabled,     setAudioEnabled]     = useState(() => {
@@ -955,6 +976,7 @@ export default function VocabPage() {
   const { isProcessing: audioProcessing } = useAudioGenerationStatus()
 
   useEffect(() => { safeLocalStorageSet('vocab-selected-source', selectedSourceId) }, [selectedSourceId])
+  useEffect(() => { safeLocalStorageSet('vocab-review-mode',     reviewMode) },       [reviewMode])
   useEffect(() => { safeLocalStorageSet('vocab-audio-enabled',  audioEnabled) },     [audioEnabled])
   useEffect(() => { safeLocalStorageSet('vocab-audio-source',   audioSource) },      [audioSource])
   useEffect(() => { safeLocalStorageSet('vocab-sfx-enabled',    sfxEnabled) },       [sfxEnabled])
@@ -1016,15 +1038,16 @@ export default function VocabPage() {
     const total = pool.length
     const updatedSublists = { ...(vocabProgress?.sublists ?? {}) }
     for (const listId of selectedSubLists) {
+      const existing = updatedSublists[listId]
+      const existingByMode = existing && 'lastReviewed' in existing ? { 'kanji-front': existing } : (existing ?? {})
       updatedSublists[listId] = {
-        lastReviewed: now,
-        correct: drill.correct,
-        total,
+        ...existingByMode,
+        [reviewMode]: { lastReviewed: now, correct: drill.correct, total },
       }
     }
     saveVocabProgress({ ...(vocabProgress ?? {}), sublists: updatedSublists })
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [drill.done, isDrilling, user])
+  }, [drill.done, isDrilling, user, reviewMode])
 
   function handleAddToSrs(words) {
     const current = srsData ?? { decks: {}, cards: {}, lastSession: null, totalReviews: 0, newCardDay: { date: '', count: 0 } }
@@ -1243,6 +1266,7 @@ export default function VocabPage() {
                   sfxEnabled={audioEnabled && sfxEnabled}
                   ttsVoice={ttsVoice}
                   showStreak={showStreak}
+                  reviewMode={reviewMode}
                   showFurigana={showFurigana}
                   showTranslation={showTranslation}
                   showSentence={showSentence}
@@ -1273,6 +1297,8 @@ export default function VocabPage() {
                 includeReview={includeReview}
                 onToggleIncludeReview={() => setIncludeReview(v => !v)}
                 vocabProgress={vocabProgress}
+                reviewMode={reviewMode}
+                onChangeReviewMode={setReviewMode}
                 onStart={() => setIsDrilling(true)}
                 onGlance={() => setIsGlancing(true)}
               />
