@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useProgress } from '../../hooks/useProgress.js'
 import { migrateProgress } from './migrate.js'
-import { resolveCard, State, MATURE_THRESHOLD_DAYS } from './srs.js'
+import { resolveCard, cardStateLabel } from './srs.js'
 import PageHeader from '../../components/PageHeader.jsx'
 import AuthSlot from '../../components/AuthSlot.jsx'
 import DrawerSelect from '../../components/DrawerSelect.jsx'
@@ -15,25 +15,18 @@ const PAGE_SIZE = 50
 
 // Same ramp as the home-screen progress bar (VocabSrsModule.jsx) — kept as a
 // local copy since it's a small, page-specific UI concern, not FSRS logic.
-const STATE_COLORS = { new: '#3a5f58', learning: '#4c8a7d', young: '#5eb6a2', mature: '#7fe0c8', relearning: '#e0a72e' }
-const STATE_LABELS = { new: 'New', learning: 'Learning', young: 'Young', mature: 'Mature', relearning: 'Relearning' }
+const STATE_COLORS = { new: '#aaaaaa', learning: '#4c8a7d', young: '#5eb6a2', mature: '#7fe0c8', relearning: '#e0a72e' }
+const STATE_LABELS = { new: 'Unlearned', learning: 'Learning', young: 'Young', mature: 'Mature', relearning: 'Relearning' }
 
 const STATE_FILTER_OPTIONS = [
   { value: 'all', label: 'All states' },
-  { value: 'new', label: 'New' },
+  { value: 'new', label: 'Unlearned' },
   { value: 'learning', label: 'Learning' },
   { value: 'young', label: 'Young' },
   { value: 'mature', label: 'Mature' },
   { value: 'relearning', label: 'Relearning' },
   { value: 'suspended', label: 'Suspended' },
 ]
-
-function cardStateLabel(card) {
-  if (card.state === State.Review) return card.scheduled_days >= MATURE_THRESHOLD_DAYS ? 'mature' : 'young'
-  if (card.state === State.Learning) return 'learning'
-  if (card.state === State.Relearning) return 'relearning'
-  return 'new'
-}
 
 function formatDue(dueIso) {
   if (!dueIso) return ''

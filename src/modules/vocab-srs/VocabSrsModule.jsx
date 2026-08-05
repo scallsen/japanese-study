@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useProgress } from '../../hooks/useProgress.js'
-import { getDeckStats, getGlobalStats, getCardStateCounts, getStateDistribution, getTodaysQueue, resolveCard, resetCardProgress, State } from './srs.js'
+import { getDeckStats, getGlobalStats, getStateDistribution, tallyCardStates, getTodaysQueue, resolveCard, resetCardProgress, State } from './srs.js'
 import { parseAnkiExport } from './import.js'
 import { initSession } from './session.js'
 import { migrateProgress, initializeDeckCards } from './migrate.js'
@@ -34,27 +34,20 @@ function useIsMobile(breakpoint = 768) {
   return isMobile
 }
 
-function StatRow({ label, value, accent }) {
-  return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '5px 0' }}>
-      <span style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>{label}</span>
-      <span style={{ fontSize: FS_BASE, color: accent || TEXT, fontVariantNumeric: 'tabular-nums' }}>{value}</span>
-    </div>
-  )
-}
-
 // Ordinal ramp (New→Learning→Young→Mature, one hue) + a distinct warning hue for
 // Relearning, validated with the dataviz skill's palette validator against this
-// module's dark background for CVD/contrast separation.
+// module's dark background for CVD/contrast separation. Unlearned is a neutral
+// grey (not part of the ramp) since it's inert — cards that haven't been
+// touched yet, not a step in the learning progression.
 const STATE_COLORS = {
-  new: '#3a5f58',
+  new: '#aaaaaa',
   learning: '#4c8a7d',
   young: '#5eb6a2',
   mature: '#7fe0c8',
   relearning: '#e0a72e',
 }
 const STATE_SEGMENTS = [
-  { key: 'new', label: 'New' },
+  { key: 'new', label: 'Unlearned' },
   { key: 'learning', label: 'Learning' },
   { key: 'young', label: 'Young' },
   { key: 'mature', label: 'Mature' },
@@ -82,7 +75,7 @@ function DeckProgressBar({ distribution }) {
         {segments.map(s => (
           <span key={s.key} style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, display: 'flex', alignItems: 'center', gap: 5 }}>
             <span style={{ width: 8, height: 8, borderRadius: 2, background: STATE_COLORS[s.key], display: 'inline-block', flexShrink: 0 }} />
-            {s.label} {s.pct.toFixed(1)}%
+            {s.label} {s.count}
           </span>
         ))}
       </div>
@@ -328,7 +321,6 @@ export default function VocabSrsModule() {
   const cardsObj = progress.cards ?? {}
   const deckList = Object.values(decks).sort((a, b) => (a.addedAt ?? 0) - (b.addedAt ?? 0))
   const globalStats = getGlobalStats(cardsObj, decks)
-  const cardStateCounts = getCardStateCounts(cardsObj, decks)
   const stateDistribution = getStateDistribution(cardsObj, decks)
   const todayStr = new Date().toISOString().split('T')[0]
   const newCardDay = progress.newCardDay ?? { date: '', count: 0 }
@@ -336,6 +328,9 @@ export default function VocabSrsModule() {
   const effectiveNewPerDay = Math.max(0, dailyNewCards - newCardsIntroducedToday)
   const { due, newCards, rescheduled } = getTodaysQueue(cardsObj, decks, { newPerDay: effectiveNewPerDay })
   const canStart = due.length > 0 || newCards.length > 0 || rescheduled.length > 0
+  // Distribution of the cards that would actually be studied if "Start review"
+  // were pressed right now — distinct from stateDistribution's whole-deck view.
+  const queueDistribution = tallyCardStates([...due, ...rescheduled, ...newCards])
   const activeDecks = deckList.filter(d => d.active)
 
   // Recomputes today's new-card count from cards actually introduced this
@@ -515,17 +510,17 @@ export default function VocabSrsModule() {
 
         {/* ── Deck Stats (global) ── */}
         <DrawerSectionHeader title="Deck Stats" />
-        {globalStats.totalCards === 0 ? (
+        {stateDistribution.total === 0 ? (
           <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, padding: '4px 0 8px' }}>
             No cards yet
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {cardStateCounts.unlearned > 0 && <StatRow label="Unlearned" value={cardStateCounts.unlearned} />}
-            {cardStateCounts.learning > 0 && <StatRow label="Learning" value={cardStateCounts.learning} />}
-            {cardStateCounts.graduated > 0 && <StatRow label="Graduated" value={cardStateCounts.graduated} />}
-            {cardStateCounts.relearning > 0 && <StatRow label="Relearning" value={cardStateCounts.relearning} />}
-          </div>
+          <>
+            <DeckProgressBar distribution={stateDistribution} />
+            <a href="#/vocab-srs/browse" className="srs-browse-link" style={{ display: 'inline-block', marginTop: 12, fontSize: FS_BASE, color: ACCENT }}>
+              View all cards →
+            </a>
+          </>
         )}
 
         <div style={hairline} />
@@ -858,12 +853,7 @@ export default function VocabSrsModule() {
                           ? `${due.length + rescheduled.length} due · ${newCards.length} new · ~${Math.ceil((due.length + rescheduled.length + newCards.length) * 0.25) || '<1'} min`
                           : 'Nothing due'}
                       </div>
-                      <DeckProgressBar distribution={stateDistribution} />
-                      {stateDistribution.total > 0 && (
-                        <a href="#/vocab-srs/browse" className="srs-browse-link" style={{ display: 'inline-block', marginTop: 12, fontSize: FS_BASE, color: ACCENT }}>
-                          View all cards →
-                        </a>
-                      )}
+                      <DeckProgressBar distribution={queueDistribution} />
                     </div>
 
                     {/* Per-deck breakdown */}
