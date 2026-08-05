@@ -36,6 +36,40 @@ const STATE_FILTER_OPTIONS = [
   { value: 'suspended', label: 'Suspended' },
 ]
 
+function StateTabs({ options, value, onChange }) {
+  return (
+    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
+      {options.map(opt => {
+        const selected = value === opt.value
+        return (
+          <button
+            key={opt.value}
+            onClick={() => onChange(opt.value)}
+            className="srs-tab"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 2,
+              padding: '6px 14px',
+              borderRadius: 6,
+              border: `1px solid ${selected ? 'rgba(58,189,164,0.4)' : 'rgba(255,255,255,0.12)'}`,
+              background: selected ? 'rgba(58,189,164,0.15)' : undefined,
+              color: selected ? ACCENT : TEXT_MUTED,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              letterSpacing: TRACKING,
+            }}
+          >
+            <span style={{ fontSize: FS_CAPTION, fontVariantNumeric: 'tabular-nums' }}>{opt.count}</span>
+            <span style={{ fontSize: FS_BASE }}>{opt.label}</span>
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
 function formatDue(dueIso) {
   if (!dueIso) return ''
   const diffDays = Math.round((new Date(dueIso) - Date.now()) / 86400000)
@@ -141,9 +175,24 @@ export default function VocabSrsBrowsePage() {
     [cardsObj, decks]
   )
 
+  const deckScopedCards = useMemo(
+    () => (deckFilter === 'all' ? allCards : allCards.filter(c => c.deckId === deckFilter)),
+    [allCards, deckFilter]
+  )
+
+  // Tab counts reflect the deck filter only, not search/state — so they stay
+  // stable reference points while switching between tabs or typing a search.
+  const stateTabCounts = useMemo(() => {
+    const counts = { all: deckScopedCards.length, new: 0, learning: 0, young: 0, mature: 0, relearning: 0, suspended: 0 }
+    for (const c of deckScopedCards) {
+      counts[cardStateLabel(c)]++
+      if (c.suspended) counts.suspended++
+    }
+    return counts
+  }, [deckScopedCards])
+
   const filtered = useMemo(() => {
-    let list = allCards
-    if (deckFilter !== 'all') list = list.filter(c => c.deckId === deckFilter)
+    let list = deckScopedCards
     if (stateFilter === 'suspended') list = list.filter(c => c.suspended)
     else if (stateFilter !== 'all') list = list.filter(c => cardStateLabel(c) === stateFilter)
     if (search) {
@@ -154,7 +203,7 @@ export default function VocabSrsBrowsePage() {
       )
     }
     return [...list].sort((a, b) => new Date(a.due) - new Date(b.due))
-  }, [allCards, deckFilter, stateFilter, search])
+  }, [deckScopedCards, stateFilter, search])
 
   if (loading && !progress) return null
 
@@ -192,37 +241,40 @@ export default function VocabSrsBrowsePage() {
       />
       <main style={{ flex: 1, overflowY: 'auto', padding: '24px 24px 60px' }}>
         <div style={{ maxWidth: 760, margin: '0 auto' }}>
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 20, alignItems: 'flex-end' }}>
-            <div style={{ minWidth: 150 }}>
-              <DrawerSelect value={stateFilter} onChange={setStateFilter} options={STATE_FILTER_OPTIONS} label="State" />
-            </div>
-            <div style={{ minWidth: 150 }}>
-              <DrawerSelect
-                value={deckFilter}
-                onChange={setDeckFilter}
-                options={[{ value: 'all', label: 'All decks' }, ...deckList.map(d => ({ value: d.id, label: d.name }))]}
-                label="Deck"
-              />
-            </div>
-            <input
-              type="text"
-              placeholder="Search..."
-              value={searchInput}
-              onChange={e => setSearchInput(e.target.value)}
-              style={{
-                flex: 1,
-                minWidth: 160,
-                padding: '6px 10px',
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.15)',
-                borderRadius: 6,
-                color: TEXT,
-                fontFamily: 'inherit',
-                fontSize: FS_BASE,
-                letterSpacing: TRACKING,
-              }}
+          <div style={{ minWidth: 200, maxWidth: 320, marginBottom: 20 }}>
+            <DrawerSelect
+              value={deckFilter}
+              onChange={setDeckFilter}
+              options={[{ value: 'all', label: 'All decks' }, ...deckList.map(d => ({ value: d.id, label: d.name }))]}
+              label="Deck"
             />
           </div>
+
+          <StateTabs
+            options={STATE_FILTER_OPTIONS.map(opt => ({ ...opt, count: stateTabCounts[opt.value] ?? 0 }))}
+            value={stateFilter}
+            onChange={setStateFilter}
+          />
+
+          <input
+            type="text"
+            placeholder="Search..."
+            value={searchInput}
+            onChange={e => setSearchInput(e.target.value)}
+            style={{
+              width: '100%',
+              boxSizing: 'border-box',
+              marginBottom: 20,
+              padding: '6px 10px',
+              background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(255,255,255,0.15)',
+              borderRadius: 6,
+              color: TEXT,
+              fontFamily: 'inherit',
+              fontSize: FS_BASE,
+              letterSpacing: TRACKING,
+            }}
+          />
 
           <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: 10 }}>
             {filtered.length} card{filtered.length === 1 ? '' : 's'}
