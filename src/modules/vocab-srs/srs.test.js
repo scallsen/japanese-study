@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createCard, reviewCard, Rating, State } from './srs.js'
+import { createCard, reviewCard, getStateDistribution, Rating, State } from './srs.js'
 
 function newCard() {
   return createCard('front', 'back', 'test-1')
@@ -78,5 +78,36 @@ describe('reviewCard — due date after Good', () => {
     const before = Date.now()
     const result = reviewOnDue(newCard(), Rating.Good)
     expect(new Date(result.due).getTime()).toBeGreaterThan(before)
+  })
+})
+
+describe('getStateDistribution', () => {
+  const decks = {
+    active: { id: 'active', active: true },
+    inactive: { id: 'inactive', active: false },
+  }
+
+  it('buckets by state, splits Review into young/mature at the 21-day threshold, and counts suspended separately', () => {
+    const cards = {
+      c1: { deckId: 'active', state: State.New },
+      c2: { deckId: 'active', state: State.Learning },
+      c3: { deckId: 'active', state: State.Review, scheduled_days: 20 },
+      c4: { deckId: 'active', state: State.Review, scheduled_days: 21 },
+      c5: { deckId: 'active', state: State.Relearning },
+      c6: { deckId: 'active', state: State.Review, scheduled_days: 30, suspended: true },
+      c7: { deckId: 'inactive', state: State.New },
+    }
+
+    const dist = getStateDistribution(cards, decks)
+
+    expect(dist).toEqual({
+      new: 1,
+      learning: 1,
+      young: 1,
+      mature: 2,
+      relearning: 1,
+      suspended: 1,
+      total: 6,
+    })
   })
 })

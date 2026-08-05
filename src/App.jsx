@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import DashboardPage from './pages/DashboardPage.jsx'
 import VocabPage from './pages/VocabPage.jsx'
 import VocabSrsModule from './modules/vocab-srs/VocabSrsModule.jsx'
+import VocabSrsBrowsePage from './modules/vocab-srs/VocabSrsBrowsePage.jsx'
 import ImmersionModule from './modules/immersion/ImmersionModule.jsx'
 import GrammarMapModule from './modules/grammar-map/GrammarMapModule.jsx'
 import StoryModule from './modules/story/StoryModule.jsx'
@@ -33,6 +34,7 @@ export default function App() {
   if (route === '/') return <DashboardPage />
   if (route === '/vocab') return <VocabPage />
   if (route === '/vocab-srs') return <VocabSrsModule />
+  if (route === '/vocab-srs/browse') return <VocabSrsBrowsePage />
   if (route === '/immersion') return <ImmersionModule />
   if (route === '/grammar-map') return <GrammarMapModule />
   if (route === '/story') return <StoryModule />
