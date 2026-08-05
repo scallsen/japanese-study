@@ -17,6 +17,14 @@ const PAGE_SIZE = 50
 // local copy since it's a small, page-specific UI concern, not FSRS logic.
 const STATE_COLORS = { new: '#aaaaaa', learning: '#4c8a7d', young: '#5eb6a2', mature: '#7fe0c8', relearning: '#e0a72e' }
 const STATE_LABELS = { new: 'Unlearned', learning: 'Learning', young: 'Young', mature: 'Mature', relearning: 'Relearning' }
+const STATE_DESCRIPTIONS = {
+  new: 'Never reviewed — waiting for its first study session',
+  learning: 'Answered correctly once, but not yet graduated to a real spaced interval',
+  young: 'Graduated, but its current interval is under 21 days — still fragile',
+  mature: 'Graduated with a 21+ day interval — well established',
+  relearning: 'Was graduated, just answered wrong — cooling down before rejoining the queue',
+}
+const SUSPENDED_DESCRIPTION = 'Paused after too many lapses (leech threshold) — won\'t appear in reviews until its progress is reset'
 
 const STATE_FILTER_OPTIONS = [
   { value: 'all', label: 'All states' },
@@ -60,27 +68,33 @@ function CardRow({ card, showDeck }) {
       {showDeck && (
         <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, flexShrink: 0 }}>{card.deckName}</span>
       )}
-      <span style={{
-        fontSize: FS_CAPTION,
-        color: STATE_COLORS[label],
-        background: 'rgba(255,255,255,0.06)',
-        border: `1px solid ${STATE_COLORS[label]}55`,
-        borderRadius: 4,
-        padding: '2px 8px',
-        flexShrink: 0,
-      }}>
-        {STATE_LABELS[label]}
-      </span>
-      {card.suspended && (
-        <span style={{
+      <span
+        title={STATE_DESCRIPTIONS[label]}
+        style={{
           fontSize: FS_CAPTION,
-          color: '#f87171',
-          background: 'rgba(192,57,43,0.15)',
-          border: '1px solid rgba(192,57,43,0.4)',
+          color: STATE_COLORS[label],
+          background: 'rgba(255,255,255,0.06)',
+          border: `1px solid ${STATE_COLORS[label]}55`,
           borderRadius: 4,
           padding: '2px 8px',
           flexShrink: 0,
+          cursor: 'help',
         }}>
+        {STATE_LABELS[label]}
+      </span>
+      {card.suspended && (
+        <span
+          title={SUSPENDED_DESCRIPTION}
+          style={{
+            fontSize: FS_CAPTION,
+            color: '#f87171',
+            background: 'rgba(192,57,43,0.15)',
+            border: '1px solid rgba(192,57,43,0.4)',
+            borderRadius: 4,
+            padding: '2px 8px',
+            flexShrink: 0,
+            cursor: 'help',
+          }}>
           Suspended
         </span>
       )}

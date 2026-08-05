@@ -47,12 +47,13 @@ const STATE_COLORS = {
   relearning: '#e0a72e',
 }
 const STATE_SEGMENTS = [
-  { key: 'new', label: 'Unlearned' },
-  { key: 'learning', label: 'Learning' },
-  { key: 'young', label: 'Young' },
-  { key: 'mature', label: 'Mature' },
-  { key: 'relearning', label: 'Relearning' },
+  { key: 'new', label: 'Unlearned', description: 'Never reviewed — waiting for its first study session' },
+  { key: 'learning', label: 'Learning', description: 'Answered correctly once, but not yet graduated to a real spaced interval' },
+  { key: 'young', label: 'Young', description: 'Graduated, but its current interval is under 21 days — still fragile' },
+  { key: 'mature', label: 'Mature', description: 'Graduated with a 21+ day interval — well established' },
+  { key: 'relearning', label: 'Relearning', description: 'Was graduated, just answered wrong — cooling down before rejoining the queue' },
 ]
+const SUSPENDED_DESCRIPTION = 'Paused after too many lapses (leech threshold) — won\'t appear in reviews until its progress is reset'
 
 function DeckProgressBar({ distribution }) {
   if (distribution.total === 0) return null
@@ -66,32 +67,35 @@ function DeckProgressBar({ distribution }) {
         {segments.map(s => (
           <div
             key={s.key}
-            title={`${s.label}: ${s.count} (${s.pct.toFixed(1)}%)`}
+            title={`${s.label}: ${s.count} (${s.pct.toFixed(1)}%) — ${s.description}`}
             style={{ flex: `${s.count} 0 0`, background: STATE_COLORS[s.key] }}
           />
         ))}
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 14px', marginTop: 8 }}>
         {segments.map(s => (
-          <span key={s.key} style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, display: 'flex', alignItems: 'center', gap: 5 }}>
+          <span key={s.key} title={s.description} style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, display: 'flex', alignItems: 'center', gap: 5, cursor: 'help' }}>
             <span style={{ width: 8, height: 8, borderRadius: 2, background: STATE_COLORS[s.key], display: 'inline-block', flexShrink: 0 }} />
             {s.label} {s.count}
           </span>
         ))}
       </div>
       {distribution.suspended > 0 && (
-        <div style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 6,
-          marginTop: 10,
-          padding: '4px 10px',
-          fontSize: FS_CAPTION,
-          background: 'rgba(192,57,43,0.15)',
-          border: '1px solid rgba(192,57,43,0.4)',
-          borderRadius: 5,
-          color: '#f87171',
-        }}>
+        <div
+          title={SUSPENDED_DESCRIPTION}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            marginTop: 10,
+            padding: '4px 10px',
+            fontSize: FS_CAPTION,
+            background: 'rgba(192,57,43,0.15)',
+            border: '1px solid rgba(192,57,43,0.4)',
+            borderRadius: 5,
+            color: '#f87171',
+            cursor: 'help',
+          }}>
           ⚠ {distribution.suspended} suspended
         </div>
       )}
