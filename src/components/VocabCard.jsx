@@ -24,21 +24,24 @@ function CardShell({ isReview, children }) {
   )
 }
 
-function FrontContent({ word, pixelFont }) {
+const FRONT_TEXT_STYLE = {
+  fontSize: '12.63cqw',
+  fontWeight: 400,
+  color: '#222',
+  letterSpacing: 'normal',
+  lineHeight: 1.2,
+  textShadow: '2px 2px 0 rgba(0,0,0,0.25)',
+  textAlign: 'center',
+}
+
+function FrontContent({ word, reviewMode, pixelFont }) {
   const jaFont = pixelFont ? FONT : 'system-ui, sans-serif'
+  const isMeaningFront = reviewMode === 'meaning-front'
   return (
     <CardShell isReview={word.isReview}>
-      <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{
-          fontFamily: jaFont,
-          fontSize: '12.63cqw',
-          fontWeight: 400,
-          color: '#222',
-          letterSpacing: 'normal',
-          lineHeight: 1.2,
-          textShadow: '2px 2px 0 rgba(0,0,0,0.25)',
-        }}>
-          {word.kanji}
+      <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: isMeaningFront ? '0 16px' : 0 }}>
+        <div style={{ ...FRONT_TEXT_STYLE, fontFamily: isMeaningFront ? FONT : jaFont }}>
+          {isMeaningFront ? word.english : word.kanji}
         </div>
       </div>
     </CardShell>
@@ -136,8 +139,8 @@ function BackContent({ word, showFurigana, showTranslation, showSentence, showKa
   )
 }
 
-export default function VocabCard({ word, flipped, onFlip, animate, showFurigana, showTranslation, showSentence, showKanjiMeaning, pixelFont }) {
-  const front = <FrontContent word={word} pixelFont={pixelFont} />
+export default function VocabCard({ word, flipped, onFlip, animate, reviewMode, showFurigana, showTranslation, showSentence, showKanjiMeaning, pixelFont }) {
+  const front = <FrontContent word={word} reviewMode={reviewMode} pixelFont={pixelFont} />
   const back  = <BackContent word={word} showFurigana={showFurigana} showTranslation={showTranslation} showSentence={showSentence} showKanjiMeaning={showKanjiMeaning} pixelFont={pixelFont} />
 
   const ants = flipped && animate ? (
