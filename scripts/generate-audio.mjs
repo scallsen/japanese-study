@@ -50,6 +50,7 @@ const TARGETS = [
   { path: 'src/data/words/nsm_n3_vocab.json', textField: 'kana' },
   { path: 'src/data/words/nsm_n3_i4_vocab.json', textField: 'kana' },
   { path: 'src/data/words/nsm_n3_i5_vocab.json', textField: 'kana' },
+  { path: 'src/data/words/nsm_n2_a1_vocab.json', textField: 'kana' },
   { path: 'src/modules/vocab-srs/decks/keigo.json', textField: 'front' },
 ]
 
