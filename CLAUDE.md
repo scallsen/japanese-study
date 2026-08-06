@@ -347,6 +347,8 @@ Anki-style spaced repetition using [ts-fsrs](https://github.com/open-spaced-repe
 | `src/modules/vocab-srs/session.js` | In-session queue — see exports below |
 | `src/modules/vocab-srs/migrate.js` | `migrateProgress(raw)` — shape migration; `initializeDeckCards(progress, deckId)` — first-activation setup |
 | `src/modules/vocab-srs/import.js` | `parseAnkiExport(tsvString, existingIds)` — Anki plain-text export parser |
+| `src/modules/vocab-srs/wordImportApi.js` | `extractWordsFromText(text)` / `extractWordsFromImage(base64, mediaType)` — wrappers over `supabase.functions.invoke('word-import', ...)`; `readImageAsBase64(file)` helper |
+| `src/modules/vocab-srs/WordImportPanel.jsx` | Modal UI for the "Import from text / image" flow — paste/image input, review checklist (editable surface/reading/meaning per row), confirm → `onConfirm(cards)` |
 | `src/modules/vocab-srs/VocabSrsModule.jsx` | Home screen + sidebar: deck management, stats, settings, Start Review |
 | `src/modules/vocab-srs/VocabSrsDrill.jsx` | Drill UI — FlipCard, rating buttons, audio, relearn countdown, session complete |
 | `src/modules/vocab-srs/decks/core2000.json` | Bundled deck — 2007 Core 2000 cards with word + sentence audio |
@@ -357,6 +359,7 @@ Anki-style spaced repetition using [ts-fsrs](https://github.com/open-spaced-repe
 | `scripts/generate-deck-json.mjs` | One-off — converts an Anki Core 2000 TSV export to `decks/core2000.json` |
 | `scripts/upload-audio.mjs` | One-off — uploads Core 2000 Anki audio files to Supabase Storage `audio/imported/` |
 | `scripts/anki-sync.py` | One-off — exports FSRS scheduling state from a local Anki Core 2000 deck to a JSON file importable into this app's SRS module, for migrating existing Anki progress |
+| `supabase/functions/word-import/index.ts` | Edge function backing "Import from text / image" — see Word import section below |
 
 **Note:** `config.js` exists in the directory but is not imported anywhere — it is vestigial and can be ignored.
 
@@ -431,7 +434,7 @@ Cards come from two sources:
 
 **Bundled decks** — static JSON files in `decks/`. Content lives in the JSON; only FSRS scheduling state is persisted to storage. New bundled decks start with no card entries in storage; entries are created on first activation via `initializeDeckCards`.
 
-**Imported decks** — created from Anki TSV exports. Content (front/back/audio/sentence fields) is stored inline on each card object in storage.
+**Imported decks** — created from Anki TSV exports, or from the "Import from text / image" flow (see Word import below). Content (front/back/audio/sentence fields) is stored inline on each card object in storage.
 
 Both sources write to the same `cards{}` object, distinguished by `deckId`.
 
@@ -460,6 +463,21 @@ Audio files live in Supabase Storage bucket `audio/imported/`. URL pattern:
 ```
 ${VITE_SUPABASE_URL}/storage/v1/object/public/audio/imported/${filename}
 ```
+
+### Word import (text / OCR)
+
+"Import from text / image" in the home screen's Import section opens `WordImportPanel.jsx` — paste raw Japanese text, or upload a photo/screenshot, to bulk-add cards without an Anki export. Client sends the input to the `word-import` edge function (`supabase/functions/word-import/index.ts`) and never touches the Anthropic API key directly.
+
+**Pipeline** (`word-import` edge function):
+1. *Image input only* — Claude (vision, default `claude-sonnet-5`, override via `WORD_IMPORT_MODEL`) OCRs the Japanese text out of the image via a `json_schema`-constrained `{ text }` response.
+2. The resulting (or directly pasted) text is tokenized with the same `npm:@patdx/kuromoji` + jsDelivr dictionary setup `story-generate` uses (duplicated, not shared — see Edge functions section under Story generator for why duplication over abstraction is the norm here). Particles/symbols are dropped; content words are deduped by dictionary base form, capped at 60 (`MAX_WORDS`) with a `truncated` flag if the cap was hit.
+3. Each unique base form is looked up against the `dictionary` table with the same two-stage query as `lookupVocabulary.js` (`primary_form` match, then `kana_forms` GIN overlap fallback) using a service-role Supabase client — the edge function's own copy, not the browser one. Words with no dictionary match are still returned (`jmdictId: null`, empty `meaning`) so OCR noise/proper nouns aren't silently dropped, just left for the user to fill in or discard.
+
+Response: `{ words: [{ id, surface, reading, meaning, jmdictId }], truncated }`.
+
+**Client flow**: `WordImportPanel` shows the returned words as a checklist (all pre-selected) with editable surface/reading/meaning fields per row — necessary since OCR and dictionary matching are both imperfect. On confirm, checked rows with both surface and meaning filled in become cards via `createCard(surface, meaning, `word-import-${ts}-${i}`, 'word-import', { kana, jmdictId })`, merged into a dedicated `word-import` deck (name "Imported Words", auto-created on first use — kept separate from the Anki-export `imported` deck so the two sources stay distinguishable in the deck list).
+
+**Deploy**: needs its own `supabase functions deploy word-import` (see Edge functions deploy steps under Story generator) — reuses the same `ANTHROPIC_API_KEY` secret; `SUPABASE_URL`/`SUPABASE_SERVICE_ROLE_KEY` are auto-provided to edge functions and don't need setting.
 
 Built in `VocabSrsDrill.jsx` via the `AUDIO_BASE` constant. Autoplay sequence on flip: word audio first, then sentence audio. Autoplay can be toggled independently for front (on card load) and back (on flip).
 

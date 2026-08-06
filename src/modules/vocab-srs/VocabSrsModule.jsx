@@ -6,6 +6,7 @@ import { parseAnkiExport } from './import.js'
 import { initSession } from './session.js'
 import { migrateProgress, initializeDeckCards } from './migrate.js'
 import VocabSrsDrill from './VocabSrsDrill.jsx'
+import WordImportPanel from './WordImportPanel.jsx'
 import PageHeader from '../../components/PageHeader.jsx'
 import SpeakerIcon from '../../components/SpeakerIcon.jsx'
 import HeaderMenu from '../../components/HeaderMenu.jsx'
@@ -205,6 +206,7 @@ export default function VocabSrsModule() {
   const sessionNewCardsRef = useRef(null)
   const [importMsg, setImportMsg] = useState(null)
   const [ankiSyncMsg, setAnkiSyncMsg] = useState(null)
+  const [showWordImport, setShowWordImport] = useState(false)
   const [advanceDays, setAdvanceDays] = useState(3)
   const [showOptions, setShowOptions] = useState(() => window.innerWidth > 768)
   const [chevronHovered, setChevronHovered] = useState(false)
@@ -455,6 +457,20 @@ export default function VocabSrsModule() {
     await save(newProgress)
     setImportMsg(`${imported.length} card${imported.length === 1 ? '' : 's'} imported`)
     e.target.value = ''
+  }
+
+  async function handleWordImportConfirm(newCards) {
+    const newCardsObj = { ...cardsObj }
+    for (const card of newCards) newCardsObj[card.id] = card
+
+    const newDecks = { ...decks }
+    if (!newDecks['word-import']) {
+      newDecks['word-import'] = { id: 'word-import', name: 'Imported Words', source: 'imported', active: true, addedAt: Date.now() }
+    }
+
+    const newProgress = { ...progress, decks: newDecks, cards: newCardsObj }
+    setProgress(newProgress)
+    await save(newProgress)
   }
 
   async function handleAnkiSyncFileChange(e) {
@@ -928,6 +944,24 @@ export default function VocabSrsModule() {
                             <span style={{ fontSize: FS_BASE, color: '#4ade80' }}>{ankiSyncMsg}</span>
                           )}
                         </div>
+                        <div>
+                          <button
+                            onClick={() => setShowWordImport(true)}
+                            style={{
+                              padding: '8px 16px',
+                              background: 'rgba(255,255,255,0.06)',
+                              border: '1px solid rgba(255,255,255,0.15)',
+                              borderRadius: 6,
+                              fontSize: FS_BASE,
+                              color: 'rgba(255,255,255,0.7)',
+                              fontFamily: 'inherit',
+                              letterSpacing: TRACKING,
+                              cursor: 'pointer',
+                            }}
+                          >
+                            Import from text / image
+                          </button>
+                        </div>
                       </div>
                       <div style={{ marginTop: 8, fontSize: 12, color: 'rgba(255,255,255,0.2)' }}>
                         {Object.keys(cardsObj).length} total cards
@@ -1012,6 +1046,12 @@ export default function VocabSrsModule() {
           </div>
         </>
       )}
+
+      <WordImportPanel
+        open={showWordImport}
+        onClose={() => setShowWordImport(false)}
+        onConfirm={handleWordImportConfirm}
+      />
 
     </div>
   )
