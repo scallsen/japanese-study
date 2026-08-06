@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -43,13 +44,30 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           VOICEVOX_URL: http://localhost:50021
 
+      # main is a protected branch requiring a passing "lint" status check, so the
+      # bot can't push straight to it — route through a branch + PR instead, then
+      # wait for checks and merge once they're green.
       - name: Commit generated audio filenames
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add src/data/words/*.json src/modules/vocab-srs/decks/keigo.json
-          git diff --cached --quiet || git commit -m "Generate Voicevox audio for vocab words"
-          git push
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+
+          BRANCH="bot/generate-audio-${{ github.run_id }}"
+          git checkout -b "$BRANCH"
+          git commit -m "Generate Voicevox audio for vocab words"
+          git push origin "$BRANCH"
+          gh pr create --base main --head "$BRANCH" \
+            --title "Generate Voicevox audio for vocab words" \
+            --body "Automated audio generation — run ${{ github.run_id }}."
+          gh pr checks "$BRANCH" --watch --interval 10
+          gh pr merge "$BRANCH" --squash --delete-branch
 
       # Belt-and-suspenders: the script itself resets status in a try/finally, but
       # this covers runner-level failures (timeout, OOM) that skip that finally block.
