@@ -6,7 +6,11 @@
     "english": "prohibition, forbidden",
     "sentence": "ここから先は関係者以外立ち入り禁止です。",
     "listKey": "n2-w1d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-002",
@@ -14,7 +18,11 @@
     "kana": "きんえん",
     "english": "no smoking",
     "sentence": "この建物は全館禁煙です。",
-    "listKey": "n2-w1d1"
+    "listKey": "n2-w1d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-003",
@@ -23,7 +31,11 @@
     "english": "smoke",
     "sentence": "火事の時は煙を吸わないように注意して逃げましょう。",
     "listKey": "n2-w1d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-004",
@@ -31,7 +43,11 @@
     "kana": "あんせい（な）",
     "english": "rest quietly, bed rest",
     "sentence": "しばらく安静に過ごしてください。",
-    "listKey": "n2-w1d1"
+    "listKey": "n2-w1d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-005",
@@ -39,7 +55,11 @@
     "kana": "しずか（な）",
     "english": "quiet",
     "sentence": "ここは静かでいい環境ですね。",
-    "listKey": "n2-w1d1"
+    "listKey": "n2-w1d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-006",
@@ -47,7 +67,11 @@
     "kana": "しずまる",
     "english": "to calm down, quiet down",
     "sentence": "ひどい風でしたが、少し静まったようですね。",
-    "listKey": "n2-w1d1"
+    "listKey": "n2-w1d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-007",
@@ -55,7 +79,11 @@
     "kana": "きき",
     "english": "crisis",
     "sentence": "会社は経営の危機からようやく抜け出しました。",
-    "listKey": "n2-w1d1"
+    "listKey": "n2-w1d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-008",
@@ -63,7 +91,11 @@
     "kana": "あぶない",
     "english": "dangerous",
     "sentence": "危ないので、動物に近付きすぎないでください。",
-    "listKey": "n2-w1d1"
+    "listKey": "n2-w1d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-009",
@@ -71,7 +103,11 @@
     "kana": "あやうい",
     "english": "precarious, risky",
     "sentence": "スキャンダルによって、彼の地位は危うくなりました。",
-    "listKey": "n2-w1d1"
+    "listKey": "n2-w1d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-010",
@@ -79,7 +115,11 @@
     "kana": "きけん（な）",
     "english": "dangerous",
     "sentence": "歩きスマホは危険ですから、おやめください。",
-    "listKey": "n2-w1d1"
+    "listKey": "n2-w1d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-011",
@@ -88,7 +128,11 @@
     "english": "steep, harsh",
     "sentence": "プロジェクトが成功するまでの道は険しそうです。",
     "listKey": "n2-w1d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-012",
@@ -97,7 +141,11 @@
     "english": "interest, concern",
     "sentence": "健康への関心が高まっています。",
     "listKey": "n2-w1d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-013",
@@ -105,7 +153,11 @@
     "kana": "（～に）かんする",
     "english": "related to",
     "sentence": "食品の安全に関するレポートを読みました。",
-    "listKey": "n2-w1d1"
+    "listKey": "n2-w1d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-014",
@@ -113,7 +165,11 @@
     "kana": "かかわる",
     "english": "to be involved with",
     "sentence": "命に関わる病気じゃなくて、安心しました。",
-    "listKey": "n2-w1d1"
+    "listKey": "n2-w1d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-015",
@@ -121,7 +177,11 @@
     "kana": "かんけい",
     "english": "relationship",
     "sentence": "関係のない質問は後にしてください。",
-    "listKey": "n2-w1d1"
+    "listKey": "n2-w1d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-016",
@@ -130,7 +190,11 @@
     "english": "person in charge",
     "sentence": "係の者におつなぎします。",
     "listKey": "n2-w1d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-017",
@@ -138,7 +202,11 @@
     "kana": "かかりいん",
     "english": "staff member, attendant",
     "sentence": "お困りの場合は、係員をお呼びください。",
-    "listKey": "n2-w1d1"
+    "listKey": "n2-w1d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-018",
@@ -147,7 +215,11 @@
     "english": "fall, tumble",
     "sentence": "山道で車の転落事故がありました。",
     "listKey": "n2-w1d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-019",
@@ -156,7 +228,11 @@
     "english": "failing (exam/grade)",
     "sentence": "大学生の時、1回だけ落第したことがあります。",
     "listKey": "n2-w1d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-020",
@@ -164,7 +240,11 @@
     "kana": "おちる",
     "english": "to fall, drop",
     "sentence": "マラソンの後半はペースが落ちてしまいました。",
-    "listKey": "n2-w1d1"
+    "listKey": "n2-w1d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-021",
@@ -172,7 +252,11 @@
     "kana": "おとす",
     "english": "to drop (something)",
     "sentence": "山道ではスピードを落としてください。",
-    "listKey": "n2-w1d1"
+    "listKey": "n2-w1d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-022",
@@ -180,7 +264,11 @@
     "kana": "らくせき",
     "english": "falling rocks",
     "sentence": "昨日、ここで落石事故がありました。",
-    "listKey": "n2-w1d1"
+    "listKey": "n2-w1d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-023",
@@ -189,7 +277,11 @@
     "english": "magnet",
     "sentence": "小学校で磁石の実験をしました。",
     "listKey": "n2-w1d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-024",
@@ -198,7 +290,11 @@
     "english": "stone",
     "sentence": "よく川に石を投げて遊びました。",
     "listKey": "n2-w1d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-025",
@@ -207,7 +303,11 @@
     "english": "airfield",
     "sentence": "この近くに飛行場があります。",
     "listKey": "n2-w1d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-026",
@@ -216,7 +316,11 @@
     "english": "to fly",
     "sentence": "ドローンが飛んでいるのを見ました。",
     "listKey": "n2-w1d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-027",
@@ -224,7 +328,11 @@
     "kana": "とびだす",
     "english": "to jump out, dash out",
     "sentence": "危ないから道に飛び出したらだめだよ。",
-    "listKey": "n2-w1d1"
+    "listKey": "n2-w1d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-028",
@@ -233,7 +341,11 @@
     "english": "parking lot",
     "sentence": "近くに無料の駐車場はありませんか？",
     "listKey": "n2-w1d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-029",
@@ -241,7 +353,11 @@
     "kana": "ちゅうしゃ",
     "english": "parking",
     "sentence": "家の前に駐車しないでください。",
-    "listKey": "n2-w1d1"
+    "listKey": "n2-w1d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-030",
@@ -250,7 +366,11 @@
     "english": "rounding (numbers)",
     "sentence": "このデータは千の位で四捨五入しています。",
     "listKey": "n2-w1d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-031",
@@ -258,7 +378,11 @@
     "kana": "すてる",
     "english": "to throw away",
     "sentence": "ゴミはルール通りに捨ててください。",
-    "listKey": "n2-w1d1"
+    "listKey": "n2-w1d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-032",
@@ -266,7 +390,11 @@
     "kana": "ゆうえい",
     "english": "swimming (formal)",
     "sentence": "ここは流れが速いから、遊泳禁止です。",
-    "listKey": "n2-w1d1"
+    "listKey": "n2-w1d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-033",
@@ -275,7 +403,11 @@
     "english": "to play",
     "sentence": "子供の時、よくゲームで遊びました。",
     "listKey": "n2-w1d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-034",
@@ -284,7 +416,11 @@
     "english": "swimming",
     "sentence": "彼は水泳の選手です。",
     "listKey": "n2-w1d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d1-035",
@@ -292,7 +428,11 @@
     "kana": "およぐ",
     "english": "to swim",
     "sentence": "毎週、近所のプールで泳いでいます。",
-    "listKey": "n2-w1d1"
+    "listKey": "n2-w1d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-001",
@@ -300,7 +440,11 @@
     "kana": "きっさてん",
     "english": "coffee shop",
     "sentence": "ちょっと喫茶店で休みませんか？",
-    "listKey": "n2-w1d2"
+    "listKey": "n2-w1d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-002",
@@ -308,7 +452,11 @@
     "kana": "きつえんじょ",
     "english": "smoking area",
     "sentence": "このビルに喫煙所はありますか？",
-    "listKey": "n2-w1d2"
+    "listKey": "n2-w1d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-003",
@@ -316,7 +464,11 @@
     "kana": "ひ～",
     "english": "non-, un- (prefix)",
     "sentence": "そのやり方は非効率ですよ。",
-    "listKey": "n2-w1d2"
+    "listKey": "n2-w1d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-004",
@@ -324,7 +476,11 @@
     "kana": "ひじょうぐち",
     "english": "emergency exit",
     "sentence": "火事の時は非常口から逃げてください。",
-    "listKey": "n2-w1d2"
+    "listKey": "n2-w1d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-005",
@@ -333,7 +489,11 @@
     "english": "extremely",
     "sentence": "非常に強い台風が近づいています。",
     "listKey": "n2-w1d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-006",
@@ -342,7 +502,11 @@
     "english": "honorific prefix",
     "sentence": "新年の御挨拶を申し上げます。",
     "listKey": "n2-w1d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-007",
@@ -350,7 +514,11 @@
     "kana": "おてあらい",
     "english": "restroom",
     "sentence": "御手洗いはあちらでございます。",
-    "listKey": "n2-w1d2"
+    "listKey": "n2-w1d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-008",
@@ -359,7 +527,11 @@
     "english": "\"attn:\" / to whom it may concern (mail)",
     "sentence": "会社に手紙を出す時は、宛名の後に「御中」と書きます。",
     "listKey": "n2-w1d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-009",
@@ -368,7 +540,11 @@
     "english": "everyday life",
     "sentence": "日常生活を忘れて南の島でゆっくりしたいです。",
     "listKey": "n2-w1d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-010",
@@ -376,7 +552,11 @@
     "kana": "じょうしき",
     "english": "common sense",
     "sentence": "自分の国では常識でも、外国では違うかもしれません。",
-    "listKey": "n2-w1d2"
+    "listKey": "n2-w1d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-011",
@@ -384,7 +564,11 @@
     "kana": "つねに",
     "english": "always, constantly",
     "sentence": "いい結果を出すために、常に努力しています。",
-    "listKey": "n2-w1d2"
+    "listKey": "n2-w1d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-012",
@@ -393,7 +577,11 @@
     "english": "taking an exam",
     "sentence": "受験生は大変ですが、親も大変ですね。",
     "listKey": "n2-w1d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-013",
@@ -402,7 +590,11 @@
     "english": "to receive, take (an exam)",
     "sentence": "明日、仕事の面接を受けます。",
     "listKey": "n2-w1d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-014",
@@ -410,7 +602,11 @@
     "kana": "ふきん",
     "english": "vicinity",
     "sentence": "新宿付近は道が混んでいます。",
-    "listKey": "n2-w1d2"
+    "listKey": "n2-w1d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-015",
@@ -418,7 +614,11 @@
     "kana": "～つき",
     "english": "included, with",
     "sentence": "朝食付きのプランはありますか？",
-    "listKey": "n2-w1d2"
+    "listKey": "n2-w1d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-016",
@@ -426,7 +626,11 @@
     "kana": "うけつけ",
     "english": "reception desk",
     "sentence": "受付で手続きをしてください。",
-    "listKey": "n2-w1d2"
+    "listKey": "n2-w1d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-017",
@@ -434,7 +638,11 @@
     "kana": "ひづけ",
     "english": "date",
     "sentence": "日付も忘れずに記入してください。",
-    "listKey": "n2-w1d2"
+    "listKey": "n2-w1d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-018",
@@ -442,7 +650,11 @@
     "kana": "あんない",
     "english": "guidance, information",
     "sentence": "お部屋にご案内いたします。",
-    "listKey": "n2-w1d2"
+    "listKey": "n2-w1d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-019",
@@ -451,7 +663,11 @@
     "english": "idea, plan",
     "sentence": "いい案が浮かびましたよ！",
     "listKey": "n2-w1d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-020",
@@ -460,7 +676,11 @@
     "english": "within",
     "sentence": "1週間以内にお返事します。",
     "listKey": "n2-w1d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-021",
@@ -468,7 +688,11 @@
     "kana": "しゃない",
     "english": "within the company",
     "sentence": "この会社は、毎年社内旅行があります。",
-    "listKey": "n2-w1d2"
+    "listKey": "n2-w1d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-022",
@@ -477,7 +701,11 @@
     "english": "inside, within",
     "sentence": "館内での喫煙はご遠慮ください。",
     "listKey": "n2-w1d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-023",
@@ -486,7 +714,11 @@
     "english": "inside",
     "sentence": "彼は心の内を話してくれました。",
     "listKey": "n2-w1d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-024",
@@ -494,7 +726,11 @@
     "kana": "かいぎしつ",
     "english": "meeting room",
     "sentence": "第2会議室を予約しておきました。",
-    "listKey": "n2-w1d2"
+    "listKey": "n2-w1d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-025",
@@ -502,7 +738,11 @@
     "kana": "ふしぎ（な）",
     "english": "mysterious",
     "sentence": "昨夜、不思議な夢を見ました。",
-    "listKey": "n2-w1d2"
+    "listKey": "n2-w1d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-026",
@@ -510,7 +750,11 @@
     "kana": "ぎろん",
     "english": "discussion, debate",
     "sentence": "何時間も議論して、やっと決まりました。",
-    "listKey": "n2-w1d2"
+    "listKey": "n2-w1d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-027",
@@ -519,7 +763,11 @@
     "english": "member of parliament/assembly",
     "sentence": "今度の議員選挙に出ようと思っています。",
     "listKey": "n2-w1d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-028",
@@ -528,7 +776,11 @@
     "english": "culture",
     "sentence": "日本の伝統文化に興味があります。",
     "listKey": "n2-w1d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-029",
@@ -537,7 +789,11 @@
     "english": "chemistry",
     "sentence": "この大学は化学の分野で有名です。",
     "listKey": "n2-w1d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-030",
@@ -546,7 +802,11 @@
     "english": "-ization (suffix)",
     "sentence": "このアニメは映画化されることが決まりました。",
     "listKey": "n2-w1d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-031",
@@ -554,7 +814,11 @@
     "kana": "けしょうしつ",
     "english": "restroom, powder room",
     "sentence": "化粧室はこの奥にあります。",
-    "listKey": "n2-w1d2"
+    "listKey": "n2-w1d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-032",
@@ -563,7 +827,11 @@
     "english": "stairs",
     "sentence": "エレベーター故障のため、階段を使ってください。",
     "listKey": "n2-w1d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-033",
@@ -572,7 +840,11 @@
     "english": "floor (counter)",
     "sentence": "マンションの10階に住んでいます。",
     "listKey": "n2-w1d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-034",
@@ -580,7 +852,11 @@
     "kana": "だんかい",
     "english": "stage, phase",
     "sentence": "自動運転車は、まだテストの段階です。",
-    "listKey": "n2-w1d2"
+    "listKey": "n2-w1d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-035",
@@ -589,7 +865,11 @@
     "english": "step",
     "sentence": "そこ、段があるから気を付けてください。",
     "listKey": "n2-w1d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-036",
@@ -597,7 +877,11 @@
     "kana": "しゅだん",
     "english": "means, method",
     "sentence": "目的のためには手段を選びません。",
-    "listKey": "n2-w1d2"
+    "listKey": "n2-w1d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-037",
@@ -605,7 +889,11 @@
     "kana": "いちだんと",
     "english": "even more, further",
     "sentence": "2月になって一段と寒くなりました。",
-    "listKey": "n2-w1d2"
+    "listKey": "n2-w1d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d2-038",
@@ -614,7 +902,11 @@
     "english": "stone steps",
     "sentence": "神社の前に長い石段があります。",
     "listKey": "n2-w1d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-001",
@@ -622,7 +914,11 @@
     "kana": "えいぎょう",
     "english": "business operations",
     "sentence": "10年以上営業の仕事をしています。",
-    "listKey": "n2-w1d3"
+    "listKey": "n2-w1d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-002",
@@ -630,7 +926,11 @@
     "kana": "ほうそう",
     "english": "broadcast",
     "sentence": "オリンピックの試合がテレビで放送されます。",
-    "listKey": "n2-w1d3"
+    "listKey": "n2-w1d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-003",
@@ -639,7 +939,11 @@
     "english": "opening up, releasing",
     "sentence": "この大学の図書館は、一般の人にも開放されています。",
     "listKey": "n2-w1d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-004",
@@ -647,7 +951,11 @@
     "kana": "かいほうげんきん",
     "english": "\"keep closed\" (strictly)",
     "sentence": "このドアは開放厳禁です。",
-    "listKey": "n2-w1d3"
+    "listKey": "n2-w1d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-005",
@@ -656,7 +964,11 @@
     "english": "to let go, release",
     "sentence": "危ないから、子供の手を放さないでください。",
     "listKey": "n2-w1d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-006",
@@ -664,7 +976,11 @@
     "kana": "おす",
     "english": "to push",
     "sentence": "満員電車で後ろから押されました。",
-    "listKey": "n2-w1d3"
+    "listKey": "n2-w1d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-007",
@@ -673,7 +989,11 @@
     "english": "closet (Japanese-style)",
     "sentence": "押し入れに布団をしまいます。",
     "listKey": "n2-w1d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-008",
@@ -682,7 +1002,11 @@
     "english": "to hold down, press",
     "sentence": "風で飛ばないように、手で帽子を押さえました。",
     "listKey": "n2-w1d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-009",
@@ -690,7 +1014,11 @@
     "kana": "じゅんび",
     "english": "preparation",
     "sentence": "旅行の準備はもうできましたか？",
-    "listKey": "n2-w1d3"
+    "listKey": "n2-w1d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-010",
@@ -698,7 +1026,11 @@
     "kana": "すいじゅん",
     "english": "level, standard",
     "sentence": "この技術は世界最高水準です。",
-    "listKey": "n2-w1d3"
+    "listKey": "n2-w1d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-011",
@@ -707,7 +1039,11 @@
     "english": "semi-express (train)",
     "sentence": "この駅には準急は停まりません。",
     "listKey": "n2-w1d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-012",
@@ -715,7 +1051,11 @@
     "kana": "じゅんけっしょう",
     "english": "semifinal",
     "sentence": "準決勝で負けてしまいました。",
-    "listKey": "n2-w1d3"
+    "listKey": "n2-w1d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-013",
@@ -723,7 +1063,11 @@
     "kana": "びひん",
     "english": "equipment, supplies",
     "sentence": "オフィスで使う備品を買いました。",
-    "listKey": "n2-w1d3"
+    "listKey": "n2-w1d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-014",
@@ -732,7 +1076,11 @@
     "english": "to prepare for, equip",
     "sentence": "災害に備えて、逃げる場所を確認しておきます。",
     "listKey": "n2-w1d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-015",
@@ -740,7 +1088,11 @@
     "kana": "そなえつけ（の）",
     "english": "built-in, furnished",
     "sentence": "備え付けの家具は大切に使ってください。",
-    "listKey": "n2-w1d3"
+    "listKey": "n2-w1d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-016",
@@ -748,7 +1100,11 @@
     "kana": "ていいん",
     "english": "capacity, quota",
     "sentence": "セミナーの定員は50名です。",
-    "listKey": "n2-w1d3"
+    "listKey": "n2-w1d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-017",
@@ -756,7 +1112,11 @@
     "kana": "ていきゅうび",
     "english": "regular holiday",
     "sentence": "定休日は毎月第3水曜日です。",
-    "listKey": "n2-w1d3"
+    "listKey": "n2-w1d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-018",
@@ -764,7 +1124,11 @@
     "kana": "ていしょく",
     "english": "set meal",
     "sentence": "今日の日替わり定食は何ですか？",
-    "listKey": "n2-w1d3"
+    "listKey": "n2-w1d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-019",
@@ -772,7 +1136,11 @@
     "kana": "じょうぎ",
     "english": "ruler",
     "sentence": "定規を使って直線を引いてください。",
-    "listKey": "n2-w1d3"
+    "listKey": "n2-w1d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-020",
@@ -780,7 +1148,11 @@
     "kana": "りゅうこう",
     "english": "trend, fashion",
     "sentence": "冬になると、インフルエンザが流行します。",
-    "listKey": "n2-w1d3"
+    "listKey": "n2-w1d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-021",
@@ -789,7 +1161,11 @@
     "english": "to flow",
     "sentence": "値上げしたら、他の店に客が流れてしまいました。",
     "listKey": "n2-w1d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-022",
@@ -797,7 +1173,11 @@
     "kana": "ながす",
     "english": "to let flow, circulate",
     "sentence": "うその情報を流さないでください。",
-    "listKey": "n2-w1d3"
+    "listKey": "n2-w1d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-023",
@@ -806,7 +1186,11 @@
     "english": "fair copy, clean draft",
     "sentence": "レポートに間違いがたくさんあったので、清書しました。",
     "listKey": "n2-w1d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-024",
@@ -815,7 +1199,11 @@
     "english": "clear stream",
     "sentence": "ハイキングの時、清流のそばで休みました。",
     "listKey": "n2-w1d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-025",
@@ -824,7 +1212,11 @@
     "english": "pure, clean",
     "sentence": "清い流れには、いろいろな魚が住んでいます。",
     "listKey": "n2-w1d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-026",
@@ -832,7 +1224,11 @@
     "kana": "せいそう",
     "english": "cleaning",
     "sentence": "トイレはただ今清掃中です。",
-    "listKey": "n2-w1d3"
+    "listKey": "n2-w1d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-027",
@@ -840,7 +1236,11 @@
     "kana": "はく",
     "english": "to sweep",
     "sentence": "そこのゴミを掃いてください。",
-    "listKey": "n2-w1d3"
+    "listKey": "n2-w1d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-028",
@@ -849,7 +1249,11 @@
     "english": "closing (of meeting/event)",
     "sentence": "オリンピックの閉会式に参加しました。",
     "listKey": "n2-w1d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-029",
@@ -857,7 +1261,11 @@
     "kana": "へいてん",
     "english": "closing (shop)",
     "sentence": "当店は今月末に閉店いたします。",
-    "listKey": "n2-w1d3"
+    "listKey": "n2-w1d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-030",
@@ -865,7 +1273,11 @@
     "kana": "しまる",
     "english": "to close (intransitive)",
     "sentence": "この店は何時に閉まりますか？",
-    "listKey": "n2-w1d3"
+    "listKey": "n2-w1d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-031",
@@ -874,7 +1286,11 @@
     "english": "to close (transitive)",
     "sentence": "冷蔵庫のドアをきちんと閉めてください。",
     "listKey": "n2-w1d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-032",
@@ -883,7 +1299,11 @@
     "english": "to close, shut",
     "sentence": "テストをしますから、教科書を閉じてください。",
     "listKey": "n2-w1d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-033",
@@ -892,7 +1312,11 @@
     "english": "point",
     "sentence": "この会社のいい点は、休みが取りやすいことです。",
     "listKey": "n2-w1d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-034",
@@ -901,7 +1325,11 @@
     "english": "point(s), aspect",
     "sentence": "テストで満点を取りました。",
     "listKey": "n2-w1d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-035",
@@ -910,7 +1338,11 @@
     "english": "flaw, weak point",
     "sentence": "誰にでも欠点はあります。",
     "listKey": "n2-w1d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-036",
@@ -918,7 +1350,11 @@
     "kana": "てんけん",
     "english": "inspection",
     "sentence": "5時からエレベーターの点検を行います。",
-    "listKey": "n2-w1d3"
+    "listKey": "n2-w1d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w1d3-037",
@@ -927,7 +1363,11 @@
     "english": "checkpoint",
     "sentence": "ここに来る時、飲酒運転の検問がありました。",
     "listKey": "n2-w1d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-001",
@@ -935,7 +1375,11 @@
     "kana": "ちかてつ",
     "english": "subway",
     "sentence": "JRと地下鉄で通勤しています。",
-    "listKey": "n2-w2d1"
+    "listKey": "n2-w2d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-002",
@@ -943,7 +1387,11 @@
     "kana": "してつ",
     "english": "private railway",
     "sentence": "この春、私鉄各社は値上げをするそうです。",
-    "listKey": "n2-w2d1"
+    "listKey": "n2-w2d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-003",
@@ -952,7 +1400,11 @@
     "english": "alumni reunion",
     "sentence": "同窓会で久しぶりに学生時代の友達に会いました。",
     "listKey": "n2-w2d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-004",
@@ -961,7 +1413,11 @@
     "english": "window",
     "sentence": "天気がいい時は、窓から富士山が見えます。",
     "listKey": "n2-w2d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-005",
@@ -969,7 +1425,11 @@
     "kana": "まどぐち",
     "english": "service window, counter",
     "sentence": "銀行の窓口は3時に閉まります。",
-    "listKey": "n2-w2d1"
+    "listKey": "n2-w2d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-006",
@@ -977,7 +1437,11 @@
     "kana": "きっぷ",
     "english": "ticket",
     "sentence": "最近はICカードがあるから、切符を買わなくなりました。",
-    "listKey": "n2-w2d1"
+    "listKey": "n2-w2d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-007",
@@ -985,7 +1449,11 @@
     "kana": "せいさん",
     "english": "fare adjustment, settlement",
     "sentence": "乗り越したから精算してきます。",
-    "listKey": "n2-w2d1"
+    "listKey": "n2-w2d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-008",
@@ -993,7 +1461,11 @@
     "kana": "せいしん",
     "english": "spirit, mind",
     "sentence": "最近、精神的に疲れています。",
-    "listKey": "n2-w2d1"
+    "listKey": "n2-w2d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-009",
@@ -1001,7 +1473,11 @@
     "kana": "けいさん",
     "english": "calculation",
     "sentence": "子供の計算の宿題をチェックしてあげました。",
-    "listKey": "n2-w2d1"
+    "listKey": "n2-w2d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-010",
@@ -1010,7 +1486,11 @@
     "english": "subtraction",
     "sentence": "引き算のテストは満点でした。",
     "listKey": "n2-w2d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-011",
@@ -1019,7 +1499,11 @@
     "english": "addition",
     "sentence": "足し算と引き算は小学校で習います。",
     "listKey": "n2-w2d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-012",
@@ -1028,7 +1512,11 @@
     "english": "revision, amendment (law)",
     "sentence": "法律が改正されて、たばこを吸える場所が減りました。",
     "listKey": "n2-w2d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-013",
@@ -1037,7 +1525,11 @@
     "english": "to correct, reform",
     "sentence": "彼は仕事で大きい失敗をした後、態度を改めました。",
     "listKey": "n2-w2d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-014",
@@ -1045,7 +1537,11 @@
     "kana": "かいさつぐち",
     "english": "ticket gate",
     "sentence": "改札口を出たところで待ち合わせしましょう。",
-    "listKey": "n2-w2d1"
+    "listKey": "n2-w2d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-015",
@@ -1053,7 +1549,11 @@
     "kana": "1まんえんさつ",
     "english": "10,000 yen bill",
     "sentence": "1万円札を千円札10枚に両替してください。",
-    "listKey": "n2-w2d1"
+    "listKey": "n2-w2d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-016",
@@ -1062,7 +1562,11 @@
     "english": "tag, bill (money)",
     "sentence": "これ、値札が付いていませんが、いくらですか？",
     "listKey": "n2-w2d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-017",
@@ -1070,7 +1574,11 @@
     "kana": "かせん",
     "english": "underline",
     "sentence": "下線部の言葉を正しい形に直しなさい。",
-    "listKey": "n2-w2d1"
+    "listKey": "n2-w2d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-018",
@@ -1078,7 +1586,11 @@
     "kana": "せんろ",
     "english": "railway track",
     "sentence": "台風で線路内に木が倒れたそうです。",
-    "listKey": "n2-w2d1"
+    "listKey": "n2-w2d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-019",
@@ -1086,7 +1598,11 @@
     "kana": "しんかんせん",
     "english": "bullet train",
     "sentence": "新幹線の切符を予約しました。",
-    "listKey": "n2-w2d1"
+    "listKey": "n2-w2d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-020",
@@ -1094,7 +1610,11 @@
     "kana": "じこく",
     "english": "time, scheduled time",
     "sentence": "飛行機の到着予定時刻は10時ちょうどです。",
-    "listKey": "n2-w2d1"
+    "listKey": "n2-w2d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-021",
@@ -1102,7 +1622,11 @@
     "kana": "きざむ",
     "english": "to chop finely, mince",
     "sentence": "玉ねぎを細かく刻んでください。",
-    "listKey": "n2-w2d1"
+    "listKey": "n2-w2d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-022",
@@ -1111,7 +1635,11 @@
     "english": "number",
     "sentence": "暗証番号を忘れてしまいました。",
     "listKey": "n2-w2d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-023",
@@ -1119,7 +1647,11 @@
     "kana": "～ばんせん",
     "english": "platform number",
     "sentence": "横浜方面の電車は何番線ですか？",
-    "listKey": "n2-w2d1"
+    "listKey": "n2-w2d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-024",
@@ -1128,7 +1660,11 @@
     "english": "symbol, sign",
     "sentence": "この符号はどんな意味ですか？",
     "listKey": "n2-w2d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-025",
@@ -1136,7 +1672,11 @@
     "kana": "～ごうしゃ",
     "english": "train car number",
     "sentence": "喫煙ルームは10号車にあります。",
-    "listKey": "n2-w2d1"
+    "listKey": "n2-w2d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-026",
@@ -1145,7 +1685,11 @@
     "english": "traffic signal",
     "sentence": "信号をよく見てから、道を渡りましょう。",
     "listKey": "n2-w2d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-027",
@@ -1153,7 +1697,11 @@
     "kana": "かいそく",
     "english": "rapid (train)",
     "sentence": "次の快速に乗ったほうが早く着きますよ。",
-    "listKey": "n2-w2d1"
+    "listKey": "n2-w2d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-028",
@@ -1161,7 +1709,11 @@
     "kana": "こころよい",
     "english": "pleasant, willing",
     "sentence": "彼は快くその仕事を引き受けてくれました。",
-    "listKey": "n2-w2d1"
+    "listKey": "n2-w2d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-029",
@@ -1169,7 +1721,11 @@
     "kana": "じそく",
     "english": "speed per hour",
     "sentence": "新幹線は時速300キロぐらい出ます。",
-    "listKey": "n2-w2d1"
+    "listKey": "n2-w2d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-030",
@@ -1177,7 +1733,11 @@
     "kana": "さっそく",
     "english": "immediately, right away",
     "sentence": "習った文法を早速使ってみました。",
-    "listKey": "n2-w2d1"
+    "listKey": "n2-w2d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-031",
@@ -1186,7 +1746,11 @@
     "english": "fast",
     "sentence": "この川は流れが速いので、泳ぐのは危険です。",
     "listKey": "n2-w2d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-032",
@@ -1195,7 +1759,11 @@
     "english": "road",
     "sentence": "道路に飛び出さないように気を付けなさい。",
     "listKey": "n2-w2d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d1-033",
@@ -1204,7 +1772,11 @@
     "english": "passage, aisle",
     "sentence": "通路に荷物を置かないでください。",
     "listKey": "n2-w2d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-001",
@@ -1212,7 +1784,11 @@
     "kana": "くうこう",
     "english": "airport",
     "sentence": "空港行きのバス乗り場はどこですか？",
-    "listKey": "n2-w2d2"
+    "listKey": "n2-w2d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-002",
@@ -1221,7 +1797,11 @@
     "english": "harbor, port",
     "sentence": "港には多くの船が停まっていました。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-003",
@@ -1230,7 +1810,11 @@
     "english": "reason",
     "sentence": "前の仕事を辞めた理由を教えてください。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-004",
@@ -1238,7 +1822,11 @@
     "kana": "ふじゆう（な）",
     "english": "inconvenienced, disabled",
     "sentence": "体の不自由な人に席をゆずりましょう。",
-    "listKey": "n2-w2d2"
+    "listKey": "n2-w2d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-005",
@@ -1246,7 +1834,11 @@
     "kana": "けいゆ",
     "english": "via, by way of",
     "sentence": "直行便より経由便のほうが安いです。",
-    "listKey": "n2-w2d2"
+    "listKey": "n2-w2d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-006",
@@ -1254,7 +1846,11 @@
     "kana": "しんや",
     "english": "late night, midnight",
     "sentence": "深夜まで仕事しました。",
-    "listKey": "n2-w2d2"
+    "listKey": "n2-w2d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-007",
@@ -1263,7 +1859,11 @@
     "english": "serious, grave",
     "sentence": "深刻な病気じゃなくてよかったです。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-008",
@@ -1271,7 +1871,11 @@
     "kana": "ふかい",
     "english": "deep",
     "sentence": "深く考えすぎないほうがいいですよ。",
-    "listKey": "n2-w2d2"
+    "listKey": "n2-w2d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-009",
@@ -1279,7 +1883,11 @@
     "kana": "こうしゃぐち",
     "english": "exit (train/bus)",
     "sentence": "降車口はあちらです。",
-    "listKey": "n2-w2d2"
+    "listKey": "n2-w2d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-010",
@@ -1287,7 +1895,11 @@
     "kana": "かこう",
     "english": "descent, decline",
     "sentence": "飛行機が下降する時、耳が痛くなりました。",
-    "listKey": "n2-w2d2"
+    "listKey": "n2-w2d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-011",
@@ -1296,7 +1908,11 @@
     "english": "to get off, disembark",
     "sentence": "電車を降りた時、かさを忘れたことに気付きました。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-012",
@@ -1305,7 +1921,11 @@
     "english": "to fall (rain/snow)",
     "sentence": "一日中雨が降っていたので、出かけませんでした。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-013",
@@ -1314,7 +1934,11 @@
     "english": "parents",
     "sentence": "来月、両親が日本に来ます。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-014",
@@ -1322,7 +1946,11 @@
     "kana": "りょうほう",
     "english": "both",
     "sentence": "どちらがいいか迷ったので、両方買いました。",
-    "listKey": "n2-w2d2"
+    "listKey": "n2-w2d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-015",
@@ -1331,7 +1959,11 @@
     "english": "both (prefix)",
     "sentence": "両手で持てないほどたくさん買いました。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-016",
@@ -1340,7 +1972,11 @@
     "english": "car number (train car counter)",
     "sentence": "3両目は女性専用車です。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-017",
@@ -1348,7 +1984,11 @@
     "kana": "りょうがえ",
     "english": "currency exchange",
     "sentence": "この両替ショップはレートがいいですね。",
-    "listKey": "n2-w2d2"
+    "listKey": "n2-w2d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-018",
@@ -1357,7 +1997,11 @@
     "english": "to change clothes",
     "sentence": "子供が一人で着替えられるようになりました。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-019",
@@ -1365,7 +2009,11 @@
     "kana": "かわせ",
     "english": "exchange rate, foreign exchange",
     "sentence": "輸入品の値段は為替レートの影響を受けます。",
-    "listKey": "n2-w2d2"
+    "listKey": "n2-w2d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-020",
@@ -1373,7 +2021,11 @@
     "kana": "やちん",
     "english": "rent",
     "sentence": "家賃は月末までに振り込んでください。",
-    "listKey": "n2-w2d2"
+    "listKey": "n2-w2d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-021",
@@ -1381,7 +2033,11 @@
     "kana": "うんちん",
     "english": "fare",
     "sentence": "子供の運賃は大人の半額です。",
-    "listKey": "n2-w2d2"
+    "listKey": "n2-w2d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-022",
@@ -1389,7 +2045,11 @@
     "kana": "ぶんかつ",
     "english": "installment, division",
     "sentence": "高い買い物なので、分割払いにしました。",
-    "listKey": "n2-w2d2"
+    "listKey": "n2-w2d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-023",
@@ -1398,7 +2058,11 @@
     "english": "to break, shatter",
     "sentence": "持って帰ってくる時に、卵が割れてしまいました。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-024",
@@ -1407,7 +2071,11 @@
     "english": "discount",
     "sentence": "この服、セールで3割引だったんです。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-025",
@@ -1416,7 +2084,11 @@
     "english": "timetable, schedule",
     "sentence": "新しい時間割が決まりました。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-026",
@@ -1425,7 +2097,11 @@
     "english": "increase",
     "sentence": "観光客の増加によって、ホテルが足りなくなっています。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-027",
@@ -1434,7 +2110,11 @@
     "english": "to increase",
     "sentence": "最近、一人で遊ぶ子供が増えています。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-028",
@@ -1442,7 +2122,11 @@
     "kana": "わりまし",
     "english": "surcharge, premium rate",
     "sentence": "タクシーの料金は、22時以降割増になります。",
-    "listKey": "n2-w2d2"
+    "listKey": "n2-w2d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-029",
@@ -1450,7 +2134,11 @@
     "kana": "ゆうせん",
     "english": "priority",
     "sentence": "優先順位を考えて仕事しましょう。",
-    "listKey": "n2-w2d2"
+    "listKey": "n2-w2d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-030",
@@ -1459,7 +2147,11 @@
     "english": "kind, gentle",
     "sentence": "子供には、人に優しくするように言っています。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-031",
@@ -1467,7 +2159,11 @@
     "kana": "すぐれる",
     "english": "to excel, be superior",
     "sentence": "コンテストには、優れた作品がたくさん集まりました。",
-    "listKey": "n2-w2d2"
+    "listKey": "n2-w2d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-032",
@@ -1476,7 +2172,11 @@
     "english": "seat",
     "sentence": "電車ではお年寄りに席をゆずりましょう。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-033",
@@ -1485,7 +2185,11 @@
     "english": "attendance",
     "sentence": "パーティーに出席する人は、明日までに連絡してください。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-034",
@@ -1494,7 +2198,11 @@
     "english": "reserved seat",
     "sentence": "指定席は満席です。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-035",
@@ -1503,7 +2211,11 @@
     "english": "side, aspect",
     "sentence": "これは新しいビルの正面と側面のデザインです。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-036",
@@ -1512,7 +2224,11 @@
     "english": "both sides",
     "sentence": "家の両側はマンションなので、日当たりが悪いです。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-037",
@@ -1520,7 +2236,11 @@
     "kana": "～がわ",
     "english": "side (suffix)",
     "sentence": "病院は駅の反対側ですよ。",
-    "listKey": "n2-w2d2"
+    "listKey": "n2-w2d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-038",
@@ -1529,7 +2249,11 @@
     "english": "seat",
     "sentence": "セミナーがもうすぐ始まるので、座席に着いてください。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-039",
@@ -1538,7 +2262,11 @@
     "english": "bank account",
     "sentence": "新しい銀行口座を作りました。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-040",
@@ -1547,7 +2275,11 @@
     "english": "to sit",
     "sentence": "ずっと座って仕事していたら、腰が痛くなりました。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-041",
@@ -1555,7 +2287,11 @@
     "kana": "きふ",
     "english": "donation",
     "sentence": "新しい図書館を建てるために、学校に寄付しました。",
-    "listKey": "n2-w2d2"
+    "listKey": "n2-w2d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-042",
@@ -1564,7 +2300,11 @@
     "english": "to order, have something sent",
     "sentence": "人気のスイーツをインターネットで取り寄せました。",
     "listKey": "n2-w2d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-043",
@@ -1572,7 +2312,11 @@
     "kana": "たちよる",
     "english": "to drop by",
     "sentence": "仕事で近くまで来たので、友達の家に立ち寄りました。",
-    "listKey": "n2-w2d2"
+    "listKey": "n2-w2d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d2-044",
@@ -1580,7 +2324,11 @@
     "kana": "としより",
     "english": "elderly person",
     "sentence": "最近は元気なお年寄りが増えています。",
-    "listKey": "n2-w2d2"
+    "listKey": "n2-w2d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-001",
@@ -1588,7 +2336,11 @@
     "kana": "しょしん",
     "english": "first medical visit",
     "sentence": "初診の際は、保険証をお持ちください。",
-    "listKey": "n2-w2d3"
+    "listKey": "n2-w2d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-002",
@@ -1597,7 +2349,11 @@
     "english": "for the first time",
     "sentence": "日本に来て初めて納豆を食べました。",
     "listKey": "n2-w2d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-003",
@@ -1606,7 +2362,11 @@
     "english": "first love",
     "sentence": "初恋は中学生の時です。",
     "listKey": "n2-w2d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-004",
@@ -1614,7 +2374,11 @@
     "kana": "はつゆき",
     "english": "first snow (of the season)",
     "sentence": "今年の初雪が降りました。",
-    "listKey": "n2-w2d3"
+    "listKey": "n2-w2d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-005",
@@ -1622,7 +2386,11 @@
     "kana": "さいしん",
     "english": "follow-up visit (doctor)",
     "sentence": "同じ月の再診なら、保険証は要りません。",
-    "listKey": "n2-w2d3"
+    "listKey": "n2-w2d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-006",
@@ -1631,7 +2399,11 @@
     "english": "playback, regeneration",
     "sentence": "この商品は再生紙を使っています。",
     "listKey": "n2-w2d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-007",
@@ -1639,7 +2411,11 @@
     "kana": "さらいねん",
     "english": "the year after next",
     "sentence": "子供は再来年、大学を卒業する予定です。",
-    "listKey": "n2-w2d3"
+    "listKey": "n2-w2d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-008",
@@ -1647,7 +2423,11 @@
     "kana": "ふたたび",
     "english": "again, once more",
     "sentence": "来年再びチャレンジするつもりです。",
-    "listKey": "n2-w2d3"
+    "listKey": "n2-w2d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-009",
@@ -1655,7 +2435,11 @@
     "kana": "しんりょう",
     "english": "medical examination, treatment",
     "sentence": "土曜日の診療時間は9時から12時までです。",
-    "listKey": "n2-w2d3"
+    "listKey": "n2-w2d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-010",
@@ -1664,7 +2448,11 @@
     "english": "medical treatment",
     "sentence": "今、治療中なので、お酒が飲めません。",
     "listKey": "n2-w2d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-011",
@@ -1673,7 +2461,11 @@
     "english": "medical care",
     "sentence": "医療技術は大きく進歩しました。",
     "listKey": "n2-w2d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-012",
@@ -1682,7 +2474,11 @@
     "english": "science",
     "sentence": "世界中で科学の研究が進んでいます。",
     "listKey": "n2-w2d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-013",
@@ -1690,7 +2486,11 @@
     "kana": "げか",
     "english": "surgery (department)",
     "sentence": "外科手術を受けなければいけません。",
-    "listKey": "n2-w2d3"
+    "listKey": "n2-w2d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-014",
@@ -1698,7 +2498,11 @@
     "kana": "ないか",
     "english": "internal medicine",
     "sentence": "お腹が痛いので、内科に行きました。",
-    "listKey": "n2-w2d3"
+    "listKey": "n2-w2d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-015",
@@ -1706,7 +2510,11 @@
     "kana": "さんふじんか",
     "english": "obstetrics and gynecology",
     "sentence": "妊娠中なので、産婦人科に通っています。",
-    "listKey": "n2-w2d3"
+    "listKey": "n2-w2d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-016",
@@ -1715,7 +2523,11 @@
     "english": "housewife",
     "sentence": "最近は専業主婦の女性が減ってきました。",
     "listKey": "n2-w2d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-017",
@@ -1724,7 +2536,11 @@
     "english": "woman, lady",
     "sentence": "この時計は婦人用です。",
     "listKey": "n2-w2d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-018",
@@ -1732,7 +2548,11 @@
     "kana": "ひにく（な）",
     "english": "ironic, sarcastic",
     "sentence": "彼はよく皮肉を言います。",
-    "listKey": "n2-w2d3"
+    "listKey": "n2-w2d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-019",
@@ -1741,7 +2561,11 @@
     "english": "skin, peel",
     "sentence": "りんごの皮をむかないで食べる時は、よく洗いましょう。",
     "listKey": "n2-w2d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-020",
@@ -1749,7 +2573,11 @@
     "kana": "ひふ",
     "english": "skin",
     "sentence": "アレルギーが出たので、皮膚科に行ってきます。",
-    "listKey": "n2-w2d3"
+    "listKey": "n2-w2d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-021",
@@ -1757,7 +2585,11 @@
     "kana": "きゅうきゅう",
     "english": "emergency (medical)",
     "sentence": "救急箱に薬が入っていますよ。",
-    "listKey": "n2-w2d3"
+    "listKey": "n2-w2d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-022",
@@ -1766,7 +2598,11 @@
     "english": "to save, rescue",
     "sentence": "新しい薬によって、多くの人が救われました。",
     "listKey": "n2-w2d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-023",
@@ -1775,7 +2611,11 @@
     "english": "mail, postal",
     "sentence": "この近くに郵便ポストはありますか？",
     "listKey": "n2-w2d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-024",
@@ -1784,7 +2624,11 @@
     "english": "to send by mail",
     "sentence": "商品パンフレットを郵送します。",
     "listKey": "n2-w2d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-025",
@@ -1792,7 +2636,11 @@
     "kana": "ゆうびんきょく",
     "english": "post office",
     "sentence": "この郵便局は日曜日も開いています。",
-    "listKey": "n2-w2d3"
+    "listKey": "n2-w2d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-026",
@@ -1801,7 +2649,11 @@
     "english": "pharmacy",
     "sentence": "隣の薬局で薬を受け取ってください。",
     "listKey": "n2-w2d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-027",
@@ -1810,7 +2662,11 @@
     "english": "broadcasting station",
     "sentence": "放送局でアルバイトをしました。",
     "listKey": "n2-w2d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-028",
@@ -1818,7 +2674,11 @@
     "kana": "ちょきん",
     "english": "savings",
     "sentence": "毎月少しずつ貯金しています。",
-    "listKey": "n2-w2d3"
+    "listKey": "n2-w2d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-029",
@@ -1826,7 +2686,11 @@
     "kana": "ほうたい",
     "english": "bandage",
     "sentence": "腕にけがをしたので包帯を巻いています。",
-    "listKey": "n2-w2d3"
+    "listKey": "n2-w2d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-030",
@@ -1834,7 +2698,11 @@
     "kana": "つつむ",
     "english": "to wrap",
     "sentence": "プレゼントをきれいな紙で包みました。",
-    "listKey": "n2-w2d3"
+    "listKey": "n2-w2d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-031",
@@ -1842,7 +2710,11 @@
     "kana": "こづつみ",
     "english": "parcel",
     "sentence": "今朝、両親から小包が届きました。",
-    "listKey": "n2-w2d3"
+    "listKey": "n2-w2d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-032",
@@ -1850,7 +2722,11 @@
     "kana": "はったつ",
     "english": "development",
     "sentence": "日本は交通が発達しています。",
-    "listKey": "n2-w2d3"
+    "listKey": "n2-w2d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-033",
@@ -1858,7 +2734,11 @@
     "kana": "そくたつ",
     "english": "express mail",
     "sentence": "速達で送ったから、明日には届くと思います。",
-    "listKey": "n2-w2d3"
+    "listKey": "n2-w2d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-034",
@@ -1867,7 +2747,11 @@
     "english": "friend",
     "sentence": "久しぶりに学生時代の友達と会いました。",
     "listKey": "n2-w2d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-035",
@@ -1875,7 +2759,11 @@
     "kana": "こくさい",
     "english": "international",
     "sentence": "学生の時、いろいろな国際交流イベントに参加しました。",
-    "listKey": "n2-w2d3"
+    "listKey": "n2-w2d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-036",
@@ -1884,7 +2772,11 @@
     "english": "on the occasion of, when",
     "sentence": "ご利用の際は、以下の点にご注意ください。",
     "listKey": "n2-w2d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w2d3-037",
@@ -1893,7 +2785,11 @@
     "english": "actually, in fact",
     "sentence": "この映画は、実際にあった話をもとに作られました。",
     "listKey": "n2-w2d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-001",
@@ -1901,7 +2797,11 @@
     "kana": "ふつう",
     "english": "normal, ordinary",
     "sentence": "この商品は、普通の主婦のアイデアから生まれました。",
-    "listKey": "n2-w3d1"
+    "listKey": "n2-w3d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-002",
@@ -1909,7 +2809,11 @@
     "kana": "ふだん（の）",
     "english": "usual, everyday",
     "sentence": "普段から体に気を付けています。",
-    "listKey": "n2-w3d1"
+    "listKey": "n2-w3d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-003",
@@ -1917,7 +2821,11 @@
     "kana": "かいすうけん",
     "english": "coupon ticket book",
     "sentence": "昔は回数券を使いましたが、最近は使いません。",
-    "listKey": "n2-w3d1"
+    "listKey": "n2-w3d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-004",
@@ -1925,7 +2833,11 @@
     "kana": "じょうしゃけん",
     "english": "passenger ticket",
     "sentence": "この電車は乗車券の他に指定券も必要です。",
-    "listKey": "n2-w3d1"
+    "listKey": "n2-w3d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-005",
@@ -1933,7 +2845,11 @@
     "kana": "りょけん",
     "english": "passport",
     "sentence": "新宿に旅券事務所があります。",
-    "listKey": "n2-w3d1"
+    "listKey": "n2-w3d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-006",
@@ -1941,7 +2857,11 @@
     "kana": "はっけん",
     "english": "ticket issuance",
     "sentence": "コンビニでチケットの発券ができます。",
-    "listKey": "n2-w3d1"
+    "listKey": "n2-w3d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-007",
@@ -1950,7 +2870,11 @@
     "english": "number, numeral",
     "sentence": "日本では「4」と「9」が悪い数字だと考えられています。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-008",
@@ -1959,7 +2883,11 @@
     "english": "mathematics",
     "sentence": "父は数学の教師です。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-009",
@@ -1968,7 +2896,11 @@
     "english": "score, points",
     "sentence": "テストの点数だけでは、本当の能力はわかりません。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-010",
@@ -1977,7 +2909,11 @@
     "english": "to count numbers",
     "sentence": "羊の数を数えても寝られません。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-011",
@@ -1986,7 +2922,11 @@
     "english": "airplane",
     "sentence": "台風で飛行機が欠航になりました。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-012",
@@ -1995,7 +2935,11 @@
     "english": "transportation",
     "sentence": "ご来場の際は、公共交通機関をご利用ください。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-013",
@@ -2004,7 +2948,11 @@
     "english": "automatic ticket machine",
     "sentence": "自動券売機でICカードのチャージができます。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-014",
@@ -2012,7 +2960,11 @@
     "kana": "きき",
     "english": "crisis",
     "sentence": "社長はもっと危機感を持つべきだと思います。",
-    "listKey": "n2-w3d1"
+    "listKey": "n2-w3d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-015",
@@ -2021,7 +2973,11 @@
     "english": "review (of study)",
     "sentence": "金曜日は復習テストを行います。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-016",
@@ -2029,7 +2985,11 @@
     "kana": "おうふく",
     "english": "round trip",
     "sentence": "往復割引はありますか？",
-    "listKey": "n2-w3d1"
+    "listKey": "n2-w3d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-017",
@@ -2038,7 +2998,11 @@
     "english": "recovery",
     "sentence": "なかなか景気が回復しません。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-018",
@@ -2046,7 +3010,11 @@
     "kana": "はへん",
     "english": "fragment, shard",
     "sentence": "ガラスの破片が落ちているので、気を付けてください。",
-    "listKey": "n2-w3d1"
+    "listKey": "n2-w3d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-019",
@@ -2054,7 +3022,11 @@
     "kana": "かたみちきっぷ",
     "english": "one-way ticket",
     "sentence": "片道切符しか買いませんでした。",
-    "listKey": "n2-w3d1"
+    "listKey": "n2-w3d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-020",
@@ -2063,7 +3035,11 @@
     "english": "to tidy up",
     "sentence": "子供におもちゃを片付けさせました。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-021",
@@ -2072,7 +3048,11 @@
     "english": "one (of a pair)",
     "sentence": "手袋を片方なくしてしまいました。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-022",
@@ -2081,7 +3061,11 @@
     "english": "counter for flat objects",
     "sentence": "申込書は2枚あります。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-023",
@@ -2089,7 +3073,11 @@
     "kana": "まいすう",
     "english": "number of sheets",
     "sentence": "資料の枚数が少ないので、2人で見てください。",
-    "listKey": "n2-w3d1"
+    "listKey": "n2-w3d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-024",
@@ -2098,7 +3086,11 @@
     "english": "period, duration",
     "sentence": "ゴールデンウィークの期間中は混雑が予想されます。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-025",
@@ -2107,7 +3099,11 @@
     "english": "regular, periodic",
     "sentence": "会社で定期健康診断があります。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-026",
@@ -2115,7 +3111,11 @@
     "kana": "ていきけん",
     "english": "commuter pass",
     "sentence": "今月末で定期券が切れます。",
-    "listKey": "n2-w3d1"
+    "listKey": "n2-w3d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-027",
@@ -2123,7 +3123,11 @@
     "kana": "はんばい",
     "english": "sales",
     "sentence": "この商品はインターネット限定販売です。",
-    "listKey": "n2-w3d1"
+    "listKey": "n2-w3d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-028",
@@ -2132,7 +3136,11 @@
     "english": "vending machine",
     "sentence": "ラウンジに自動販売機がありますよ。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-029",
@@ -2140,7 +3148,11 @@
     "kana": "していせき",
     "english": "reserved seat",
     "sentence": "指定席は高いから自由席にしましょう。",
-    "listKey": "n2-w3d1"
+    "listKey": "n2-w3d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-030",
@@ -2149,7 +3161,11 @@
     "english": "finger",
     "sentence": "指をけがしてしまいました。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-031",
@@ -2157,7 +3173,11 @@
     "kana": "さす",
     "english": "to point at",
     "sentence": "学生を一人ずつ指して質問しました。",
-    "listKey": "n2-w3d1"
+    "listKey": "n2-w3d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-032",
@@ -2165,7 +3185,11 @@
     "kana": "ちょうせい",
     "english": "adjustment",
     "sentence": "会議の日程を調整しましょう。",
-    "listKey": "n2-w3d1"
+    "listKey": "n2-w3d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-033",
@@ -2174,7 +3198,11 @@
     "english": "condition, tone",
     "sentence": "ちょっとwifiの調子が悪いですね。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-034",
@@ -2183,7 +3211,11 @@
     "english": "to look up, investigate",
     "sentence": "知らない単語があったら、すぐ調べるようにしています。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-035",
@@ -2192,7 +3224,11 @@
     "english": "numbered ticket (queue)",
     "sentence": "整理券を取ってからお待ちください。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-036",
@@ -2200,7 +3236,11 @@
     "kana": "せいび",
     "english": "maintenance",
     "sentence": "自動車整備の仕事をしています。",
-    "listKey": "n2-w3d1"
+    "listKey": "n2-w3d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-037",
@@ -2208,7 +3248,11 @@
     "kana": "ととのう",
     "english": "to be arranged, ready",
     "sentence": "準備が整ったら呼んでください。",
-    "listKey": "n2-w3d1"
+    "listKey": "n2-w3d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-038",
@@ -2217,7 +3261,11 @@
     "english": "table, chart",
     "sentence": "お配りした資料の表をご覧ください。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-039",
@@ -2226,7 +3274,11 @@
     "english": "timetable",
     "sentence": "インターネットでもバスの時刻表が見られます。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-040",
@@ -2235,7 +3287,11 @@
     "english": "presentation, announcement",
     "sentence": "明日、会議で発表しなければいけません。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-041",
@@ -2244,7 +3300,11 @@
     "english": "front side",
     "sentence": "絵が描いてあるほうがコインの表です。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-042",
@@ -2253,7 +3313,11 @@
     "english": "to express, represent",
     "sentence": "この印は何を表しているんですか？",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-043",
@@ -2261,7 +3325,11 @@
     "kana": "ひょうじ",
     "english": "display, indication",
     "sentence": "当店では価格を税込で表示しています。",
-    "listKey": "n2-w3d1"
+    "listKey": "n2-w3d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-044",
@@ -2270,7 +3338,11 @@
     "english": "instruction",
     "sentence": "もっとわかりやすく指示してください。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-045",
@@ -2278,7 +3350,11 @@
     "kana": "けいじ",
     "english": "posting, notice",
     "sentence": "掲示板にイベントの案内が貼ってありました。",
-    "listKey": "n2-w3d1"
+    "listKey": "n2-w3d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d1-046",
@@ -2287,7 +3363,11 @@
     "english": "to show, indicate",
     "sentence": "数字を示して説明したほうがわかりやすいですよ。",
     "listKey": "n2-w3d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-001",
@@ -2295,7 +3375,11 @@
     "kana": "げんきん",
     "english": "cash",
     "sentence": "現金がないので、クレジットカードで払えますか？",
-    "listKey": "n2-w3d2"
+    "listKey": "n2-w3d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-002",
@@ -2304,7 +3388,11 @@
     "english": "expression",
     "sentence": "これは役に立つ表現ですね。",
     "listKey": "n2-w3d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-003",
@@ -2313,7 +3401,11 @@
     "english": "to appear",
     "sentence": "夢に亡くなった祖母が現れました。",
     "listKey": "n2-w3d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-004",
@@ -2322,7 +3414,11 @@
     "english": "branch (office)",
     "sentence": "大阪支店に転勤になりました。",
     "listKey": "n2-w3d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-005",
@@ -2330,7 +3426,11 @@
     "kana": "しじ",
     "english": "support, endorsement",
     "sentence": "どの政党を支持していますか？",
-    "listKey": "n2-w3d2"
+    "listKey": "n2-w3d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-006",
@@ -2338,7 +3438,11 @@
     "kana": "ささえる",
     "english": "to support",
     "sentence": "大変な時も、家族が支えてくれました。",
-    "listKey": "n2-w3d2"
+    "listKey": "n2-w3d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-007",
@@ -2347,7 +3451,11 @@
     "english": "to pay",
     "sentence": "服にほこりが付いていたので、手で払いました。",
     "listKey": "n2-w3d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-008",
@@ -2356,7 +3464,11 @@
     "english": "to pay",
     "sentence": "あちらのカウンターでお支払いください。",
     "listKey": "n2-w3d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-009",
@@ -2364,7 +3476,11 @@
     "kana": "しはらいき",
     "english": "payment machine",
     "sentence": "このスーパーには現金自動支払機が置いてありますよ。",
-    "listKey": "n2-w3d2"
+    "listKey": "n2-w3d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-010",
@@ -2372,7 +3488,11 @@
     "kana": "よきん",
     "english": "deposit (bank)",
     "sentence": "今の預金金利はとても低いです。",
-    "listKey": "n2-w3d2"
+    "listKey": "n2-w3d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-011",
@@ -2380,7 +3500,11 @@
     "kana": "あずける",
     "english": "to deposit, entrust",
     "sentence": "平日は仕事なので、両親に子供を預けています。",
-    "listKey": "n2-w3d2"
+    "listKey": "n2-w3d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-012",
@@ -2389,7 +3513,11 @@
     "english": "to keep, look after",
     "sentence": "荷物を預かってもらえますか？",
     "listKey": "n2-w3d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-013",
@@ -2397,7 +3525,11 @@
     "kana": "はらいもどし",
     "english": "refund",
     "sentence": "切符の払い戻しには手数料がかかります。",
-    "listKey": "n2-w3d2"
+    "listKey": "n2-w3d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-014",
@@ -2406,7 +3538,11 @@
     "english": "to return, go back",
     "sentence": "部長はいつお戻りになりますか？",
     "listKey": "n2-w3d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-015",
@@ -2414,7 +3550,11 @@
     "kana": "ざんだかしょうかい",
     "english": "balance inquiry",
     "sentence": "残高照会したいので、ATMに行ってきます。",
-    "listKey": "n2-w3d2"
+    "listKey": "n2-w3d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-016",
@@ -2423,7 +3563,11 @@
     "english": "to remain",
     "sentence": "先週の雪がまだ残っています。",
     "listKey": "n2-w3d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-017",
@@ -2432,7 +3576,11 @@
     "english": "to leave behind",
     "sentence": "子供を家に残してきたので、早めに帰ります。",
     "listKey": "n2-w3d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-018",
@@ -2440,7 +3588,11 @@
     "kana": "しょうめい",
     "english": "lighting",
     "sentence": "部屋の照明を変えました。",
-    "listKey": "n2-w3d2"
+    "listKey": "n2-w3d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-019",
@@ -2448,7 +3600,11 @@
     "kana": "たいしょうてき",
     "english": "contrasting",
     "sentence": "私と妹は対照的な性格です。",
-    "listKey": "n2-w3d2"
+    "listKey": "n2-w3d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-020",
@@ -2456,7 +3612,11 @@
     "kana": "てらす",
     "english": "to illuminate",
     "sentence": "夕日に照らされた町の景色はとてもきれいでした。",
-    "listKey": "n2-w3d2"
+    "listKey": "n2-w3d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-021",
@@ -2464,7 +3624,11 @@
     "kana": "こうか",
     "english": "coin",
     "sentence": "記念硬貨を買いました。",
-    "listKey": "n2-w3d2"
+    "listKey": "n2-w3d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-022",
@@ -2473,7 +3637,11 @@
     "english": "hard, stiff",
     "sentence": "硬いマットレスのほうが好きです。",
     "listKey": "n2-w3d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-023",
@@ -2482,7 +3650,11 @@
     "english": "freight, cargo",
     "sentence": "年々、国際貨物が増えています。",
     "listKey": "n2-w3d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-024",
@@ -2490,7 +3662,11 @@
     "kana": "つうか",
     "english": "currency",
     "sentence": "通貨危機の後、その国の経済は悪化しました。",
-    "listKey": "n2-w3d2"
+    "listKey": "n2-w3d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-025",
@@ -2498,7 +3674,11 @@
     "kana": "かくてい",
     "english": "confirmation, finalization",
     "sentence": "スケジュールが確定したらお知らせします。",
-    "listKey": "n2-w3d2"
+    "listKey": "n2-w3d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-026",
@@ -2506,7 +3686,11 @@
     "kana": "めいかく（な）",
     "english": "clear, definite",
     "sentence": "彼から明確な答えは聞けませんでした。",
-    "listKey": "n2-w3d2"
+    "listKey": "n2-w3d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-027",
@@ -2515,7 +3699,11 @@
     "english": "certain, sure",
     "sentence": "うわさなので、確かかどうかわからないんですが…",
     "listKey": "n2-w3d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-028",
@@ -2524,7 +3712,11 @@
     "english": "to confirm, check",
     "sentence": "その話が本当かどうか確かめましょう。",
     "listKey": "n2-w3d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-029",
@@ -2532,7 +3724,11 @@
     "kana": "かくにん",
     "english": "confirmation",
     "sentence": "左右をよく確認してから道を渡りましょう。",
-    "listKey": "n2-w3d2"
+    "listKey": "n2-w3d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-030",
@@ -2541,7 +3737,11 @@
     "english": "to acknowledge, admit",
     "sentence": "自分の失敗は認めたくないものです。",
     "listKey": "n2-w3d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-031",
@@ -2549,7 +3749,11 @@
     "kana": "いほう",
     "english": "illegal",
     "sentence": "日本では銃を持つことは違法です。",
-    "listKey": "n2-w3d2"
+    "listKey": "n2-w3d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-032",
@@ -2558,7 +3762,11 @@
     "english": "difference",
     "sentence": "同じ国でも地域によって様々な違いがあります。",
     "listKey": "n2-w3d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-033",
@@ -2566,7 +3774,11 @@
     "kana": "まちがえる",
     "english": "to make a mistake",
     "sentence": "道を間違えて遅れてしまいました。",
-    "listKey": "n2-w3d2"
+    "listKey": "n2-w3d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-034",
@@ -2575,7 +3787,11 @@
     "english": "mistake",
     "sentence": "彼は自分の間違いを認めました。",
     "listKey": "n2-w3d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-035",
@@ -2584,7 +3800,11 @@
     "english": "(news) coverage, interview",
     "sentence": "テレビの取材を受けました。",
     "listKey": "n2-w3d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-036",
@@ -2593,7 +3813,11 @@
     "english": "to take",
     "sentence": "やっとお客様のアポイントが取れました。",
     "listKey": "n2-w3d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-037",
@@ -2601,7 +3825,11 @@
     "kana": "とりけし",
     "english": "cancellation",
     "sentence": "注文の取り消しはできませんので、ご注意ください。",
-    "listKey": "n2-w3d2"
+    "listKey": "n2-w3d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-038",
@@ -2610,7 +3838,11 @@
     "english": "dictation (writing)",
     "sentence": "これから書き取りの練習をします。",
     "listKey": "n2-w3d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-039",
@@ -2619,7 +3851,11 @@
     "english": "listening comprehension",
     "sentence": "文法はわかるんですが、聞き取りは苦手です。",
     "listKey": "n2-w3d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-040",
@@ -2627,7 +3863,11 @@
     "kana": "しょうきょ",
     "english": "deletion",
     "sentence": "大切なデータを消去してしまいました。",
-    "listKey": "n2-w3d2"
+    "listKey": "n2-w3d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-041",
@@ -2636,7 +3876,11 @@
     "english": "to disappear, go out",
     "sentence": "電気が消えているから、もう寝たみたいです。",
     "listKey": "n2-w3d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-042",
@@ -2645,7 +3889,11 @@
     "english": "to erase, turn off",
     "sentence": "このペンは消せるから便利ですね。",
     "listKey": "n2-w3d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d2-043",
@@ -2654,7 +3902,11 @@
     "english": "eraser",
     "sentence": "この消しゴムは消しにくいです。",
     "listKey": "n2-w3d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-001",
@@ -2662,7 +3914,11 @@
     "kana": "だんたい",
     "english": "group, organization",
     "sentence": "ボランティア団体に寄付しました。",
-    "listKey": "n2-w3d3"
+    "listKey": "n2-w3d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-002",
@@ -2671,7 +3927,11 @@
     "english": "group, crowd",
     "sentence": "猿は集団で生活します。",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-003",
@@ -2680,7 +3940,11 @@
     "english": "housing complex",
     "sentence": "子どもの時、団地に住んでいました。",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-004",
@@ -2689,7 +3953,11 @@
     "english": "futon",
     "sentence": "ベッドより布団で寝るほうが好きです。",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-005",
@@ -2698,7 +3966,11 @@
     "english": "general, overall",
     "sentence": "大学では日本史全般を勉強しました。",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-006",
@@ -2706,7 +3978,11 @@
     "kana": "ようじ",
     "english": "young child, toddler",
     "sentence": "この英会話学校には幼児クラスがあります。",
-    "listKey": "n2-w3d3"
+    "listKey": "n2-w3d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-007",
@@ -2714,7 +3990,11 @@
     "kana": "おさない",
     "english": "young, childish",
     "sentence": "彼女は若いというより幼いですね。",
-    "listKey": "n2-w3d3"
+    "listKey": "n2-w3d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-008",
@@ -2723,7 +4003,11 @@
     "english": "pediatrics",
     "sentence": "子供を小児科に連れて行きました。",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-009",
@@ -2731,7 +4015,11 @@
     "kana": "いっぱん",
     "english": "general, public",
     "sentence": "この建物の中は、一般には公開されていません。",
-    "listKey": "n2-w3d3"
+    "listKey": "n2-w3d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-010",
@@ -2739,7 +4027,11 @@
     "kana": "にじゅっさい／はたち",
     "english": "20 years old",
     "sentence": "家族が二十歳のお祝いをしてくれました。",
-    "listKey": "n2-w3d3"
+    "listKey": "n2-w3d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-011",
@@ -2747,7 +4039,11 @@
     "kana": "みらい",
     "english": "future",
     "sentence": "地球の未来のために、環境を大切にしましょう。",
-    "listKey": "n2-w3d3"
+    "listKey": "n2-w3d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-012",
@@ -2756,7 +4052,11 @@
     "english": "children",
     "sentence": "よく児童公園で子供と遊びます。",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-013",
@@ -2765,7 +4065,11 @@
     "english": "years old (counter)",
     "sentence": "25歳で結婚しました。",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-014",
@@ -2774,7 +4078,11 @@
     "english": "undecided",
     "sentence": "イベントの詳細は未定です。",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-015",
@@ -2783,7 +4091,11 @@
     "english": "unknown",
     "sentence": "未知の分野に挑戦したいです。",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-016",
@@ -2791,7 +4103,11 @@
     "kana": "み～",
     "english": "un-, not yet (prefix)",
     "sentence": "未経験の方も歓迎します。",
-    "listKey": "n2-w3d3"
+    "listKey": "n2-w3d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-017",
@@ -2799,7 +4115,11 @@
     "kana": "みまん",
     "english": "under, less than",
     "sentence": "10歳未満のお子様は無料です。",
-    "listKey": "n2-w3d3"
+    "listKey": "n2-w3d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-018",
@@ -2808,7 +4128,11 @@
     "english": "full (capacity)",
     "sentence": "コンサート会場は満員でした。",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-019",
@@ -2816,7 +4140,11 @@
     "kana": "まんぞく",
     "english": "satisfaction",
     "sentence": "今の仕事に満足しています。",
-    "listKey": "n2-w3d3"
+    "listKey": "n2-w3d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-020",
@@ -2825,7 +4153,11 @@
     "english": "to be full, fulfilled",
     "sentence": "彼は自信に満ちた表情をしていました。",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-021",
@@ -2833,7 +4165,11 @@
     "kana": "ろうじん",
     "english": "elderly person",
     "sentence": "ヘミングウェイの『老人と海』は名作です。",
-    "listKey": "n2-w3d3"
+    "listKey": "n2-w3d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-022",
@@ -2842,7 +4178,11 @@
     "english": "aged, elderly",
     "sentence": "年老いた両親が心配です。",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-023",
@@ -2850,7 +4190,11 @@
     "kana": "おんど",
     "english": "temperature",
     "sentence": "寒いので、エアコンの温度を少し上げてください。",
-    "listKey": "n2-w3d3"
+    "listKey": "n2-w3d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-024",
@@ -2859,7 +4203,11 @@
     "english": "thermometer",
     "sentence": "熱を測りたいんですが、体温計はありますか？",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-025",
@@ -2868,7 +4216,11 @@
     "english": "greenhouse",
     "sentence": "温室効果ガスの問題は深刻です。",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-026",
@@ -2876,7 +4228,11 @@
     "kana": "あたたかい",
     "english": "warm",
     "sentence": "彼は心の温かい人です。",
-    "listKey": "n2-w3d3"
+    "listKey": "n2-w3d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-027",
@@ -2884,7 +4240,11 @@
     "kana": "れいせい（な）",
     "english": "calm, composed",
     "sentence": "もっと冷静に考えてください。",
-    "listKey": "n2-w3d3"
+    "listKey": "n2-w3d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-028",
@@ -2892,7 +4252,11 @@
     "kana": "つめたい",
     "english": "cold",
     "sentence": "そんな冷たいこと言わないで、手伝ってよ。",
-    "listKey": "n2-w3d3"
+    "listKey": "n2-w3d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-029",
@@ -2901,7 +4265,11 @@
     "english": "to get cold",
     "sentence": "夜は冷えますから、上着を持って出かけましょう。",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-030",
@@ -2910,7 +4278,11 @@
     "english": "to cool (something)",
     "sentence": "少し頭を冷やしてきなさい。",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-031",
@@ -2918,7 +4290,11 @@
     "kana": "さめる",
     "english": "to cool down (food)",
     "sentence": "料理が冷めないうちに食べてください。",
-    "listKey": "n2-w3d3"
+    "listKey": "n2-w3d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-032",
@@ -2927,7 +4303,11 @@
     "english": "to let cool",
     "sentence": "少し冷ましてから、子供にごはんをあげます。",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-033",
@@ -2935,7 +4315,11 @@
     "kana": "りょくちゃ",
     "english": "green tea",
     "sentence": "緑茶は体にいいそうですよ。",
-    "listKey": "n2-w3d3"
+    "listKey": "n2-w3d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-034",
@@ -2943,7 +4327,11 @@
     "kana": "しんりょく",
     "english": "fresh greenery",
     "sentence": "新緑のきれいな季節になりました。",
-    "listKey": "n2-w3d3"
+    "listKey": "n2-w3d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-035",
@@ -2952,7 +4340,11 @@
     "english": "green (color)",
     "sentence": "部屋のインテリアを明るい緑色に変えました。",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-036",
@@ -2960,7 +4352,11 @@
     "kana": "こうちゃ",
     "english": "black tea",
     "sentence": "紅茶はたいていストレートで飲みます。",
-    "listKey": "n2-w3d3"
+    "listKey": "n2-w3d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-037",
@@ -2969,7 +4365,11 @@
     "english": "lipstick",
     "sentence": "口紅の色を変えてみました。",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-038",
@@ -2978,7 +4378,11 @@
     "english": "polka dot",
     "sentence": "その水玉のネクタイ、素敵ですね。",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-039",
@@ -2987,7 +4391,11 @@
     "english": "ball, orb",
     "sentence": "その占い師は水晶の玉を使いました。",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-040",
@@ -2995,7 +4403,11 @@
     "kana": "じゅうえんだま",
     "english": "10-yen coin",
     "sentence": "十円玉に描かれているのはお寺ですか？",
-    "listKey": "n2-w3d3"
+    "listKey": "n2-w3d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-041",
@@ -3004,7 +4416,11 @@
     "english": "reply",
     "sentence": "お返事をお待ちしております。",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-042",
@@ -3012,7 +4428,11 @@
     "kana": "へんきゃく",
     "english": "return (an item)",
     "sentence": "食べ終わった食器はカウンターに返却してください。",
-    "listKey": "n2-w3d3"
+    "listKey": "n2-w3d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-043",
@@ -3021,7 +4441,11 @@
     "english": "refund",
     "sentence": "キャンセルの場合は、手数料を引いて残りを返金します。",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w3d3-044",
@@ -3030,7 +4454,11 @@
     "english": "to return (something)",
     "sentence": "先週借りた本、明日返しますね。",
     "listKey": "n2-w3d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-001",
@@ -3038,7 +4466,11 @@
     "kana": "せってい",
     "english": "setting, configuration",
     "sentence": "今、エアコンは何度に設定されていますか？",
-    "listKey": "n2-w4d1"
+    "listKey": "n2-w4d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-002",
@@ -3046,7 +4478,11 @@
     "kana": "せっけい",
     "english": "design (engineering/architecture)",
     "sentence": "オリンピック・スタジアムの設計者は誰ですか？",
-    "listKey": "n2-w4d1"
+    "listKey": "n2-w4d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-003",
@@ -3055,7 +4491,11 @@
     "english": "facilities, equipment",
     "sentence": "この病院は最新の設備が整っています。",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-004",
@@ -3063,7 +4503,11 @@
     "kana": "かんき",
     "english": "ventilation",
     "sentence": "少し窓を開けて換気しましょう。",
-    "listKey": "n2-w4d1"
+    "listKey": "n2-w4d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-005",
@@ -3071,7 +4515,11 @@
     "kana": "うんてんきりかえ",
     "english": "operation mode switch",
     "sentence": "運転切換で送風だけにできますよ。",
-    "listKey": "n2-w4d1"
+    "listKey": "n2-w4d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-006",
@@ -3080,7 +4528,11 @@
     "english": "transfer (trains)",
     "sentence": "時間がかかっても乗り換えなしで行けるほうがいいです。",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-007",
@@ -3088,7 +4540,11 @@
     "kana": "ふうこう",
     "english": "wind direction",
     "sentence": "風向はこのボタンで調節できます。",
-    "listKey": "n2-w4d1"
+    "listKey": "n2-w4d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-008",
@@ -3097,7 +4553,11 @@
     "english": "direction of the wind",
     "sentence": "台風が過ぎた後、風の向きが変わりました。",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-009",
@@ -3106,7 +4566,11 @@
     "english": "across from, opposite",
     "sentence": "両親は向かいの家に住んでいます。",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-010",
@@ -3115,7 +4579,11 @@
     "english": "the other side, beyond",
     "sentence": "川の向こうに公園があります。",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-011",
@@ -3123,7 +4591,11 @@
     "kana": "ていし",
     "english": "stop, halt",
     "sentence": "信号がない交差点では一時停止しましょう。",
-    "listKey": "n2-w4d1"
+    "listKey": "n2-w4d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-012",
@@ -3131,7 +4603,11 @@
     "kana": "ていでん",
     "english": "power outage",
     "sentence": "地震の後、停電になりました。",
-    "listKey": "n2-w4d1"
+    "listKey": "n2-w4d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-013",
@@ -3140,7 +4616,11 @@
     "english": "stopping (train/vehicle)",
     "sentence": "この電車は各駅に停車します。",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-014",
@@ -3148,7 +4628,11 @@
     "kana": "だんぼう",
     "english": "heating",
     "sentence": "寒いので暖房をつけてください。",
-    "listKey": "n2-w4d1"
+    "listKey": "n2-w4d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-015",
@@ -3156,7 +4640,11 @@
     "kana": "おんだん（な）",
     "english": "warm, mild (climate)",
     "sentence": "地球の温暖化が問題になっています。",
-    "listKey": "n2-w4d1"
+    "listKey": "n2-w4d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-016",
@@ -3165,7 +4653,11 @@
     "english": "warm",
     "sentence": "夜は冷えるので、暖かい服で行ったほうがいいですよ。",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-017",
@@ -3173,7 +4665,11 @@
     "kana": "じょしつ",
     "english": "dehumidification",
     "sentence": "梅雨の時期は除湿機を使います。",
-    "listKey": "n2-w4d1"
+    "listKey": "n2-w4d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-018",
@@ -3182,7 +4678,11 @@
     "english": "cleaning",
     "sentence": "年末に大掃除をします。",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-019",
@@ -3191,7 +4691,11 @@
     "english": "to exclude, remove",
     "sentence": "部長を除いて全員が賛成しました。",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-020",
@@ -3199,7 +4703,11 @@
     "kana": "しつど",
     "english": "humidity",
     "sentence": "湿度が高いから暑く感じますね。",
-    "listKey": "n2-w4d1"
+    "listKey": "n2-w4d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-021",
@@ -3208,7 +4716,11 @@
     "english": "moisture, humidity",
     "sentence": "クローゼットに湿気取りを置いています。",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-022",
@@ -3217,7 +4729,11 @@
     "english": "to become damp",
     "sentence": "洗濯物はまだ湿っています。",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-023",
@@ -3225,7 +4741,11 @@
     "kana": "ひょうじゅん",
     "english": "standard",
     "sentence": "大阪出身だから、アクセントが標準語と少し違います。",
-    "listKey": "n2-w4d1"
+    "listKey": "n2-w4d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-024",
@@ -3234,7 +4754,11 @@
     "english": "goal, target",
     "sentence": "今の目標はN1に合格することです。",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-025",
@@ -3243,7 +4767,11 @@
     "english": "specimen",
     "sentence": "きれいな花の標本を集めています。",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-026",
@@ -3252,7 +4780,11 @@
     "english": "double, times (multiplier)",
     "sentence": "オーガニック食品は普通の値段の倍くらいしますね。",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-027",
@@ -3260,7 +4792,11 @@
     "kana": "～ばい",
     "english": "-fold, times (counter)",
     "sentence": "大盛りは普通サイズの1.5倍です。",
-    "listKey": "n2-w4d1"
+    "listKey": "n2-w4d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-028",
@@ -3269,7 +4805,11 @@
     "english": "volume (counter for books)",
     "sentence": "まんがの『ドラゴンボール』は全部で42巻あります。",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-029",
@@ -3278,7 +4818,11 @@
     "english": "to wind, wrap around",
     "sentence": "寒いので、マフラーをしっかり巻いて出かけました。",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-030",
@@ -3286,7 +4830,11 @@
     "kana": "まきもどし",
     "english": "rewind",
     "sentence": "好きな映画のシーンを何度も巻き戻して見ました。",
-    "listKey": "n2-w4d1"
+    "listKey": "n2-w4d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-031",
@@ -3294,7 +4842,11 @@
     "kana": "ろくが",
     "english": "video recording",
     "sentence": "忙しくて、録画したドラマがなかなか見られません。",
-    "listKey": "n2-w4d1"
+    "listKey": "n2-w4d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-032",
@@ -3302,7 +4854,11 @@
     "kana": "ろくおん",
     "english": "audio recording",
     "sentence": "発音の練習のために、自分の声を録音して聞いています。",
-    "listKey": "n2-w4d1"
+    "listKey": "n2-w4d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-033",
@@ -3310,7 +4866,11 @@
     "kana": "おんりょう",
     "english": "volume (sound)",
     "sentence": "子供が寝たので、テレビの音量を下げました。",
-    "listKey": "n2-w4d1"
+    "listKey": "n2-w4d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-034",
@@ -3319,7 +4879,11 @@
     "english": "airflow volume",
     "sentence": "ちょっと風量を弱くしましょう。",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-035",
@@ -3328,7 +4892,11 @@
     "english": "amount, quantity",
     "sentence": "砂糖の分量は好みに合わせて調節してください。",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-036",
@@ -3337,7 +4905,11 @@
     "english": "quantity, amount",
     "sentence": "在庫の数量を確認しておきます。",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-037",
@@ -3345,7 +4917,11 @@
     "kana": "はかる",
     "english": "to measure, weigh",
     "sentence": "ちゃんと分量を量らなかったから、失敗してしまいました。",
-    "listKey": "n2-w4d1"
+    "listKey": "n2-w4d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-038",
@@ -3354,7 +4930,11 @@
     "english": "plan, schedule",
     "sentence": "もう夏休みの予定を決めましたか？",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-039",
@@ -3363,7 +4943,11 @@
     "english": "preparation (study ahead)",
     "sentence": "彼女はまじめだから毎日予習してきます。",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-040",
@@ -3372,7 +4956,11 @@
     "english": "spare, reserve",
     "sentence": "会議の資料は予備も入れて50部用意してください。",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-041",
@@ -3381,7 +4969,11 @@
     "english": "budget",
     "sentence": "欲しい車があるんですが、ちょっと予算オーバーなんです。",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-042",
@@ -3389,7 +4981,11 @@
     "kana": "よやく",
     "english": "reservation",
     "sentence": "予約していないんですが、席は空いていますか？",
-    "listKey": "n2-w4d1"
+    "listKey": "n2-w4d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-043",
@@ -3398,7 +4994,11 @@
     "english": "approximately (prefix)",
     "sentence": "東京から大阪までは約3時間です。",
     "listKey": "n2-w4d1",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d1-044",
@@ -3406,7 +5006,11 @@
     "kana": "やくそく",
     "english": "promise",
     "sentence": "約束を忘れていたので、友達に怒られてしまいました。",
-    "listKey": "n2-w4d1"
+    "listKey": "n2-w4d1",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-001",
@@ -3415,7 +5019,11 @@
     "english": "zone, area",
     "sentence": "この辺りは工業地帯です。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-002",
@@ -3423,7 +5031,11 @@
     "kana": "けいたいでんわ",
     "english": "mobile phone",
     "sentence": "携帯電話の料金プランはわかりにくいです。",
-    "listKey": "n2-w4d2"
+    "listKey": "n2-w4d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-003",
@@ -3432,7 +5044,11 @@
     "english": "temperate zone",
     "sentence": "日本は温帯に位置しています。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-004",
@@ -3441,7 +5057,11 @@
     "english": "belt, sash",
     "sentence": "柔道は帯の色で強さを表します。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-005",
@@ -3450,7 +5070,11 @@
     "english": "heat retention",
     "sentence": "この服は保温性に優れています。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-006",
@@ -3459,7 +5083,11 @@
     "english": "moisturizing",
     "sentence": "冬はいつも保湿クリームを使っています。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-007",
@@ -3467,7 +5095,11 @@
     "kana": "ほけん",
     "english": "insurance",
     "sentence": "万一のために保険に入っておいたほうがいいですよ。",
-    "listKey": "n2-w4d2"
+    "listKey": "n2-w4d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-008",
@@ -3475,7 +5107,11 @@
     "kana": "たもつ",
     "english": "to maintain, keep",
     "sentence": "理想の体型を保つために、毎日運動しています。",
-    "listKey": "n2-w4d2"
+    "listKey": "n2-w4d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-009",
@@ -3483,7 +5119,11 @@
     "kana": "ほりゅう",
     "english": "hold, pending",
     "sentence": "今決められないので、返事は保留させてください。",
-    "listKey": "n2-w4d2"
+    "listKey": "n2-w4d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-010",
@@ -3492,7 +5132,11 @@
     "english": "studying abroad",
     "sentence": "海外の大学院に留学したいです。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-011",
@@ -3500,7 +5144,11 @@
     "kana": "ていりゅうじょ",
     "english": "bus stop",
     "sentence": "ここはバスの停留所なので、一般の車は駐車禁止です。",
-    "listKey": "n2-w4d2"
+    "listKey": "n2-w4d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-012",
@@ -3509,7 +5157,11 @@
     "english": "registered mail",
     "sentence": "書留に受け取りのサインをお願いします。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-013",
@@ -3517,7 +5169,11 @@
     "kana": "ほしゅてき（な）",
     "english": "conservative",
     "sentence": "昔より保守的になった気がします。",
-    "listKey": "n2-w4d2"
+    "listKey": "n2-w4d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-014",
@@ -3525,7 +5181,11 @@
     "kana": "るす",
     "english": "being away from home",
     "sentence": "友達が留守の間、子供を預かってあげました。",
-    "listKey": "n2-w4d2"
+    "listKey": "n2-w4d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-015",
@@ -3534,7 +5194,11 @@
     "english": "to protect, keep (rules)",
     "sentence": "ルールはきちんと守ってください。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-016",
@@ -3543,7 +5207,11 @@
     "english": "amulet, charm",
     "sentence": "毎年、初詣に行ってお守りを買います。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-017",
@@ -3551,7 +5219,11 @@
     "kana": "でんごん",
     "english": "message",
     "sentence": "伝言をお願いできますか？",
-    "listKey": "n2-w4d2"
+    "listKey": "n2-w4d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-018",
@@ -3560,7 +5232,11 @@
     "english": "to convey, tell",
     "sentence": "ご家族によろしくお伝えください。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-019",
@@ -3569,7 +5245,11 @@
     "english": "to help",
     "sentence": "同僚が手伝ってくれたので、仕事が早く終わりました。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-020",
@@ -3577,7 +5257,11 @@
     "kana": "へんさい",
     "english": "repayment",
     "sentence": "やっと家のローン返済が終わりました。",
-    "listKey": "n2-w4d2"
+    "listKey": "n2-w4d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-021",
@@ -3586,7 +5270,11 @@
     "english": "to be finished, settled",
     "sentence": "用事が早く済んだので、買い物して帰りました。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-022",
@@ -3594,7 +5282,11 @@
     "kana": "～ずみ",
     "english": "already done, completed",
     "sentence": "使用済みのインクカートリッジは再利用します。",
-    "listKey": "n2-w4d2"
+    "listKey": "n2-w4d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-023",
@@ -3602,7 +5294,11 @@
     "kana": "ようけん",
     "english": "matter of business, errand",
     "sentence": "用件を早く言ってください。",
-    "listKey": "n2-w4d2"
+    "listKey": "n2-w4d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-024",
@@ -3611,7 +5307,11 @@
     "english": "subject (of email)",
     "sentence": "件名を書き忘れてメールを送ってしまいました。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-025",
@@ -3620,7 +5320,11 @@
     "english": "incident, case",
     "sentence": "殺人事件の犯人はまだ捕まっていません。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-026",
@@ -3628,7 +5332,11 @@
     "kana": "つうしん",
     "english": "communication",
     "sentence": "通信技術が発達して便利になりました。",
-    "listKey": "n2-w4d2"
+    "listKey": "n2-w4d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-027",
@@ -3637,7 +5345,11 @@
     "english": "confidence",
     "sentence": "ここで勉強して、日本語で話す自信がつきました。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-028",
@@ -3646,7 +5358,11 @@
     "english": "to believe",
     "sentence": "信じられないけど、本当にあった話です。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-029",
@@ -3654,7 +5370,11 @@
     "kana": "ちゃくしんりれき",
     "english": "call history (incoming)",
     "sentence": "着信履歴を見ましたが、誰からの電話かわかりません。",
-    "listKey": "n2-w4d2"
+    "listKey": "n2-w4d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-030",
@@ -3663,7 +5383,11 @@
     "english": "resume, CV",
     "sentence": "日本語の履歴書を送ってください。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-031",
@@ -3671,7 +5395,11 @@
     "kana": "れきし",
     "english": "history",
     "sentence": "これは歴史に残る大きな出来事です。",
-    "listKey": "n2-w4d2"
+    "listKey": "n2-w4d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-032",
@@ -3679,7 +5407,11 @@
     "kana": "じゅしんばこ",
     "english": "inbox",
     "sentence": "受信箱を整理したほうがいいですよ。",
-    "listKey": "n2-w4d2"
+    "listKey": "n2-w4d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-033",
@@ -3688,7 +5420,11 @@
     "english": "sent box",
     "sentence": "送信箱を空にしました。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-034",
@@ -3697,7 +5433,11 @@
     "english": "trash can",
     "sentence": "ごみはごみ箱にきちんと捨てましょう。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-035",
@@ -3705,7 +5445,11 @@
     "kana": "しんき",
     "english": "new, fresh",
     "sentence": "新規プロジェクトのメンバーに選ばれました。",
-    "listKey": "n2-w4d2"
+    "listKey": "n2-w4d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-036",
@@ -3713,7 +5457,11 @@
     "kana": "きてい",
     "english": "regulation, rule",
     "sentence": "社内規定で副業は禁止されています。",
-    "listKey": "n2-w4d2"
+    "listKey": "n2-w4d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-037",
@@ -3721,7 +5469,11 @@
     "kana": "へんかん",
     "english": "conversion, transformation",
     "sentence": "日本語入力の際は、漢字変換に気を付けましょう。",
-    "listKey": "n2-w4d2"
+    "listKey": "n2-w4d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-038",
@@ -3730,7 +5482,11 @@
     "english": "tough, serious",
     "sentence": "大変だったら手伝いますから言ってください。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-039",
@@ -3739,7 +5495,11 @@
     "english": "to change (intransitive)",
     "sentence": "髪を切って雰囲気が変わりましたね。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-040",
@@ -3748,7 +5508,11 @@
     "english": "to change (transitive)",
     "sentence": "気分を変えたいので、ちょっと出かけてきます。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-041",
@@ -3756,7 +5520,11 @@
     "kana": "せんたく",
     "english": "choice, selection",
     "sentence": "テストは選択式です。",
-    "listKey": "n2-w4d2"
+    "listKey": "n2-w4d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-042",
@@ -3765,7 +5533,11 @@
     "english": "athlete, player",
     "sentence": "好きなスポーツ選手はいますか？",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-043",
@@ -3774,7 +5546,11 @@
     "english": "selection (screening)",
     "sentence": "書類選考の後、面接があります。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-044",
@@ -3783,7 +5559,11 @@
     "english": "to choose",
     "sentence": "オリンピックの選手に選ばれました。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-045",
@@ -3791,7 +5571,11 @@
     "kana": "けってい",
     "english": "decision",
     "sentence": "日本の会社は決定に時間がかかりますね。",
-    "listKey": "n2-w4d2"
+    "listKey": "n2-w4d2",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-046",
@@ -3800,7 +5584,11 @@
     "english": "to decide",
     "sentence": "もう少し考えてから決めましょう。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d2-047",
@@ -3809,7 +5597,11 @@
     "english": "to be decided",
     "sentence": "名古屋に転勤することが決まりました。",
     "listKey": "n2-w4d2",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-001",
@@ -3817,7 +5609,11 @@
     "kana": "とうろく",
     "english": "registration",
     "sentence": "登録住所に変更がある場合はお知らせください。",
-    "listKey": "n2-w4d3"
+    "listKey": "n2-w4d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-002",
@@ -3825,7 +5621,11 @@
     "kana": "とうじょう",
     "english": "appearance (in a story/scene)",
     "sentence": "この本は登場人物が多すぎて複雑です。",
-    "listKey": "n2-w4d3"
+    "listKey": "n2-w4d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-003",
@@ -3834,7 +5634,11 @@
     "english": "mountain climbing",
     "sentence": "来年こそ富士登山に挑戦します。",
     "listKey": "n2-w4d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-004",
@@ -3842,7 +5646,11 @@
     "kana": "やまのぼり",
     "english": "mountain climbing, hiking",
     "sentence": "山登りが好きで、週末はたいてい山に行きます。",
-    "listKey": "n2-w4d3"
+    "listKey": "n2-w4d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-005",
@@ -3850,7 +5658,11 @@
     "kana": "へんしゅう",
     "english": "editing",
     "sentence": "雑誌の編集の仕事をしています。",
-    "listKey": "n2-w4d3"
+    "listKey": "n2-w4d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-006",
@@ -3859,7 +5671,11 @@
     "english": "full-length (novel/film)",
     "sentence": "この長編映画は全部で3部あります。",
     "listKey": "n2-w4d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-007",
@@ -3868,7 +5684,11 @@
     "english": "short (story/film)",
     "sentence": "日本語の短編小説を読んでいます。",
     "listKey": "n2-w4d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-008",
@@ -3877,7 +5697,11 @@
     "english": "knitting",
     "sentence": "母は編み物が好きで、マフラーを編んでくれました。",
     "listKey": "n2-w4d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-009",
@@ -3885,7 +5709,11 @@
     "kana": "きのう",
     "english": "function",
     "sentence": "スマホにはいろいろな機能があります。",
-    "listKey": "n2-w4d3"
+    "listKey": "n2-w4d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-010",
@@ -3893,7 +5721,11 @@
     "kana": "かのう（な）",
     "english": "possible",
     "sentence": "可能な限り、お客様のご要望にお応えします。",
-    "listKey": "n2-w4d3"
+    "listKey": "n2-w4d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-011",
@@ -3901,7 +5733,11 @@
     "kana": "のうりょく",
     "english": "ability, capability",
     "sentence": "この仕事は高いコミュニケーション能力が求められます。",
-    "listKey": "n2-w4d3"
+    "listKey": "n2-w4d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-012",
@@ -3910,7 +5746,11 @@
     "english": "correction, revision",
     "sentence": "計画を一部修正しました。",
     "listKey": "n2-w4d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-013",
@@ -3918,7 +5758,11 @@
     "kana": "しゅうり",
     "english": "repair",
     "sentence": "コピー機が壊れたので、修理に来てもらいました。",
-    "listKey": "n2-w4d3"
+    "listKey": "n2-w4d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-014",
@@ -3927,7 +5771,11 @@
     "english": "master's degree",
     "sentence": "経営学の修士号を持っています。",
     "listKey": "n2-w4d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-015",
@@ -3935,7 +5783,11 @@
     "kana": "かんりょう",
     "english": "completion",
     "sentence": "工事の完了は来月の予定です。",
-    "listKey": "n2-w4d3"
+    "listKey": "n2-w4d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-016",
@@ -3944,7 +5796,11 @@
     "english": "completion (of a work)",
     "sentence": "この作品が完成したら、少し休暇を取ります。",
     "listKey": "n2-w4d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-017",
@@ -3953,7 +5809,11 @@
     "english": "fully equipped",
     "sentence": "このマンションはセキュリティ完備です。",
     "listKey": "n2-w4d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-018",
@@ -3962,7 +5822,11 @@
     "english": "end, termination",
     "sentence": "今月末で無料サポートサービスの期間が終了します。",
     "listKey": "n2-w4d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-019",
@@ -3970,7 +5834,11 @@
     "kana": "しゅうりょう",
     "english": "completion (of a course)",
     "sentence": "このコースを修了した人は、仕事の紹介が受けられます。",
-    "listKey": "n2-w4d3"
+    "listKey": "n2-w4d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-020",
@@ -3978,7 +5846,11 @@
     "kana": "がぞう",
     "english": "image",
     "sentence": "今はインターネットでいろいろな画像が検索できます。",
-    "listKey": "n2-w4d3"
+    "listKey": "n2-w4d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-021",
@@ -3987,7 +5859,11 @@
     "english": "video, footage",
     "sentence": "これは事故の瞬間の映像です。",
     "listKey": "n2-w4d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-022",
@@ -3996,7 +5872,11 @@
     "english": "film developing",
     "sentence": "アナログカメラは現像する時がおもしろいんです。",
     "listKey": "n2-w4d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-023",
@@ -4004,7 +5884,11 @@
     "kana": "しょるい",
     "english": "documents",
     "sentence": "書類を整理してください。",
-    "listKey": "n2-w4d3"
+    "listKey": "n2-w4d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-024",
@@ -4013,7 +5897,11 @@
     "english": "classification",
     "sentence": "プロジェクトごとに書類を分類しました。",
     "listKey": "n2-w4d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-025",
@@ -4022,7 +5910,11 @@
     "english": "humankind",
     "sentence": "人類は約500万年前に誕生しました。",
     "listKey": "n2-w4d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-026",
@@ -4030,7 +5922,11 @@
     "kana": "しょしき",
     "english": "format (document)",
     "sentence": "書式を変えて読みやすくしました。",
-    "listKey": "n2-w4d3"
+    "listKey": "n2-w4d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-027",
@@ -4039,7 +5935,11 @@
     "english": "entrance ceremony",
     "sentence": "夫婦で子供の入学式に出席します。",
     "listKey": "n2-w4d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-028",
@@ -4048,7 +5948,11 @@
     "english": "Japanese style",
     "sentence": "日本式のコミュニケーションにまだ慣れません。",
     "listKey": "n2-w4d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-029",
@@ -4056,7 +5960,11 @@
     "kana": "せいしき（な）",
     "english": "official, formal",
     "sentence": "社長の交代が正式に発表されました。",
-    "listKey": "n2-w4d3"
+    "listKey": "n2-w4d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-030",
@@ -4064,7 +5972,11 @@
     "kana": "ちゅうおう",
     "english": "center",
     "sentence": "中央アジアの国々を旅行しました。",
-    "listKey": "n2-w4d3"
+    "listKey": "n2-w4d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-031",
@@ -4072,7 +5984,11 @@
     "kana": "ほぞん",
     "english": "preservation, saving (data)",
     "sentence": "データを修正して上書き保存しました。",
-    "listKey": "n2-w4d3"
+    "listKey": "n2-w4d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-032",
@@ -4081,7 +5997,11 @@
     "english": "survival",
     "sentence": "倒れたビルの中から生存者が見つかりました。",
     "listKey": "n2-w4d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-033",
@@ -4090,7 +6010,11 @@
     "english": "know (honorific)",
     "sentence": "ご存じの通り、来月社長が交代します。",
     "listKey": "n2-w4d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-034",
@@ -4098,7 +6022,11 @@
     "kana": "そんざい",
     "english": "existence",
     "sentence": "彼は私にとって父親のような存在です。",
-    "listKey": "n2-w4d3"
+    "listKey": "n2-w4d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-035",
@@ -4107,7 +6035,11 @@
     "english": "personal seal, stamp",
     "sentence": "お荷物です。こちらに認め印かサインをお願いします。",
     "listKey": "n2-w4d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-036",
@@ -4116,7 +6048,11 @@
     "english": "mark, seal",
     "sentence": "これは感謝の印です。受け取ってください。",
     "listKey": "n2-w4d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-037",
@@ -4125,7 +6061,11 @@
     "english": "landmark, marker",
     "sentence": "赤い看板がお店の目印です。",
     "listKey": "n2-w4d3",
-    "isReview": true
+    "isReview": true,
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-038",
@@ -4133,7 +6073,11 @@
     "kana": "いんさつ",
     "english": "printing",
     "sentence": "プリンターが故障しているので、今印刷できません。",
-    "listKey": "n2-w4d3"
+    "listKey": "n2-w4d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-039",
@@ -4141,7 +6085,11 @@
     "kana": "かくだい",
     "english": "enlargement, expansion",
     "sentence": "今後アジア地域でのビジネスを拡大する予定です。",
-    "listKey": "n2-w4d3"
+    "listKey": "n2-w4d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   },
   {
     "id": "n2-w4d3-040",
@@ -4149,6 +6097,10 @@
     "kana": "しゅくしょう",
     "english": "reduction, shrinking",
     "sentence": "B5サイズに縮小してください。",
-    "listKey": "n2-w4d3"
+    "listKey": "n2-w4d3",
+    "voicevoxVoices": [
+      2,
+      11
+    ]
   }
 ]
