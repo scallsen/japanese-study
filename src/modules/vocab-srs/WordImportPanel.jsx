@@ -57,6 +57,25 @@ function PrimaryButton({ onClick, disabled, children }) {
   )
 }
 
+// capture="environment" opens the rear camera directly on mobile (iOS/Android);
+// desktop browsers ignore it and just show the normal file picker, so this needs
+// no feature-detection branch — it degrades to "Choose image" behavior on its own.
+function FileTrigger({ label, capture, onChange }) {
+  return (
+    <label style={{ cursor: 'pointer' }}>
+      <div style={{
+        display: 'inline-block', padding: '8px 16px',
+        background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)',
+        borderRadius: 6, fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)',
+        fontFamily: FONT, letterSpacing: TRACKING,
+      }}>
+        {label}
+      </div>
+      <input type="file" accept="image/*" capture={capture} style={{ display: 'none' }} onChange={onChange} />
+    </label>
+  )
+}
+
 function rowInputStyle(width) {
   return {
     width,
@@ -320,17 +339,10 @@ export default function WordImportPanel({ open, onClose, onConfirm }) {
                 />
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  <label style={{ cursor: 'pointer' }}>
-                    <div style={{
-                      display: 'inline-block', padding: '8px 16px',
-                      background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)',
-                      borderRadius: 6, fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)',
-                      fontFamily: FONT, letterSpacing: TRACKING,
-                    }}>
-                      Choose image
-                    </div>
-                    <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageChange} />
-                  </label>
+                  <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                    <FileTrigger label="Take photo" capture="environment" onChange={handleImageChange} />
+                    <FileTrigger label="Choose image" onChange={handleImageChange} />
+                  </div>
                   {imagePreviewUrl && (
                     <img
                       src={imagePreviewUrl}

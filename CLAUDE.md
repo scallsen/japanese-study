@@ -466,7 +466,7 @@ ${VITE_SUPABASE_URL}/storage/v1/object/public/audio/imported/${filename}
 
 ### Word import (text / OCR)
 
-"Import from text / image" in the home screen's Import section opens `WordImportPanel.jsx` — paste raw Japanese text, or upload a photo/screenshot, to bulk-add cards without an Anki export. Client sends the input to the `word-import` edge function (`supabase/functions/word-import/index.ts`) and never touches the Anthropic API key directly.
+"Import from text / image" in the home screen's Import section opens `WordImportPanel.jsx` — paste raw Japanese text, or upload/photograph an image, to bulk-add cards without an Anki export. The image tab offers two file-input triggers: "Take photo" (`capture="environment"`, opens the rear camera directly on mobile) and "Choose image" (gallery/file picker). `capture` is simply ignored on desktop browsers, so no feature-detection branch is needed — both buttons behave identically there. Client sends the input to the `word-import` edge function (`supabase/functions/word-import/index.ts`) and never touches the Anthropic API key directly.
 
 **Pipeline** (`word-import` edge function):
 1. *Image input only* — Claude (vision, default `claude-sonnet-5`, override via `WORD_IMPORT_MODEL`) OCRs the Japanese text out of the image via a `json_schema`-constrained `{ text }` response.
