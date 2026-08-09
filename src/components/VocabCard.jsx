@@ -3,6 +3,9 @@ import { buildFurigana } from '../utils/furigana.js'
 import { FONT } from '../data/theme.js'
 import { useKanjiMeanings } from '../hooks/useKanjiMeanings.js'
 import { kanjiCharsOf } from '../utils/kanjiMeaningLookup.js'
+import { useDictionaryEntry } from '../hooks/useDictionaryEntries.js'
+import { briefGloss } from '../utils/dictionaryEntryLookup.js'
+import { useSentenceForWord } from '../hooks/useSentenceForWord.js'
 
 const CARD_BG = '#E8E4DE'
 
@@ -34,14 +37,14 @@ const FRONT_TEXT_STYLE = {
   textAlign: 'center',
 }
 
-function FrontContent({ word, reviewMode, pixelFont }) {
+function FrontContent({ word, resolvedEnglish, reviewMode, pixelFont }) {
   const jaFont = pixelFont ? FONT : 'system-ui, sans-serif'
   const isMeaningFront = reviewMode === 'meaning-front'
   return (
     <CardShell isReview={word.isReview}>
       <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: isMeaningFront ? '0 16px' : 0 }}>
         <div style={{ ...FRONT_TEXT_STYLE, fontFamily: isMeaningFront ? FONT : jaFont }}>
-          {isMeaningFront ? word.english : word.kanji}
+          {isMeaningFront ? resolvedEnglish : word.kanji}
         </div>
       </div>
     </CardShell>
@@ -70,7 +73,7 @@ function KanjiMeaningBar({ chars, meanings, jaFont }) {
   )
 }
 
-function BackContent({ word, showFurigana, showTranslation, showSentence, showKanjiMeaning, pixelFont }) {
+function BackContent({ word, resolvedEnglish, sentenceText, showFurigana, showTranslation, showSentence, showKanjiMeaning, pixelFont }) {
   const jaFont = pixelFont ? FONT : 'system-ui, sans-serif'
   const f = showFurigana ? buildFurigana(word.kanji, word.kana) : null
 
@@ -116,10 +119,10 @@ function BackContent({ word, showFurigana, showTranslation, showSentence, showKa
               color: '#555',
               textAlign: 'center',
             }}>
-              {word.english}
+              {resolvedEnglish}
             </div>
           )}
-          {showSentence && word.sentence && (
+          {showSentence && sentenceText && (
             <div style={{
               fontFamily: jaFont,
               fontSize: '4.2cqw',
@@ -129,7 +132,7 @@ function BackContent({ word, showFurigana, showTranslation, showSentence, showKa
               textAlign: 'center',
               lineHeight: 1.5,
             }}>
-              {word.sentence}
+              {sentenceText}
             </div>
           )}
         </div>
@@ -139,9 +142,22 @@ function BackContent({ word, showFurigana, showTranslation, showSentence, showKa
   )
 }
 
-export default function VocabCard({ word, flipped, onFlip, animate, reviewMode, showFurigana, showTranslation, showSentence, showKanjiMeaning, pixelFont }) {
-  const front = <FrontContent word={word} reviewMode={reviewMode} pixelFont={pixelFont} />
-  const back  = <BackContent word={word} showFurigana={showFurigana} showTranslation={showTranslation} showSentence={showSentence} showKanjiMeaning={showKanjiMeaning} pixelFont={pixelFont} />
+export default function VocabCard({ word, flipped, onFlip, animate, reviewMode, showFurigana, showTranslation, showSentence, showKanjiMeaning, pixelFont, sentenceSource }) {
+  // Dictionary is the source of truth for the definition when this word is
+  // linked (word.jmdictId); the static `english` field is only a fallback for
+  // words that don't have (or don't yet have) a dictionary match.
+  const dictEntry = useDictionaryEntry(word.jmdictId, true)
+  const resolvedEnglish = briefGloss(dictEntry) ?? word.english
+
+  // The word's own curated sentence wins by default ('custom'); a Tanaka
+  // Corpus sentence fills the gap when there isn't one, or takes priority
+  // outright when sentenceSource is 'tanaka'.
+  const tanakaSentence = useSentenceForWord(word.jmdictId, showSentence)
+  const useTanaka = sentenceSource === 'tanaka' ? !!tanakaSentence : (!word.sentence && !!tanakaSentence)
+  const sentenceText = useTanaka ? tanakaSentence.japanese : word.sentence
+
+  const front = <FrontContent word={word} resolvedEnglish={resolvedEnglish} reviewMode={reviewMode} pixelFont={pixelFont} />
+  const back  = <BackContent word={word} resolvedEnglish={resolvedEnglish} sentenceText={sentenceText} showFurigana={showFurigana} showTranslation={showTranslation} showSentence={showSentence} showKanjiMeaning={showKanjiMeaning} pixelFont={pixelFont} />
 
   const ants = flipped && animate ? (
     <svg viewBox="0 0 380 280" className="mc-overlay" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 10, overflow: 'visible' }} aria-hidden="true">

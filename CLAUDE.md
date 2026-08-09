@@ -114,6 +114,7 @@ Used by multiple modules/pages:
 | `ModuleCard.jsx` | Dashboard module card |
 | `HeaderMenu.jsx` | Icon-button row that collapses into a dropdown below a width breakpoint — used for module header actions (e.g. Vocab drill, SRS) |
 | `SpeakerIcon.jsx` | Muted/unmuted speaker SVG icon |
+| `AttributionFooter.jsx` | Third-party data credit line at the foot of a page — `<AttributionFooter sources={['dictionary', 'tanaka-corpus']} />`. See Attribution system section below |
 
 ### PageHeader
 
@@ -171,6 +172,11 @@ Mirrors katsuyou-drill's UI exactly. Speed-mode only (no text input). Card front
 | `src/hooks/useGamepad.js` | Gamepad controller support (VocabPage-only) |
 | `src/hooks/useKanjiMeanings.js` | `useKanjiMeanings(text, enabled)` → `{ [kanjiChar]: firstGloss }` — resolves per-kanji meanings for the "Show kanji meanings" bar; shared with Vocab SRS |
 | `src/utils/kanjiMeaningLookup.js` | `kanjiCharsOf(str)` (extracts Han-script chars) + `fetchKanjiMeanings(chars)` (queries the `kanji` table, module-level cache) — backs `useKanjiMeanings` |
+| `src/hooks/useDictionaryEntries.js` | `useDictionaryEntries(ids, enabled)` / `useDictionaryEntry(id, enabled)` — resolves `dictionary` rows by `jmdictId`; shared with Vocab SRS. See Dictionary linkage section above |
+| `src/utils/dictionaryEntryLookup.js` | `fetchDictionaryEntries(ids)` (batched, module-cached) + `briefGloss(row)` — backs `useDictionaryEntries` |
+| `src/lib/dictionaryLookup.js` | `lookupDictionaryEntries(client, bases)` + `pickBestDictionaryMatch(rows)` — shared two-stage `dictionary` lookup used by scripts and `lookupVocabulary.js` |
+| `src/hooks/useSentenceForWord.js` | `useSentenceForWord(id, enabled)` / `useSentencesForWords(ids, enabled)` — resolves the best Tanaka Corpus sentence per `jmdictId`; shared with Vocab SRS |
+| `src/utils/sentenceLookup.js` | `fetchSentencesFor(ids)` (batched, module-cached) — backs `useSentenceForWord` |
 | `src/utils/voicevoxAudio.js` | Voicevox voice list, audio-source picker options, Storage URL helper — shared with Vocab SRS |
 | `src/engines/simpleQueue.js` | Card queue engine — wrong cards reinsert after 3 |
 | `src/utils/furigana.js` | `buildFurigana(kanji, kana)` → decomposed furigana parts |
@@ -215,13 +221,61 @@ Each word object in a `src/data/words/*.json` file:
   "english": "fish",          // meaning — shown on back of card (concise, 1–5 words)
   "sentence": "...",          // optional example sentence — shown on back when "Show sentence" is on
   "listKey": "nsm-n3-w1d1",  // must match a source id (flat) or sublist id (hierarchical)
-  "voicevoxVoices": [2, 11]  // set by scripts/generate-audio.mjs — speaker ids with generated audio; absent/empty until generated
+  "voicevoxVoices": [2, 11], // set by scripts/generate-audio.mjs — speaker ids with generated audio; absent/empty until generated
+  "jmdictId": "1426920"      // set by scripts/backfill-vocab-jmdict.mjs — links to the `dictionary` table row for this word; absent if unmatched (see Dictionary linkage section)
 }
 ```
 
 ### Per-kanji meanings
 
 `vocab-show-kanji-meaning` (default `false`) toggles a `KanjiMeaningBar` row on the card back showing each kanji character in the word alongside its first `kanji` table gloss (via `useKanjiMeanings`/`kanjiMeaningLookup.js`, see Key files above). `KanjiMeaningBar` is defined locally in both `VocabCard.jsx` and `VocabSrsDrill.jsx` (not extracted to a shared component). The SRS module has the equivalent `srs-show-kanji-meaning` setting (see SRS settings table below).
+
+### Dictionary as source of truth (jmdictId linkage) & Tanaka Corpus sentences
+
+Every word/card that carries a `jmdictId` field is linked to a row in the Supabase `dictionary` table (see Dictionary section below), which is the **authoritative source for definitions and readings** — not a fallback preference, a hard rule. The static `english`/`back` text on a word or card is used only when there's no `jmdictId` or the dictionary lookup returns nothing (legacy/unmatched entries). This applies identically to Vocab Drill words and Vocab SRS cards (bundled and imported).
+
+Resolution is **live-query + cache**, never denormalized into JSON/storage:
+- `src/utils/dictionaryEntryLookup.js` (`fetchDictionaryEntries(ids)`) + `src/hooks/useDictionaryEntries.js` (`useDictionaryEntries`/`useDictionaryEntry`) — batched, module-cached lookup by `jmdictId`, mirroring the `kanjiMeaningLookup.js`/`useKanjiMeanings.js` pattern above. Used by `VocabCard.jsx`, `VocabPage.jsx`'s `GlanceScreen`, and `VocabSrsDrill.jsx`'s `SrsCardFace`.
+- `src/lib/dictionaryLookup.js` (`lookupDictionaryEntries`, `pickBestDictionaryMatch`) — the shared two-stage `dictionary` lookup (primary_form exact match, then kana_forms GIN overlap, tie-broken by common+shortest) used by `lookupVocabulary.js`, the backfill/import scripts below, and (in spirit — Deno can't share the module) `supabase/functions/word-import/index.ts`.
+
+**Example sentences** come from the Tanaka Corpus (EDRDG, CC-BY licensed), imported into a Supabase `sentences` table:
+```sql
+create table if not exists sentences (
+  id             text primary key,        -- Tanaka/Tatoeba sentence id
+  japanese       text not null,
+  english        text not null,
+  dictionary_ids text[] not null default '{}',
+  quality        boolean not null default false  -- Tanaka Corpus '~' "recommended example" flag
+);
+create index sentences_dictionary_ids_gin on sentences using gin (dictionary_ids);
+grant select on sentences to anon, authenticated;
+grant all on sentences to service_role;
+-- Supabase enables RLS on every new table by default — without a policy,
+-- anon/authenticated reads silently return zero rows (no error):
+alter table sentences enable row level security;
+create policy "public read" on sentences for select using (true);
+```
+`src/utils/sentenceLookup.js` (`fetchSentencesFor`) + `src/hooks/useSentenceForWord.js` (`useSentenceForWord`, `useSentencesForWords`) resolve the best sentence per `jmdictId` (quality-flagged first, then shortest), same cached-batch pattern as above.
+
+**Sentence resolution has the opposite priority rule from definitions** — a word/card's own curated `sentence` wins by default; a Tanaka sentence only fills the gap when there isn't one. `vocab-sentence-source` (Vocab Drill) / `srs-sentence-source` (SRS) — both `'custom' | 'tanaka'`, default `'custom'` — flip that priority outright when set to `'tanaka'`. Each renders as a `DrawerSelect` ("Sentence source", options from `src/data/sentenceSource.js`) nested under the "Show sentence" checkbox, shown only while it's checked — same visual pattern as "Enable audio" → "Text to speech". Attribution for Tanaka-sourced sentences is handled at the page level, not per-card — see Attribution system below.
+
+### Attribution system (`src/data/attributions.js` + `AttributionFooter.jsx`)
+
+Third-party data/asset credits (JMdict/EDICT, KANJIDIC2, Tanaka Corpus, Voicevox) are centralized rather than hand-copied per call site:
+
+- `src/data/attributions.js` — `ATTRIBUTIONS`, a `{ id: segments[] }` registry. Each credit is an array of text segments — `{ text }` for plain text, `{ text, href }` for a clickable piece — rather than one flat string, so file names can link to their EDRDG project page inline within the sentence (their licence page explicitly permits linking or quoting those URLs as the acknowledgement — https://www.edrdg.org/edrdg/licence.html). `dictionary` covers JMdict/EDICT + KANJIDIC together (short, own wording — not EDRDG's full suggested sample text, which is verbose; the requirement is "a general acknowledgement of the sources", not that exact wording); `tanaka-corpus` covers the Tanaka Corpus (CC BY); `voicevox-2`/`voicevox-11` cover the two Voicevox voices (plain text, no link). Adding a new data source (e.g. a future bundled word list with its own attribution requirement) means adding one entry here.
+- `src/utils/attributionSegments.jsx` — `renderAttributionSegments(segments)` turns a segment array into inline JSX (`<a>` for linked segments, `<span>` otherwise). Kept out of `AttributionFooter.jsx` to satisfy react-refresh lint (same reasoning as `vocabMap.js`) since it's used both by `AttributionFooter.jsx` and the contextual Voicevox credit line under the "Text to speech" picker (`VocabPage.jsx`/`VocabSrsModule.jsx`, via `getVoicevoxCredit(audioSource)` in `voicevoxAudio.js` — that function now returns segments, not a string).
+- `src/components/AttributionFooter.jsx` — `<AttributionFooter sources={['dictionary', 'tanaka-corpus']} />`. Each page/screen declares which credits it actually needs (explicit per-page list, not auto-detected) and the footer renders them (via `renderAttributionSegments`) joined at the foot of the page. It's a normal in-flow block, not `position: fixed`/`sticky` — deliberately, so it never overlaps scrolled content. Each host page uses the classic flexbox "sticky footer" trick instead: the scrollable container is a flex column, and its content is wrapped in an inner `flex: 1` div with the footer as a trailing sibling — short content stretches the wrapper and pushes the footer to the bottom of the viewport, tall content just overflows normally with the footer trailing after it. Preserve that `flex: 1` wrapper when editing these pages' layout, or the footer will stop behaving correctly.
+- **Rendered everywhere JMdict/KANJIDIC2/Tanaka-sourced text can actually appear on screen**, including the drill/review screens — not just deck-management/browse screens. The distinction isn't "is this the dictionary module", it's "does this screen ever show text pulled from `dictionary`/`kanji`/`sentences`": `VocabCard.jsx`'s `resolvedEnglish` and `SrsCardFace`'s `resolvedBackText` render JMdict's own gloss text (not just link to it) whenever a word has a `jmdictId` match, `showKanjiMeaning`'s `KanjiMeaningBar` renders KANJIDIC2 meanings, and both can show a Tanaka sentence — so `ActiveDrill`/`DoneScreen` in `VocabPage.jsx` and `VocabSrsDrill.jsx` (both its in-session view and its done-screen return) all carry `['dictionary', 'tanaka-corpus']` too, computed once per component as `footerSources`/inline in the JSX rather than gated off. (Individual flashcards themselves still never render attribution text — it's page/screen-level, not per-card.) Elsewhere: `DictionaryPage.jsx` (`['dictionary']`), `DictionaryEntryPage.jsx` (`['dictionary']`, plus `'tanaka-corpus'` when `sentences.length > 0`).
+- **Voicevox** is added into that same footer array *conditionally*, on top of staying in its existing contextual spot: its credit depends on *which voice is currently selected*, not "this page uses this data source", so it stays rendered directly under the "Text to speech" picker in `VocabPage.jsx`/`VocabSrsModule.jsx` (`getVoicevoxCredit(audioSource)` in `voicevoxAudio.js`) for whenever the settings drawer is open. Independently of that, every screen's `AttributionFooter` (Home, Glance, and the drill/review screens — every place the footer renders at all) also appends `` `voicevox-${speakerId}` `` (via `speakerIdFromAudioSource(audioSource)`) whenever audio is enabled and a Voicevox voice is the active source — not gated to only-while-drilling — so the credit is visible whenever the *setting* is on, whether or not audio happens to be playing at that instant or the drawer is open. `VOICEVOX_VOICES`' `credit` fields pull their text from `ATTRIBUTIONS` instead of owning their own copy.
+
+**Scripts:**
+| Script | Purpose |
+|---|---|
+| `scripts/backfill-vocab-jmdict.mjs` | One-off — matches every Vocab Drill word (`src/data/words/*.json`) and bundled SRS deck entry (`core2000.json`, `keigo.json`) against `dictionary`, writing `jmdictId` back into the JSON. Reading-verified (rejects a match if the candidate's `kana_forms` don't include the word's own reading) to avoid linking the wrong homograph — e.g. it deliberately leaves `する`/`ある` unmatched rather than guessing among 為る/刷る/剃る/擦る/掏る. Writes unmatched entries to `backfill-vocab-jmdict-report.json` for manual review; not all entries will ever auto-match (compound/decorated forms like `〇〇向き`, `正確（な）`). |
+| `scripts/import-tanaka.mjs` | Downloads/parses the Tanaka Corpus (`examples.utf.gz` from `https://www.edrdg.org/pub/Nihongo/examples.utf.gz` — the `ftp://` URL EDRDG's own docs reference isn't reachable from every network), resolves each sentence's per-word index tags to `dictionary.id`, populates `sentences`. Destructive full-refresh like `import-jmdict.mjs`. |
+
+`jmdictId` write sites for SRS cards (all pass it through `createCard`'s `extras`): `VocabPage.jsx`'s `handleAddToSrs`, `WordImportPanel.jsx`, `ImmersionReader.jsx`, `StoryReviewPage.jsx`. `IMPORTED_CONTENT_FIELDS` in `srs.js` includes `jmdictId` so it survives `resetCardProgress`.
 
 ### Adding a word list
 
@@ -266,9 +320,9 @@ grant select on audio_generation_status to anon, authenticated;
 grant all on audio_generation_status to service_role;
 ```
 
-**Attribution**: Voicevox's license requires a discoverable text credit for each character voice used. Each voice's credit string (`"四国めたん by Voicevox"` / `"玄野武宏 by Voicevox"`, in `VOICEVOX_VOICES` in `src/utils/voicevoxAudio.js` — an intentional exception to the "no Japanese in the UI" convention, since the license's own examples credit the Japanese character name) renders as its own line directly below the "Text to speech" select (`getVoicevoxCredit(audioSource)`) — not as the select's `subtext` (that renders above the control, which would read as a field description rather than a credit) — and only while that voice is the selected option, hidden entirely when "Browser TTS" is selected.
+**Attribution**: Voicevox's license requires a discoverable text credit for each character voice used, and its own examples credit the Japanese character name (e.g. "VOICEVOX:四国めたん") — an intentional exception to the "no Japanese in the UI" convention. Each voice's credit segments (`ATTRIBUTIONS['voicevox-2']`/`['voicevox-11']` in `src/data/attributions.js`, e.g. "Text to speech powered by VOICEVOX (四国めたん)" with "VOICEVOX" linking to the project — see Attribution system section under Vocabulary Drill for the full segment/link mechanism) render as their own line directly below the "Text to speech" select (`getVoicevoxCredit(audioSource)` in `voicevoxAudio.js`, via `renderAttributionSegments`) — not as the select's `subtext` (that renders above the control, which would read as a field description rather than a credit) — and only while that voice is the selected option, hidden entirely when "Browser TTS" is selected. The same credit is also folded into the drill-screen `AttributionFooter` while that voice is actively speaking (see Attribution system section).
 
-**Playback priority** (both Vocab drill and Vocab SRS): recorded file audio (Core 2000's Anki audio, SRS-only) → Voicevox audio for the selected voice, if generated → browser TTS. The audio-source picker (`AUDIO_SOURCE_OPTIONS` in `src/utils/voicevoxAudio.js`, labeled "Text to speech" in both settings drawers) offers "Shikoku Metan (female)", "Kurono Takehiro (male)", and "Browser TTS"; picking a Voicevox voice still silently falls back to browser TTS for any entry that voice hasn't been generated for yet.
+**Playback priority** (both Vocab drill and Vocab SRS): recorded file audio (Core 2000's Anki audio, SRS-only) → Voicevox audio for the selected voice, if generated → browser TTS. The audio-source picker (`AUDIO_SOURCE_OPTIONS` in `src/utils/voicevoxAudio.js`, labeled "Text to speech" in both settings drawers) offers "Female (Shikoku Metan)", "Male (Kurono Takehiro)" (`DEFAULT_AUDIO_SOURCE`, `'voicevox-11'`), and "Browser TTS"; picking a Voicevox voice still silently falls back to browser TTS for any entry that voice hasn't been generated for yet.
 
 **Audio preload** (Vocab drill only): a `useEffect` in `VocabPage.jsx` preloads the current card's Voicevox audio plus the next few upcoming cards (`AUDIO_PRELOAD_COUNT`) into an `Audio` object cache keyed by URL, so flipping to a card doesn't wait on a network fetch. The cache is trimmed to the current window (current + upcoming) on every card change/audio-source change.
 
@@ -582,12 +636,13 @@ All keys use `srs-` prefix. The VocabSrsModule reads these on mount; VocabSrsDri
 | `srs-autoplay-audio` | `true` | Parent toggle for front/back autoplay |
 | `srs-autoplay-front` | `true` | Autoplay word audio when card loads |
 | `srs-autoplay-back` | `true` | Autoplay word → sentence audio on flip |
-| `srs-audio-source` | `'voicevox-2'` | Audio source picker — `'voicevox-2'` \| `'voicevox-11'` \| `'browser'`, see Vocab audio section |
+| `srs-audio-source` | `'voicevox-11'` | Audio source picker — `'voicevox-2'` \| `'voicevox-11'` \| `'browser'`, see Vocab audio section |
 | `srs-tts-voice` | `''` | Browser TTS voice name (used when audio source is `'browser'`) |
 | `srs-sfx-enabled` | `true` | Sound effects (correct/wrong beeps) |
 | `srs-show-furigana` | `true` | Show kana reading on card front; always shown on back |
 | `srs-show-translation` | `true` | Show English translation on card back |
 | `srs-show-sentence` | `true` | Show example sentence on card back |
+| `srs-sentence-source` | `'custom'` | `'custom'` \| `'tanaka'` — which sentence wins when both a curated sentence and a Tanaka Corpus match exist (see Dictionary linkage section under Vocabulary Drill) |
 | `srs-show-kanji-meaning` | `false` | Show per-kanji meaning bar on card back (see Per-kanji meanings under Vocabulary Drill) |
 | `srs-pixel-font` | `true` | Use DotGothic16 pixel font on cards |
 | `srs-visual-effects` | `true` | Enable card visual effects |
@@ -742,7 +797,11 @@ There is no automation (no GitHub Actions workflow) re-running this pipeline —
 
 **Page-based** — two routes: `#/dictionary` → `DictionaryPage.jsx` (search) and `#/dictionary/entry/:id` → `DictionaryEntryPage.jsx` (full entry detail). JMdict-backed dictionary with inline kanji lookup. Searches the Supabase `dictionary` table (JMdict) and the `kanji` table (KANJIDIC2).
 
-Each word result row on `DictionaryPage` (`EntryRow`) is a link to `#/dictionary/entry/${entry.id}`, not an inline expansion. `DictionaryEntryPage` re-fetches the full row (including `senses` and `kanji_forms`) plus `kanji` table rows for every kanji character in `primary_form`, and renders: the word with alternate forms, a grouped-by-part-of-speech sense list (via `SensesSection`, using the `senses` jsonb column — falls back to the flat `gloss_en` string for pre-`senses` rows), and a "Kanji" breakdown section listing each component kanji's readings/meanings/grade/JLPT/stroke count/frequency (reusing the same visual card style as the search page's kanji carousel).
+Each word result row on `DictionaryPage` (`EntryRow`) is a link to `#/dictionary/entry/${entry.id}`, not an inline expansion. `DictionaryEntryPage` re-fetches the full row (including `senses` and `kanji_forms`) plus `kanji` table rows for every kanji character in `primary_form`, and renders: the word with alternate forms, a grouped-by-part-of-speech sense list (via `SensesSection`, using the `senses` jsonb column — falls back to the flat `gloss_en` string for pre-`senses` rows), a "Your Decks" section, a "Kanji" breakdown section listing each component kanji's readings/meanings/grade/JLPT/stroke count/frequency (reusing the same visual card style as the search page's kanji carousel), and an "Example Sentences" section.
+
+**"Your Decks" section** — shows which decks this word (by `entry.id` = `jmdictId`) appears in, and its SRS status. Renders when there's a Vocab Drill match (`WORD_DATA.filter(w => w.jmdictId === entry.id)`, resolved to human labels via `WORD_SOURCES`, no auth needed — pure client-side, already-bundled data) or the user is signed in (in which case SRS decks are checked too, via `useProgress('vocab-srs')` → `migrateProgress` → `resolveCard(card).jmdictId === entry.id` for every card, showing deck name + `cardStateLabel(card)` from `srs.js`). Signed-out visitors with no Vocab Drill match see nothing — the section is skipped entirely rather than nagging every word to sign in.
+
+**"Example Sentences" section** — up to 5 rows from the `sentences` table (`.overlaps('dictionary_ids', [entry.id])`, quality-flagged first), each showing the Japanese sentence + English translation. Attribution is handled by the page-level `AttributionFooter`, not per-sentence — see Attribution system section under Vocabulary Drill for the full `sentences` table schema and import pipeline.
 
 ### Key files
 

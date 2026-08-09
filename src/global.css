@@ -131,3 +131,20 @@ button, input, select, textarea {
 .srs-browse-link:hover {
   text-decoration: underline;
 }
+
+.attribution-link {
+  color: inherit;
+  transition: color 120ms;
+}
+
+.attribution-link:hover {
+  color: #fff;
+}
+
+.dict-deck-row {
+  transition: background 120ms;
+}
+
+.dict-deck-row:hover {
+  background: #313131;
+}

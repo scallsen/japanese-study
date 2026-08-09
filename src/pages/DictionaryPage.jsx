@@ -4,6 +4,7 @@ import PageHeader from '../components/PageHeader.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
 import { supabase } from '../lib/supabase.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_NAV, FS_BADGE, FS_CAPTION, FS_ENTRY_KANJI, FS_ENTRY_WORD, FS_CONTENT_HEADING } from '../data/theme.js'
+import AttributionFooter from '../components/AttributionFooter.jsx'
 
 const BG = '#1E1E1E'
 const SURFACE = '#2A2A2A'
@@ -511,8 +512,9 @@ export default function DictionaryPage() {
         ]}
         rightSlot={<AuthSlot />}
       />
-      <div ref={scrollRef} onScroll={handleScroll} style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 48px' }}>
-        <div style={{ maxWidth: 600, margin: '0 auto' }}>
+      <div ref={scrollRef} onScroll={handleScroll} style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 48px', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ maxWidth: 600, margin: '0 auto', width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ flex: 1 }}>
           <input
             type="text"
             placeholder="Search Japanese or English..."
@@ -642,6 +644,9 @@ export default function DictionaryPage() {
               )}
             </>
           )}
+        </div>
+
+          <AttributionFooter sources={['dictionary']} />
         </div>
       </div>
     </div>

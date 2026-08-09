@@ -11,6 +11,7 @@ import SpeakerIcon from '../components/SpeakerIcon.jsx'
 import HeaderMenu from '../components/HeaderMenu.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_BADGE, FS_ENTRY_WORD, FS_STAT_VALUE, FS_DISPLAY_HEADING } from '../data/theme.js'
 import { WORD_SOURCES } from '../data/wordLists.js'
+import { SENTENCE_SOURCE_OPTIONS, DEFAULT_SENTENCE_SOURCE } from '../data/sentenceSource.js'
 import { useDrill } from '../hooks/useDrill.js'
 import { useTTS, useJaVoices } from '../hooks/useTTS.js'
 import { useSFX } from '../hooks/useSFX.js'
@@ -18,12 +19,16 @@ import { useGamepad } from '../hooks/useGamepad.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useProgress } from '../hooks/useProgress.js'
 import { useAudioGenerationStatus } from '../hooks/useAudioGenerationStatus.js'
+import { useDictionaryEntries } from '../hooks/useDictionaryEntries.js'
+import { useSentencesForWords } from '../hooks/useSentenceForWord.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../utils/storage.js'
 import { supabase } from '../lib/supabase.js'
 import * as SimpleQueue from '../engines/simpleQueue.js'
 import { WORD_DATA } from '../data/wordData.js'
 import { createCard } from '../modules/vocab-srs/srs.js'
 import { AUDIO_SOURCE_OPTIONS, DEFAULT_AUDIO_SOURCE, getVoicevoxAudioUrl, getVoicevoxCredit, speakerIdFromAudioSource } from '../utils/voicevoxAudio.js'
+import AttributionFooter from '../components/AttributionFooter.jsx'
+import { renderAttributionSegments } from '../utils/attributionSegments.jsx'
 
 const PANEL_W = 420
 const CHEVRON_W = 28
@@ -117,7 +122,7 @@ function relativeTime(isoStr) {
 
 const AUDIO_PRELOAD_COUNT = 3
 
-function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, reviewMode, showFurigana, showTranslation, showSentence, showKanjiMeaning, pixelFont, showVisualEffects, onPulse, isShort }) {
+function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, reviewMode, showFurigana, showTranslation, showSentence, sentenceSource, showKanjiMeaning, pixelFont, showVisualEffects, onPulse, isShort }) {
   const [flippedCardId, setFlippedCardId] = useState(null)
   const [transitioning, setTransitioning] = useState(false)
   const [exitDir, setExitDir] = useState(null)
@@ -329,6 +334,7 @@ function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, rev
             showFurigana={showFurigana}
             showTranslation={showTranslation}
             showSentence={showSentence}
+            sentenceSource={sentenceSource}
             showKanjiMeaning={showKanjiMeaning}
             pixelFont={pixelFont}
           />
@@ -498,27 +504,13 @@ class GlanceErrorBoundary extends Component {
   }
 }
 
-function GlanceScreen({ words, availableSubLists, selectedSubLists }) {
-  const [dictMap, setDictMap] = useState({})
+function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSource }) {
+  const jmdictIds = useMemo(() => words.map(w => w.jmdictId).filter(Boolean), [words])
+  const dictEntries = useDictionaryEntries(jmdictIds, true)
+  const tanakaSentences = useSentencesForWords(jmdictIds, true)
   const [expandedId, setExpandedId] = useState(null)
   const [expandedKanji, setExpandedKanji] = useState([])
   const kanjiCache = useRef({})
-
-  useEffect(() => {
-    if (!supabase || words.length === 0) return
-    const kanjiForms = [...new Set(words.map(w => w.kanji).filter(Boolean))]
-    if (kanjiForms.length === 0) return
-    supabase
-      .from('dictionary')
-      .select('id, primary_form, kana_forms, gloss_en, pos, common')
-      .in('primary_form', kanjiForms)
-      .then(({ data }) => {
-        if (!data) return
-        const map = {}
-        for (const entry of data) map[entry.primary_form] = entry
-        setDictMap(map)
-      })
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleToggleRow(word) {
     const next = expandedId === word.id ? null : word.id
@@ -563,7 +555,10 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists }) {
           </div>
           <div style={{ background: '#2A2A2A', borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
           {group.words.map(word => {
-            const dictEntry = dictMap[word.kanji]
+            const dictEntry = word.jmdictId ? dictEntries[word.jmdictId] : null
+            const tanakaSentence = word.jmdictId ? tanakaSentences[word.jmdictId] : null
+            const useTanakaSentence = sentenceSource === 'tanaka' ? !!tanakaSentence : (!word.sentence && !!tanakaSentence)
+            const sentenceText = useTanakaSentence ? tanakaSentence.japanese : word.sentence
             const isExpanded = expandedId === word.id
             const kanjiChars = (word.kanji ?? '').split('').filter(ch => /\p{Script=Han}/u.test(ch))
             return (
@@ -689,15 +684,16 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists }) {
                         <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, padding: '6px 0' }}>Loading…</div>
                       )
                     )}
-                    {word.sentence && (
+                    {sentenceText && (
                       <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontStyle: 'italic', padding: '2px 0' }}>
-                        {word.sentence}
+                        {sentenceText}
                       </div>
                     )}
                     {dictEntry && (
                       <a
                         href={`#/dictionary/entry/${dictEntry.id}`}
-                        style={{ fontSize: FS_CAPTION, color: ACCENT, textDecoration: 'none', alignSelf: 'flex-start', marginTop: 2 }}
+                        className="srs-browse-link"
+                        style={{ fontSize: FS_CAPTION, color: ACCENT, alignSelf: 'flex-start', marginTop: 2 }}
                       >
                         View full entry →
                       </a>
@@ -959,6 +955,7 @@ export default function VocabPage() {
   const [showSentence,     setShowSentence]     = useState(() => {
     const s = safeLocalStorageGet('vocab-show-sentence'); return s === null ? false : s === 'true'
   })
+  const [sentenceSource, setSentenceSource] = useState(() => safeLocalStorageGet('vocab-sentence-source') ?? DEFAULT_SENTENCE_SOURCE)
   const [showKanjiMeaning, setShowKanjiMeaning] = useState(() => {
     const s = safeLocalStorageGet('vocab-show-kanji-meaning'); return s === null ? false : s === 'true'
   })
@@ -987,6 +984,7 @@ export default function VocabPage() {
   useEffect(() => { safeLocalStorageSet('vocab-pixel-font',     pixelFont) },        [pixelFont])
   useEffect(() => { safeLocalStorageSet('vocab-show-translation', showTranslation) },[showTranslation])
   useEffect(() => { safeLocalStorageSet('vocab-show-sentence',    showSentence) },   [showSentence])
+  useEffect(() => { safeLocalStorageSet('vocab-sentence-source', sentenceSource) }, [sentenceSource])
   useEffect(() => { safeLocalStorageSet('vocab-show-kanji-meaning', showKanjiMeaning) }, [showKanjiMeaning])
   useEffect(() => { safeLocalStorageSet('vocab-include-review', includeReview) }, [includeReview])
 
@@ -1070,6 +1068,7 @@ export default function VocabPage() {
       const extras = {}
       if (word.kana) extras.kana = word.kana
       if (word.sentence) extras.sentence = word.sentence
+      if (word.jmdictId) extras.jmdictId = word.jmdictId
       if (word.voicevoxVoices?.length) {
         extras.voicevoxVoices = word.voicevoxVoices
         extras.voicevoxId = word.id
@@ -1110,6 +1109,17 @@ export default function VocabPage() {
           <DrawerCheckbox checked={pixelFont}         onChange={() => setPixelFont(v => !v)}         label="Use pixel font" />
           <DrawerCheckbox checked={showTranslation}   onChange={() => setShowTranslation(v => !v)}   label="Show translation" />
           <DrawerCheckbox checked={showSentence}      onChange={() => setShowSentence(v => !v)}       label="Show sentence" />
+          {showSentence && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
+              <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Sentence source</span>
+              <DrawerSelect
+                value={sentenceSource}
+                onChange={setSentenceSource}
+                options={SENTENCE_SOURCE_OPTIONS}
+                label="Sentence source"
+              />
+            </div>
+          )}
           <DrawerCheckbox checked={showKanjiMeaning}  onChange={() => setShowKanjiMeaning(v => !v)}   label="Show kanji meaning" />
           <DrawerCheckbox
             checked={audioEnabled}
@@ -1127,7 +1137,7 @@ export default function VocabPage() {
                   label="Text to speech"
                 />
                 {getVoicevoxCredit(audioSource) && (
-                  <span style={{ fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.35)' }}>{getVoicevoxCredit(audioSource)}</span>
+                  <span style={{ fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.35)' }}>{renderAttributionSegments(getVoicevoxCredit(audioSource))}</span>
                 )}
                 {audioProcessing && (
                   <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>Audio is being generated</span>
@@ -1270,6 +1280,7 @@ export default function VocabPage() {
                   showFurigana={showFurigana}
                   showTranslation={showTranslation}
                   showSentence={showSentence}
+                  sentenceSource={sentenceSource}
                   showKanjiMeaning={showKanjiMeaning}
                   pixelFont={pixelFont}
                   showVisualEffects={showVisualEffects}
@@ -1283,6 +1294,7 @@ export default function VocabPage() {
                   words={glanceWords}
                   availableSubLists={availableSubLists}
                   selectedSubLists={selectedSubLists}
+                  sentenceSource={sentenceSource}
                 />
               </GlanceErrorBoundary>
             ) : (
@@ -1304,6 +1316,11 @@ export default function VocabPage() {
               />
             )}
           </div>
+          <AttributionFooter sources={[
+            'dictionary',
+            'tanaka-corpus',
+            ...(audioEnabled && speakerIdFromAudioSource(audioSource) ? ['voicevox'] : []),
+          ]} />
         </div>
       </div>
 
