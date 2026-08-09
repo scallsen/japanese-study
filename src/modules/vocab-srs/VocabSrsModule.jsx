@@ -17,7 +17,10 @@ import DrawerSelect from '../../components/DrawerSelect.jsx'
 import { useJaVoices } from '../../hooks/useTTS.js'
 import { useAudioGenerationStatus } from '../../hooks/useAudioGenerationStatus.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
-import { AUDIO_SOURCE_OPTIONS, DEFAULT_AUDIO_SOURCE, getVoicevoxCredit } from '../../utils/voicevoxAudio.js'
+import { AUDIO_SOURCE_OPTIONS, DEFAULT_AUDIO_SOURCE, getVoicevoxCredit, speakerIdFromAudioSource } from '../../utils/voicevoxAudio.js'
+import { SENTENCE_SOURCE_OPTIONS, DEFAULT_SENTENCE_SOURCE } from '../../data/sentenceSource.js'
+import AttributionFooter from '../../components/AttributionFooter.jsx'
+import { renderAttributionSegments } from '../../utils/attributionSegments.jsx'
 
 const ACCENT = '#3ABDA4'
 const PANEL_W = 420
@@ -228,6 +231,7 @@ export default function VocabSrsModule() {
   const [showSentence, setShowSentence] = useState(() => {
     const s = safeLocalStorageGet('srs-show-sentence'); return s === null ? true : s === 'true'
   })
+  const [sentenceSource, setSentenceSource] = useState(() => safeLocalStorageGet('srs-sentence-source') ?? DEFAULT_SENTENCE_SOURCE)
   const [showKanjiMeaning, setShowKanjiMeaning] = useState(() => {
     const s = safeLocalStorageGet('srs-show-kanji-meaning'); return s === null ? false : s === 'true'
   })
@@ -263,6 +267,7 @@ export default function VocabSrsModule() {
   useEffect(() => { safeLocalStorageSet('srs-show-translation', showTranslation) }, [showTranslation])
   useEffect(() => { safeLocalStorageSet('srs-show-furigana', showFurigana) }, [showFurigana])
   useEffect(() => { safeLocalStorageSet('srs-show-sentence', showSentence) }, [showSentence])
+  useEffect(() => { safeLocalStorageSet('srs-sentence-source', sentenceSource) }, [sentenceSource])
   useEffect(() => { safeLocalStorageSet('srs-show-kanji-meaning', showKanjiMeaning) }, [showKanjiMeaning])
   useEffect(() => { safeLocalStorageSet('srs-audio-enabled', audioEnabled) }, [audioEnabled])
   useEffect(() => { safeLocalStorageSet('srs-autoplay-audio', autoplayAudio) }, [autoplayAudio])
@@ -625,6 +630,17 @@ export default function VocabSrsModule() {
           <DrawerCheckbox checked={showTranslation} onChange={() => setShowTranslation(v => !v)} label="Show translation" />
           <DrawerCheckbox checked={showFurigana} onChange={() => setShowFurigana(v => !v)} label="Show furigana on front" />
           <DrawerCheckbox checked={showSentence} onChange={() => setShowSentence(v => !v)} label="Show sentence" />
+          {showSentence && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
+              <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Sentence source</span>
+              <DrawerSelect
+                value={sentenceSource}
+                onChange={setSentenceSource}
+                options={SENTENCE_SOURCE_OPTIONS}
+                label="Sentence source"
+              />
+            </div>
+          )}
           <DrawerCheckbox checked={showKanjiMeaning} onChange={() => setShowKanjiMeaning(v => !v)} label="Show kanji meaning" />
           <DrawerCheckbox
             checked={audioEnabled}
@@ -664,7 +680,7 @@ export default function VocabSrsModule() {
                   label="Text to speech"
                 />
                 {getVoicevoxCredit(audioSource) && (
-                  <span style={{ fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.35)' }}>{getVoicevoxCredit(audioSource)}</span>
+                  <span style={{ fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.35)' }}>{renderAttributionSegments(getVoicevoxCredit(audioSource))}</span>
                 )}
                 {audioProcessing && (
                   <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>Audio is being generated</span>
@@ -800,6 +816,7 @@ export default function VocabSrsModule() {
             showTranslation={showTranslation}
             showFurigana={showFurigana}
             showSentence={showSentence}
+            sentenceSource={sentenceSource}
             showKanjiMeaning={showKanjiMeaning}
             pixelFont={pixelFont}
             showVisualEffects={showVisualEffects}
@@ -854,8 +871,9 @@ export default function VocabSrsModule() {
               />}
             />
 
-            <main style={{ flex: 1, overflowY: 'auto', padding: '28px 24px' }}>
-              <div style={{ maxWidth: 480, margin: '0 auto' }}>
+            <main style={{ flex: 1, overflowY: 'auto', padding: '28px 24px', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ maxWidth: 480, margin: '0 auto', width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <div style={{ flex: 1 }}>
 
                 {activeDecks.length === 0 ? (
                   <div style={{ textAlign: 'center', paddingTop: 60 }}>
@@ -969,7 +987,13 @@ export default function VocabSrsModule() {
                     </div>
                   </>
                 )}
+                </div>
 
+                <AttributionFooter sources={[
+                  'dictionary',
+                  'tanaka-corpus',
+                  ...(audioEnabled && speakerIdFromAudioSource(audioSource) ? [`voicevox-${speakerIdFromAudioSource(audioSource)}`] : []),
+                ]} />
               </div>
             </main>
           </div>

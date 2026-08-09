@@ -10,6 +10,10 @@ import { useGamepad } from '../../hooks/useGamepad.js'
 import { useKanjiMeanings } from '../../hooks/useKanjiMeanings.js'
 import { getVoicevoxAudioUrl, speakerIdFromAudioSource } from '../../utils/voicevoxAudio.js'
 import { kanjiCharsOf } from '../../utils/kanjiMeaningLookup.js'
+import { useDictionaryEntry } from '../../hooks/useDictionaryEntries.js'
+import { briefGloss } from '../../utils/dictionaryEntryLookup.js'
+import { useSentenceForWord } from '../../hooks/useSentenceForWord.js'
+import AttributionFooter from '../../components/AttributionFooter.jsx'
 
 const CARD_BG = '#E8E4DE'
 const RELEARN_STEP_LABEL = '10m'
@@ -79,7 +83,7 @@ function KanjiMeaningBar({ chars, meanings, jaFont }) {
   )
 }
 
-function SrsCardFace({ text, kana, isBack, backText, sentence, sentenceEnglish, showFurigana, showTranslation, showSentence, showKanjiMeaning, pixelFont }) {
+function SrsCardFace({ text, kana, isBack, backText, jmdictId, sentence, sentenceEnglish, showFurigana, showTranslation, showSentence, sentenceSource, showKanjiMeaning, pixelFont }) {
   const cardFont = pixelFont ? FONT : 'system-ui, sans-serif'
   const showReading = kana && kana !== text && (isBack || showFurigana)
 
@@ -87,6 +91,20 @@ function SrsCardFace({ text, kana, isBack, backText, sentence, sentenceEnglish, 
   const kanjiMeanings = useKanjiMeanings(text, kanjiMeaningsEnabled)
   const kanjiChars = kanjiMeaningsEnabled ? kanjiCharsOf(text) : []
   const meaningBarReady = kanjiChars.length > 0 && kanjiChars.every(ch => ch in kanjiMeanings)
+
+  // Dictionary is the source of truth for the definition when this card is
+  // linked (jmdictId); the card's own `back` text is only a fallback for cards
+  // that don't have (or don't yet have) a dictionary match.
+  const dictEntry = useDictionaryEntry(jmdictId, true)
+  const resolvedBackText = briefGloss(dictEntry) ?? backText
+
+  // The card's own sentence wins by default ('custom'); a Tanaka Corpus
+  // sentence fills the gap when there isn't one, or takes priority outright
+  // when sentenceSource is 'tanaka'.
+  const tanakaSentence = useSentenceForWord(jmdictId, isBack && showSentence)
+  const useTanaka = sentenceSource === 'tanaka' ? !!tanakaSentence : (!sentence && !!tanakaSentence)
+  const resolvedSentence = useTanaka ? tanakaSentence.japanese : sentence
+  const resolvedSentenceEnglish = useTanaka ? tanakaSentence.english : sentenceEnglish
 
   return (
     <div style={{ backgroundColor: CARD_BG, width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -122,7 +140,7 @@ function SrsCardFace({ text, kana, isBack, backText, sentence, sentenceEnglish, 
             </div>
           )}
         </div>
-        {isBack && backText && showTranslation && (
+        {isBack && resolvedBackText && showTranslation && (
           <div style={{
             fontFamily: cardFont,
             fontSize: '5.26cqw',
@@ -130,10 +148,10 @@ function SrsCardFace({ text, kana, isBack, backText, sentence, sentenceEnglish, 
             textAlign: 'center',
             lineHeight: 1.5,
           }}>
-            {backText}
+            {resolvedBackText}
           </div>
         )}
-        {isBack && sentence && showSentence && (
+        {isBack && resolvedSentence && showSentence && (
           <div style={{ textAlign: 'center' }}>
             <div style={{
               fontFamily: cardFont,
@@ -141,9 +159,9 @@ function SrsCardFace({ text, kana, isBack, backText, sentence, sentenceEnglish, 
               color: '#666',
               lineHeight: 1.5,
             }}>
-              {sentence}
+              {resolvedSentence}
             </div>
-            {sentenceEnglish && (
+            {resolvedSentenceEnglish && (
               <div style={{
                 fontFamily: cardFont,
                 fontSize: '3.5cqw',
@@ -152,7 +170,7 @@ function SrsCardFace({ text, kana, isBack, backText, sentence, sentenceEnglish, 
                 fontStyle: 'italic',
                 marginTop: 2,
               }}>
-                {sentenceEnglish}
+                {resolvedSentenceEnglish}
               </div>
             )}
           </div>
@@ -268,7 +286,7 @@ function DoneScreen({ stats, onDone }) {
 
 export default function VocabSrsDrill({
   initialCards, initialSession, onCardSave, onDone,
-  showTranslation = true, showFurigana = true, showSentence = true, showKanjiMeaning = false,
+  showTranslation = true, showFurigana = true, showSentence = true, sentenceSource = 'custom', showKanjiMeaning = false,
   pixelFont = true, showVisualEffects = true,
   audioEnabled = true, autoplayFront = true, autoplayBack = true,
   audioSource = 'voicevox-2', sfxEnabled = true, ttsVoice = '',
@@ -539,6 +557,18 @@ export default function VocabSrsDrill({
 
   const drillCrumbs = [...crumbs, { label: 'Review' }]
 
+  // Definitions/kanji meanings and Tanaka sentences shown on the card itself are
+  // real reproduced JMdict/KANJIDIC2/Tanaka Corpus content, not just an internal
+  // link — this screen needs its own credit rather than relying on one shown
+  // back on the deck-management screen. Voicevox is added only when it's the
+  // active audio source, mirroring the contextual credit under the TTS picker.
+  const activeVoicevoxSpeakerId = audioEnabled ? speakerIdFromAudioSource(audioSource) : null
+  const footerSources = [
+    'dictionary',
+    'tanaka-corpus',
+    ...(activeVoicevoxSpeakerId ? [`voicevox-${activeVoicevoxSpeakerId}`] : []),
+  ]
+
   if (isComplete(session)) {
     const stats = getSessionStats(session)
     return (
@@ -575,6 +605,7 @@ export default function VocabSrsDrill({
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <DoneScreen stats={stats} onDone={() => onDone(localCards, stats.goodCount)} />
         </div>
+        <AttributionFooter sources={footerSources} />
       </div>
     )
   }
@@ -618,10 +649,10 @@ export default function VocabSrsDrill({
   const isRequeue = currentCard && seenRef.current.has(currentCard.id)
 
   const front = currentCard
-    ? <SrsCardFace text={currentCard.front} kana={currentCard.kana} isBack={false} showFurigana={showFurigana} backText={currentCard.back} sentence={currentCard.sentence} sentenceEnglish={currentCard.sentenceEnglish} showTranslation={showTranslation} showSentence={showSentence} showKanjiMeaning={showKanjiMeaning} pixelFont={pixelFont} />
+    ? <SrsCardFace text={currentCard.front} kana={currentCard.kana} isBack={false} showFurigana={showFurigana} backText={currentCard.back} jmdictId={currentCard.jmdictId} sentence={currentCard.sentence} sentenceEnglish={currentCard.sentenceEnglish} showTranslation={showTranslation} showSentence={showSentence} sentenceSource={sentenceSource} showKanjiMeaning={showKanjiMeaning} pixelFont={pixelFont} />
     : null
   const back = currentCard
-    ? <SrsCardFace text={currentCard.front} kana={currentCard.kana} isBack={true} showFurigana={showFurigana} backText={currentCard.back} sentence={currentCard.sentence} sentenceEnglish={currentCard.sentenceEnglish} showTranslation={showTranslation} showSentence={showSentence} showKanjiMeaning={showKanjiMeaning} pixelFont={pixelFont} />
+    ? <SrsCardFace text={currentCard.front} kana={currentCard.kana} isBack={true} showFurigana={showFurigana} backText={currentCard.back} jmdictId={currentCard.jmdictId} sentence={currentCard.sentence} sentenceEnglish={currentCard.sentenceEnglish} showTranslation={showTranslation} showSentence={showSentence} sentenceSource={sentenceSource} showKanjiMeaning={showKanjiMeaning} pixelFont={pixelFont} />
     : null
 
   let cardClass = ''
@@ -822,6 +853,7 @@ export default function VocabSrsDrill({
         </div>
 
       </div>
+      <AttributionFooter sources={footerSources} />
     </div>
   )
 }

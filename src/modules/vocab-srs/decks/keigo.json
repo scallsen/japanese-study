@@ -37,7 +37,8 @@
     "voicevoxVoices": [
       2,
       11
-    ]
+    ],
+    "jmdictId": "1302070"
   },
   {
     "id": "keigo-005",
@@ -47,7 +48,8 @@
     "voicevoxVoices": [
       2,
       11
-    ]
+    ],
+    "jmdictId": "1363090"
   },
   {
     "id": "keigo-006",
@@ -87,7 +89,8 @@
     "voicevoxVoices": [
       2,
       11
-    ]
+    ],
+    "jmdictId": "1349440"
   },
   {
     "id": "keigo-010",
@@ -97,7 +100,8 @@
     "voicevoxVoices": [
       2,
       11
-    ]
+    ],
+    "jmdictId": "1305700"
   },
   {
     "id": "keigo-011",
@@ -107,7 +111,8 @@
     "voicevoxVoices": [
       2,
       11
-    ]
+    ],
+    "jmdictId": "1291270"
   },
   {
     "id": "keigo-012",
@@ -117,7 +122,8 @@
     "voicevoxVoices": [
       2,
       11
-    ]
+    ],
+    "jmdictId": "1346370"
   },
   {
     "id": "keigo-013",
@@ -127,7 +133,8 @@
     "voicevoxVoices": [
       2,
       11
-    ]
+    ],
+    "jmdictId": "2217040"
   },
   {
     "id": "keigo-014",
@@ -147,7 +154,8 @@
     "voicevoxVoices": [
       2,
       11
-    ]
+    ],
+    "jmdictId": "1406140"
   },
   {
     "id": "keigo-016",
@@ -157,7 +165,8 @@
     "voicevoxVoices": [
       2,
       11
-    ]
+    ],
+    "jmdictId": "1535140"
   },
   {
     "id": "keigo-017",
@@ -187,7 +196,8 @@
     "voicevoxVoices": [
       2,
       11
-    ]
+    ],
+    "jmdictId": "2863193"
   },
   {
     "id": "keigo-020",
@@ -197,7 +207,8 @@
     "voicevoxVoices": [
       2,
       11
-    ]
+    ],
+    "jmdictId": "2133750"
   },
   {
     "id": "keigo-021",
@@ -217,7 +228,8 @@
     "voicevoxVoices": [
       2,
       11
-    ]
+    ],
+    "jmdictId": "1189140"
   },
   {
     "id": "keigo-023",
@@ -227,7 +239,8 @@
     "voicevoxVoices": [
       2,
       11
-    ]
+    ],
+    "jmdictId": "1381160"
   },
   {
     "id": "keigo-024",
@@ -297,6 +310,7 @@
     "voicevoxVoices": [
       2,
       11
-    ]
+    ],
+    "jmdictId": "1472260"
   }
 ]

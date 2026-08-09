@@ -1,8 +1,15 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import PageHeader from '../components/PageHeader.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
 import { supabase } from '../lib/supabase.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_ENTRY_KANJI, FS_ENTRY_HEADING, FS_ENTRY_ALT, SUBHEADING_STYLE } from '../data/theme.js'
+import { useAuth } from '../context/AuthContext.jsx'
+import { useProgress } from '../hooks/useProgress.js'
+import { migrateProgress } from '../modules/vocab-srs/migrate.js'
+import { resolveCard, cardStateLabel } from '../modules/vocab-srs/srs.js'
+import { WORD_DATA } from '../data/wordData.js'
+import { WORD_SOURCES } from '../data/wordLists.js'
+import AttributionFooter from '../components/AttributionFooter.jsx'
 
 const BG = '#1E1E1E'
 const SURFACE = '#2A2A2A'
@@ -35,6 +42,34 @@ async function fetchKanjiDetails(chars) {
     .in('literal', chars)
   if (error) throw error
   return chars.map(ch => (data ?? []).find(r => r.literal === ch)).filter(Boolean)
+}
+
+const MAX_SENTENCES = 5
+
+async function fetchSentences(id) {
+  if (!supabase) return []
+  const { data, error } = await supabase
+    .from('sentences')
+    .select('id, japanese, english, quality')
+    .overlaps('dictionary_ids', [id])
+    .order('quality', { ascending: false })
+    .limit(MAX_SENTENCES)
+  if (error) throw error
+  return data ?? []
+}
+
+// Resolves a Vocab Drill word's listKey to a human label: "Source — Sublist"
+// for hierarchical sources, or just the source label for flat ones.
+function labelForListKey(listKey) {
+  for (const source of WORD_SOURCES) {
+    if (!source.lists) {
+      if (source.id === listKey) return source.label
+      continue
+    }
+    const sublist = source.lists.find(l => l.id === listKey)
+    if (sublist) return `${source.label} — ${sublist.label}`
+  }
+  return listKey
 }
 
 const LANG_NAMES = { eng: 'English', fre: 'French', ger: 'German', deu: 'German', por: 'Portuguese', ita: 'Italian', spa: 'Spanish', chi: 'Chinese', zho: 'Chinese', kor: 'Korean', nld: 'Dutch', rus: 'Russian', ara: 'Arabic', per: 'Persian', hin: 'Hindi' }
@@ -202,23 +237,69 @@ function SectionLabel({ label }) {
   )
 }
 
+const SRS_STATE_LABELS = { new: 'New', learning: 'Learning', young: 'Young', mature: 'Mature', relearning: 'Relearning' }
+
+function DeckRow({ label, href, meta }) {
+  return (
+    <a href={href} className="dict-deck-row" style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 12,
+      background: SURFACE,
+      borderRadius: 8,
+      border: '1px solid rgba(255,255,255,0.06)',
+      padding: '10px 14px',
+      textDecoration: 'none',
+    }}>
+      <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>{label}</span>
+      {meta && (
+        <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>{meta}</span>
+      )}
+    </a>
+  )
+}
+
+function SentenceCard({ sentence }) {
+  return (
+    <div style={{ background: SURFACE, borderRadius: 8, border: '1px solid rgba(255,255,255,0.06)', padding: '12px 16px' }}>
+      <div style={{ fontSize: FS_BASE, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, lineHeight: 1.6 }}>
+        {sentence.japanese}
+      </div>
+      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, marginTop: 4 }}>
+        {sentence.english}
+      </div>
+    </div>
+  )
+}
+
 export default function DictionaryEntryPage({ entryId }) {
   const [entry, setEntry] = useState(null)
   const [kanjiDetails, setKanjiDetails] = useState([])
+  const [sentences, setSentences] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+
+  const { user } = useAuth()
+  const { data: rawSrsProgress } = useProgress('vocab-srs')
 
   useEffect(() => {
     let cancelled = false
     setLoading(true)
     setError(null)
+    setSentences([])
     fetchEntry(entryId)
       .then(async data => {
         if (cancelled) return
         setEntry(data)
-        const chars = extractKanjiChars(data.primary_form)
-        const kd = await fetchKanjiDetails(chars)
-        if (!cancelled) setKanjiDetails(kd)
+        const [kd, sentenceRows] = await Promise.all([
+          fetchKanjiDetails(extractKanjiChars(data.primary_form)),
+          fetchSentences(data.id),
+        ])
+        if (!cancelled) {
+          setKanjiDetails(kd)
+          setSentences(sentenceRows)
+        }
       })
       .catch(err => {
         if (!cancelled) setError(err.message)
@@ -228,6 +309,31 @@ export default function DictionaryEntryPage({ entryId }) {
       })
     return () => { cancelled = true }
   }, [entryId])
+
+  const vocabDrillMatches = useMemo(() => {
+    if (!entry) return []
+    const labels = new Set(WORD_DATA.filter(w => w.jmdictId === entry.id).map(w => labelForListKey(w.listKey)))
+    return [...labels]
+  }, [entry])
+
+  const srsMatches = useMemo(() => {
+    if (!entry || !user) return []
+    const progress = migrateProgress(rawSrsProgress)
+    const matches = []
+    for (const card of Object.values(progress.cards)) {
+      const resolved = resolveCard(card)
+      if (resolved.jmdictId !== entry.id) continue
+      matches.push({
+        cardId: card.id,
+        deckName: progress.decks[card.deckId]?.name ?? card.deckId,
+        state: cardStateLabel(card),
+        due: card.due ? new Date(card.due) : null,
+      })
+    }
+    return matches
+  }, [entry, user, rawSrsProgress])
+
+  const showDecksSection = vocabDrillMatches.length > 0 || !!user
 
   const allForms = entry
     ? [...new Set([
@@ -248,8 +354,9 @@ export default function DictionaryEntryPage({ entryId }) {
         ]}
         rightSlot={<AuthSlot />}
       />
-      <div style={{ flex: 1, overflowY: 'auto', padding: '32px 16px 64px' }}>
-        <div style={{ maxWidth: 600, margin: '0 auto' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '32px 16px 64px', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ maxWidth: 600, margin: '0 auto', width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ flex: 1 }}>
           {loading && (
             <div style={{ textAlign: 'center', padding: '64px 0', color: TEXT_MUTED, fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING }}>
               Loading...
@@ -298,6 +405,31 @@ export default function DictionaryEntryPage({ entryId }) {
                 )}
               </div>
 
+              {/* Your decks */}
+              {showDecksSection && (
+                <>
+                  <SectionLabel label="Your Decks" />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {vocabDrillMatches.map(label => (
+                      <DeckRow key={`vocab-${label}`} label={label} href="#/vocab" meta="Vocab Drill" />
+                    ))}
+                    {user && srsMatches.length > 0 && srsMatches.map(m => (
+                      <DeckRow
+                        key={m.cardId}
+                        label={m.deckName}
+                        href="#/vocab-srs"
+                        meta={SRS_STATE_LABELS[m.state] ?? m.state}
+                      />
+                    ))}
+                    {user && srsMatches.length === 0 && (
+                      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.6, padding: '2px 2px' }}>
+                        Not in any of your SRS decks yet.
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+
               {/* Kanji breakdown */}
               {kanjiDetails.length > 0 && (
                 <>
@@ -307,7 +439,22 @@ export default function DictionaryEntryPage({ entryId }) {
                   </div>
                 </>
               )}
+
+              {/* Example sentences */}
+              {sentences.length > 0 && (
+                <>
+                  <SectionLabel label="Example Sentences" />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {sentences.map(s => <SentenceCard key={s.id} sentence={s} />)}
+                  </div>
+                </>
+              )}
             </>
+          )}
+        </div>
+
+          {!loading && entry && (
+            <AttributionFooter sources={sentences.length > 0 ? ['dictionary', 'tanaka-corpus'] : ['dictionary']} />
           )}
         </div>
       </div>
