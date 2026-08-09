@@ -992,7 +992,7 @@ export default function VocabSrsModule() {
                 <AttributionFooter sources={[
                   'dictionary',
                   'tanaka-corpus',
-                  ...(audioEnabled && speakerIdFromAudioSource(audioSource) ? [`voicevox-${speakerIdFromAudioSource(audioSource)}`] : []),
+                  ...(audioEnabled && speakerIdFromAudioSource(audioSource) ? ['voicevox'] : []),
                 ]} />
               </div>
             </main>

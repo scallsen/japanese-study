@@ -566,7 +566,7 @@ export default function VocabSrsDrill({
   const footerSources = [
     'dictionary',
     'tanaka-corpus',
-    ...(activeVoicevoxSpeakerId ? [`voicevox-${activeVoicevoxSpeakerId}`] : []),
+    ...(activeVoicevoxSpeakerId ? ['voicevox'] : []),
   ]
 
   if (isComplete(session)) {

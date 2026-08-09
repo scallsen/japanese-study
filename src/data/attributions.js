@@ -28,17 +28,22 @@ export const ATTRIBUTIONS = {
     { text: 'Tanaka Corpus', href: 'https://www.edrdg.org/wiki/index.php/Tanaka_Corpus' },
     { text: ' (EDRDG, CC BY)' },
   ],
-  // Voicevox's own credit examples name the specific character voice used
-  // (e.g. "VOICEVOX:四国めたん"), so that stays even though the lead-in wording
-  // is ours.
-  'voicevox-2': [
-    { text: 'Text to speech powered by ' },
+  // Generic, character-agnostic — shown in the page footer whenever Voicevox
+  // is the active TTS voice. One entry covers both voices since it doesn't
+  // name either character.
+  voicevox: [
+    { text: 'Text to speech audio generated with ' },
     { text: 'VOICEVOX', href: 'https://voicevox.hiroshiba.jp/' },
-    { text: ' (四国めたん)' },
+  ],
+  // Character-specific — shown inline under the "Text to speech" picker.
+  // Voicevox's own credit examples name the specific character voice used
+  // (e.g. "VOICEVOX:四国めたん"), which the generic footer credit above doesn't.
+  'voicevox-2': [
+    { text: '四国めたん by ' },
+    { text: 'VOICEVOX', href: 'https://voicevox.hiroshiba.jp/' },
   ],
   'voicevox-11': [
-    { text: 'Text to speech powered by ' },
+    { text: '玄野武宏 by ' },
     { text: 'VOICEVOX', href: 'https://voicevox.hiroshiba.jp/' },
-    { text: ' (玄野武宏)' },
   ],
 }
