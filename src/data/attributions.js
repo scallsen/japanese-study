@@ -46,4 +46,19 @@ export const ATTRIBUTIONS = {
     { text: '玄野武宏 by ' },
     { text: 'VOICEVOX', href: 'https://voicevox.hiroshiba.jp/' },
   ],
+  jiten: [
+    { text: 'Anime vocabulary data from ' },
+    { text: 'Jiten.moe', href: 'https://jiten.moe/' },
+    { text: ' (CC BY-SA 4.0)' },
+  ],
+  // Community-estimated JLPT level tags — no official list exists (see
+  // scripts/import-jlpt-vocab.mjs) — sourced via stephenmk's JMdict-matched
+  // conversion of Jonathan Waller's original JLPT Resources list.
+  'jlpt-vocab': [
+    { text: 'JLPT level estimates from ' },
+    { text: "Jonathan Waller's JLPT Resources", href: 'http://www.tanos.co.uk/jlpt/' },
+    { text: ', via ' },
+    { text: 'yomitan-jlpt-vocab', href: 'https://github.com/stephenmk/yomitan-jlpt-vocab' },
+    { text: ' (CC BY-SA 4.0)' },
+  ],
 }

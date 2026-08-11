@@ -70,4 +70,14 @@ export const MODULES = [
     accent: '#D4A84B',
     requiresAuth: false,
   },
+  {
+    id: 'anime-vocab',
+    label: 'Anime Vocab',
+    sublabel: 'Browse and drill vocabulary from anime episodes',
+    stats: null,
+    href: '#/anime-vocab',
+    external: false,
+    accent: '#D46EA3',
+    requiresAuth: false,
+  },
 ]

@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase.js'
 const cache = new Map()
 const attempted = new Set()
 
-const SELECT = 'id, primary_form, kana_forms, gloss_en, pos, common'
+const SELECT = 'id, primary_form, kana_forms, gloss_en, pos, common, jlpt_level, jlpt_level_inferred'
 
 // Returns { [jmdictId]: row|null } for every id already resolved (found or not).
 export async function fetchDictionaryEntries(ids) {
