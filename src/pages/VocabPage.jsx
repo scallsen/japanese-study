@@ -20,6 +20,7 @@ import { useAuth } from '../context/AuthContext.jsx'
 import { useProgress } from '../hooks/useProgress.js'
 import { useAudioGenerationStatus } from '../hooks/useAudioGenerationStatus.js'
 import { useDictionaryEntries } from '../hooks/useDictionaryEntries.js'
+import { briefGloss } from '../utils/dictionaryEntryLookup.js'
 import { useSentencesForWords } from '../hooks/useSentenceForWord.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../utils/storage.js'
 import { supabase } from '../lib/supabase.js'
@@ -133,6 +134,16 @@ function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, rev
   const voicevoxAudioRef = useRef(null)
   const audioPreloadCacheRef = useRef(new Map())
 
+  const nearbyJmdictIds = useMemo(
+    () => [currentCard, ...upcoming].map(c => c.word.jmdictId).filter(Boolean),
+    [currentCard, upcoming]
+  )
+  const { entries: nearbyDictEntries } = useDictionaryEntries(nearbyJmdictIds, true)
+
+  function resolveReading(word) {
+    return word.kana ?? (word.jmdictId ? nearbyDictEntries[word.jmdictId]?.kana_forms?.[0] : undefined)
+  }
+
   function voicevoxUrlForWord(word) {
     const speakerId = speakerIdFromAudioSource(audioSource)
     return speakerId && word.voicevoxVoices?.includes(speakerId) ? getVoicevoxAudioUrl(speakerId, word.id) : null
@@ -152,7 +163,8 @@ function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, rev
       }
       voicevoxAudioRef.current.play().catch(() => {})
     } else if (audioSource === 'browser') {
-      tts.speak(word.kana)
+      const reading = resolveReading(word)
+      if (reading) tts.speak(reading)
     }
   }
 
@@ -356,6 +368,8 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
       .sort((a, b) => b.mistakes - a.mistakes),
     [pool, mistakeCounts]
   )
+  const jmdictIds = useMemo(() => rows.map(r => r.word.jmdictId).filter(Boolean), [rows])
+  const { entries: dictEntries } = useDictionaryEntries(jmdictIds, true)
   const [selected, setSelected] = useState(() => new Set(rows.filter(r => r.mistakes > 0).map(r => r.id)))
   const [addedCount, setAddedCount] = useState(null)
 
@@ -445,40 +459,45 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
             </div>
           )}
           <div style={{ background: '#2A2A2A', borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
-            {rows.map(row => (
-              <label
-                key={row.id}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 12,
-                  padding: '10px 14px',
-                  borderBottom: '1px solid rgba(255,255,255,0.05)',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                  letterSpacing: TRACKING,
-                }}
-              >
-                <input
-                  type="checkbox"
-                  checked={selected.has(row.id)}
-                  onChange={() => toggleRow(row.id)}
-                  style={{ flexShrink: 0, width: 16, height: 16, accentColor: ACCENT }}
-                />
-                <span style={{ width: 8, height: 8, borderRadius: '50%', background: MISTAKE_TIER_COLOR[mistakeTier(row.mistakes)], flexShrink: 0 }} />
-                <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, flexShrink: 0 }}>
-                  {row.word.kanji || row.word.kana}
-                </span>
-                <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {row.word.english}
-                </span>
-                {row.mistakes > 0 && (
-                  <span style={{ fontSize: FS_BADGE, color: MISTAKE_TIER_COLOR[mistakeTier(row.mistakes)], flexShrink: 0 }}>
-                    {row.mistakes}×
+            {rows.map(row => {
+              const dictEntry = row.word.jmdictId ? dictEntries[row.word.jmdictId] : null
+              const displayForm = row.word.kanji ?? dictEntry?.primary_form ?? row.word.kana
+              const resolvedEnglish = row.word.english ?? briefGloss(dictEntry)
+              return (
+                <label
+                  key={row.id}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    padding: '10px 14px',
+                    borderBottom: '1px solid rgba(255,255,255,0.05)',
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    letterSpacing: TRACKING,
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={selected.has(row.id)}
+                    onChange={() => toggleRow(row.id)}
+                    style={{ flexShrink: 0, width: 16, height: 16, accentColor: ACCENT }}
+                  />
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: MISTAKE_TIER_COLOR[mistakeTier(row.mistakes)], flexShrink: 0 }} />
+                  <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, flexShrink: 0 }}>
+                    {displayForm}
                   </span>
-                )}
-              </label>
-            ))}
+                  <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {resolvedEnglish}
+                  </span>
+                  {row.mistakes > 0 && (
+                    <span style={{ fontSize: FS_BADGE, color: MISTAKE_TIER_COLOR[mistakeTier(row.mistakes)], flexShrink: 0 }}>
+                      {row.mistakes}×
+                    </span>
+                  )}
+                </label>
+              )
+            })}
           </div>
         </div>
       )}
@@ -518,7 +537,8 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
     setExpandedKanji([])
     if (!next) return
 
-    const chars = (word.kanji ?? '').split('').filter(ch => /\p{Script=Han}/u.test(ch))
+    const displayForm = word.kanji ?? dictEntries[word.jmdictId]?.primary_form ?? word.kana
+    const chars = (displayForm ?? '').split('').filter(ch => /\p{Script=Han}/u.test(ch))
     const missing = chars.filter(ch => !kanjiCache.current[ch])
     if (missing.length > 0 && supabase) {
       const { data } = await supabase
@@ -560,7 +580,8 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
             const useTanakaSentence = sentenceSource === 'tanaka' ? !!tanakaSentence : (!word.sentence && !!tanakaSentence)
             const sentenceText = useTanakaSentence ? tanakaSentence.japanese : word.sentence
             const isExpanded = expandedId === word.id
-            const kanjiChars = (word.kanji ?? '').split('').filter(ch => /\p{Script=Han}/u.test(ch))
+            const displayForm = word.kanji ?? dictEntry?.primary_form ?? word.kana
+            const kanjiChars = (displayForm ?? '').split('').filter(ch => /\p{Script=Han}/u.test(ch))
             return (
               <div key={word.id}>
                 <button
@@ -585,11 +606,11 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 5 }}>
                       <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
-                        {word.kanji || word.kana}
+                        {displayForm}
                       </span>
                       {(() => {
-                        const kana = dictEntry?.kana_forms?.[0] ?? word.kana
-                        return kana && kana !== (word.kanji || word.kana) ? (
+                        const kana = word.kana ?? dictEntry?.kana_forms?.[0]
+                        return kana && kana !== displayForm ? (
                           <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{kana}</span>
                         ) : null
                       })()}
@@ -1029,6 +1050,13 @@ export default function VocabPage() {
 
   const drill = useDrill(pool, { engine: SimpleQueue })
 
+  // Warm the shared dictionary-entry cache for the whole selected pool as
+  // soon as it's chosen — well before "Start Drill" — so ActiveDrill/
+  // DoneScreen/GlanceScreen's own useDictionaryEntries calls resolve from
+  // cache instead of flashing a loading state per card.
+  const poolJmdictIds = useMemo(() => pool.map(p => p.word.jmdictId).filter(Boolean), [pool])
+  const { entries: poolDictEntries } = useDictionaryEntries(poolJmdictIds, true)
+
   // Save progress when session completes
   useEffect(() => {
     if (!isDrilling || !drill.done || !user) return
@@ -1061,19 +1089,22 @@ export default function VocabPage() {
     const newCards = {}
     let addedCount = 0
     words.forEach((word, i) => {
-      const front = word.kanji || word.kana
+      const dictEntry = word.jmdictId ? poolDictEntries[word.jmdictId] : null
+      const front = word.kanji ?? dictEntry?.primary_form ?? word.kana
       if (existingFronts.has(front)) return
       existingFronts.add(front)
       const cardId = `${VOCAB_DRILL_DECK_ID}-${Date.now()}-${i}`
+      const kana = word.kana ?? dictEntry?.kana_forms?.[0]
+      const english = word.english ?? briefGloss(dictEntry)
       const extras = {}
-      if (word.kana) extras.kana = word.kana
+      if (kana) extras.kana = kana
       if (word.sentence) extras.sentence = word.sentence
       if (word.jmdictId) extras.jmdictId = word.jmdictId
       if (word.voicevoxVoices?.length) {
         extras.voicevoxVoices = word.voicevoxVoices
         extras.voicevoxId = word.id
       }
-      newCards[cardId] = createCard(front, word.english, cardId, VOCAB_DRILL_DECK_ID, extras)
+      newCards[cardId] = createCard(front, english, cardId, VOCAB_DRILL_DECK_ID, extras)
       addedCount++
     })
     if (addedCount > 0) {
