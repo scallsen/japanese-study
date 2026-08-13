@@ -27,8 +27,6 @@ import { supabase } from '../lib/supabase.js'
 import * as SimpleQueue from '../engines/simpleQueue.js'
 import { WORD_DATA } from '../data/wordData.js'
 import { createCard } from '../modules/vocab-srs/srs.js'
-import { useTrackedAnime } from '../modules/anime-vocab/useTrackedAnime.js'
-import { fetchAnimeSources, fetchEpisodeWords } from '../modules/anime-vocab/animeVocabSources.js'
 import { AUDIO_SOURCE_OPTIONS, DEFAULT_AUDIO_SOURCE, getVoicevoxAudioUrl, getVoicevoxCredit, speakerIdFromAudioSource } from '../utils/voicevoxAudio.js'
 import AttributionFooter from '../components/AttributionFooter.jsx'
 import { renderAttributionSegments } from '../utils/attributionSegments.jsx'
@@ -735,9 +733,9 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
 
 // ── HomeScreen ────────────────────────────────────────────────────────────────
 
-function HomeScreen({ selectedSourceId, onSelectSource, animeSources, availableSubLists, selectedSubLists, onToggleSubList, wordCountByList, hasReviewWords, includeReview, onToggleIncludeReview, vocabProgress, reviewMode, onChangeReviewMode, onStart, onGlance, animeWordsLoading }) {
+function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selectedSubLists, onToggleSubList, wordCountByList, hasReviewWords, includeReview, onToggleIncludeReview, vocabProgress, reviewMode, onChangeReviewMode, onStart, onGlance }) {
   const [startHovered, setStartHovered] = useState(false)
-  const canStart = selectedSubLists.length > 0 && !animeWordsLoading
+  const canStart = selectedSubLists.length > 0
 
   return (
     <div style={{
@@ -784,27 +782,13 @@ function HomeScreen({ selectedSourceId, onSelectSource, animeSources, availableS
           backgroundPosition: 'right 12px center',
         }}
       >
-        <optgroup label="Textbooks">
-          {WORD_SOURCES.map(source => (
-            <option key={source.id} value={source.id}>{source.label}</option>
-          ))}
-        </optgroup>
-        {animeSources.length > 0 && (
-          <optgroup label="Anime">
-            {animeSources.map(source => (
-              <option key={source.id} value={source.id}>{source.label}</option>
-            ))}
-          </optgroup>
-        )}
+        {WORD_SOURCES.map(source => (
+          <option key={source.id} value={source.id}>{source.label}</option>
+        ))}
       </select>
       {hasReviewWords && (
         <div style={{ marginTop: 4 }}>
           <DrawerCheckbox checked={includeReview} onChange={onToggleIncludeReview} label="Include review words" />
-        </div>
-      )}
-      {animeWordsLoading && (
-        <div style={{ marginTop: 4, fontSize: FS_CAPTION, color: TEXT_MUTED }}>
-          Loading episode vocabulary...
         </div>
       )}
       </div>
@@ -1033,49 +1017,15 @@ export default function VocabPage() {
     return () => ro.disconnect()
   }, [])
 
-  // Tracked-anime episodes appear as additional (per-user, dynamic) sources
-  // alongside the static textbook WORD_SOURCES — see animeVocabSources.js.
-  const { tracked: trackedAnime } = useTrackedAnime()
-  const [animeSources, setAnimeSources] = useState([])
-  useEffect(() => {
-    let cancelled = false
-    fetchAnimeSources(trackedAnime).then(sources => { if (!cancelled) setAnimeSources(sources) })
-    return () => { cancelled = true }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Object.keys(trackedAnime).join(',')])
-
   const availableSubLists = useMemo(() => {
-    const source = WORD_SOURCES.find(s => s.id === selectedSourceId) ?? animeSources.find(s => s.id === selectedSourceId)
+    const source = WORD_SOURCES.find(s => s.id === selectedSourceId)
     return source?.lists ?? [{ id: source?.id, label: source?.label }]
-  }, [selectedSourceId, animeSources])
+  }, [selectedSourceId])
 
   const hasReviewWords = useMemo(() => {
     const sourceListKeys = new Set(availableSubLists.map(l => l.id))
     return WORD_DATA.some(w => sourceListKeys.has(w.listKey) && w.isReview)
   }, [availableSubLists])
-
-  // Anime episode words aren't fetched until their sublist is actually
-  // selected (an episode's vocab can require a live Jiten sync on first
-  // view) — see fetchEpisodeWords. Keyed by listKey; a key present with an
-  // empty/absent value means "still loading".
-  const [animeWordsByListKey, setAnimeWordsByListKey] = useState({})
-  useEffect(() => {
-    const pending = availableSubLists.filter(l => l.episodeId && selectedSubLists.includes(l.id) && !(l.id in animeWordsByListKey))
-    if (pending.length === 0) return
-    setAnimeWordsByListKey(prev => {
-      const next = { ...prev }
-      for (const l of pending) next[l.id] = null // mark as loading
-      return next
-    })
-    pending.forEach(l => {
-      fetchEpisodeWords(l).then(words => {
-        setAnimeWordsByListKey(prev => ({ ...prev, [l.id]: words }))
-      })
-    })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSubLists.join(','), availableSubLists])
-
-  const animeWordsLoading = availableSubLists.some(l => l.episodeId && selectedSubLists.includes(l.id) && !animeWordsByListKey[l.id])
 
   const wordCountByList = useMemo(() => {
     const map = {}
@@ -1083,23 +1033,19 @@ export default function VocabPage() {
       if (!includeReview && w.isReview) continue
       map[w.listKey] = (map[w.listKey] ?? 0) + 1
     }
-    for (const source of animeSources) {
-      for (const l of source.lists) map[l.id] = l.wordCount
-    }
     return map
-  }, [includeReview, animeSources])
+  }, [includeReview])
 
-  const glanceWords = useMemo(() => [
-    ...WORD_DATA.filter(w => selectedSubLists.includes(w.listKey) && (includeReview || !w.isReview)),
-    ...selectedSubLists.flatMap(listKey => animeWordsByListKey[listKey] ?? []),
-  ],
+  const glanceWords = useMemo(() =>
+    WORD_DATA.filter(w => selectedSubLists.includes(w.listKey) && (includeReview || !w.isReview)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedSubLists.join(','), includeReview, animeWordsByListKey]
+    [selectedSubLists.join(','), includeReview]
   )
 
   const pool = useMemo(() =>
     glanceWords.map(w => ({ id: w.id, word: w })),
-    [glanceWords]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedSubLists.join(','), includeReview]
   )
 
   const drill = useDrill(pool, { engine: SimpleQueue })
@@ -1386,7 +1332,6 @@ export default function VocabPage() {
               <HomeScreen
                 selectedSourceId={selectedSourceId}
                 onSelectSource={handleSelectSource}
-                animeSources={animeSources}
                 availableSubLists={availableSubLists}
                 selectedSubLists={selectedSubLists}
                 onToggleSubList={id => setSelectedSubLists(prev => toggle(prev, id))}
@@ -1399,7 +1344,6 @@ export default function VocabPage() {
                 onChangeReviewMode={setReviewMode}
                 onStart={() => setIsDrilling(true)}
                 onGlance={() => setIsGlancing(true)}
-                animeWordsLoading={animeWordsLoading}
               />
             )}
           </div>
