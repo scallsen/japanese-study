@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import ModuleCard from '../components/ModuleCard.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
 import PageHeader from '../components/PageHeader.jsx'
+import TrackedAnimeSection from '../modules/anime-vocab/TrackedAnimeSection.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { FONT, TRACKING, TEXT, FS_BASE } from '../data/theme.js'
 import { MODULES } from '../data/modules.js'
@@ -68,6 +69,8 @@ export default function DashboardPage() {
         overflowY: 'auto',
         padding: isMobile ? '20px 16px' : '28px 28px',
       }}>
+
+        <TrackedAnimeSection />
 
         <div ref={gridRef} style={{
           display: 'grid',

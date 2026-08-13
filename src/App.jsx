@@ -43,5 +43,6 @@ export default function App() {
   if (route === '/dictionary') return <DictionaryPage />
   if (route.startsWith('/dictionary/entry/')) return <DictionaryEntryPage entryId={route.slice('/dictionary/entry/'.length)} />
   if (route === '/anime-vocab') return <AnimeVocabModule />
+  if (route.startsWith('/anime-vocab/')) return <AnimeVocabModule initialMediaId={route.slice('/anime-vocab/'.length)} />
   return <DashboardPage />
 }

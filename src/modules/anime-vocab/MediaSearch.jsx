@@ -36,11 +36,6 @@ function ResultRow({ result, onClick, busy }) {
           }}>
             {result.mediaType}
           </span>
-          {result.mediaId && (
-            <span style={{ fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, color: '#6BCB6B' }}>
-              Already added
-            </span>
-          )}
         </div>
         <div style={{ fontSize: FS_LIST_TITLE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {result.title}

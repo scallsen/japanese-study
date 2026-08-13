@@ -1,7 +1,11 @@
 import { useState } from 'react'
+import { useAuth } from '../../context/AuthContext.jsx'
+import { useTrackedAnime } from './useTrackedAnime.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE } from '../../data/theme.js'
 
 const ACCENT = '#D46EA3'
+const TRACKED_COLOR = '#6BCB6B'
+const REMOVE_COLOR = '#f87171'
 
 function EpisodeRow({ episode, onClick }) {
   const [hovered, setHovered] = useState(false)
@@ -39,23 +43,61 @@ function EpisodeRow({ episode, onClick }) {
           Difficulty {Number(difficulty).toFixed(1)}
         </span>
       )}
-      {episode.synced_at && (
-        <span style={{ fontSize: FS_BADGE, color: '#6BCB6B', fontFamily: FONT, flexShrink: 0 }}>Synced</span>
-      )}
     </div>
   )
 }
 
+function TrackToggle({ tracked, signedIn, onClick }) {
+  const [hovered, setHovered] = useState(false)
+
+  let label = '+ Track this series'
+  let color = ACCENT
+  if (!signedIn) {
+    label = 'Sign in to track this series'
+    color = TEXT_MUTED
+  } else if (tracked) {
+    label = hovered ? 'Remove tracking' : '✓ Tracking'
+    color = hovered ? REMOVE_COLOR : TRACKED_COLOR
+  }
+
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        padding: '8px 14px', borderRadius: 6, cursor: 'pointer', background: 'transparent',
+        fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0,
+        color, border: `1px solid ${color}`,
+      }}
+    >
+      {label}
+    </button>
+  )
+}
+
 export default function EpisodeList({ media, episodes, onSelectEpisode }) {
+  const { user, signIn } = useAuth()
+  const { isTracked, track, untrack } = useTrackedAnime()
+  const tracked = isTracked(media.id)
+
+  function handleToggleTrack() {
+    if (!user) { signIn(); return }
+    if (tracked) untrack(media.id); else track(media)
+  }
+
   return (
     <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <div>
-        <div style={{ fontSize: FS_LIST_TITLE + 4, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, marginBottom: 4 }}>
-          {media.title}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+        <div>
+          <div style={{ fontSize: FS_LIST_TITLE + 4, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, marginBottom: 4 }}>
+            {media.title}
+          </div>
+          <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+            {episodes.length} episode{episodes.length === 1 ? '' : 's'}
+          </div>
         </div>
-        <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-          {episodes.length} episode{episodes.length === 1 ? '' : 's'}
-        </div>
+        <TrackToggle tracked={tracked} signedIn={!!user} onClick={handleToggleTrack} />
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         {episodes.map(ep => (
