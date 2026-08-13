@@ -75,18 +75,20 @@ function KanjiMeaningBar({ chars, meanings, jaFont }) {
 
 function BackContent({ word, displayForm, reading, resolvedEnglish, sentenceText, showFurigana, showTranslation, showSentence, showKanjiMeaning, pixelFont }) {
   const jaFont = pixelFont ? FONT : 'system-ui, sans-serif'
-  const f = showFurigana && reading ? buildFurigana(displayForm, reading) : null
+  const furiganaParts = showFurigana ? buildFurigana(displayForm, reading) : null
 
-  const kanjiDisplay = f ? (
+  const kanjiDisplay = furiganaParts ? (
     <span>
-      {f.prefix}
-      <ruby>
-        {f.kanjiPart}
-        <rt style={{ fontSize: '0.45em', fontFamily: jaFont, letterSpacing: '0.05em', paddingBottom: '0.25em' }}>
-          {f.furigana}
-        </rt>
-      </ruby>
-      {f.okurigana}
+      {furiganaParts.map((part, i) => part.type === 'kanji' ? (
+        <ruby key={i}>
+          {part.text}
+          <rt style={{ fontSize: '0.45em', fontFamily: jaFont, letterSpacing: '0.05em', paddingBottom: '0.25em' }}>
+            {part.furigana}
+          </rt>
+        </ruby>
+      ) : (
+        <span key={i}>{part.text}</span>
+      ))}
     </span>
   ) : displayForm
 

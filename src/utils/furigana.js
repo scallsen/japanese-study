@@ -4,26 +4,47 @@ function isKanji(ch) {
   return KANJI_RE.test(ch)
 }
 
-// Returns { prefix, kanjiPart, furigana, okurigana } or null if no kanji found
-// (including when either string is missing — e.g. a dictionary-resolved
-// reading that hasn't loaded yet).
-// prefix: leading hiragana/katakana before the kanji block (e.g. "お" in "お金").
+function escapeRegExp(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+// Splits a string into runs of consecutive kanji / non-kanji characters.
+function segment(str) {
+  const segments = []
+  let i = 0
+  while (i < str.length) {
+    const kanji = isKanji(str[i])
+    let j = i + 1
+    while (j < str.length && isKanji(str[j]) === kanji) j++
+    segments.push({ kanji, text: str.slice(i, j) })
+    i = j
+  }
+  return segments
+}
+
+// Returns an array of parts describing how to render `kanjiStr` with furigana
+// from `kanaStr`, or null if `kanjiStr` has no kanji (including when either
+// string is missing — e.g. a dictionary-resolved reading that hasn't loaded
+// yet). Each part is either
+//   { type: 'kanji', text, furigana } — render as <ruby>text<rt>furigana</rt></ruby>
+//   { type: 'kana', text }            — render as plain text
+//
+// Handles compound words with multiple, non-adjacent kanji runs (e.g. 引き算
+// = 引 + き + 算) by matching a regex built from the kanji/kana segments
+// against the full reading: kana runs anchor the match literally, kanji runs
+// become non-greedy wildcard capture groups.
 export function buildFurigana(kanjiStr, kanaStr) {
   if (!kanjiStr || !kanaStr) return null
 
-  let prefixLen = 0
-  while (prefixLen < kanjiStr.length && !isKanji(kanjiStr[prefixLen])) prefixLen++
+  const segments = segment(kanjiStr)
+  if (!segments.some(s => s.kanji)) return null
 
-  let kanjiEnd = prefixLen
-  while (kanjiEnd < kanjiStr.length && isKanji(kanjiStr[kanjiEnd])) kanjiEnd++
+  const pattern = '^' + segments.map(s => (s.kanji ? '(.+?)' : escapeRegExp(s.text))).join('') + '$'
+  const match = kanaStr.match(new RegExp(pattern))
+  if (!match) return null
 
-  if (kanjiEnd === prefixLen) return null
-
-  const prefix    = kanjiStr.slice(0, prefixLen)
-  const kanjiPart = kanjiStr.slice(prefixLen, kanjiEnd)
-  const okurigana = kanjiStr.slice(kanjiEnd)
-  const furigana  = kanaStr.slice(prefixLen, kanaStr.length - okurigana.length)
-  if (!furigana) return null
-
-  return { prefix, kanjiPart, furigana, okurigana }
+  let group = 1
+  return segments.map(s => (
+    s.kanji ? { type: 'kanji', text: s.text, furigana: match[group++] } : { type: 'kana', text: s.text }
+  ))
 }

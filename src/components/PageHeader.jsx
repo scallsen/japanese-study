@@ -103,12 +103,13 @@ export default function PageHeader({ crumbs = [], rightSlot, noBorder, children 
       flexDirection: 'column',
       borderBottom: noBorder ? undefined : `1px solid ${BORDER}`,
       flexShrink: 0,
+      paddingTop: 'env(safe-area-inset-top)',
     }}>
       <div style={{
         display: 'flex',
         alignItems: 'center',
         height: 64,
-        padding: '0 24px',
+        padding: `0 calc(24px + env(safe-area-inset-right)) 0 calc(24px + env(safe-area-inset-left))`,
         fontFamily: FONT,
         letterSpacing: TRACKING,
       }}>

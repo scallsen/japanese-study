@@ -19,7 +19,7 @@ export default function AttributionFooter({ sources }) {
     <div style={{
       width: '100%',
       textAlign: 'center',
-      padding: '16px 16px 4px',
+      padding: '16px calc(16px + env(safe-area-inset-right)) calc(4px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left))',
       fontSize: FS_SM,
       color: TEXT_MUTED,
       fontFamily: FONT,
