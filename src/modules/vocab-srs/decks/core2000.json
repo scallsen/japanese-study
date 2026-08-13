@@ -1078,7 +1078,8 @@
     "wordAudio": "c040358bf31eef715231b69c0b1bb3f7-2f5379ff2f3cd090ee625f8552c0fdfb212053b6.mp3",
     "sentenceAudio": "a5ad112ad26012971c1cd145d2500c4f-5eccf3b1d0cf792d6da1b45071f7c0ec2d1b32fd.mp3",
     "sentence": "あの本をどこに置きましたか。",
-    "sentenceEnglish": "Where did you put that book?"
+    "sentenceEnglish": "Where did you put that book?",
+    "jmdictId": "1577140"
   },
   {
     "id": "anki-101",
@@ -1510,7 +1511,8 @@
     "wordAudio": "6b2b0cb883c88a7ec1e8d86fb9847244-24386fda243087fe067d1eca982b590e69bfc7c1.mp3",
     "sentenceAudio": "35cd113f6077f9596c4be1d4596654e2-719c05b48695a34880731461ae71c9e18816ebca.mp3",
     "sentence": "彼はかなり英語が上手です。",
-    "sentenceEnglish": "He's pretty good at English."
+    "sentenceEnglish": "He's pretty good at English.",
+    "jmdictId": "1590560"
   },
   {
     "id": "anki-141",
@@ -1943,7 +1945,8 @@
     "wordAudio": "8bb3f58a9c842b5b478e53028f075b8f-18cb8f257b6a528555d015c3f4dbd938f971a217.mp3",
     "sentenceAudio": "0b12df0af60cff4e59bb52a49986c4eb-602a581a0da6513f26ca331b86df4e282c6c5e53.mp3",
     "sentence": "彼女からプレゼントをもらいました。",
-    "sentenceEnglish": "I got a present from her."
+    "sentenceEnglish": "I got a present from her.",
+    "jmdictId": "1535910"
   },
   {
     "id": "anki-181",
@@ -2018,7 +2021,8 @@
     "wordAudio": "5c6778535a1d9666a6d6f8cf5519760b-c3523e66a1cc5c71353c4f4b7ea46b390ff77eed.mp3",
     "sentenceAudio": "6b576501251de4de54d392da57cb57dc-fa23565b2d43ae9ef51cd8fc3a303ce8dc7118f8.mp3",
     "sentence": "宿題はまだ終わっていません。",
-    "sentenceEnglish": "I haven't finished my homework yet."
+    "sentenceEnglish": "I haven't finished my homework yet.",
+    "jmdictId": "1527110"
   },
   {
     "id": "anki-188",
@@ -2047,7 +2051,8 @@
     "wordAudio": "001811b50ecb6a9545818df3f859ae8a-dd47382d31f53d9b80860f2e4cd2412af3ae464a.mp3",
     "sentenceAudio": "8033321085dee8b196bf5e4d35d704d0-51ec651af7e3b0bf33c0df1d21c0ea2fb3ba3513.mp3",
     "sentence": "この本はとてもおもしろい。",
-    "sentenceEnglish": "This book is very interesting."
+    "sentenceEnglish": "This book is very interesting.",
+    "jmdictId": "1008630"
   },
   {
     "id": "anki-191",
@@ -2155,7 +2160,8 @@
     "wordAudio": "ac0416ebc73cbc84afabf4677d163b12-ccabd2a15c7ef81376bcb2690d72ed301516affc.mp3",
     "sentenceAudio": "59efb17497ca9566990af0b3758d71c7-51ce7de8c758afaa704d1f22a48a59792dd1687f.mp3",
     "sentence": "みんなにお菓子をあげましょう。",
-    "sentenceEnglish": "Let's give everyone some sweets."
+    "sentenceEnglish": "Let's give everyone some sweets.",
+    "jmdictId": "1202150"
   },
   {
     "id": "anki-201",
@@ -2262,7 +2268,8 @@
     "wordAudio": "0b99be82283bfab2e888f2034e2f97e3.mp3",
     "sentenceAudio": "31079fc02a94c41ff64bb377ba4c0197.mp3",
     "sentence": "彼女はいつも元気だ。",
-    "sentenceEnglish": "She's always full of energy."
+    "sentenceEnglish": "She's always full of energy.",
+    "jmdictId": "1188890"
   },
   {
     "id": "anki-211",
@@ -2478,7 +2485,8 @@
     "wordAudio": "5fa945021473f46db2e320fd4ba1e9db-749d521c78ea85f5ce8f7ecc1bd15c7d713de6fb.mp3",
     "sentenceAudio": "5c84dfeee45ad4f72e577062e05e4b8e-5457994ecb7f5df9b8638b378465ccb0ceaf6346.mp3",
     "sentence": "肉と魚とどちらが好きですか。",
-    "sentenceEnglish": "Which do you prefer, meat or fish?"
+    "sentenceEnglish": "Which do you prefer, meat or fish?",
+    "jmdictId": "1189360"
   },
   {
     "id": "anki-231",
@@ -2586,7 +2594,8 @@
     "wordAudio": "722241bb0f4ce21cbb388e276ae0a6f4-017cadbdee5c2bd5fb16cf083a4d3352c32d7d62.mp3",
     "sentenceAudio": "b3b2c52dd411c176af418032442fbb98-ca54a00a97eb6ea95b1341c859a1be18363d2d3a.mp3",
     "sentence": "この中でどれが好きですか。",
-    "sentenceEnglish": "Which of these do you like?"
+    "sentenceEnglish": "Which of these do you like?",
+    "jmdictId": "1009290"
   },
   {
     "id": "anki-241",
@@ -3129,7 +3138,8 @@
     "wordAudio": "2cd7816ca841097d39c700a150a163a1-371e40160a73c533ce5c280fa7c31d6f52fb26cc.mp3",
     "sentenceAudio": "7c6e07e2d9445431457e08d8a8514cee-f7df4600ce5e20a9696a3832e1541f33bc8e2fb2.mp3",
     "sentence": "どうして泣いているの。",
-    "sentenceEnglish": "Why are you crying?"
+    "sentenceEnglish": "Why are you crying?",
+    "jmdictId": "1466940"
   },
   {
     "id": "anki-291",
@@ -3237,7 +3247,8 @@
     "wordAudio": "f8a6f1394ee3d6959c7687e4d6d4e4f6-e5831e8ab91aa8789d84e37faa375198b1464690.mp3",
     "sentenceAudio": "9cce208b8c1ab9ee8a6a24b775518c1c-28f797b4001e4f423e209d509e0bcc388467298d.mp3",
     "sentence": "おなかが空きました。",
-    "sentenceEnglish": "I'm hungry."
+    "sentenceEnglish": "I'm hungry.",
+    "jmdictId": "1002610"
   },
   {
     "id": "anki-301",
@@ -3671,7 +3682,8 @@
     "wordAudio": "9393f61b9af2b428204e7f3264cbd01a-7ca19e68f23eb66e77dc82ce2d92bb25fafb5eb7.mp3",
     "sentenceAudio": "c1ac084c4aec542e1f3ed30fd861ab9a-d5a4f1d865b4e10d7a9855af0502dc8273115195.mp3",
     "sentence": "ここの料理はまずい。",
-    "sentenceEnglish": "The food here is bad."
+    "sentenceEnglish": "The food here is bad.",
+    "jmdictId": "1495000"
   },
   {
     "id": "anki-341",
@@ -4104,7 +4116,8 @@
     "wordAudio": "9dd0baeca90a894b5b08366e9145c731-7546b9c8d05130f7f62c14566cd080166f27c3dc.mp3",
     "sentenceAudio": "03480fb7dc87925687a972278cd42f92-92d8a865d41c79ac5ed7f37822f431971597c29b.mp3",
     "sentence": "あそこにバス停があります。",
-    "sentenceEnglish": "There's a bus stop over there."
+    "sentenceEnglish": "There's a bus stop over there.",
+    "jmdictId": "1000320"
   },
   {
     "id": "anki-381",
@@ -4212,7 +4225,8 @@
     "wordAudio": "36523f033cfce45a5b436a11f803a8ac-839d0611fc83a986e79527338bd1d8315861a878.mp3",
     "sentenceAudio": "bff03a5c9cdfd4b22a265af0ae1a766e-15eb9e29fb2518c11ad991fdbeb53c81a72b5e6d.mp3",
     "sentence": "このケーキはおいしいね。",
-    "sentenceEnglish": "This cake is yummy."
+    "sentenceEnglish": "This cake is yummy.",
+    "jmdictId": "1486650"
   },
   {
     "id": "anki-391",
@@ -4254,7 +4268,8 @@
     "wordAudio": "bbf6e4ece5428308b5af1b71394e075c-01f1086e438bda233f579ecd27363e46b98c4d22.mp3",
     "sentenceAudio": "6530bcab0c844fee5a6cddd7bda0b57b-a5fa58ed4d774d71cdd4b33512adcbb70c8b81ab.mp3",
     "sentence": "彼はだめな男だ。",
-    "sentenceEnglish": "He's a loser."
+    "sentenceEnglish": "He's a loser.",
+    "jmdictId": "1409110"
   },
   {
     "id": "anki-395",
@@ -4285,7 +4300,8 @@
     "wordAudio": "d7721a921e50991fb41ce6d5a79853f5-ce97d2c6f9a43d7f0d76747368105cfc2e12eb60.mp3",
     "sentenceAudio": "3ee3353a31bf5a9bd4c7dd844f826eab-b51d99fc7504bb75dbc410caa3b2e2072fb51200.mp3",
     "sentence": "彼女はとてもきれいだ。",
-    "sentenceEnglish": "She's very beautiful."
+    "sentenceEnglish": "She's very beautiful.",
+    "jmdictId": "1591900"
   },
   {
     "id": "anki-398",
@@ -4380,7 +4396,8 @@
     "wordAudio": "132721c65c5e5b25e04d1f157e025bcd.mp3",
     "sentenceAudio": "941b1ac3c393a0c031c4ca4a7fe210f9.mp3",
     "sentence": "この服は300ドルしました。",
-    "sentenceEnglish": "These clothes cost 300 dollars."
+    "sentenceEnglish": "These clothes cost 300 dollars.",
+    "jmdictId": "1089090"
   },
   {
     "id": "anki-407",
@@ -4646,7 +4663,8 @@
     "wordAudio": "577e7ca1b68e2ef7b91a7dbb429a1dd8-8d01bc8ec225841a62edd49b9a6d7bc31f402ef6.mp3",
     "sentenceAudio": "3617ccce818a0a15aaf858a089893959-1ce11c59538199521f62c73ab78ef0e9ad003e43.mp3",
     "sentence": "お金がほとんどありません。",
-    "sentenceEnglish": "There's hardly any money."
+    "sentenceEnglish": "There's hardly any money.",
+    "jmdictId": "1522050"
   },
   {
     "id": "anki-432",
@@ -5128,7 +5146,8 @@
     "wordAudio": "e2e4afc21b9dedab4cecda3a18440df2.mp3",
     "sentenceAudio": "d5a7f77e3605e1a769f998fefc37e458.mp3",
     "sentence": "今日はこれらの問題について話し合います。",
-    "sentenceEnglish": "We will discuss these issues today."
+    "sentenceEnglish": "We will discuss these issues today.",
+    "jmdictId": "1004830"
   },
   {
     "id": "anki-477",
@@ -5181,7 +5200,8 @@
     "wordAudio": "2fade12b2828f95577958418863b8162-65cc98330abc61a9528bb925951c5770b0731eb3.mp3",
     "sentenceAudio": "da40e22dc2e1fe3e4d82320f2785e9eb-8339aa2a87719264b2dcaabfe4e541bf9cac98ee.mp3",
     "sentence": "いずれまたお会いしましょう。",
-    "sentenceEnglish": "Let's meet again sometime."
+    "sentenceEnglish": "Let's meet again sometime.",
+    "jmdictId": "1566210"
   },
   {
     "id": "anki-482",
@@ -5233,7 +5253,8 @@
     "wordAudio": "06e108bf9151b80579e9a65b93fba3c2-c8262b5b5c9222195cabf6d734b9b3ee90e3bcaf.mp3",
     "sentenceAudio": "d7f74908901a72b39f14c487d267c2d3-11739db95082df9e54cc15fd603e08002bfc5558.mp3",
     "sentence": "このビールはあまり美味しくありません。",
-    "sentenceEnglish": "This beer isn't very good."
+    "sentenceEnglish": "This beer isn't very good.",
+    "jmdictId": "1584930"
   },
   {
     "id": "anki-487",
@@ -5554,7 +5575,8 @@
     "wordAudio": "a35d05a63edaa0736865f2573fa95ce2-3244b8fea753d1a11bfcf06da955c693c223d0ad.mp3",
     "sentenceAudio": "8b7eefe2932a5d0f8b8d5da717a22dfd-f2147afc5ce76fa34271c270845251c022b8aa06.mp3",
     "sentence": "彼女は荷物をまとめて出て行った。",
-    "sentenceEnglish": "She packed her luggage and left."
+    "sentenceEnglish": "She packed her luggage and left.",
+    "jmdictId": "1440930"
   },
   {
     "id": "anki-517",
@@ -5607,7 +5629,8 @@
     "wordAudio": "6766dabfc4a9a90ce797a1e8df12cd42-47f9f4bad366e1b0064e0a1c73085f344003e3d8.mp3",
     "sentenceAudio": "5ee93012832f187fa2b6feb0a0dbcbce-606890065ee34825a792ad903975dbfac3d1490d.mp3",
     "sentence": "彼はやはり遅刻しました。",
-    "sentenceEnglish": "He was late, as expected."
+    "sentenceEnglish": "He was late, as expected.",
+    "jmdictId": "2772770"
   },
   {
     "id": "anki-522",
@@ -5714,7 +5737,8 @@
     "wordAudio": "6b8d1b0b210eb2ccc632bd91789393aa-9d2763011768d070d8c66700a06580cd54e80a48.mp3",
     "sentenceAudio": "966c1b74df423f99acc8bd78f8f24a50-ed846de1a9ba2b9ef67d5e729eda6beb73af20ed.mp3",
     "sentence": "つまり、あなたは何も知らないのですね。",
-    "sentenceEnglish": "So, basically, you don't know anything."
+    "sentenceEnglish": "So, basically, you don't know anything.",
+    "jmdictId": "1610430"
   },
   {
     "id": "anki-532",
@@ -5821,7 +5845,8 @@
     "wordAudio": "198723d6dc6b52aa4666196872b5f212-6d8c2fde14f22dc7833a3a3989dfbe8b09c4b7d9.mp3",
     "sentenceAudio": "845762a749d2df4e369e72db3e004b6d-dc6d35171bb7103b10a0e3c2ffc01f2a8afb05da.mp3",
     "sentence": "もちろん一緒に行きます。",
-    "sentenceEnglish": "Of course I'll go with you."
+    "sentenceEnglish": "Of course I'll go with you.",
+    "jmdictId": "1535780"
   },
   {
     "id": "anki-542",
@@ -5874,7 +5899,8 @@
     "wordAudio": "2354e005e29d3997de0dec4a108efef7-3a2c5e9ba451be876f3e279c455e96aa10fedd8b.mp3",
     "sentenceAudio": "9050234f1ac9d6f056961362caf80899-fa6d2ce3f355288479ff67cbda346c967c5572db.mp3",
     "sentence": "かつて私が学生だった頃のことです。",
-    "sentenceEnglish": "That was when I was still a student."
+    "sentenceEnglish": "That was when I was still a student.",
+    "jmdictId": "1581210"
   },
   {
     "id": "anki-547",
@@ -5979,7 +6005,8 @@
     "wordAudio": "5dc9285a9eec1ccced2a43fe9dd98922-308b3c8314afc9ea775faf334b5c9667824f98ed.mp3",
     "sentenceAudio": "3e0f4d8b4bb28fde9ed8517b13325f38-c06754cdd4b699cbe69cfdabcf5d8d7f26ad3e67.mp3",
     "sentence": "なぜ来なかったの。",
-    "sentenceEnglish": "Why didn't you come?"
+    "sentenceEnglish": "Why didn't you come?",
+    "jmdictId": "1577120"
   },
   {
     "id": "anki-557",
@@ -6032,7 +6059,8 @@
     "wordAudio": "21a2514f08da1f37f9362ccb78b38796-be5088412112a62c193f24975fbc75e733e20393.mp3",
     "sentenceAudio": "d95dc97b9be90f33e238de2ebe561ab9-32418b2d4e34331055ca951a274b4b02fbf69527.mp3",
     "sentence": "そのままお待ちください。",
-    "sentenceEnglish": "Please just wait a bit."
+    "sentenceEnglish": "Please just wait a bit.",
+    "jmdictId": "1406030"
   },
   {
     "id": "anki-562",
@@ -6192,7 +6220,8 @@
     "wordAudio": "664aa8a62ccf1ae90c9eed4944c1e2bc-ed1ccbed6fd876a3fdae0200fccc30e5ba4c0656.mp3",
     "sentenceAudio": "52f86bbe771189926bd22f54d45a15d8-2176fdf850c0fa053f11058657fd3de9d3d41aa8.mp3",
     "sentence": "やっと仕事が終わりました。",
-    "sentenceEnglish": "Finally, I finished my work."
+    "sentenceEnglish": "Finally, I finished my work.",
+    "jmdictId": "1012800"
   },
   {
     "id": "anki-577",
@@ -6460,7 +6489,8 @@
     "wordAudio": "39a17b214c69dbf6e59fb66d4ab207e1-02efa6c15c98d2e7aefdb832ad93077164603d81.mp3",
     "sentenceAudio": "b75c5256a7fc9ff4bf97d04370c36716-d0b37b4141404ccc5c6d6d7168a0da681d49c6ec.mp3",
     "sentence": "そこでしばらく休んでいます。",
-    "sentenceEnglish": "He's resting over there for a while."
+    "sentenceEnglish": "He's resting over there for a while.",
+    "jmdictId": "1304420"
   },
   {
     "id": "anki-602",
@@ -6513,7 +6543,8 @@
     "wordAudio": "c243983617927646adb211cf61997529.mp3",
     "sentenceAudio": "4597e2f136d146ced9088859fceddd75.mp3",
     "sentence": "地震でガスが止まった。",
-    "sentenceEnglish": "The gas got cut off due to the earthquake."
+    "sentenceEnglish": "The gas got cut off due to the earthquake.",
+    "jmdictId": "1040060"
   },
   {
     "id": "anki-607",
@@ -6942,7 +6973,8 @@
     "wordAudio": "689e6babb4e486c246d8901f1a81ce1d.mp3",
     "sentenceAudio": "1aa860783827b5060d65e3d9cf1b8a31.mp3",
     "sentence": "クリスタルガラスの花瓶を買いました。",
-    "sentenceEnglish": "I bought a crystal glass vase."
+    "sentenceEnglish": "I bought a crystal glass vase.",
+    "jmdictId": "1040380"
   },
   {
     "id": "anki-647",
@@ -7373,7 +7405,8 @@
     "wordAudio": "08022deccf62c44f9fe80bf9cfe4c027.mp3",
     "sentenceAudio": "6e193813475da68736379dffeb2ac09f-26b98c76a4639aa6c122afe252c91a1602f8c777.mp3",
     "sentence": "32ページを開いてください。",
-    "sentenceEnglish": "Please open to page 32."
+    "sentenceEnglish": "Please open to page 32.",
+    "jmdictId": "1120410"
   },
   {
     "id": "anki-687",
@@ -7587,7 +7620,8 @@
     "wordAudio": "2ffc53527b6d798473833281d386f2bb-66f35b1220c102efe9b08acfee909fd0f40dd41e.mp3",
     "sentenceAudio": "1f72b602221000fcc7ec913ab3d173bf-a93a98225e778da0392b6c3a0c63dc831a2d737c.mp3",
     "sentence": "私たちは朝からあちこち散歩しました。",
-    "sentenceEnglish": "We strolled about here and there from the morning."
+    "sentenceEnglish": "We strolled about here and there from the morning.",
+    "jmdictId": "1612620"
   },
   {
     "id": "anki-707",
@@ -8447,7 +8481,8 @@
     "wordAudio": "20134ca99eb85cda60e9a0683d54c42d-3830f8b8bef0687fc881707db6c3bc37b911af20.mp3",
     "sentenceAudio": "fc25cf8f643507b7378281d8cb0e0f93-81113cb0413bee5254380849e9085930be7cd76c.mp3",
     "sentence": "彼の様子がおかしい。",
-    "sentenceEnglish": "He's acting strange."
+    "sentenceEnglish": "He's acting strange.",
+    "jmdictId": "1190860"
   },
   {
     "id": "anki-787",
@@ -8663,7 +8698,7 @@
     "sentenceAudio": "2e11dbfb3e317f569d96fe308cc8577a.mp3",
     "sentence": "カラーコピーは一枚幾らですか。",
     "sentenceEnglish": "How much is one color copy?",
-    "jmdictId": "1038500"
+    "jmdictId": "2853151"
   },
   {
     "id": "anki-807",
@@ -8824,7 +8859,8 @@
     "wordAudio": "965af22e624b077dbca559d3e0d0fccc.mp3",
     "sentenceAudio": "34d0f6366173b3c998eb93757f248ec9.mp3",
     "sentence": "荷物がなかなか届きません。",
-    "sentenceEnglish": "The parcel still hasn't arrived."
+    "sentenceEnglish": "The parcel still hasn't arrived.",
+    "jmdictId": "1599420"
   },
   {
     "id": "anki-822",
@@ -8932,7 +8968,7 @@
     "sentenceAudio": "c571856fb93dbd65932713e8d9f18c5e.mp3",
     "sentence": "もうすぐこのホームに電車が来ます。",
     "sentenceEnglish": "The train will arrive on this platform soon.",
-    "jmdictId": "1121740"
+    "jmdictId": "2855797"
   },
   {
     "id": "anki-832",
@@ -9200,7 +9236,8 @@
     "wordAudio": "31db01062d89b518cf7bdc0bfb42088b.mp3",
     "sentenceAudio": "0118b8ab4d182d0284557738160435a2.mp3",
     "sentence": "ズボンが汚れた。",
-    "sentenceEnglish": "My trousers got dirty."
+    "sentenceEnglish": "My trousers got dirty.",
+    "jmdictId": "1074260"
   },
   {
     "id": "anki-857",
@@ -9253,7 +9290,8 @@
     "wordAudio": "2298655f9c03daa0982e9593105cf924.mp3",
     "sentenceAudio": "c5501a47a79c693400873f19a5637f94.mp3",
     "sentence": "赤ちゃんが自動車のおもちゃで遊んでいる。",
-    "sentenceEnglish": "The baby's playing with the toy car."
+    "sentenceEnglish": "The baby's playing with the toy car.",
+    "jmdictId": "1217070"
   },
   {
     "id": "anki-862",
@@ -9306,7 +9344,8 @@
     "wordAudio": "109741cb40bac8a6b5d39b06104b5f1e.mp3",
     "sentenceAudio": "0cc5cf4611bc9754c88026671b1d38ef.mp3",
     "sentence": "ひき肉を200グラムください。",
-    "sentenceEnglish": "Please give me 200 grams of ground (beef, chicken, etc.)"
+    "sentenceEnglish": "Please give me 200 grams of ground (beef, chicken, etc.)",
+    "jmdictId": "1046810"
   },
   {
     "id": "anki-867",
@@ -9359,7 +9398,8 @@
     "wordAudio": "24262c91a1bda41bb7cdd54a41a33282.mp3",
     "sentenceAudio": "e1310b0199e59e92c5653d72f43d4242.mp3",
     "sentence": "私は毎朝コーヒーを飲みます。",
-    "sentenceEnglish": "I drink coffee every morning."
+    "sentenceEnglish": "I drink coffee every morning.",
+    "jmdictId": "1049180"
   },
   {
     "id": "anki-872",
@@ -9628,7 +9668,8 @@
     "wordAudio": "3da234ba9496407e5ce83d0e2d739118-2ec5d30812b708ed431050dae19a4fcc8e128afb.mp3",
     "sentenceAudio": "dd70b6f7e18e054dd5e7f76f1bb48efc-07f79729f720c543663062ddf77c73b687e8ce03.mp3",
     "sentence": "妹とひどい喧嘩をした。",
-    "sentenceEnglish": "I had an awful fight with my little sister."
+    "sentenceEnglish": "I had an awful fight with my little sister.",
+    "jmdictId": "1602060"
   },
   {
     "id": "anki-897",
@@ -9842,7 +9883,8 @@
     "wordAudio": "4576f837f0c99192b3e61a7e02998c37.mp3",
     "sentenceAudio": "40754107cd7a19c5f1c1b3d06765127c.mp3",
     "sentence": "いつでもうちに来てください。",
-    "sentenceEnglish": "Please come to my house any time."
+    "sentenceEnglish": "Please come to my house any time.",
+    "jmdictId": "1577130"
   },
   {
     "id": "anki-917",
@@ -9949,7 +9991,8 @@
     "wordAudio": "94205b4533b75ab87b42ead41ae26e0c-b9e53e786bb1eba760842a6243c424d324e48383.mp3",
     "sentenceAudio": "71d2f4afc85244b5fdd2144852e4737a-ef45bba999e0faf6a92219bb672b52ab6037e0c6.mp3",
     "sentence": "受付はこちらです。",
-    "sentenceEnglish": "The reception desk is this way."
+    "sentenceEnglish": "The reception desk is this way.",
+    "jmdictId": "1004500"
   },
   {
     "id": "anki-927",
@@ -10055,7 +10098,8 @@
     "wordAudio": "cbc9ec70a2c548b8699392be038da830.mp3",
     "sentenceAudio": "93431c23fbf4959e76416332f12f1abe.mp3",
     "sentence": "彼の話はおかしかった。",
-    "sentenceEnglish": "His story was funny."
+    "sentenceEnglish": "His story was funny.",
+    "jmdictId": "1190860"
   },
   {
     "id": "anki-937",
@@ -10431,7 +10475,8 @@
     "wordAudio": "23e519043b11ebdbd8110513b1a7b880.mp3",
     "sentenceAudio": "ea5dc5e67a24b55cb070e4a38b462c69.mp3",
     "sentence": "彼女はめったに怒りません。",
-    "sentenceEnglish": "She rarely gets angry."
+    "sentenceEnglish": "She rarely gets angry.",
+    "jmdictId": "1612000"
   },
   {
     "id": "anki-972",
@@ -10754,7 +10799,8 @@
     "wordAudio": "04199cfb63f62947fe8529b18c395dab.mp3",
     "sentenceAudio": "72c3f2bccd29e30300f3fc7ff34817ac.mp3",
     "sentence": "ゴムが伸びてしまった。",
-    "sentenceEnglish": "The elastic has gone loose."
+    "sentenceEnglish": "The elastic has gone loose.",
+    "jmdictId": "1054570"
   },
   {
     "id": "anki-1002",
@@ -10915,7 +10961,8 @@
     "wordAudio": "c4e1a9eb0936ed1c3aa2885dfe489d4c-c34da88311b217ba923baea92491fa21e4700a23.mp3",
     "sentenceAudio": "b31805a127db22868e2388a32ffa0b30-5a6af63f02712bfe5e2947eaadf8e7831110414d.mp3",
     "sentence": "やっぱり旅が大好きだ。",
-    "sentenceEnglish": "I just love to travel."
+    "sentenceEnglish": "I just love to travel.",
+    "jmdictId": "1012810"
   },
   {
     "id": "anki-1017",
@@ -11722,7 +11769,8 @@
     "wordAudio": "ce56bf6afe85478b7c125aa8e082e327.mp3",
     "sentenceAudio": "cd3a29f110a014a770c9f999ef7664cb.mp3",
     "sentence": "妹はとてもおしゃべりです。",
-    "sentenceEnglish": "My little sister's very talkative."
+    "sentenceEnglish": "My little sister's very talkative.",
+    "jmdictId": "1002450"
   },
   {
     "id": "anki-1092",
@@ -11775,7 +11823,8 @@
     "wordAudio": "740d032ef2da1985f610e76584573505-b639214c3fe1d0499703776ed3bfdc50c15fa9dd.mp3",
     "sentenceAudio": "797fd37158f1f6734ba9e54ef7aa59e3-1a985086bd943c6f63ff8d1b61f81279d29ce5f3.mp3",
     "sentence": "明日はきっと雨が降ります。",
-    "sentenceEnglish": "I'm sure it'll rain tomorrow."
+    "sentenceEnglish": "I'm sure it'll rain tomorrow.",
+    "jmdictId": "1003430"
   },
   {
     "id": "anki-1097",
@@ -11935,7 +11984,8 @@
     "wordAudio": "621ca70ef81be5605f09c6fda2f26dd9.mp3",
     "sentenceAudio": "f23007717e5441001084a458c946fd2a.mp3",
     "sentence": "あの子はおしゃれだね。",
-    "sentenceEnglish": "That girl is trendy."
+    "sentenceEnglish": "That girl is trendy.",
+    "jmdictId": "1002770"
   },
   {
     "id": "anki-1112",
@@ -12042,7 +12092,8 @@
     "wordAudio": "c5fbdee007a0b1224a69bb4ec7f31ea4.mp3",
     "sentenceAudio": "2c5f92c9c10ad8f0931b9ea0b75d0a52.mp3",
     "sentence": "今日の交通事故はゼロです。",
-    "sentenceEnglish": "Today there were zero traffic accidents."
+    "sentenceEnglish": "Today there were zero traffic accidents.",
+    "jmdictId": "2839962"
   },
   {
     "id": "anki-1122",
@@ -12471,7 +12522,8 @@
     "wordAudio": "eb6b6d0c8e4d775a08a7ee9801948817-412ae2706707f7eaa29a9fe144b1aaccf2d9520e.mp3",
     "sentenceAudio": "8d97bd9f42e96c2ebd4f32f35e37010f-cf23e78b03c0fa367b9900feae6c4da0c104ca57.mp3",
     "sentence": "この通りは車の音がうるさい。",
-    "sentenceEnglish": "Traffic is noisy on this street."
+    "sentenceEnglish": "Traffic is noisy on this street.",
+    "jmdictId": "1481920"
   },
   {
     "id": "anki-1162",
@@ -13169,7 +13221,8 @@
     "wordAudio": "2694550336f66a637f11f6e367060c14.mp3",
     "sentenceAudio": "80e42250133cf14500717632cbde416a.mp3",
     "sentence": "テレビのチャンネルを変えてください。",
-    "sentenceEnglish": "Please change the TV channel."
+    "sentenceEnglish": "Please change the TV channel.",
+    "jmdictId": "1077960"
   },
   {
     "id": "anki-1227",
@@ -13222,7 +13275,8 @@
     "wordAudio": "8075b8ebdbd22abe4c2acae6b39f1267-2c75416d0e0f392bbdbd2d64bde390bf47025526.mp3",
     "sentenceAudio": "89f5d95a41edeb1dec5c0b2dd465c26d-5185f7e8daac6560430c753370f734e02f7d035b.mp3",
     "sentence": "彼の話はつまらないですね。",
-    "sentenceEnglish": "What he's talking about is boring."
+    "sentenceEnglish": "What he's talking about is boring.",
+    "jmdictId": "1008190"
   },
   {
     "id": "anki-1232",
@@ -13597,7 +13651,8 @@
     "wordAudio": "7e6dddd056a8ce5169a7cac55686ea7e.mp3",
     "sentenceAudio": "60e4d390a332cbffeaa5fe924e0c48cf.mp3",
     "sentence": "紅茶にレモンを入れて飲んだ。",
-    "sentenceEnglish": "I put lemon in my tea and drank it."
+    "sentenceEnglish": "I put lemon in my tea and drank it.",
+    "jmdictId": "1146020"
   },
   {
     "id": "anki-1267",
@@ -14297,7 +14352,8 @@
     "wordAudio": "6802ba453ea51b5fa9f4cb7036e86a46.mp3",
     "sentenceAudio": "1a25b903f12b647bc67c08c2c0513ad5.mp3",
     "sentence": "晩ご飯のおかずは何?",
-    "sentenceEnglish": "What are we having for dinner?"
+    "sentenceEnglish": "What are we having for dinner?",
+    "jmdictId": "1588930"
   },
   {
     "id": "anki-1332",
@@ -14728,7 +14784,8 @@
     "wordAudio": "6dab9bbe036427f65349ab9137b3a676-e043b9e7b61295b5f5e66e02632dd3d84b2e7c52.mp3",
     "sentenceAudio": "5d10ab3b233b18e79c4c8180c7364d37-f55b7bd703b8f01974c0ac28a1eac5f22489b96f.mp3",
     "sentence": "昨日おじさんに会いました。",
-    "sentenceEnglish": "I met my uncle yesterday."
+    "sentenceEnglish": "I met my uncle yesterday.",
+    "jmdictId": "2261490"
   },
   {
     "id": "anki-1372",
@@ -14943,7 +15000,8 @@
     "wordAudio": "5a8bb45a92800eeb21e07097ac6f2827.mp3",
     "sentenceAudio": "e75725ddec3127bb6e1229892dec8753.mp3",
     "sentence": "彼は白いワイシャツを着ている。",
-    "sentenceEnglish": "He's wearing a white shirt."
+    "sentenceEnglish": "He's wearing a white shirt.",
+    "jmdictId": "1148640"
   },
   {
     "id": "anki-1392",
@@ -15050,7 +15108,8 @@
     "wordAudio": "2bbc410601cc69eb9b07801f891027dd.mp3",
     "sentenceAudio": "5260fa24190923e3eb36e5af08b0c61a.mp3",
     "sentence": "私はお昼にうどんを食べました。",
-    "sentenceEnglish": "I ate udon noodles for lunch."
+    "sentenceEnglish": "I ate udon noodles for lunch.",
+    "jmdictId": "1574470"
   },
   {
     "id": "anki-1402",
@@ -15588,7 +15647,8 @@
     "wordAudio": "7175a30d6e093b52330a61d4ab3c9d80-27ce104c2a8967726f59952bd694bf3c168b9f31.mp3",
     "sentenceAudio": "5e569032e649745c5245d18e673fbfc0-224f2cad6281685113a9601bc87346a03fb912e2.mp3",
     "sentence": "お加減はいかがですか。",
-    "sentenceEnglish": "How are you feeling?"
+    "sentenceEnglish": "How are you feeling?",
+    "jmdictId": "2845606"
   },
   {
     "id": "anki-1452",
@@ -15801,7 +15861,8 @@
     "wordAudio": "e2b83dbb6d1935b0b3f0b8443b632fc0-33d78ecb961a6c3a2b6020ecbcbcc143838ede56.mp3",
     "sentenceAudio": "f2ae61e9f8fc3b2a6ddb0d59464c502a-a46283f11761b79b1b4c25cca81cab169303e9f6.mp3",
     "sentence": "星がきらきら光っている。",
-    "sentenceEnglish": "The stars are shining brightly."
+    "sentenceEnglish": "The stars are shining brightly.",
+    "jmdictId": "1003500"
   },
   {
     "id": "anki-1472",
@@ -16123,7 +16184,8 @@
     "wordAudio": "52515f5327551e7b52f093a59a6197c5-5faeee45e1d1a0e44e8b94903144903497616de2.mp3",
     "sentenceAudio": "a74ff7454f735b4640b91d809e125957-d092830b70e9f9532e346a667aad9cfa6fc0484e.mp3",
     "sentence": "夕方そちらに着きます。",
-    "sentenceEnglish": "I'll arrive there in the evening."
+    "sentenceEnglish": "I'll arrive there in the evening.",
+    "jmdictId": "1006780"
   },
   {
     "id": "anki-1502",
@@ -16229,7 +16291,8 @@
     "wordAudio": "a5d981317e5b2a963f0fa5d8dccc68fe-a6f873ff5e0ccc6db77ce2a883d56f3cff155738.mp3",
     "sentenceAudio": "adbbc46a1c03010b145a76e5967d09b3-caa5a19e98ab7423cb3f8d10d93723c237babb57.mp3",
     "sentence": "どっちの色が好きですか。",
-    "sentenceEnglish": "Which color do you like?"
+    "sentenceEnglish": "Which color do you like?",
+    "jmdictId": "1189360"
   },
   {
     "id": "anki-1512",
@@ -16390,7 +16453,8 @@
     "wordAudio": "e9978a342832f89fee5d890f4cf57e49-94c1d0174d09e136524b708943589a20e1d35c40.mp3",
     "sentenceAudio": "cb060da0a07dd23da3ddbd365c44d0e1-b685dd510e4a800a7bdda084073702d7b44e9a9b.mp3",
     "sentence": "彼女はいつもにこにこしています。",
-    "sentenceEnglish": "She's always smiling."
+    "sentenceEnglish": "She's always smiling.",
+    "jmdictId": "1091130"
   },
   {
     "id": "anki-1527",
@@ -16605,7 +16669,8 @@
     "wordAudio": "4d4729a0c27701c4caef697fb2cd8669.mp3",
     "sentenceAudio": "bb21ccc222daf712bea367a880c555c1.mp3",
     "sentence": "失礼ですが、どなたですか。",
-    "sentenceEnglish": "Excuse me, but who are you?"
+    "sentenceEnglish": "Excuse me, but who are you?",
+    "jmdictId": "1189370"
   },
   {
     "id": "anki-1547",
@@ -17144,7 +17209,8 @@
     "wordAudio": "c2decff4a107e04ff5d9740e2d65c1b8.mp3",
     "sentenceAudio": "05e32a9ad606e627266f8ce640197e36-5cb4f194d987d6969fc22e95a5c52b7e9002402d.mp3",
     "sentence": "背中がかゆいです。",
-    "sentenceEnglish": "My back itches."
+    "sentenceEnglish": "My back itches.",
+    "jmdictId": "1569570"
   },
   {
     "id": "anki-1597",
@@ -17197,7 +17263,8 @@
     "wordAudio": "3b2f5d1fb17d0c4cfb9d86961f30f7e7.mp3",
     "sentenceAudio": "597a3f9390bc8c55cc4b6293af0b5077.mp3",
     "sentence": "地震で家がぐらぐらと揺れた。",
-    "sentenceEnglish": "The house shook because of the earthquake."
+    "sentenceEnglish": "The house shook because of the earthquake.",
+    "jmdictId": "1004110"
   },
   {
     "id": "anki-1602",
@@ -17412,7 +17479,8 @@
     "wordAudio": "f72bf464cc89d1e8b378c6c8cfd9f1c1-a769307ba9f6b129bb9397feeab3b6165afff9f4.mp3",
     "sentenceAudio": "a21c54995d811da1f5198974148f5b3a-399f046f9abae5b427baaef06dee41782552d5ac.mp3",
     "sentence": "レポートはこれでよろしいですか。",
-    "sentenceEnglish": "Is this all right as a report?"
+    "sentenceEnglish": "Is this all right as a report?",
+    "jmdictId": "1224880"
   },
   {
     "id": "anki-1622",
@@ -17625,7 +17693,8 @@
     "wordAudio": "ab0aa9583b156c97d7b653386cbb596d-2be5ae74af2ad54c4bb35a7b4c27b9716d3823e1.mp3",
     "sentenceAudio": "8cd6be2afbff0308f7efd1504c5aea9f-eab9c3a19c168d67a5e912b1b6f1085ff2af3f57.mp3",
     "sentence": "昨日はたくさん泳ぎました。",
-    "sentenceEnglish": "I swam a lot yesterday."
+    "sentenceEnglish": "I swam a lot yesterday.",
+    "jmdictId": "1415870"
   },
   {
     "id": "anki-1642",
@@ -17732,7 +17801,8 @@
     "wordAudio": "82dd58ca88716f7c5284910e22e1fea8-8fba039c7997e12d18ee7b66e540d9d99a406477.mp3",
     "sentenceAudio": "6558d803911cad7bcdd3ad7eff2b6be5-348c0e2affa1ba7c639ffbe8442cfc3953c80525.mp3",
     "sentence": "あちらに行ってみよう。",
-    "sentenceEnglish": "Let's go that way."
+    "sentenceEnglish": "Let's go that way.",
+    "jmdictId": "1483185"
   },
   {
     "id": "anki-1652",
@@ -17785,7 +17855,8 @@
     "wordAudio": "ec579e0d5eda4564402a61ff6c25d2d9.mp3",
     "sentenceAudio": "ba0d4460fbd3aa52241aad6ec3b9cea5.mp3",
     "sentence": "彼女に会うとどきどきします。",
-    "sentenceEnglish": "I feel nervous when I meet her."
+    "sentenceEnglish": "I feel nervous when I meet her.",
+    "jmdictId": "1009050"
   },
   {
     "id": "anki-1657",
@@ -18096,7 +18167,8 @@
     "wordAudio": "2259a32233aa1e91ea5728080dca83d8.mp3",
     "sentenceAudio": "599024de4387bcfb4be8cb4aff0c281e.mp3",
     "sentence": "家族にはがきを書いています。",
-    "sentenceEnglish": "I'm writing a postcard to my family."
+    "sentenceEnglish": "I'm writing a postcard to my family.",
+    "jmdictId": "1546590"
   },
   {
     "id": "anki-1686",
@@ -18159,7 +18231,8 @@
     "wordAudio": "8e81e9db1f6b47684a2e08a5872a17da-accdd9b682a745cd2e85cc7232a00c22694cc85b.mp3",
     "sentenceAudio": "baf8ec87292b12db089d822ddd61c51f-d6e4636bf51b13ee17deba2ebfc854707d90eae4.mp3",
     "sentence": "ソファにワインをこぼした。",
-    "sentenceEnglish": "I spilt wine on the sofa."
+    "sentenceEnglish": "I spilt wine on the sofa.",
+    "jmdictId": "1557640"
   },
   {
     "id": "anki-1692",
@@ -18535,7 +18608,8 @@
     "wordAudio": "90ad4e8aac3bfa802cb5635f09ab7bbc.mp3",
     "sentenceAudio": "0207a635a11519ed0abc88fcd6b84437.mp3",
     "sentence": "映画館はがらがらでした。",
-    "sentenceEnglish": "The movie theater was empty."
+    "sentenceEnglish": "The movie theater was empty.",
+    "jmdictId": "1003290"
   },
   {
     "id": "anki-1727",
@@ -18588,7 +18662,8 @@
     "wordAudio": "ff1f6f6b0f29b410a9f9f0c51c360da9.mp3",
     "sentenceAudio": "ad1bf64d1b0db09123b1c75baab8da09.mp3",
     "sentence": "太陽がぎらぎらしている。",
-    "sentenceEnglish": "The sun is glaring."
+    "sentenceEnglish": "The sun is glaring.",
+    "jmdictId": "1003650"
   },
   {
     "id": "anki-1732",
@@ -18641,7 +18716,8 @@
     "wordAudio": "834df395b27cb6dba02f890251df9e40-0dd085f222c21c2a1532c556351645b2851e3230.mp3",
     "sentenceAudio": "14fe15f5f0728e6e8934eda887b95f1f-fcd7ecc2238c6c1813f7d794f908e41bb2e101db.mp3",
     "sentence": "そっちが私の部屋です。",
-    "sentenceEnglish": "That's my room over there."
+    "sentenceEnglish": "That's my room over there.",
+    "jmdictId": "1006780"
   },
   {
     "id": "anki-1737",
@@ -18748,7 +18824,8 @@
     "wordAudio": "07e497d5fd5cb11fa2e5ec27993d8f79.mp3",
     "sentenceAudio": "eb9ab0b64ccdd4db6520968d1cb1419a.mp3",
     "sentence": "私はおなかがぺこぺこです。",
-    "sentenceEnglish": "I'm very hungry."
+    "sentenceEnglish": "I'm very hungry.",
+    "jmdictId": "1011540"
   },
   {
     "id": "anki-1747",
@@ -18801,7 +18878,8 @@
     "wordAudio": "07920e8163ee9751df2e3f7cfd74fceb.mp3",
     "sentenceAudio": "fbe3f6f8b8dfc95de17b69c685a747ab.mp3",
     "sentence": "彼女はドイツ語がぺらぺらです。",
-    "sentenceEnglish": "She speaks German fluently."
+    "sentenceEnglish": "She speaks German fluently.",
+    "jmdictId": "1011580"
   },
   {
     "id": "anki-1752",
@@ -18962,7 +19040,8 @@
     "wordAudio": "1eb2051dd4fde0296e3a48b88889bc70.mp3",
     "sentenceAudio": "aa837edfa3875ccf2e72099232d98fb7.mp3",
     "sentence": "いつごろ夏休みを取りますか。",
-    "sentenceEnglish": "About when are you going on summer vacation?"
+    "sentenceEnglish": "About when are you going on summer vacation?",
+    "jmdictId": "1188960"
   },
   {
     "id": "anki-1767",
@@ -19015,7 +19094,8 @@
     "wordAudio": "9feae179223cc343599a3011dcc6c66a.mp3",
     "sentenceAudio": "e1f66fb16a2dd098502761c226c875e6.mp3",
     "sentence": "このウィスキーは強いよ。",
-    "sentenceEnglish": "This whisky is strong."
+    "sentenceEnglish": "This whisky is strong.",
+    "jmdictId": "1025140"
   },
   {
     "id": "anki-1772",
@@ -19230,7 +19310,8 @@
     "wordAudio": "a111b84bc5cabe09321e9ac110882dc1.mp3",
     "sentenceAudio": "4ef2af9df190073d1e46bf45d563a0f2.mp3",
     "sentence": "彼は手にやけどをしました。",
-    "sentenceEnglish": "He burned his hand."
+    "sentenceEnglish": "He burned his hand.",
+    "jmdictId": "1577310"
   },
   {
     "id": "anki-1792",
@@ -19337,7 +19418,8 @@
     "wordAudio": "53b8bd12d60aa8bdf7da63bb622efca4-cbff221d6c2e7672c9f887479cc7bd6c109b9023.mp3",
     "sentenceAudio": "c0f380b09ad6f870e5fc333f607c8214-539a9024da74d9c15d522e966ec7cb99267e53c1.mp3",
     "sentence": "郵便局はあっちです。",
-    "sentenceEnglish": "The post office is that way."
+    "sentenceEnglish": "The post office is that way.",
+    "jmdictId": "1483185"
   },
   {
     "id": "anki-1802",
@@ -19497,7 +19579,8 @@
     "wordAudio": "07e86091b2cd0bb3776247208f375536.mp3",
     "sentenceAudio": "b35f88b9f8b9e281382e380dcca85d2b.mp3",
     "sentence": "ウェートレスを呼んだ。",
-    "sentenceEnglish": "I called the waitress."
+    "sentenceEnglish": "I called the waitress.",
+    "jmdictId": "1025690"
   },
   {
     "id": "anki-1817",
@@ -19710,7 +19793,8 @@
     "wordAudio": "f90e989f3c8c2240a43f2f010f90751e-e923d0dc6f8647fb0a11e8bf6a55b7a8dac17301.mp3",
     "sentenceAudio": "bc88911357f41ee360286cf0c474f574-6ddebd7905d9c293aedcb1d931d9e12de4493800.mp3",
     "sentence": "テーブルの上にごちそうが並んでいる。",
-    "sentenceEnglish": "There are some delicious treats lined up on the table."
+    "sentenceEnglish": "There are some delicious treats lined up on the table.",
+    "jmdictId": "1593590"
   },
   {
     "id": "anki-1837",
@@ -19923,7 +20007,8 @@
     "wordAudio": "ac20c40518c12d330400c99e0014669e.mp3",
     "sentenceAudio": "b76cef7324d0dda9d587c9204b83e3a7.mp3",
     "sentence": "雨がざあざあ降っている。",
-    "sentenceEnglish": "It's pouring."
+    "sentenceEnglish": "It's pouring.",
+    "jmdictId": "1058910"
   },
   {
     "id": "anki-1857",
@@ -19976,7 +20061,8 @@
     "wordAudio": "6c7ffd4602a1202434c8a0276540e228.mp3",
     "sentenceAudio": "847f0c000a7d39b6db6e9c51fdea8225.mp3",
     "sentence": "ポテトサラダを作るから、ジャガイモを買ってきて。",
-    "sentenceEnglish": "I'm going to make potato salad, so go and buy some potatoes."
+    "sentenceEnglish": "I'm going to make potato salad, so go and buy some potatoes.",
+    "jmdictId": "1005930"
   },
   {
     "id": "anki-1862",
@@ -20189,7 +20275,8 @@
     "wordAudio": "a47e1bd7b6bda5103c2768ee6f690dcd-a8eb23ce87d54e6b85db2a54d05405e2c55145b1.mp3",
     "sentenceAudio": "9bd4ecbefbeb55419db74f9978707ab1-418a29ea657cc00bc0e478167ccafe84755be18a.mp3",
     "sentence": "もうちょっと塩を入れて。",
-    "sentenceEnglish": "Put in a little more salt."
+    "sentenceEnglish": "Put in a little more salt.",
+    "jmdictId": "1163940"
   },
   {
     "id": "anki-1882",
@@ -20209,7 +20296,8 @@
     "wordAudio": "505393e9d80545fe3c5aac22e2fe3eff-a71571417786612ffb6a5ea8ec25f291873363b4.mp3",
     "sentenceAudio": "1c48bf902e707f3c19b72035522dab1c-9f379e03029b34d4a9ccfaacea41c2a57e5b2f3b.mp3",
     "sentence": "娘さんはいくつになりましたか。",
-    "sentenceEnglish": "How old is your daughter now?"
+    "sentenceEnglish": "How old is your daughter now?",
+    "jmdictId": "1219960"
   },
   {
     "id": "anki-1884",
@@ -20282,7 +20370,8 @@
     "wordAudio": "7c81b849b65e10ed7f5bdeefebed11e9-b6f6a6eea8817e9ae99ed07792e5ba021ec3a3cf.mp3",
     "sentenceAudio": "1a5409954d5ab67db829f53865a5cf17-6341128771e7f157a681102ec1c951116ad69572.mp3",
     "sentence": "そのかわいそうな子供たちは食べるものがない。",
-    "sentenceEnglish": "Those poor children have nothing to eat."
+    "sentenceEnglish": "Those poor children have nothing to eat.",
+    "jmdictId": "1590740"
   },
   {
     "id": "anki-1891",
@@ -20291,7 +20380,8 @@
     "wordAudio": "baf9deeb090a99c1754a9ab192ebf0df.mp3",
     "sentenceAudio": "9e7a7874a819c34076e18901cbd64798.mp3",
     "sentence": "私はえびのてんぷらが好きです。",
-    "sentenceEnglish": "I like shrimp tempura."
+    "sentenceEnglish": "I like shrimp tempura.",
+    "jmdictId": "1440590"
   },
   {
     "id": "anki-1892",
@@ -20453,7 +20543,8 @@
     "wordAudio": "041f6430c9bfb0ddd5fe9f58e56c39aa.mp3",
     "sentenceAudio": "28231ee7b80db9433bf40865f746e3ed.mp3",
     "sentence": "風呂がぬるかった。",
-    "sentenceEnglish": "The bath was lukewarm."
+    "sentenceEnglish": "The bath was lukewarm.",
+    "jmdictId": "1183300"
   },
   {
     "id": "anki-1907",
@@ -20560,7 +20651,8 @@
     "wordAudio": "fb7d8f53071aba58d738f70f67336b90-275a5941afe848361438faed97b02c6bfa5ac676.mp3",
     "sentenceAudio": "7c7eafdf18b11fa0d626ec1fe82a3cab-95396ce1794597aae117db64b90f87f16d083317.mp3",
     "sentence": "スキーでひざを怪我しました。",
-    "sentenceEnglish": "I injured my knee skiing."
+    "sentenceEnglish": "I injured my knee skiing.",
+    "jmdictId": "1487320"
   },
   {
     "id": "anki-1917",
@@ -20580,7 +20672,8 @@
     "wordAudio": "90277c3a36728b886b330a02ca77f124-fbb88d2e1388a072f59d603ccf0ebe6bc667080b.mp3",
     "sentenceAudio": "2381c5f250453e62574bb8494db3dd6b-c33d87e6f6b67c985af0419ca88148f493a3b960.mp3",
     "sentence": "ぜひ、うちに来てください。",
-    "sentenceEnglish": "By all means come to my house."
+    "sentenceEnglish": "By all means come to my house.",
+    "jmdictId": "1374530"
   },
   {
     "id": "anki-1919",
@@ -20664,7 +20757,8 @@
     "wordAudio": "274ae1208a69000c6f558c2d6d06c601.mp3",
     "sentenceAudio": "316d5dc271790baface7b81215b70f02.mp3",
     "sentence": "靴のひもが切れた。",
-    "sentenceEnglish": "The shoe lace is broken."
+    "sentenceEnglish": "The shoe lace is broken.",
+    "jmdictId": "1487970"
   },
   {
     "id": "anki-1927",
@@ -20875,7 +20969,8 @@
     "wordAudio": "2c7c76186c129b4ac89c365edc1f2b66.mp3",
     "sentenceAudio": "28ad10757cc193732ff060ece1e1adc2.mp3",
     "sentence": "ウェーターが水を運んできました。",
-    "sentenceEnglish": "The waiter brought some water."
+    "sentenceEnglish": "The waiter brought some water.",
+    "jmdictId": "1025670"
   },
   {
     "id": "anki-1947",
@@ -21037,7 +21132,8 @@
     "wordAudio": "70d1c70ee8c1f1c07da268bc10f37b10-65cc78585db95f28adbf7465822ec21d08487771.mp3",
     "sentenceAudio": "9a137c95b111047a24c2253292092146-dd103b57b8fb6e409c8713b46fd4b5ecba1a4233.mp3",
     "sentence": "おじょうさんはおいくつですか。",
-    "sentenceEnglish": "How old is your daughter?"
+    "sentenceEnglish": "How old is your daughter?",
+    "jmdictId": "1002170"
   },
   {
     "id": "anki-1962",

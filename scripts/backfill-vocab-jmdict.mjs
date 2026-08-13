@@ -22,6 +22,7 @@
 
 import { createClient } from '@supabase/supabase-js'
 import { readFileSync, writeFileSync } from 'fs'
+import { resolveJmdictMatches, matchKey } from '../src/lib/dictionaryLookup.js'
 
 const SUPABASE_URL = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.SUPABASE_SECRET_KEY
@@ -32,7 +33,6 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
 }
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
-const SELECT = 'id, primary_form, kanji_forms, kana_forms, common'
 
 const TARGETS = [
   { path: 'src/data/words/nsm_n3_vocab.json', formField: 'kanji', kanaField: 'kana' },
@@ -43,104 +43,26 @@ const TARGETS = [
   { path: 'src/modules/vocab-srs/decks/keigo.json', formField: 'front', kanaField: null },
 ]
 
-function pickBest(rows) {
-  if (!rows.length) return null
-  return rows.slice().sort((a, b) => (b.common === true) - (a.common === true) || a.primary_form.length - b.primary_form.length)[0]
-}
-
-// Matches a single word to a dictionary row. Requires the reading to line up
-// whenever we have one to check against, to avoid linking to the wrong homograph.
-function matchWord(word, formField, kanaField, byPrimaryForm, byKanaForm) {
-  const form = word[formField]
-  // When there's no separate reading field, the form itself is already kana
-  // (e.g. Core 2000's `front: "する"` has no `kana` — see CLAUDE.md's "use kana
-  // if no kanji form" convention).
-  const kana = kanaField ? (word[kanaField] ?? form) : null
-  if (!form) return null
-
-  const primaryCandidates = byPrimaryForm.get(form) ?? []
-  if (primaryCandidates.length) {
-    if (!kana) return pickBest(primaryCandidates)
-    const readingMatched = primaryCandidates.filter(r => r.kana_forms.includes(kana))
-    return readingMatched.length ? pickBest(readingMatched) : null
-  }
-
-  if (kana) {
-    let kanaCandidates = byKanaForm.get(kana) ?? []
-    if (form !== kana) {
-      // We have a specific kanji form to match against.
-      kanaCandidates = kanaCandidates.filter(r => r.kanji_forms.includes(form) || r.kanji_forms.length === 0)
-    } else if (kanaCandidates.length > 1) {
-      // Pure-kana source word (no kanji in our data) with multiple kanji-bearing
-      // homophone candidates (e.g. する → 為る/刷る/掏る/剃る/擦る) — only trust an
-      // unambiguous match: a single candidate, or the one with no kanji form itself.
-      const kanaOnly = kanaCandidates.filter(r => r.kanji_forms.length === 0)
-      kanaCandidates = kanaOnly.length === 1 ? kanaOnly : []
-    }
-    if (kanaCandidates.length) return pickBest(kanaCandidates)
-  }
-
-  return null
-}
-
-async function fetchByPrimaryForm(forms) {
-  const map = new Map()
-  const unique = [...new Set(forms)]
-  const BATCH = 200
-  for (let i = 0; i < unique.length; i += BATCH) {
-    const chunk = unique.slice(i, i + BATCH)
-    const { data, error } = await supabase.from('dictionary').select(SELECT).in('primary_form', chunk)
-    if (error) throw error
-    for (const row of data ?? []) {
-      if (!map.has(row.primary_form)) map.set(row.primary_form, [])
-      map.get(row.primary_form).push(row)
-    }
-  }
-  return map
-}
-
-async function fetchByKanaForm(kanas) {
-  const map = new Map()
-  const unique = [...new Set(kanas)]
-  const BATCH = 50 // .overlaps() queries are heavier — keep batches small
-  for (let i = 0; i < unique.length; i += BATCH) {
-    const chunk = unique.slice(i, i + BATCH)
-    const { data, error } = await supabase.from('dictionary').select(SELECT).overlaps('kana_forms', chunk)
-    if (error) throw error
-    for (const row of data ?? []) {
-      for (const k of row.kana_forms) {
-        if (!chunk.includes(k)) continue
-        if (!map.has(k)) map.set(k, [])
-        map.get(k).push(row)
-      }
-    }
-  }
-  return map
-}
-
 async function processTarget(target, report) {
   console.log(`\nProcessing ${target.path}`)
   const entries = JSON.parse(readFileSync(target.path, 'utf8'))
 
-  const forms = entries.map(e => e[target.formField]).filter(Boolean)
-  const byPrimaryForm = await fetchByPrimaryForm(forms)
-
-  const needsKanaFallback = entries.filter(e => {
-    const form = e[target.formField]
-    if (!form) return false
-    const candidates = byPrimaryForm.get(form) ?? []
-    if (!candidates.length) return true
-    const kana = target.kanaField ? e[target.kanaField] : null
-    if (!kana) return false
-    return !candidates.some(r => r.kana_forms.includes(kana))
-  })
-  const kanas = target.kanaField ? needsKanaFallback.map(e => e[target.kanaField]).filter(Boolean) : []
-  const byKanaForm = kanas.length ? await fetchByKanaForm(kanas) : new Map()
+  // When there's no separate reading field, the form itself is already kana
+  // (e.g. Core 2000's `front: "する"` has no `kana` — see CLAUDE.md's "use kana
+  // if no kanji form" convention). keigo.json has no reading concept at all
+  // (kanaField: null), so its matches skip reading verification entirely.
+  const words = entries.map(e => ({
+    form: e[target.formField],
+    kana: target.kanaField ? (e[target.kanaField] ?? e[target.formField]) : null,
+  }))
+  const matches = await resolveJmdictMatches(supabase, words)
 
   let matched = 0
   let changed = false
-  for (const entry of entries) {
-    const row = matchWord(entry, target.formField, target.kanaField, byPrimaryForm, byKanaForm)
+  for (let i = 0; i < entries.length; i++) {
+    const entry = entries[i]
+    const { form, kana } = words[i]
+    const row = matches.get(matchKey(form, kana))
     if (row) {
       if (entry.jmdictId !== row.id) { entry.jmdictId = row.id; changed = true }
       matched++
