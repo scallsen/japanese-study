@@ -109,6 +109,22 @@ async function deleteAudio(speakerId, filename) {
   if (error) console.warn(`  Failed to delete ${path}: ${error.message}`)
 }
 
+// Vocab Drill word entries aren't required to carry their own `kana` once
+// they're linked to the dictionary (see CLAUDE.md's word data format) — fall
+// back to the dictionary's own reading so those entries still get audio.
+async function fetchReadingsByJmdictId(ids) {
+  const map = new Map()
+  const unique = [...new Set(ids)]
+  const BATCH = 200
+  for (let i = 0; i < unique.length; i += BATCH) {
+    const chunk = unique.slice(i, i + BATCH)
+    const { data, error } = await supabase.from('dictionary').select('id, kana_forms').in('id', chunk)
+    if (error) throw error
+    for (const row of data ?? []) map.set(row.id, row.kana_forms?.[0] ?? null)
+  }
+  return map
+}
+
 async function setStatus(status) {
   const { error } = await supabase
     .from('audio_generation_status')
@@ -139,9 +155,14 @@ async function generate() {
     const entries = JSON.parse(readFileSync(target.path, 'utf8'))
     let changed = false
 
+    const needsFallback = entries.filter(e => !e[target.textField] && e.jmdictId)
+    const readingByJmdictId = needsFallback.length
+      ? await fetchReadingsByJmdictId(needsFallback.map(e => e.jmdictId))
+      : new Map()
+
     for (const entry of entries) {
       allEntryIds.push(entry.id)
-      const text = entry[target.textField]
+      const text = entry[target.textField] ?? (entry.jmdictId ? readingByJmdictId.get(entry.jmdictId) : null)
       if (!text) continue
 
       entry.voicevoxVoices = entry.voicevoxVoices ?? []
