@@ -53,7 +53,7 @@ export default function TrackedAnimeSection() {
   if (entries.length === 0) return null
 
   return (
-    <section style={{ maxWidth: 900, margin: '0 auto 20px' }}>
+    <section style={{ maxWidth: 640, margin: '0 auto 20px' }}>
       <div style={{ ...SUBHEADING_STYLE, color: TEXT_MUTED, fontFamily: FONT, marginBottom: 10 }}>
         Currently studying
       </div>

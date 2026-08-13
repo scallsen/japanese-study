@@ -7,6 +7,7 @@ import MediaSearch from './MediaSearch.jsx'
 import EpisodeList from './EpisodeList.jsx'
 import EpisodeVocabBrowser from './EpisodeVocabBrowser.jsx'
 import EpisodeDrill from './EpisodeDrill.jsx'
+import TrackedAnimeSection from './TrackedAnimeSection.jsx'
 import { FONT, TRACKING, TEXT_MUTED, FS_BASE } from '../../data/theme.js'
 
 // Self-contained module: anime lookup -> episode list -> episode vocab browser
@@ -93,7 +94,12 @@ export default function AnimeVocabModule({ initialMediaId }) {
               Loading...
             </div>
           )}
-          {!resolving && !media && <MediaSearch onSelected={handleMediaSelected} />}
+          {!resolving && !media && (
+            <>
+              <TrackedAnimeSection />
+              <MediaSearch onSelected={handleMediaSelected} />
+            </>
+          )}
           {media && !episode && <EpisodeList media={media} episodes={episodes} onSelectEpisode={setEpisode} />}
           {media && episode && !drillWords && (
             <EpisodeVocabBrowser media={media} episode={episode} onStartDrill={setDrillWords} />
