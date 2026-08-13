@@ -4,9 +4,13 @@ function isKanji(ch) {
   return KANJI_RE.test(ch)
 }
 
-// Returns { prefix, kanjiPart, furigana, okurigana } or null if no kanji found.
+// Returns { prefix, kanjiPart, furigana, okurigana } or null if no kanji found
+// (including when either string is missing — e.g. a dictionary-resolved
+// reading that hasn't loaded yet).
 // prefix: leading hiragana/katakana before the kanji block (e.g. "お" in "お金").
 export function buildFurigana(kanjiStr, kanaStr) {
+  if (!kanjiStr || !kanaStr) return null
+
   let prefixLen = 0
   while (prefixLen < kanjiStr.length && !isKanji(kanjiStr[prefixLen])) prefixLen++
 

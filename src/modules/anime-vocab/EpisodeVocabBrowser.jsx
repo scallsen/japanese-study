@@ -106,7 +106,7 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill }) {
   const cardIndex = useMemo(() => buildJmdictIdCardIndex(migrateProgress(srsData)), [srsData])
 
   const jmdictIds = useMemo(() => occurrences.map(o => o.jmdict_id).filter(Boolean), [occurrences])
-  const dictEntries = useDictionaryEntries(jmdictIds, true)
+  const { entries: dictEntries } = useDictionaryEntries(jmdictIds, true)
 
   useEffect(() => {
     let cancelled = false

@@ -506,7 +506,7 @@ class GlanceErrorBoundary extends Component {
 
 function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSource }) {
   const jmdictIds = useMemo(() => words.map(w => w.jmdictId).filter(Boolean), [words])
-  const dictEntries = useDictionaryEntries(jmdictIds, true)
+  const { entries: dictEntries } = useDictionaryEntries(jmdictIds, true)
   const tanakaSentences = useSentencesForWords(jmdictIds, true)
   const [expandedId, setExpandedId] = useState(null)
   const [expandedKanji, setExpandedKanji] = useState([])
