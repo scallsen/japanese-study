@@ -87,11 +87,11 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill }) {
   const [syncing, setSyncing] = useState(false)
   const [error, setError] = useState(null)
 
-  const [excludeGrammar, setExcludeGrammar] = useState(true)
-  const [excludeNames, setExcludeNames] = useState(true)
-  const [excludeGeneric, setExcludeGeneric] = useState(true)
+  const [includeGrammar, setIncludeGrammar] = useState(false)
+  const [includeNames, setIncludeNames] = useState(false)
+  const [includeGeneric, setIncludeGeneric] = useState(false)
   const [minJlptLevel, setMinJlptLevel] = useState('any')
-  const [excludeKnown, setExcludeKnown] = useState(false)
+  const [includeKnown, setIncludeKnown] = useState(true)
   const [lookupQuery, setLookupQuery] = useState('')
   const [selected, setSelected] = useState(new Set())
   // True once the user has made an explicit selection choice (individual
@@ -147,16 +147,24 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill }) {
     }
   }), [occurrences, dictEntries, cardIndex])
 
+  const candidateRows = useMemo(() => rows.filter(r => r.jmdict_id), [rows])
+  const grammarCount = useMemo(() => candidateRows.filter(r => r.is_grammar).length, [candidateRows])
+  const namesCount = useMemo(() => candidateRows.filter(r => r.is_name).length, [candidateRows])
+  const genericCount = useMemo(() =>
+    candidateRows.filter(r => r.global_frequency_rank != null && r.global_frequency_rank <= GENERIC_RANK_THRESHOLD).length,
+    [candidateRows]
+  )
+  const knownCount = useMemo(() => candidateRows.filter(r => r.status === 'young' || r.status === 'mature').length, [candidateRows])
+
   const eligible = useMemo(() =>
-    rows
-      .filter(r => r.jmdict_id)
-      .filter(r => !excludeGrammar || !r.is_grammar)
-      .filter(r => !excludeNames || !r.is_name)
-      .filter(r => !excludeGeneric || r.global_frequency_rank == null || r.global_frequency_rank > GENERIC_RANK_THRESHOLD)
+    candidateRows
+      .filter(r => includeGrammar || !r.is_grammar)
+      .filter(r => includeNames || !r.is_name)
+      .filter(r => includeGeneric || r.global_frequency_rank == null || r.global_frequency_rank > GENERIC_RANK_THRESHOLD)
       .filter(r => minJlptLevel === 'any' || r.jlptLevel == null || JLPT_LEVEL_ORDER[r.jlptLevel] >= JLPT_LEVEL_ORDER[minJlptLevel])
-      .filter(r => !excludeKnown || (r.status !== 'young' && r.status !== 'mature'))
+      .filter(r => includeKnown || (r.status !== 'young' && r.status !== 'mature'))
       .sort((a, b) => (a.frequency_rank ?? 0) - (b.frequency_rank ?? 0)),
-    [rows, excludeGrammar, excludeNames, excludeGeneric, minJlptLevel, excludeKnown]
+    [candidateRows, includeGrammar, includeNames, includeGeneric, minJlptLevel, includeKnown]
   )
 
   // Auto-select the top DEFAULT_WORD_LIMIT eligible words whenever filters
@@ -249,22 +257,6 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill }) {
         </div>
       </div>
 
-      <input
-        type="text"
-        value={lookupQuery}
-        onChange={e => setLookupQuery(e.target.value)}
-        placeholder="Look up a word from this episode..."
-        style={{
-          width: '100%', padding: '10px 14px', fontSize: FS_BASE, fontFamily: FONT, letterSpacing: 'normal',
-          background: '#2A2A2A', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: TEXT, outline: 'none',
-        }}
-      />
-      {lookupQuery.trim() && displayedRows.length === 0 && (
-        <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-          No match in this episode — try <a href="#/dictionary" style={{ color: ACCENT }}>the full dictionary search</a>.
-        </div>
-      )}
-
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14, background: '#2A2A2A', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: '14px 16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
           <span style={{ fontSize: FS_LIST_TITLE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>Minimum JLPT level</span>
@@ -275,68 +267,70 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill }) {
             Filter words
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
-            {checkboxRow('Exclude grammar words', excludeGrammar, () => setExcludeGrammar(v => !v))}
-            {checkboxRow('Exclude names', excludeNames, () => setExcludeNames(v => !v))}
-            {checkboxRow('Exclude very common words', excludeGeneric, () => setExcludeGeneric(v => !v))}
-            {checkboxRow('Exclude already-known', excludeKnown, () => setExcludeKnown(v => !v))}
+            {checkboxRow(`Grammar words (${grammarCount})`, includeGrammar, () => setIncludeGrammar(v => !v))}
+            {checkboxRow(`Names (${namesCount})`, includeNames, () => setIncludeNames(v => !v))}
+            {checkboxRow(`Very common words (${genericCount})`, includeGeneric, () => setIncludeGeneric(v => !v))}
+            {checkboxRow(`Known (${knownCount})`, includeKnown, () => setIncludeKnown(v => !v))}
           </div>
         </div>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <button
-          onClick={handleStartDrill}
-          disabled={selected.size === 0}
-          style={{
-            padding: '10px 24px', fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING, borderRadius: 8,
-            cursor: selected.size > 0 ? 'pointer' : 'not-allowed',
-            background: selected.size > 0 ? ACCENT : 'rgba(255,255,255,0.05)',
-            color: selected.size > 0 ? '#fff' : 'rgba(255,255,255,0.3)',
-            border: 'none',
-          }}
-        >
-          Start Drill ({selected.size})
-        </button>
-      </div>
-
       <div style={{ background: '#2A2A2A', borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-          <SelectAllCheckbox checked={allEligibleSelected} indeterminate={!allEligibleSelected && someEligibleSelected} onChange={toggleSelectAll} />
-          <CaretButton open={bulkOpen} onClick={toggleBulkOpen} />
-          {!bulkOpen ? (
-            <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-              {selected.size} of {eligible.length} selected
-            </span>
-          ) : (
-            <>
-              <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>Select first</span>
-              <input
-                type="number"
-                min={1}
-                max={Math.max(eligible.length, 1)}
-                value={bulkCountInput}
-                onChange={e => setBulkCountInput(e.target.value)}
-                autoFocus
-                style={{ width: 56, padding: '4px 8px', fontFamily: FONT, background: '#1E1E1E', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 4, color: TEXT }}
-              />
-              <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>words</span>
-              <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, flexShrink: 0 }}>
-                <button
-                  onClick={handleCancelBulk}
-                  style={{ padding: '5px 14px', fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING, borderRadius: 6, cursor: 'pointer', background: 'rgba(255,255,255,0.06)', color: TEXT, border: 'none' }}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleConfirmBulk}
-                  style={{ padding: '5px 14px', fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING, borderRadius: 6, cursor: 'pointer', background: ACCENT, color: '#fff', border: 'none' }}
-                >
-                  Confirm
-                </button>
-              </div>
-            </>
-          )}
+        <div style={{ padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+          <input
+            type="text"
+            value={lookupQuery}
+            onChange={e => setLookupQuery(e.target.value)}
+            placeholder="Look up a word from this episode..."
+            style={{
+              width: '100%', fontSize: FS_BASE, fontFamily: FONT, letterSpacing: 'normal',
+              background: 'transparent', border: 'none', color: TEXT, outline: 'none',
+            }}
+          />
         </div>
+        {lookupQuery.trim() && displayedRows.length === 0 ? (
+          <div style={{ padding: '10px 14px', fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+            No match in this episode — try <a href="#/dictionary" style={{ color: ACCENT }}>the full dictionary search</a>.
+          </div>
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+            <SelectAllCheckbox checked={allEligibleSelected} indeterminate={!allEligibleSelected && someEligibleSelected} onChange={toggleSelectAll} />
+            <CaretButton open={bulkOpen} onClick={toggleBulkOpen} />
+            {!bulkOpen ? (
+              <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+                {selected.size} of {eligible.length} selected
+              </span>
+            ) : (
+              <>
+                <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>Select first</span>
+                <input
+                  type="number"
+                  min={1}
+                  max={Math.max(eligible.length, 1)}
+                  value={bulkCountInput}
+                  onChange={e => setBulkCountInput(e.target.value)}
+                  autoFocus
+                  style={{ width: 56, padding: '4px 8px', fontFamily: FONT, background: '#1E1E1E', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 4, color: TEXT }}
+                />
+                <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>words</span>
+                <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, flexShrink: 0 }}>
+                  <button
+                    onClick={handleCancelBulk}
+                    style={{ padding: '5px 14px', fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING, borderRadius: 6, cursor: 'pointer', background: 'rgba(255,255,255,0.06)', color: TEXT, border: 'none' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleConfirmBulk}
+                    style={{ padding: '5px 14px', fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING, borderRadius: 6, cursor: 'pointer', background: ACCENT, color: '#fff', border: 'none' }}
+                  >
+                    Confirm
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
         {displayedRows.map(row => (
           <label
             key={row.id}
@@ -373,6 +367,27 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill }) {
             </span>
           </label>
         ))}
+      </div>
+
+      <div style={{
+        position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 20,
+        background: '#1E1E1E', borderTop: '1px solid rgba(255,255,255,0.08)', padding: '12px 24px',
+      }}>
+        <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex', justifyContent: 'flex-end' }}>
+          <button
+            onClick={handleStartDrill}
+            disabled={selected.size === 0}
+            style={{
+              padding: '10px 24px', fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING, borderRadius: 8,
+              cursor: selected.size > 0 ? 'pointer' : 'not-allowed',
+              background: selected.size > 0 ? ACCENT : 'rgba(255,255,255,0.05)',
+              color: selected.size > 0 ? '#fff' : 'rgba(255,255,255,0.3)',
+              border: 'none',
+            }}
+          >
+            Start Drill ({selected.size})
+          </button>
+        </div>
       </div>
     </div>
   )

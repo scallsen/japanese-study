@@ -80,12 +80,13 @@ export default function AnimeVocabModule({ initialMediaId }) {
   }
 
   const showFooter = !!episode
+  const showDrillBar = !!(media && episode && !drillWords)
   const footerSources = ['jiten', 'dictionary', 'jlpt-vocab']
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', background: '#1E1E1E' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', background: '#1E1E1E', fontFamily: FONT, letterSpacing: TRACKING }}>
       <PageHeader crumbs={crumbs} rightSlot={<AuthSlot />} />
-      <div style={{ flex: 1, overflowY: 'auto', padding: '32px 24px', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: showDrillBar ? '32px 24px 84px' : '32px 24px', display: 'flex', flexDirection: 'column' }}>
         <div style={{ flex: 1 }}>
           {resolving && (
             <div style={{ maxWidth: 640, margin: '0 auto', fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
