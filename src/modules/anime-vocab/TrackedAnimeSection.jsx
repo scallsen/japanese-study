@@ -28,7 +28,7 @@ function RemoveButton({ onClick }) {
   )
 }
 
-function TrackedAnimeRow({ mediaId, title, mediaType, onOpen, onRemove }) {
+function TrackedAnimeRow({ title, mediaType, onOpen, onRemove }) {
   const [hovered, setHovered] = useState(false)
   return (
     <div
@@ -79,7 +79,6 @@ export default function TrackedAnimeSection() {
         {entries.map(([mediaId, entry]) => (
           <TrackedAnimeRow
             key={mediaId}
-            mediaId={mediaId}
             title={entry.title}
             mediaType={entry.mediaType}
             onOpen={() => { window.location.hash = `/anime-vocab/${mediaId}` }}
