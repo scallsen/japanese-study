@@ -47,9 +47,12 @@ export default function AnimeVocabModule({ initialMediaId }) {
       const { data: episodeRows } = await supabase
         .from('media_episode').select('*').eq('media_id', initialMediaId).order('episode_number', { ascending: true })
       if (cancelled) return
+      const { data: ref } = await supabase
+        .from('media_provider_ref').select('external_id').eq('media_id', initialMediaId).eq('provider', 'jiten').maybeSingle()
+      if (cancelled) return
       setMedia({
         id: mediaRow.id, title: mediaRow.title, mediaType: mediaRow.media_type,
-        coverUrl: mediaRow.cover_url, difficulty: mediaRow.difficulty,
+        coverUrl: mediaRow.cover_url, difficulty: mediaRow.difficulty, externalId: ref?.external_id ?? null,
       })
       setEpisodes(episodeRows ?? [])
       setResolving(false)

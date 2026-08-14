@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { searchMedia, selectMedia, browseMedia } from './api.js'
 import { fetchRecommendedMedia } from './recommendedMediaCache.js'
+import { difficultyLabel } from './difficultyLabels.js'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE } from '../../data/theme.js'
@@ -76,7 +77,7 @@ function DifficultyBadge({ difficulty }) {
       fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, color: ACCENT,
       background: `${ACCENT}22`, border: `1px solid ${ACCENT}55`, borderRadius: 4, padding: '1px 7px', flexShrink: 0,
     }}>
-      Difficulty {Number(difficulty).toFixed(1)}
+      {difficultyLabel(difficulty)} ({Number(difficulty).toFixed(1)})
     </span>
   )
 }
@@ -276,7 +277,7 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
     setError(null)
     try {
       const { mediaId, title, mediaType, coverUrl, difficulty, episodes } = await selectMedia(result.externalId)
-      onSelected({ id: mediaId, title, mediaType, coverUrl, difficulty }, episodes)
+      onSelected({ id: mediaId, title, mediaType, coverUrl, difficulty, externalId: result.externalId }, episodes)
     } catch (err) {
       setError(err.message)
       setSelectingId(null)
@@ -315,7 +316,7 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
           <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>Difficulty</span>
           <DifficultyChip label="All" active={isAllDifficulties} onClick={selectAllDifficulties} />
           {ALL_DIFFICULTY_LEVELS.map(level => (
-            <DifficultyChip key={level} label={String(level)} active={difficulties.has(level)} onClick={() => toggleDifficulty(level)} />
+            <DifficultyChip key={level} label={difficultyLabel(level)} active={difficulties.has(level)} onClick={() => toggleDifficulty(level)} />
           ))}
           {query.trim() && !isAllDifficulties && (
             <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>

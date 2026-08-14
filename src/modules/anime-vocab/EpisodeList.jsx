@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useTrackedAnime } from './useTrackedAnime.js'
+import { difficultyLabel } from './difficultyLabels.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE } from '../../data/theme.js'
 
 const ACCENT = '#D46EA3'
@@ -40,7 +41,7 @@ function EpisodeRow({ episode, onClick }) {
           fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, color: ACCENT,
           background: `${ACCENT}22`, border: `1px solid ${ACCENT}55`, borderRadius: 4, padding: '1px 7px', flexShrink: 0,
         }}>
-          Difficulty {Number(difficulty).toFixed(1)}
+          {difficultyLabel(difficulty)} ({Number(difficulty).toFixed(1)})
         </span>
       )}
     </div>
@@ -106,8 +107,20 @@ export default function EpisodeList({ media, episodes, onSelectEpisode }) {
                   fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, color: ACCENT,
                   background: `${ACCENT}22`, border: `1px solid ${ACCENT}55`, borderRadius: 4, padding: '1px 7px', flexShrink: 0,
                 }}>
-                  Difficulty {Number(showDifficulty).toFixed(1)}
+                  {difficultyLabel(showDifficulty)} ({Number(showDifficulty).toFixed(1)})
                 </span>
+              )}
+              {media.externalId && (
+                <a
+                  href={`https://jiten.moe/decks/media/${media.externalId}/detail`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, fontSize: FS_BASE, textDecoration: 'none' }}
+                  onMouseEnter={e => { e.currentTarget.style.textDecoration = 'underline' }}
+                  onMouseLeave={e => { e.currentTarget.style.textDecoration = 'none' }}
+                >
+                  Open in Jiten ↗
+                </a>
               )}
             </div>
           </div>

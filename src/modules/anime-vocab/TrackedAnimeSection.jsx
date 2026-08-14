@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase.js'
+import { difficultyLabel } from './difficultyLabels.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, SUBHEADING_STYLE, FS_BADGE, FS_LIST_TITLE } from '../../data/theme.js'
 
 const ACCENT = '#D46EA3'
@@ -63,7 +64,7 @@ function TrackedAnimeRow({ title, mediaType, coverUrl, difficulty, onOpen, onRem
           fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, color: ACCENT,
           background: `${ACCENT}22`, border: `1px solid ${ACCENT}55`, borderRadius: 4, padding: '1px 7px', flexShrink: 0,
         }}>
-          Difficulty {Number(difficulty).toFixed(1)}
+          {difficultyLabel(difficulty)} ({Number(difficulty).toFixed(1)})
         </span>
       )}
       <RemoveButton onClick={onRemove} />
