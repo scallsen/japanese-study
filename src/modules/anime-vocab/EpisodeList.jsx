@@ -169,6 +169,19 @@ export default function EpisodeList({ media, episodes, onSelectEpisode }) {
                 {media.originalTitle}
               </div>
             )}
+            <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+              {episodes.length} episode{episodes.length === 1 ? '' : 's'}
+            </div>
+            {showDifficulty != null && (
+              <div>
+                <span style={{
+                  fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, color: ACCENT,
+                  background: `${ACCENT}22`, border: `1px solid ${ACCENT}55`, borderRadius: 4, padding: '1px 7px',
+                }}>
+                  {difficultyLabel(showDifficulty)} ({Number(showDifficulty).toFixed(1)})
+                </span>
+              </div>
+            )}
           </div>
           <TrackToggle tracked={tracked} signedIn={!!user} onClick={handleToggleTrack} />
         </div>
@@ -179,18 +192,6 @@ export default function EpisodeList({ media, episodes, onSelectEpisode }) {
           {media.description}
         </div>
       )}
-
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-        {episodes.length} episode{episodes.length === 1 ? '' : 's'}
-        {showDifficulty != null && (
-          <span style={{
-            fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, color: ACCENT,
-            background: `${ACCENT}22`, border: `1px solid ${ACCENT}55`, borderRadius: 4, padding: '1px 7px', flexShrink: 0,
-          }}>
-            {difficultyLabel(showDifficulty)} ({Number(showDifficulty).toFixed(1)})
-          </span>
-        )}
-      </div>
 
       {(tags.length > 0 || relationships.length > 0 || showLinksRow) && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
