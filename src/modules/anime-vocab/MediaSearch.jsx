@@ -325,27 +325,33 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
       />
 
       <div style={{ display: 'flex', flexDirection: 'column', background: '#2A2A2A', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, overflow: 'hidden' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap', padding: '12px 16px' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '12px 16px' }}>
           <FilterSectionLabel>Content</FilterSectionLabel>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+          {/* flex: 1 + minWidth: 0 lets this wrap its OWN chips onto multiple
+              lines within the remaining width, instead of the outer row (which
+              sees its unwrapped max-content width) dropping the whole thing —
+              label included — onto a line of its own. */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, flex: 1, minWidth: 0 }}>
             {ALL_MEDIA_TYPES.map(t => (
               <Chip key={t} label={MEDIA_TYPE_LABELS[t]} active={mediaTypes.has(t)} onClick={() => toggleType(t)} />
             ))}
           </div>
         </div>
         <div style={{ height: 1, background: 'rgba(255,255,255,0.08)' }} />
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap', padding: '12px 16px' }}>
-          <FilterSectionLabel>Difficulty</FilterSectionLabel>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-            <Chip label="All" active={isAllDifficulties} onClick={selectAllDifficulties} />
-            {ALL_DIFFICULTY_LEVELS.map(level => (
-              <Chip key={level} label={difficultyLabel(level)} active={difficulties.has(level)} onClick={() => toggleDifficulty(level)} />
-            ))}
+        <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+            <FilterSectionLabel>Difficulty</FilterSectionLabel>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, flex: 1, minWidth: 0 }}>
+              <Chip label="All" active={isAllDifficulties} onClick={selectAllDifficulties} />
+              {ALL_DIFFICULTY_LEVELS.map(level => (
+                <Chip key={level} label={difficultyLabel(level)} active={difficulties.has(level)} onClick={() => toggleDifficulty(level)} />
+              ))}
+            </div>
           </div>
           {query.trim() && !isAllDifficulties && (
-            <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+            <div style={{ paddingLeft: 104, fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
               Difficulty filtering is not available for text search — clear the search box to browse by difficulty.
-            </span>
+            </div>
           )}
         </div>
       </div>
