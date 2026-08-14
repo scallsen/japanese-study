@@ -15,6 +15,7 @@ const MEDIA_TYPE_LABELS = {
   6: 'Video game', 7: 'Visual novel', 8: 'Web novel', 9: 'Manga', 10: 'Audio',
 }
 const ALL_MEDIA_TYPES = Object.keys(MEDIA_TYPE_LABELS).map(Number)
+const DEFAULT_MEDIA_TYPES = [1] // Anime only, by default
 
 function checkboxRow(label, checked, onChange) {
   return (
@@ -156,7 +157,7 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [selectingId, setSelectingId] = useState(null)
-  const [mediaTypes, setMediaTypes] = useState(() => new Set(ALL_MEDIA_TYPES))
+  const [mediaTypes, setMediaTypes] = useState(() => new Set(DEFAULT_MEDIA_TYPES))
   const [difficultyMin, setDifficultyMin] = useState('')
   const [difficultyMax, setDifficultyMax] = useState('')
   const [viewMode, setViewMode] = useState(() => safeLocalStorageGet('anime-vocab-view-mode') ?? 'tiles')
@@ -181,7 +182,8 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
     })
   }
 
-  const filterNarrowed = mediaTypes.size < ALL_MEDIA_TYPES.length || difficultyMin !== '' || difficultyMax !== ''
+  const isDefaultMediaTypes = mediaTypes.size === DEFAULT_MEDIA_TYPES.length && DEFAULT_MEDIA_TYPES.every(t => mediaTypes.has(t))
+  const filterNarrowed = !isDefaultMediaTypes || difficultyMin !== '' || difficultyMax !== ''
   const selectedLabels = new Set([...mediaTypes].map(t => MEDIA_TYPE_LABELS[t]))
   const hasDifficultyRange = difficultyMin !== '' || difficultyMax !== ''
   const isIdle = !query.trim() && !filterNarrowed
