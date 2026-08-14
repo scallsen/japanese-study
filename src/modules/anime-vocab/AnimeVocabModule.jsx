@@ -103,9 +103,12 @@ export default function AnimeVocabModule({ initialMediaId }) {
     crumbs.push({ label: 'Drill' })
   }
 
-  const showFooter = !!episode
+  // The detail view (EpisodeList) only ever shows Jiten-sourced text
+  // (description/tags/difficulty) — dictionary/JLPT-vocab credit only
+  // applies once episode/drill screens start rendering per-word definitions.
+  const showFooter = !!media
   const showDrillBar = !!(media && episode && !drillWords)
-  const footerSources = ['jiten', 'dictionary', 'jlpt-vocab']
+  const footerSources = episode ? ['jiten', 'dictionary', 'jlpt-vocab'] : ['jiten']
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', background: '#1E1E1E', fontFamily: FONT, letterSpacing: TRACKING }}>

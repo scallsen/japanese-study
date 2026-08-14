@@ -61,12 +61,12 @@ function TrackToggle({ tracked, signedIn, onClick }) {
           color: TEXT_MUTED, border: `1px solid ${TEXT_MUTED}55`, opacity: 0.6,
         }}
       >
-        Sign in to track this series
+        Follow
       </button>
     )
   }
 
-  const label = tracked ? (hovered ? 'Remove tracking' : '✓ Tracking') : '+ Track this series'
+  const label = tracked ? 'Unfollow' : 'Follow'
   const color = tracked ? (hovered ? REMOVE_COLOR : TRACKED_COLOR) : ACCENT
 
   return (
@@ -155,11 +155,11 @@ export default function EpisodeList({ media, episodes, onSelectEpisode }) {
 
   return (
     <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, minWidth: 0 }}>
-          {media.coverUrl && (
-            <img src={media.coverUrl} alt="" style={{ width: 96, height: 135, objectFit: 'cover', borderRadius: 6, flexShrink: 0 }} />
-          )}
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+        {media.coverUrl && (
+          <img src={media.coverUrl} alt="" style={{ width: 96, height: 135, objectFit: 'cover', borderRadius: 6, flexShrink: 0 }} />
+        )}
+        <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, minWidth: 0 }}>
           <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
             <div style={{ fontSize: FS_LIST_TITLE + 8, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, lineHeight: 1.25 }}>
               {media.title}
@@ -169,25 +169,27 @@ export default function EpisodeList({ media, episodes, onSelectEpisode }) {
                 {media.originalTitle}
               </div>
             )}
-            {media.description && (
-              <div style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: 'normal', lineHeight: 1.55, whiteSpace: 'pre-wrap' }}>
-                {media.description}
-              </div>
-            )}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-              {episodes.length} episode{episodes.length === 1 ? '' : 's'}
-              {showDifficulty != null && (
-                <span style={{
-                  fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, color: ACCENT,
-                  background: `${ACCENT}22`, border: `1px solid ${ACCENT}55`, borderRadius: 4, padding: '1px 7px', flexShrink: 0,
-                }}>
-                  {difficultyLabel(showDifficulty)} ({Number(showDifficulty).toFixed(1)})
-                </span>
-              )}
-            </div>
           </div>
+          <TrackToggle tracked={tracked} signedIn={!!user} onClick={handleToggleTrack} />
         </div>
-        <TrackToggle tracked={tracked} signedIn={!!user} onClick={handleToggleTrack} />
+      </div>
+
+      {media.description && (
+        <div style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: 'normal', lineHeight: 1.55, whiteSpace: 'pre-wrap' }}>
+          {media.description}
+        </div>
+      )}
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+        {episodes.length} episode{episodes.length === 1 ? '' : 's'}
+        {showDifficulty != null && (
+          <span style={{
+            fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, color: ACCENT,
+            background: `${ACCENT}22`, border: `1px solid ${ACCENT}55`, borderRadius: 4, padding: '1px 7px', flexShrink: 0,
+          }}>
+            {difficultyLabel(showDifficulty)} ({Number(showDifficulty).toFixed(1)})
+          </span>
+        )}
       </div>
 
       {(tags.length > 0 || relationships.length > 0 || showLinksRow) && (
