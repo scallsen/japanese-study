@@ -26,6 +26,22 @@ function jsonResponse(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } })
 }
 
+// Show-detail-only fields — see jitenClient.js's identical deckMeta for why
+// genres are excluded and why this is only pulled at select/backfill time.
+function deckMeta(deck: any) {
+  return {
+    originalTitle: deck?.originalTitle,
+    description: deck?.description,
+    tags: (deck?.tags ?? []).map((t: any) => ({ name: t.name, percentage: t.percentage })),
+    links: (deck?.links ?? []).map((l: any) => ({ linkType: l.linkType, url: l.url })),
+    relationships: (deck?.relationships ?? []).map((r: any) => ({
+      externalId: String(r.targetDeckId),
+      title: r.targetDeck?.englishTitle || r.targetDeck?.romajiTitle || r.targetDeck?.originalTitle,
+      mediaType: MEDIA_TYPE_LABELS[r.targetDeck?.mediaType] ?? 'Other',
+    })),
+  }
+}
+
 async function fetchEpisodeList(externalId: string) {
   const headers: Record<string, string> = { Accept: 'application/json' }
   if (JITEN_API_KEY) headers['X-Api-Key'] = JITEN_API_KEY
@@ -75,11 +91,19 @@ Deno.serve(async (req) => {
       uniqueCoverage: mainDeck.uniqueCoverage,
       externalRating: mainDeck.externalRating,
     }
+    const meta = deckMeta(mainDeck)
+    const metaColumns = {
+      original_title: meta.originalTitle,
+      description: meta.description,
+      tags: meta.tags,
+      links: meta.links,
+      relationships: meta.relationships,
+    }
 
     let mediaId = existingRef?.media_id
     if (!mediaId) {
       const { data: mediaRow, error: mediaErr } = await supabase
-        .from('media').insert({ title, media_type: mediaType, cover_url: coverUrl, difficulty }).select('id').single()
+        .from('media').insert({ title, media_type: mediaType, cover_url: coverUrl, difficulty, ...metaColumns }).select('id').single()
       if (mediaErr) throw mediaErr
       mediaId = mediaRow.id
       const { error: refErr } = await supabase
@@ -90,7 +114,7 @@ Deno.serve(async (req) => {
       // difficulty are community-voted and can drift, and mainDeck is
       // already fetched unconditionally above either way, so this only
       // costs one cheap update, not an extra Jiten request.
-      const { error: updateErr } = await supabase.from('media').update({ cover_url: coverUrl, difficulty }).eq('id', mediaId)
+      const { error: updateErr } = await supabase.from('media').update({ cover_url: coverUrl, difficulty, ...metaColumns }).eq('id', mediaId)
       if (updateErr) throw updateErr
     }
 
@@ -119,7 +143,7 @@ Deno.serve(async (req) => {
       .from('media_episode').select('*').eq('media_id', mediaId).order('episode_number')
     if (fetchErr) throw fetchErr
 
-    return jsonResponse({ mediaId, title, mediaType, coverUrl, difficulty, episodes: savedEpisodes })
+    return jsonResponse({ mediaId, title, mediaType, coverUrl, difficulty, ...meta, episodes: savedEpisodes })
   } catch (err) {
     console.error('[anime-media-select]', err)
     return jsonResponse({ error: err?.message || 'Linking media failed' }, 500)

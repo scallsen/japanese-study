@@ -281,8 +281,13 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
     setSelectingId(result.externalId)
     setError(null)
     try {
-      const { mediaId, title, mediaType, coverUrl, difficulty, episodes } = await selectMedia(result.externalId)
-      onSelected({ id: mediaId, title, mediaType, coverUrl, difficulty, externalId: result.externalId }, episodes)
+      const {
+        mediaId, title, mediaType, coverUrl, difficulty, originalTitle, description, tags, links, relationships, episodes,
+      } = await selectMedia(result.externalId)
+      onSelected({
+        id: mediaId, title, mediaType, coverUrl, difficulty, externalId: result.externalId,
+        originalTitle, description, tags, links, relationships,
+      }, episodes)
     } catch (err) {
       setError(err.message)
       setSelectingId(null)

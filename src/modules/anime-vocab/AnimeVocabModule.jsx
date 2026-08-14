@@ -41,7 +41,9 @@ export default function AnimeVocabModule({ initialMediaId }) {
     setResolving(true)
     async function resolve() {
       const { data: mediaRow } = await supabase
-        .from('media').select('id, title, media_type, cover_url, difficulty').eq('id', initialMediaId).maybeSingle()
+        .from('media')
+        .select('id, title, media_type, cover_url, difficulty, original_title, description, tags, links, relationships')
+        .eq('id', initialMediaId).maybeSingle()
       if (cancelled) return
       if (!mediaRow) { setResolving(false); return }
       const { data: episodeRows } = await supabase
@@ -53,6 +55,8 @@ export default function AnimeVocabModule({ initialMediaId }) {
       setMedia({
         id: mediaRow.id, title: mediaRow.title, mediaType: mediaRow.media_type,
         coverUrl: mediaRow.cover_url, difficulty: mediaRow.difficulty, externalId: ref?.external_id ?? null,
+        originalTitle: mediaRow.original_title, description: mediaRow.description,
+        tags: mediaRow.tags, links: mediaRow.links, relationships: mediaRow.relationships,
       })
       setEpisodes(episodeRows ?? [])
       setResolving(false)

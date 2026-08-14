@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /**
- * One-off backfill: populates `media.cover_url`/`media.difficulty` for shows
- * linked before those columns existed. Going forward, anime-media-select
- * (and import-anime-vocab.mjs's linkMedia) capture and refresh these fields
+ * One-off backfill: populates `media.cover_url`/`difficulty`/`original_title`/
+ * `description`/`tags`/`links`/`relationships` for shows linked before those
+ * columns existed. Going forward, anime-media-select (and
+ * import-anime-vocab.mjs's linkMedia) capture and refresh these fields
  * automatically on every select/reopen — this script only needs to run once
- * to catch up already-tracked shows.
+ * (or again after adding a new column here) to catch up already-tracked shows.
  *
  * Run: node --env-file=.env scripts/backfill-media-difficulty.mjs
  *
@@ -31,10 +32,11 @@ const sleep = ms => new Promise(r => setTimeout(r, ms))
 
 async function main() {
   const { data: rows, error } = await supabase
-    .from('media').select('id, title').or('cover_url.is.null,difficulty.is.null')
+    .from('media').select('id, title')
+    .or('cover_url.is.null,difficulty.is.null,description.is.null,tags.is.null,links.is.null,relationships.is.null')
   if (error) throw error
 
-  console.log(`${rows.length} media row(s) missing cover_url/difficulty.`)
+  console.log(`${rows.length} media row(s) missing cover_url/difficulty/description/tags/links/relationships.`)
 
   let updated = 0
   for (const row of rows) {
@@ -47,8 +49,11 @@ async function main() {
     }
 
     try {
-      const { coverUrl, difficulty } = await fetchMediaSummary(ref.external_id, { apiKey: JITEN_API_KEY })
-      const { error: updateErr } = await supabase.from('media').update({ cover_url: coverUrl, difficulty }).eq('id', row.id)
+      const { coverUrl, difficulty, originalTitle, description, tags, links, relationships } =
+        await fetchMediaSummary(ref.external_id, { apiKey: JITEN_API_KEY })
+      const { error: updateErr } = await supabase.from('media').update({
+        cover_url: coverUrl, difficulty, original_title: originalTitle, description, tags, links, relationships,
+      }).eq('id', row.id)
       if (updateErr) throw updateErr
       console.log(`  Updated "${row.title}" — difficulty ${difficulty.difficulty} (raw ${difficulty.difficultyRaw})`)
       updated++

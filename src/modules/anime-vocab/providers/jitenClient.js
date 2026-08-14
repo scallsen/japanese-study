@@ -61,6 +61,27 @@ function deckDifficulty(deck) {
   }
 }
 
+// Show-detail-only fields (synopsis, tags, external links, related decks) —
+// only pulled at select/backfill time (one full mainDeck fetch), never on
+// every search/browse result, so those lighter-weight lists don't bloat.
+// `genres` is deliberately left out: Jiten returns it as bare numeric ids
+// with no public name-lookup endpoint (probed live — /api/genre,
+// /api/media-deck/genres, etc. all 404), unlike `tags` which already come
+// back with human-readable names attached.
+function deckMeta(deck) {
+  return {
+    originalTitle: deck?.originalTitle,
+    description: deck?.description,
+    tags: (deck?.tags ?? []).map(t => ({ name: t.name, percentage: t.percentage })),
+    links: (deck?.links ?? []).map(l => ({ linkType: l.linkType, url: l.url })),
+    relationships: (deck?.relationships ?? []).map(r => ({
+      externalId: String(r.targetDeckId),
+      title: r.targetDeck?.englishTitle || r.targetDeck?.romajiTitle || r.targetDeck?.originalTitle,
+      mediaType: MEDIA_TYPE_LABELS[r.targetDeck?.mediaType] ?? 'Other',
+    })),
+  }
+}
+
 // Episodes are modeled as child "decks" of the show's main deck. Paginates
 // through all subDecks (25/page) and returns them in provider order, which
 // matches sequential episode numbering (subDecks[0] = deckOrder 1, etc.).
@@ -81,6 +102,7 @@ export async function fetchEpisodeList(externalId, { apiKey } = {}) {
     mediaType: MEDIA_TYPE_LABELS[mainDeck?.mediaType] ?? 'Other',
     coverUrl: mainDeck?.coverName,
     difficulty: deckDifficulty(mainDeck),
+    ...deckMeta(mainDeck),
     episodes: episodes.map((ep, i) => ({
       externalId: String(ep.deckId),
       episodeNumber: i + 1,
@@ -105,6 +127,7 @@ export async function fetchMediaSummary(externalId, { apiKey } = {}) {
     mediaType: MEDIA_TYPE_LABELS[mainDeck?.mediaType] ?? 'Other',
     coverUrl: mainDeck?.coverName,
     difficulty: deckDifficulty(mainDeck),
+    ...deckMeta(mainDeck),
   }
 }
 

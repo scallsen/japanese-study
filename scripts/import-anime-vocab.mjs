@@ -30,20 +30,37 @@
  * Before running for the first time, create the tables in the Supabase SQL editor:
  * (if `media` already exists from before cover_url/difficulty were added, run
  * `ALTER TABLE media ADD COLUMN cover_url text; ALTER TABLE media ADD COLUMN
- * difficulty jsonb;` instead — no new grants needed, they're table-level.)
+ * difficulty jsonb;` instead — no new grants needed, they're table-level. If
+ * `media` predates original_title/description/tags/links/relationships, run
+ * `ALTER TABLE media ADD COLUMN original_title text; ALTER TABLE media ADD
+ * COLUMN description text; ALTER TABLE media ADD COLUMN tags jsonb; ALTER
+ * TABLE media ADD COLUMN links jsonb; ALTER TABLE media ADD COLUMN
+ * relationships jsonb;` — then run scripts/backfill-media-difficulty.mjs to
+ * populate them for shows linked before this migration.)
  *
  *   CREATE TABLE IF NOT EXISTS media (
- *     id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
- *     title        text NOT NULL,
- *     media_type   text NOT NULL,
- *     internal_key text UNIQUE,
- *     cover_url    text,      -- Jiten's mainDeck.coverName, captured/refreshed
- *                              -- on link and on every re-select of an
- *                              -- already-linked show (see anime-media-select)
- *     difficulty   jsonb,     -- show-level version of media_episode.difficulty:
- *                              -- { difficulty, difficultyRaw, difficultyAlgorithmic,
- *                              --   coverage, uniqueCoverage, externalRating }
- *     created_at   timestamptz NOT NULL DEFAULT now()
+ *     id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+ *     title         text NOT NULL,
+ *     media_type    text NOT NULL,
+ *     internal_key  text UNIQUE,
+ *     cover_url     text,      -- Jiten's mainDeck.coverName, captured/refreshed
+ *                               -- on link and on every re-select of an
+ *                               -- already-linked show (see anime-media-select)
+ *     difficulty    jsonb,     -- show-level version of media_episode.difficulty:
+ *                               -- { difficulty, difficultyRaw, difficultyAlgorithmic,
+ *                               --   coverage, uniqueCoverage, externalRating }
+ *     original_title text,     -- Jiten's mainDeck.originalTitle (the Japanese
+ *                               -- name) — shown alongside `title` when the two differ
+ *     description   text,      -- synopsis (Jiten mainDeck.description)
+ *     tags          jsonb,     -- [{name, percentage}] — Jiten's own community tags.
+ *                               -- mainDeck.genres (bare numeric ids) is deliberately
+ *                               -- not captured — no public id->name lookup exists
+ *                               -- (probed live: every /api/genre* candidate 404s)
+ *     links         jsonb,     -- [{linkType, url}] — external site links
+ *                               -- (confirmed: linkType 4 = AniList, 5 = MyAnimeList)
+ *     relationships jsonb,     -- [{externalId, title, mediaType}] — related decks,
+ *                               -- e.g. the manga <-> anime version of the same show
+ *     created_at    timestamptz NOT NULL DEFAULT now()
  *   );
  *
  *   CREATE TABLE IF NOT EXISTS media_provider_ref (
@@ -157,8 +174,10 @@ const EPISODE_SYNC_DELAY_MS = 6500 // ~10 req/min heavy-endpoint budget
 const sleep = ms => new Promise(r => setTimeout(r, ms))
 
 async function linkMedia(jitenDeckId) {
-  const { title, mediaType, coverUrl, difficulty, episodes } = await fetchEpisodeList(jitenDeckId, { apiKey: JITEN_API_KEY })
+  const { title, mediaType, coverUrl, difficulty, originalTitle, description, tags, links, relationships, episodes } =
+    await fetchEpisodeList(jitenDeckId, { apiKey: JITEN_API_KEY })
   if (!title) throw new Error(`No media found for Jiten deck ${jitenDeckId}`)
+  const metaColumns = { original_title: originalTitle, description, tags, links, relationships }
 
   const { data: existingRef } = await supabase
     .from('media_provider_ref').select('media_id').eq('provider', PROVIDER).eq('external_id', String(jitenDeckId)).maybeSingle()
@@ -166,7 +185,7 @@ async function linkMedia(jitenDeckId) {
   let mediaId = existingRef?.media_id
   if (!mediaId) {
     const { data: mediaRow, error: mediaErr } = await supabase
-      .from('media').insert({ title, media_type: mediaType, cover_url: coverUrl, difficulty }).select('id').single()
+      .from('media').insert({ title, media_type: mediaType, cover_url: coverUrl, difficulty, ...metaColumns }).select('id').single()
     if (mediaErr) throw mediaErr
     mediaId = mediaRow.id
     const { error: refErr } = await supabase
@@ -175,7 +194,7 @@ async function linkMedia(jitenDeckId) {
     console.log(`Created media "${title}" (${mediaId})`)
   } else {
     // Refresh on every reopen — see anime-media-select's identical comment.
-    const { error: updateErr } = await supabase.from('media').update({ cover_url: coverUrl, difficulty }).eq('id', mediaId)
+    const { error: updateErr } = await supabase.from('media').update({ cover_url: coverUrl, difficulty, ...metaColumns }).eq('id', mediaId)
     if (updateErr) throw updateErr
     console.log(`Media already linked: "${title}" (${mediaId})`)
   }
