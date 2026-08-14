@@ -244,9 +244,14 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
       return () => clearTimeout(debounceRef.current)
     }
 
-    // Jiten's difficultyMin/Max is a continuous range, but chip selection can
-    // be a discontiguous set (e.g. levels 1 and 4 with 2-3 excluded) — query
-    // the superset range server-side, then enforce the exact set client-side.
+    // Jiten's difficultyMin/Max filters the continuous difficultyRaw score,
+    // not the rounded bucket a chip represents — bucket N covers raw scores
+    // [N, N+1), so querying min=max=N (e.g. "Beginner" -> 0-0) matches
+    // essentially nothing (confirmed live: 0 results) where 0-0.99 correctly
+    // returns real matches. Widen the upper bound by 1 bucket-width so the
+    // superset query actually captures the bucket's real range; chip
+    // selection can also be a discontiguous set (e.g. levels 1 and 4 with
+    // 2-3 excluded), so the exact set is still enforced client-side after.
     const matchesDifficulty = x => isAllDifficulties
       || (x.difficulty?.difficulty != null && difficulties.has(x.difficulty.difficulty))
 
@@ -255,7 +260,7 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
       browseMedia({
         mediaTypes: [...mediaTypes],
         difficultyMin: isAllDifficulties ? null : Math.min(...difficulties),
-        difficultyMax: isAllDifficulties ? null : Math.max(...difficulties),
+        difficultyMax: isAllDifficulties ? null : Math.max(...difficulties) + 1,
         sortBy: 'difficulty', sortDirection: 'asc', limit: 24,
       })
         .then(({ results: r }) => { setResults(r.filter(x => selectedLabels.has(x.mediaType) && matchesDifficulty(x))); setError(null) })
