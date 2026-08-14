@@ -218,47 +218,60 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onBack,
   )
 }
 
-// Settings panel — deliberately reuses Vocab Drill's own localStorage keys
-// (vocab-*) rather than a separate anime-vocab-* namespace, so display/audio
-// preferences carry over between the two drills automatically, in both
-// directions. Rendered as a fixed slide-over (not VocabPage's desktop
-// sidebar+chevron layout) since this module doesn't own its page's overall
-// layout — it's embedded content inside AnimeVocabModule's scroll area — so a
-// self-contained overlay is the simplest way to make it reachable from here,
-// on both desktop and mobile with one implementation.
+const DRAWER_CHEVRON_W = 28
+const DRAWER_PANEL_W = 'min(320px, 92vw)'
+
+// Settings drawer — mirrors Vocab Drill's own desktop sidebar: a persistent
+// edge tab that slides a panel in/out (no backdrop, no separate open/close
+// button — the tab itself is both). Pinned to the viewport edge with
+// `position: fixed` rather than docked in-flow like VocabPage's, since this
+// module doesn't own its page's overall layout — it's embedded content
+// inside AnimeVocabModule's scroll area — so a fixed tab is what keeps it
+// reachable regardless of scroll position, on both desktop and mobile with
+// one implementation.
+//
+// Reuses Vocab Drill's own localStorage keys (vocab-*) rather than a
+// separate anime-vocab-* namespace, so display/audio preferences carry over
+// between the two drills automatically, in both directions.
 //
 // No "Text to speech" (Voicevox) source picker like VocabPage's — Anime Vocab
 // words are drawn from episode vocabulary, never Voicevox-pre-generated, so
 // that control would always silently do nothing. Just the browser-voice
 // picker (vocab-tts-voice) is exposed here, under the same "Enable audio"
 // checkbox VocabPage uses.
-function OptionsPanel({
-  onClose, jaVoices,
+function SettingsDrawer({
+  open, onToggle, jaVoices,
   showStreak, setShowStreak, showFurigana, setShowFurigana, showVisualEffects, setShowVisualEffects,
   pixelFont, setPixelFont, showTranslation, setShowTranslation, showSentence, setShowSentence,
   sentenceSource, setSentenceSource, showKanjiMeaning, setShowKanjiMeaning,
   audioEnabled, setAudioEnabled, sfxEnabled, setSfxEnabled, ttsVoice, setTtsVoice,
 }) {
+  const [hovered, setHovered] = useState(false)
   return (
     <>
-      <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 40 }} />
+      <div
+        onClick={onToggle}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        style={{
+          position: 'fixed', top: '50%', right: open ? DRAWER_PANEL_W : 0, transform: 'translateY(-50%)',
+          width: DRAWER_CHEVRON_W, height: 56, zIndex: 46,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: hovered ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.06)',
+          border: '1px solid rgba(255,255,255,0.15)',
+          borderTopLeftRadius: 8, borderBottomLeftRadius: 8,
+          cursor: 'pointer', transition: 'right 220ms ease, background 130ms',
+        }}
+      >
+        <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: FS_BASE, fontFamily: 'inherit' }}>{open ? '›' : '‹'}</span>
+      </div>
       <div style={{
-        position: 'fixed', top: 0, right: 0, bottom: 0, width: 'min(360px, 100vw)', zIndex: 50,
-        background: '#2E2E2E', borderLeft: '1px solid rgba(255,255,255,0.08)',
+        position: 'fixed', top: 0, right: 0, bottom: 0, width: DRAWER_PANEL_W, zIndex: 45,
+        background: '#2E2E2E', borderLeft: '1px solid rgba(255,255,255,0.1)',
+        transform: open ? 'translateX(0)' : 'translateX(100%)',
+        transition: 'transform 220ms ease',
         display: 'flex', flexDirection: 'column', overflow: 'hidden',
       }}>
-        <div style={{
-          padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0,
-        }}>
-          <div style={{ color: '#fff', fontSize: FS_BASE, fontWeight: 700 }}>Options</div>
-          <button
-            onClick={onClose}
-            style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: FS_BASE, fontFamily: 'inherit', cursor: 'pointer', padding: 0 }}
-          >
-            Close
-          </button>
-        </div>
         <div className="sidebar-scroll" style={{ flex: 1, overflowY: 'auto', padding: '16px 20px' }}>
           <DrawerSectionHeader title="Settings" />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -391,20 +404,6 @@ export default function EpisodeDrill({ words, onBack }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-      <div style={{ width: 'min(380px, calc(100vw - 32px))', display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
-        <button
-          type="button"
-          onClick={() => setShowOptions(true)}
-          style={{
-            padding: '5px 14px', fontSize: FS_BASE, fontFamily: 'inherit', letterSpacing: TRACKING,
-            borderRadius: 6, cursor: 'pointer', background: 'rgba(255,255,255,0.06)', color: TEXT_MUTED,
-            border: '1px solid rgba(255,255,255,0.15)',
-          }}
-        >
-          Options
-        </button>
-      </div>
-
       {drill.done ? (
         <DoneScreen
           pool={pool}
@@ -435,23 +434,22 @@ export default function EpisodeDrill({ words, onBack }) {
         />
       )}
 
-      {showOptions && (
-        <OptionsPanel
-          onClose={() => setShowOptions(false)}
-          jaVoices={jaVoices}
-          showStreak={showStreak} setShowStreak={setShowStreak}
-          showFurigana={showFurigana} setShowFurigana={setShowFurigana}
-          showVisualEffects={showVisualEffects} setShowVisualEffects={setShowVisualEffects}
-          pixelFont={pixelFont} setPixelFont={setPixelFont}
-          showTranslation={showTranslation} setShowTranslation={setShowTranslation}
-          showSentence={showSentence} setShowSentence={setShowSentence}
-          sentenceSource={sentenceSource} setSentenceSource={setSentenceSource}
-          showKanjiMeaning={showKanjiMeaning} setShowKanjiMeaning={setShowKanjiMeaning}
-          audioEnabled={audioEnabled} setAudioEnabled={setAudioEnabled}
-          sfxEnabled={sfxEnabled} setSfxEnabled={setSfxEnabled}
-          ttsVoice={ttsVoice} setTtsVoice={setTtsVoice}
-        />
-      )}
+      <SettingsDrawer
+        open={showOptions}
+        onToggle={() => setShowOptions(v => !v)}
+        jaVoices={jaVoices}
+        showStreak={showStreak} setShowStreak={setShowStreak}
+        showFurigana={showFurigana} setShowFurigana={setShowFurigana}
+        showVisualEffects={showVisualEffects} setShowVisualEffects={setShowVisualEffects}
+        pixelFont={pixelFont} setPixelFont={setPixelFont}
+        showTranslation={showTranslation} setShowTranslation={setShowTranslation}
+        showSentence={showSentence} setShowSentence={setShowSentence}
+        sentenceSource={sentenceSource} setSentenceSource={setSentenceSource}
+        showKanjiMeaning={showKanjiMeaning} setShowKanjiMeaning={setShowKanjiMeaning}
+        audioEnabled={audioEnabled} setAudioEnabled={setAudioEnabled}
+        sfxEnabled={sfxEnabled} setSfxEnabled={setSfxEnabled}
+        ttsVoice={ttsVoice} setTtsVoice={setTtsVoice}
+      />
     </div>
   )
 }
