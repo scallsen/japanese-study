@@ -1,20 +1,14 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import * as SimpleQueue from '../../engines/simpleQueue.js'
 import { useDrill } from '../../hooks/useDrill.js'
-import { useTTS, useJaVoices } from '../../hooks/useTTS.js'
+import { useTTS } from '../../hooks/useTTS.js'
 import { useSFX } from '../../hooks/useSFX.js'
 import VocabCard from '../../components/VocabCard.jsx'
 import DrillHUD from '../../components/DrillHUD.jsx'
 import SpeedModeControls from '../../components/SpeedModeControls.jsx'
-import DrawerSectionHeader from '../../components/DrawerSectionHeader.jsx'
-import DrawerCheckbox from '../../components/DrawerCheckbox.jsx'
-import DrawerSelect from '../../components/DrawerSelect.jsx'
-import SettingsSidebar from '../../components/SettingsSidebar.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useProgress } from '../../hooks/useProgress.js'
 import { createCard } from '../vocab-srs/srs.js'
-import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
-import { SENTENCE_SOURCE_OPTIONS, DEFAULT_SENTENCE_SOURCE } from '../../data/sentenceSource.js'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION,
   FS_DISPLAY_HEADING, FS_STAT_VALUE, FS_LIST_TITLE,
@@ -22,20 +16,6 @@ import {
 
 const ACCENT = '#D46EA3'
 const ANIME_WORDS_DECK_ID = 'anime-words'
-
-// Duplicated per-file (matches this module's own established convention —
-// see e.g. GrammarMapModule.jsx, VocabSrsModule.jsx, StoryModule.jsx — each
-// self-contained module keeps its own small copy rather than a shared hook).
-function useIsMobile(breakpoint = 768) {
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= breakpoint)
-  useEffect(() => {
-    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`)
-    const handler = e => setIsMobile(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [breakpoint])
-  return isMobile
-}
 
 // One-off drill session — same tech/flow as Vocab Drill's speed mode
 // (FlipCard/VocabCard/DrillHUD/SpeedModeControls/useDrill+SimpleQueue), just
@@ -234,56 +214,18 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onBack,
 }
 
 // words: [{ id, kanji, kana, english, sentence, jmdictId }]
-export default function EpisodeDrill({ words, onBack }) {
+// Display/audio settings are owned by AnimeVocabModule (not here) so it can
+// host the settings sidebar at its own top level — see the comment on
+// AnimeVocabModule's settings state for why.
+export default function EpisodeDrill({
+  words, onBack,
+  ttsVoice, audioEnabled, sfxEnabled, disableKeyboard,
+  showStreak, showFurigana, showTranslation, showSentence, sentenceSource, showKanjiMeaning, pixelFont, showVisualEffects,
+}) {
   const pool = useMemo(() => words.map(w => ({ id: w.id, word: w })), [words])
   const drill = useDrill(pool, { engine: SimpleQueue })
   const { user, signIn } = useAuth()
   const { data: srsData, save: saveSrs } = useProgress('vocab-srs')
-  const jaVoices = useJaVoices()
-  const isMobile = useIsMobile()
-
-  const [showOptions, setShowOptions] = useState(false)
-  const [showStreak,       setShowStreak]       = useState(() => {
-    const s = safeLocalStorageGet('vocab-show-streak'); return s === null ? true : s === 'true'
-  })
-  const [showFurigana,     setShowFurigana]     = useState(() => {
-    const s = safeLocalStorageGet('vocab-show-furigana'); return s === null ? true : s === 'true'
-  })
-  const [showVisualEffects, setShowVisualEffects] = useState(() => {
-    const s = safeLocalStorageGet('vocab-visual-effects'); return s === null ? true : s === 'true'
-  })
-  const [pixelFont,        setPixelFont]        = useState(() => {
-    const s = safeLocalStorageGet('vocab-pixel-font'); return s === null ? true : s === 'true'
-  })
-  const [showTranslation,  setShowTranslation]  = useState(() => {
-    const s = safeLocalStorageGet('vocab-show-translation'); return s === null ? true : s === 'true'
-  })
-  const [showSentence,     setShowSentence]     = useState(() => {
-    const s = safeLocalStorageGet('vocab-show-sentence'); return s === null ? false : s === 'true'
-  })
-  const [sentenceSource, setSentenceSource] = useState(() => safeLocalStorageGet('vocab-sentence-source') ?? DEFAULT_SENTENCE_SOURCE)
-  const [showKanjiMeaning, setShowKanjiMeaning] = useState(() => {
-    const s = safeLocalStorageGet('vocab-show-kanji-meaning'); return s === null ? false : s === 'true'
-  })
-  const [audioEnabled,     setAudioEnabled]     = useState(() => {
-    const s = safeLocalStorageGet('vocab-audio-enabled'); return s === null ? true : s === 'true'
-  })
-  const [sfxEnabled,       setSfxEnabled]       = useState(() => {
-    const s = safeLocalStorageGet('vocab-sfx-enabled'); return s === null ? true : s === 'true'
-  })
-  const [ttsVoice,         setTtsVoice]         = useState(() => safeLocalStorageGet('vocab-tts-voice') ?? '')
-
-  useEffect(() => { safeLocalStorageSet('vocab-show-streak',       showStreak) },        [showStreak])
-  useEffect(() => { safeLocalStorageSet('vocab-show-furigana',     showFurigana) },       [showFurigana])
-  useEffect(() => { safeLocalStorageSet('vocab-visual-effects',    showVisualEffects) },  [showVisualEffects])
-  useEffect(() => { safeLocalStorageSet('vocab-pixel-font',        pixelFont) },          [pixelFont])
-  useEffect(() => { safeLocalStorageSet('vocab-show-translation',  showTranslation) },    [showTranslation])
-  useEffect(() => { safeLocalStorageSet('vocab-show-sentence',     showSentence) },       [showSentence])
-  useEffect(() => { safeLocalStorageSet('vocab-sentence-source',   sentenceSource) },     [sentenceSource])
-  useEffect(() => { safeLocalStorageSet('vocab-show-kanji-meaning', showKanjiMeaning) },  [showKanjiMeaning])
-  useEffect(() => { safeLocalStorageSet('vocab-audio-enabled',     audioEnabled) },       [audioEnabled])
-  useEffect(() => { safeLocalStorageSet('vocab-sfx-enabled',       sfxEnabled) },         [sfxEnabled])
-  useEffect(() => { safeLocalStorageSet('vocab-tts-voice',         ttsVoice) },           [ttsVoice])
 
   function handleAddToSrs(addedWords) {
     const current = srsData ?? { decks: {}, cards: {}, lastSession: null, totalReviews: 0, newCardDay: { date: '', count: 0 } }
@@ -309,112 +251,37 @@ export default function EpisodeDrill({ words, onBack }) {
     return addedCount
   }
 
-  // Reuses Vocab Drill's own localStorage keys (vocab-*) rather than a
-  // separate anime-vocab-* namespace, so display/audio preferences carry
-  // over between the two drills automatically, in both directions.
-  //
-  // No "Text to speech" (Voicevox) source picker like VocabPage's — Anime
-  // Vocab words are drawn from episode vocabulary, never Voicevox-pre-
-  // generated, so that control would always silently do nothing. Just the
-  // browser-voice picker (vocab-tts-voice) is exposed here, under the same
-  // "Enable audio" checkbox VocabPage uses.
-  function renderSettingsPanel(paddingH) {
-    return (
-      <div style={{ padding: `16px ${paddingH}px 16px` }}>
-        <DrawerSectionHeader title="Settings" />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <DrawerCheckbox checked={showStreak}        onChange={() => setShowStreak(v => !v)}        label="Show streak" />
-          <DrawerCheckbox checked={showFurigana}      onChange={() => setShowFurigana(v => !v)}      label="Show furigana" />
-          <DrawerCheckbox checked={showVisualEffects} onChange={() => setShowVisualEffects(v => !v)} label="Show visual effects" />
-          <DrawerCheckbox checked={pixelFont}         onChange={() => setPixelFont(v => !v)}         label="Use pixel font" />
-          <DrawerCheckbox checked={showTranslation}   onChange={() => setShowTranslation(v => !v)}   label="Show translation" />
-          <DrawerCheckbox checked={showSentence}      onChange={() => setShowSentence(v => !v)}       label="Show sentence" />
-          {showSentence && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
-              <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Sentence source</span>
-              <DrawerSelect
-                value={sentenceSource}
-                onChange={setSentenceSource}
-                options={SENTENCE_SOURCE_OPTIONS}
-                label="Sentence source"
-              />
-            </div>
-          )}
-          <DrawerCheckbox checked={showKanjiMeaning}  onChange={() => setShowKanjiMeaning(v => !v)}   label="Show kanji meaning" />
-          <DrawerCheckbox
-            checked={audioEnabled}
-            onChange={() => setAudioEnabled(v => !v)}
-            label="Enable audio"
-          />
-          {audioEnabled && (
-            <>
-              {jaVoices.length > 0 && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
-                  <DrawerSelect
-                    value={ttsVoice}
-                    onChange={setTtsVoice}
-                    options={[{ value: '', label: 'Default' }, ...jaVoices.map(v => ({ value: v.name, label: v.name }))]}
-                    label="Voice"
-                    subtext="Availability based on your device or browser"
-                  />
-                </div>
-              )}
-              <DrawerCheckbox
-                checked={sfxEnabled}
-                onChange={() => setSfxEnabled(v => !v)}
-                label="Sound effects"
-                subtext="Silent mode may mute sound effects"
-                indent={1}
-              />
-            </>
-          )}
-        </div>
-      </div>
-    )
-  }
-
   return (
-    <div style={{ position: 'relative', display: 'flex', width: '100%' }}>
-      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        {drill.done ? (
-          <DoneScreen
-            pool={pool}
-            mistakeCounts={drill.mistakeCounts}
-            correct={drill.correct}
-            troubled={drill.troubled}
-            onRestart={drill.restart}
-            onBack={onBack}
-            onAddToSrs={handleAddToSrs}
-            requiresSignIn={!user}
-            onSignIn={signIn}
-          />
-        ) : (
-          <ActiveEpisodeDrill
-            drill={drill}
-            ttsVoice={ttsVoice}
-            audioEnabled={audioEnabled}
-            sfxEnabled={audioEnabled && sfxEnabled}
-            disableKeyboard={showOptions}
-            showStreak={showStreak}
-            showFurigana={showFurigana}
-            showTranslation={showTranslation}
-            showSentence={showSentence}
-            sentenceSource={sentenceSource}
-            showKanjiMeaning={showKanjiMeaning}
-            pixelFont={pixelFont}
-            showVisualEffects={showVisualEffects}
-          />
-        )}
-      </div>
-
-      <SettingsSidebar
-        open={showOptions}
-        onToggle={() => setShowOptions(v => !v)}
-        onClose={() => setShowOptions(false)}
-        isMobile={isMobile}
-      >
-        {paddingH => renderSettingsPanel(paddingH)}
-      </SettingsSidebar>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+      {drill.done ? (
+        <DoneScreen
+          pool={pool}
+          mistakeCounts={drill.mistakeCounts}
+          correct={drill.correct}
+          troubled={drill.troubled}
+          onRestart={drill.restart}
+          onBack={onBack}
+          onAddToSrs={handleAddToSrs}
+          requiresSignIn={!user}
+          onSignIn={signIn}
+        />
+      ) : (
+        <ActiveEpisodeDrill
+          drill={drill}
+          ttsVoice={ttsVoice}
+          audioEnabled={audioEnabled}
+          sfxEnabled={audioEnabled && sfxEnabled}
+          disableKeyboard={disableKeyboard}
+          showStreak={showStreak}
+          showFurigana={showFurigana}
+          showTranslation={showTranslation}
+          showSentence={showSentence}
+          sentenceSource={sentenceSource}
+          showKanjiMeaning={showKanjiMeaning}
+          pixelFont={pixelFont}
+          showVisualEffects={showVisualEffects}
+        />
+      )}
     </div>
   )
 }
