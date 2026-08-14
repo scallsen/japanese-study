@@ -9,6 +9,7 @@ import SpeedModeControls from '../components/SpeedModeControls.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import SpeakerIcon from '../components/SpeakerIcon.jsx'
 import HeaderMenu from '../components/HeaderMenu.jsx'
+import SettingsSidebar from '../components/SettingsSidebar.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_BADGE, FS_ENTRY_WORD, FS_STAT_VALUE, FS_DISPLAY_HEADING } from '../data/theme.js'
 import { WORD_SOURCES } from '../data/wordLists.js'
 import { SENTENCE_SOURCE_OPTIONS, DEFAULT_SENTENCE_SOURCE } from '../data/sentenceSource.js'
@@ -31,9 +32,6 @@ import { AUDIO_SOURCE_OPTIONS, DEFAULT_AUDIO_SOURCE, getVoicevoxAudioUrl, getVoi
 import AttributionFooter from '../components/AttributionFooter.jsx'
 import { renderAttributionSegments } from '../utils/attributionSegments.jsx'
 
-const PANEL_W = 420
-const CHEVRON_W = 28
-const PANEL_CONTENT_W = PANEL_W - CHEVRON_W
 const ACCENT = '#3ABDA4'
 const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
 
@@ -987,7 +985,6 @@ export default function VocabPage() {
   const [headerHeight,     setHeaderHeight]     = useState(72)
   const headerRef   = useRef(null)
   const [optionsHovered, setOptionsHovered] = useState(false)
-  const [chevronHovered, setChevronHovered] = useState(false)
   const isMobile = useIsMobile()
   const isShort  = useIsShort()
   const jaVoices = useJaVoices()
@@ -1111,15 +1108,6 @@ export default function VocabPage() {
       saveSrs({ ...current, decks, cards: { ...current.cards, ...newCards } })
     }
     return addedCount
-  }
-
-  function handleSidebarFocus(e) {
-    const container = e.currentTarget
-    const target = e.target
-    const cRect = container.getBoundingClientRect()
-    const tRect = target.getBoundingClientRect()
-    if (tRect.top < cRect.top + 8) container.scrollTop += tRect.top - cRect.top - 8
-    else if (tRect.bottom > cRect.bottom - 8) container.scrollTop += tRect.bottom - cRect.bottom + 8
   }
 
   function handleSelectSource(sourceId) {
@@ -1355,75 +1343,14 @@ export default function VocabPage() {
         </div>
       </div>
 
-      {/* ── Desktop sidebar ── */}
-      {!isMobile && (
-        <>
-          <div
-            onClick={() => setShowOptions(v => !v)}
-            onMouseEnter={() => setChevronHovered(true)}
-            onMouseLeave={() => setChevronHovered(false)}
-            style={{
-              flexShrink: 0,
-              width: CHEVRON_W,
-              borderLeft: '1px solid rgba(255,255,255,0.1)',
-              borderRight: showOptions ? '1px solid rgba(255,255,255,0.1)' : 'none',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer',
-              background: chevronHovered ? 'rgba(255,255,255,0.05)' : 'transparent',
-              transition: 'background 130ms',
-            }}>
-            <button style={{
-              width: CHEVRON_W, height: 44,
-              background: 'none', border: 'none',
-              color: 'rgba(255,255,255,0.5)', fontSize: FS_BASE,
-              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontFamily: 'inherit', padding: 0,
-            }}>
-              {showOptions ? '›' : '‹'}
-            </button>
-          </div>
-          <div style={{
-            flexShrink: 0,
-            width: showOptions ? PANEL_CONTENT_W : 0,
-            overflow: 'hidden',
-            transition: 'width 220ms ease',
-          }}>
-            <div className="sidebar-scroll" style={{ width: PANEL_CONTENT_W, height: '100%', overflowY: 'auto' }} onFocus={handleSidebarFocus}>
-              {renderPanelContent(16)}
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* ── Mobile overlay ── */}
-      {isMobile && showOptions && (
-        <>
-          <div onClick={() => setShowOptions(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 20 }} />
-          <div style={{
-            position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-            zIndex: 30, background: '#2E2E2E',
-            display: 'flex', flexDirection: 'column', overflow: 'hidden',
-          }}>
-            <div style={{
-              padding: '16px 20px',
-              borderBottom: '1px solid rgba(255,255,255,0.08)',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              flexShrink: 0,
-            }}>
-              <div style={{ color: '#fff', fontSize: FS_BASE, fontWeight: 700 }}>Options</div>
-              <button
-                onClick={() => setShowOptions(false)}
-                style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: FS_BASE, fontFamily: 'inherit', cursor: 'pointer', padding: 0 }}
-              >
-                Back
-              </button>
-            </div>
-            <div className="sidebar-scroll" style={{ flex: 1, overflowY: 'auto', paddingBottom: 'env(safe-area-inset-bottom)' }} onFocus={handleSidebarFocus}>
-              {renderPanelContent(20)}
-            </div>
-          </div>
-        </>
-      )}
+      <SettingsSidebar
+        open={showOptions}
+        onToggle={() => setShowOptions(v => !v)}
+        onClose={() => setShowOptions(false)}
+        isMobile={isMobile}
+      >
+        {paddingH => renderPanelContent(paddingH)}
+      </SettingsSidebar>
 
     </div>
   )
