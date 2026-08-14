@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
 import PageHeader from '../../components/PageHeader.jsx'
 import AuthSlot from '../../components/AuthSlot.jsx'
+import TopProgressBar from '../../components/TopProgressBar.jsx'
+import CenteredLoadingMessage from '../../components/CenteredLoadingMessage.jsx'
 import ImmersionReader from './ImmersionReader.jsx'
 import { supabase } from '../../lib/supabase.js'
 import { useProgress } from '../../hooks/useProgress.js'
+import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_LIST_TITLE } from '../../data/theme.js'
 
 const ACCENT = '#E05A4E'
@@ -93,6 +96,7 @@ export default function ImmersionModule() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const { data: progressData, save: saveProgress } = useProgress('immersion')
+  const showLoadingMessage = useDelayedLoading(loading)
 
   const readSet = new Set(Object.keys(progressData?.read ?? {}))
 
@@ -148,13 +152,13 @@ export default function ImmersionModule() {
           { label: 'Immersion' },
         ]}
         rightSlot={<AuthSlot />}
-      />
+      >
+        <TopProgressBar loading={showLoadingMessage} color={ACCENT} />
+      </PageHeader>
       <div style={{ flex: 1, overflowY: 'auto', padding: '32px 24px' }}>
         <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 12 }}>
           {loading ? (
-            <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-              Loading...
-            </div>
+            showLoadingMessage && <CenteredLoadingMessage text="Loading articles" />
           ) : error ? (
             <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
               {error}
