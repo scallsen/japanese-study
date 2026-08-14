@@ -34,3 +34,10 @@ export function syncEpisodeVocab(mediaEpisodeId) {
 export function browseMedia(params) {
   return invoke('anime-media-browse', params)
 }
+
+// externalIds: string[] — fetches live cover/difficulty for a fixed set of
+// Jiten deck ids (used by the curated recommendations list).
+// → { results: [{ externalId, title, originalTitle, mediaType, coverUrl, difficulty, mediaId }] }
+export function lookupMedia(externalIds) {
+  return invoke('anime-media-lookup', { externalIds })
+}
