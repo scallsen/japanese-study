@@ -58,8 +58,30 @@ function deckDifficulty(d: any) {
   }
 }
 
+// Content-maturity filtering — see identical constants/logic in
+// jitenClient.js's browseMedia for the full reasoning (hard-block is an
+// operator-safety floor, not a user preference; soft tiers use genre id 5
+// "Ecchi" + the "Nudity" tag, both live-verified). Duplicated here per the
+// same Node/Deno-boundary convention as MEDIA_TYPE_LABELS above.
+const HARD_BLOCK_TAG_IDS = new Set([173, 225, 226, 227, 228, 229, 230]) // Guro, Femdom, Incest, Netorare, Netorase, Netori, Prostitution
+const ECCHI_GENRE_ID = 5
+const NUDITY_TAG_ID = 231
+
+function isHardBlocked(deck: any) {
+  return (deck?.tags ?? []).some((t: any) => HARD_BLOCK_TAG_IDS.has(t.tagId))
+}
+
+function passesMaturity(deck: any, maturity: string) {
+  if (isHardBlocked(deck)) return false
+  if (maturity === 'suggestive') return true
+  const hasEcchi = (deck?.genres ?? []).includes(ECCHI_GENRE_ID)
+  const hasNudity = (deck?.tags ?? []).some((t: any) => t.tagId === NUDITY_TAG_ID)
+  if (maturity === 'slightly-suggestive') return !(hasEcchi && hasNudity)
+  return !hasEcchi && !hasNudity // 'safe' (default)
+}
+
 async function browseMedia(params: any) {
-  const { mediaTypes, difficultyMin, difficultyMax, sortBy = 'difficulty', sortDirection = 'asc', limit = 24 } = params ?? {}
+  const { mediaTypes, difficultyMin, difficultyMax, maturity = 'safe', sortBy = 'difficulty', sortDirection = 'asc', limit = 24 } = params ?? {}
 
   const qs = new URLSearchParams()
   qs.set('sortBy', sortBy)
@@ -80,6 +102,7 @@ async function browseMedia(params: any) {
   if (mediaTypes?.length) decks = decks.filter((d: any) => mediaTypes.includes(d.mediaType))
   if (difficultyMin != null) decks = decks.filter((d: any) => (d.difficultyRaw ?? d.difficulty ?? 0) >= difficultyMin)
   if (difficultyMax != null) decks = decks.filter((d: any) => (d.difficultyRaw ?? d.difficulty ?? 0) <= difficultyMax)
+  decks = decks.filter((d: any) => passesMaturity(d, maturity))
   decks = decks.slice().sort(compareBy(SORT_FIELD[sortBy] ?? sortBy, sortDirection)).slice(0, clampedLimit)
 
   return decks.map((d: any) => ({

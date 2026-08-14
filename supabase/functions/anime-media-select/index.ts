@@ -42,6 +42,20 @@ function deckMeta(deck: any) {
   }
 }
 
+// Operator-safety floor, not a user preference — always enforced, no
+// setting can bypass it. This is the backstop for titles found via text
+// search: search-suggestions carries no tag/genre data at all (confirmed
+// live), so anime-media-browse's maturity filtering can't apply there —
+// this check is what actually prevents one from ever being linked/tracked
+// through the tool regardless of how it was found. Same tag id set as
+// anime-media-browse's identical HARD_BLOCK_TAG_IDS — duplicated per the
+// established Node/Deno-boundary convention (see deckMeta above).
+const HARD_BLOCK_TAG_IDS = new Set([173, 225, 226, 227, 228, 229, 230]) // Guro, Femdom, Incest, Netorare, Netorase, Netori, Prostitution
+
+function isHardBlocked(deck: any) {
+  return (deck?.tags ?? []).some((t: any) => HARD_BLOCK_TAG_IDS.has(t.tagId))
+}
+
 async function fetchEpisodeList(externalId: string) {
   const headers: Record<string, string> = { Accept: 'application/json' }
   if (JITEN_API_KEY) headers['X-Api-Key'] = JITEN_API_KEY
@@ -80,6 +94,8 @@ Deno.serve(async (req) => {
 
     const { mainDeck, episodes } = await fetchEpisodeList(String(jitenDeckId))
     if (!mainDeck) return jsonResponse({ error: `No media found for Jiten deck ${jitenDeckId}` }, 404)
+    // Generic message, deliberately not explaining why — see HARD_BLOCK_TAG_IDS comment.
+    if (isHardBlocked(mainDeck) && !existingRef) return jsonResponse({ error: 'This title is not available.' }, 403)
     const title = mainDeck.englishTitle || mainDeck.romajiTitle || mainDeck.originalTitle
     const mediaType = MEDIA_TYPE_LABELS[mainDeck.mediaType] ?? 'Other'
     const coverUrl = mainDeck.coverName

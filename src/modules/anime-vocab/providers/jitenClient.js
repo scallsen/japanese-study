@@ -146,6 +146,35 @@ function compareBy(field, direction) {
   }
 }
 
+// Content-maturity filtering for browse results. Hard-blocked tags are
+// always excluded regardless of the caller's maturity level — this is the
+// operator-safety floor for a publicly-shared tool, not a user preference,
+// and is enforced here plus (separately, duplicated across the Deno
+// boundary) in anime-media-select, since text search results carry no
+// tag/genre data at all (confirmed live) and so can't be filtered the same
+// way — select is the backstop that still prevents linking one found via
+// search. Soft tiers use the two signals live testing confirmed reliable:
+// genre id 5, cross-verified against 3 real AniList-linked shows (SPY×FAMILY,
+// High School DxD, Prison School) as "Ecchi" — Jiten's genre ids otherwise
+// have no public name mapping, which is why they aren't captured/used
+// anywhere else in this app — and the already-named "Nudity" tag (231).
+const HARD_BLOCK_TAG_IDS = new Set([173, 225, 226, 227, 228, 229, 230]) // Guro, Femdom, Incest, Netorare, Netorase, Netori, Prostitution
+const ECCHI_GENRE_ID = 5
+const NUDITY_TAG_ID = 231
+
+function isHardBlocked(deck) {
+  return (deck?.tags ?? []).some(t => HARD_BLOCK_TAG_IDS.has(t.tagId))
+}
+
+function passesMaturity(deck, maturity) {
+  if (isHardBlocked(deck)) return false
+  if (maturity === 'suggestive') return true
+  const hasEcchi = (deck?.genres ?? []).includes(ECCHI_GENRE_ID)
+  const hasNudity = (deck?.tags ?? []).some(t => t.tagId === NUDITY_TAG_ID)
+  if (maturity === 'slightly-suggestive') return !(hasEcchi && hasNudity)
+  return !hasEcchi && !hasNudity // 'safe' (default) — either signal alone excludes
+}
+
 // Browse/filter the show-level catalog (GET /api/media-deck/get-media-decks)
 // — confirmed live that Jiten's own query params for this endpoint aren't
 // reliably honored (repeated mediaType keys don't filter, limit is ignored,
@@ -155,7 +184,7 @@ function compareBy(field, direction) {
 // ignored — but every result is always re-filtered/re-sorted/re-sliced here
 // in JS, so correctness never depends on Jiten having honored them.
 export async function browseMedia(params = {}, { apiKey } = {}) {
-  const { mediaTypes, difficultyMin, difficultyMax, sortBy = 'difficulty', sortDirection = 'asc', limit = 24 } = params
+  const { mediaTypes, difficultyMin, difficultyMax, maturity = 'safe', sortBy = 'difficulty', sortDirection = 'asc', limit = 24 } = params
 
   const qs = new URLSearchParams()
   qs.set('sortBy', sortBy)
@@ -170,6 +199,7 @@ export async function browseMedia(params = {}, { apiKey } = {}) {
   if (mediaTypes?.length) decks = decks.filter(d => mediaTypes.includes(d.mediaType))
   if (difficultyMin != null) decks = decks.filter(d => (d.difficultyRaw ?? d.difficulty ?? 0) >= difficultyMin)
   if (difficultyMax != null) decks = decks.filter(d => (d.difficultyRaw ?? d.difficulty ?? 0) <= difficultyMax)
+  decks = decks.filter(d => passesMaturity(d, maturity))
   decks = decks.slice().sort(compareBy(SORT_FIELD[sortBy] ?? sortBy, sortDirection)).slice(0, limit)
 
   return decks.map(d => ({

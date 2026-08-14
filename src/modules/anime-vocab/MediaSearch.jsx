@@ -19,6 +19,13 @@ const ALL_MEDIA_TYPES = Object.keys(MEDIA_TYPE_LABELS).map(Number)
 const DEFAULT_MEDIA_TYPES = [1] // Anime only, by default
 const ALL_DIFFICULTY_LEVELS = [0, 1, 2, 3, 4, 5] // matches the coarse `difficulty` bucket's real range
 
+// Soft content-maturity tiers — the hard-block (server-side, non-optional)
+// floor is enforced regardless of this setting; see jitenClient.js's
+// browseMedia for the full reasoning behind these three levels.
+const MATURITY_LEVELS = ['safe', 'slightly-suggestive', 'suggestive']
+const MATURITY_LABELS = { safe: 'Safe', 'slightly-suggestive': 'Slightly suggestive', suggestive: 'Suggestive' }
+const DEFAULT_MATURITY = 'safe'
+
 function ViewModeButton({ label, active, onClick }) {
   const [hovered, setHovered] = useState(false)
   return (
@@ -72,6 +79,17 @@ function FilterSectionLabel({ children }) {
   return (
     <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0, width: 92, marginTop: 4 }}>
       {children}
+    </span>
+  )
+}
+
+function ChevronIcon({ expanded }) {
+  return (
+    <span style={{
+      display: 'inline-block', width: 10, fontSize: FS_BADGE, color: TEXT_MUTED,
+      transform: expanded ? 'rotate(90deg)' : 'none', transition: 'transform 120ms',
+    }}>
+      ▸
     </span>
   )
 }
@@ -188,6 +206,8 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
   const [selectingId, setSelectingId] = useState(null)
   const [mediaTypes, setMediaTypes] = useState(() => new Set(DEFAULT_MEDIA_TYPES))
   const [difficulties, setDifficulties] = useState(() => new Set(ALL_DIFFICULTY_LEVELS))
+  const [maturity, setMaturity] = useState(DEFAULT_MATURITY)
+  const [maturityExpanded, setMaturityExpanded] = useState(false)
   const [viewMode, setViewMode] = useState(() => safeLocalStorageGet('anime-vocab-view-mode') ?? 'tiles')
   const debounceRef = useRef(null)
 
@@ -231,7 +251,8 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
 
   const isDefaultMediaTypes = mediaTypes.size === DEFAULT_MEDIA_TYPES.length && DEFAULT_MEDIA_TYPES.every(t => mediaTypes.has(t))
   const isAllDifficulties = difficulties.size === ALL_DIFFICULTY_LEVELS.length
-  const filterNarrowed = !isDefaultMediaTypes || !isAllDifficulties
+  const isDefaultMaturity = maturity === DEFAULT_MATURITY
+  const filterNarrowed = !isDefaultMediaTypes || !isAllDifficulties || !isDefaultMaturity
   const selectedLabels = new Set([...mediaTypes].map(t => MEDIA_TYPE_LABELS[t]))
   const isIdle = !query.trim() && !filterNarrowed
 
@@ -267,6 +288,7 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
         mediaTypes: [...mediaTypes],
         difficultyMin: isAllDifficulties ? null : Math.min(...difficulties),
         difficultyMax: isAllDifficulties ? null : Math.max(...difficulties) + 1,
+        maturity,
         sortBy: 'difficulty', sortDirection: 'asc', limit: 24,
       })
         .then(({ results: r }) => { setResults(r.filter(x => selectedLabels.has(x.mediaType) && matchesDifficulty(x))); setError(null) })
@@ -275,13 +297,16 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
       return
     }
 
+    // The curated recommended list (recommendedMediaCache.js) is a small,
+    // hand-picked set of wholesome beginner titles — safe by construction,
+    // so it's never run back through the maturity filter here.
     setLoading(true)
     fetchRecommendedMedia()
       .then(r => { setResults(r.filter(x => selectedLabels.has(x.mediaType) && matchesDifficulty(x))); setError(null) })
       .catch(err => setError(err.message))
       .finally(() => setLoading(false))
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, [...mediaTypes].join(','), [...difficulties].sort().join(',')])
+  }, [query, [...mediaTypes].join(','), [...difficulties].sort().join(','), maturity])
 
   async function handleSelect(result) {
     setSelectingId(result.externalId)
@@ -351,6 +376,31 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
           {query.trim() && !isAllDifficulties && (
             <div style={{ paddingLeft: 104, fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
               Difficulty filtering is not available for text search — clear the search box to browse by difficulty.
+            </div>
+          )}
+        </div>
+        <div style={{ height: 1, background: 'rgba(255,255,255,0.08)' }} />
+        <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <button
+            type="button"
+            onClick={() => setMaturityExpanded(v => !v)}
+            style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', background: 'transparent', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left' }}
+          >
+            <ChevronIcon expanded={maturityExpanded} />
+            <FilterSectionLabel>Maturity</FilterSectionLabel>
+          </button>
+          {maturityExpanded && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingLeft: 18 }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {MATURITY_LEVELS.map(level => (
+                  <Chip key={level} label={MATURITY_LABELS[level]} active={maturity === level} onClick={() => setMaturity(level)} />
+                ))}
+              </div>
+              {query.trim() && !isDefaultMaturity && (
+                <div style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+                  Maturity filtering is not available for text search — clear the search box to browse by maturity.
+                </div>
+              )}
             </div>
           )}
         </div>
