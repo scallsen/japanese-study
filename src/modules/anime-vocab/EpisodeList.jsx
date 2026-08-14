@@ -136,6 +136,10 @@ function RelatedPill({ title, mediaType }) {
 const MAX_TAGS_SHOWN = 8
 const MAX_RELATED_SHOWN = 6
 
+// Temporarily disabled — flip back to true to bring the related-decks
+// row back once its display is revisited.
+const SHOW_RELATED = false
+
 export default function EpisodeList({ media, episodes, onSelectEpisode }) {
   const { user } = useAuth()
   const { isTracked, track, untrack } = useTrackedAnime()
@@ -149,7 +153,7 @@ export default function EpisodeList({ media, episodes, onSelectEpisode }) {
   const showDifficulty = media.difficulty?.difficulty
   const showOriginalTitle = media.originalTitle && media.originalTitle !== media.title
   const tags = (media.tags ?? []).slice(0, MAX_TAGS_SHOWN)
-  const relationships = (media.relationships ?? []).slice(0, MAX_RELATED_SHOWN)
+  const relationships = SHOW_RELATED ? (media.relationships ?? []).slice(0, MAX_RELATED_SHOWN) : []
   const links = media.links ?? []
   const showLinksRow = !!media.externalId || links.length > 0
 
