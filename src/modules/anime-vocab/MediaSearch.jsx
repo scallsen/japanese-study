@@ -19,15 +19,6 @@ const ALL_MEDIA_TYPES = Object.keys(MEDIA_TYPE_LABELS).map(Number)
 const DEFAULT_MEDIA_TYPES = [1] // Anime only, by default
 const ALL_DIFFICULTY_LEVELS = [0, 1, 2, 3, 4, 5] // matches the coarse `difficulty` bucket's real range
 
-function checkboxRow(label, checked, onChange) {
-  return (
-    <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, cursor: 'pointer' }}>
-      <input type="checkbox" checked={checked} onChange={onChange} style={{ width: 14, height: 14, accentColor: ACCENT }} />
-      {label}
-    </label>
-  )
-}
-
 function ViewModeButton({ label, active, onClick }) {
   const [hovered, setHovered] = useState(false)
   return (
@@ -37,7 +28,7 @@ function ViewModeButton({ label, active, onClick }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        padding: '5px 12px', borderRadius: 6, cursor: 'pointer',
+        padding: '5px 12px', borderRadius: 4, cursor: 'pointer',
         fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING,
         background: active ? `${ACCENT}22` : hovered ? 'rgba(255,255,255,0.06)' : 'transparent',
         color: active ? ACCENT : TEXT_MUTED,
@@ -49,7 +40,9 @@ function ViewModeButton({ label, active, onClick }) {
   )
 }
 
-function DifficultyChip({ label, active, onClick }) {
+// Shared toggle chip — used for both the media-type and difficulty filter
+// rows (same click-to-select/click-to-deselect interaction either way).
+function Chip({ label, active, onClick }) {
   const [hovered, setHovered] = useState(false)
   return (
     <button
@@ -58,7 +51,7 @@ function DifficultyChip({ label, active, onClick }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        padding: '4px 11px', borderRadius: 999, cursor: 'pointer',
+        padding: '4px 11px', borderRadius: 4, cursor: 'pointer',
         fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING,
         background: active ? `${ACCENT}22` : hovered ? 'rgba(255,255,255,0.06)' : 'transparent',
         color: active ? ACCENT : TEXT_MUTED,
@@ -67,6 +60,14 @@ function DifficultyChip({ label, active, onClick }) {
     >
       {label}
     </button>
+  )
+}
+
+function FilterSectionLabel({ children }) {
+  return (
+    <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0, width: 84 }}>
+      {children}
+    </span>
   )
 }
 
@@ -318,16 +319,24 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
         }}
       />
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, background: '#2A2A2A', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: '12px 16px' }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-          {ALL_MEDIA_TYPES.map(t => checkboxRow(MEDIA_TYPE_LABELS[t], mediaTypes.has(t), () => toggleType(t)))}
+      <div style={{ display: 'flex', flexDirection: 'column', background: '#2A2A2A', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, overflow: 'hidden' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', padding: '12px 16px' }}>
+          <FilterSectionLabel>Content</FilterSectionLabel>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {ALL_MEDIA_TYPES.map(t => (
+              <Chip key={t} label={MEDIA_TYPE_LABELS[t]} active={mediaTypes.has(t)} onClick={() => toggleType(t)} />
+            ))}
+          </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>Difficulty</span>
-          <DifficultyChip label="All" active={isAllDifficulties} onClick={selectAllDifficulties} />
-          {ALL_DIFFICULTY_LEVELS.map(level => (
-            <DifficultyChip key={level} label={difficultyLabel(level)} active={difficulties.has(level)} onClick={() => toggleDifficulty(level)} />
-          ))}
+        <div style={{ height: 1, background: 'rgba(255,255,255,0.08)' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', padding: '12px 16px' }}>
+          <FilterSectionLabel>Difficulty</FilterSectionLabel>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            <Chip label="All" active={isAllDifficulties} onClick={selectAllDifficulties} />
+            {ALL_DIFFICULTY_LEVELS.map(level => (
+              <Chip key={level} label={difficultyLabel(level)} active={difficulties.has(level)} onClick={() => toggleDifficulty(level)} />
+            ))}
+          </div>
           {query.trim() && !isAllDifficulties && (
             <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
               Difficulty filtering is not available for text search — clear the search box to browse by difficulty.
