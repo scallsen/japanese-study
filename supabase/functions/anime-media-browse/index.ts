@@ -71,17 +71,23 @@ function isHardBlocked(deck: any) {
   return (deck?.tags ?? []).some((t: any) => HARD_BLOCK_TAG_IDS.has(t.tagId))
 }
 
-function passesMaturity(deck: any, maturity: string) {
-  if (isHardBlocked(deck)) return false
-  if (maturity === 'suggestive') return true
+// Classifies a deck into exactly one bucket so the client's multi-select
+// maturity chips can OR across buckets the same way the difficulty chips do.
+function classifyMaturity(deck: any) {
   const hasEcchi = (deck?.genres ?? []).includes(ECCHI_GENRE_ID)
   const hasNudity = (deck?.tags ?? []).some((t: any) => t.tagId === NUDITY_TAG_ID)
-  if (maturity === 'slightly-suggestive') return !(hasEcchi && hasNudity)
-  return !hasEcchi && !hasNudity // 'safe' (default)
+  if (hasEcchi && hasNudity) return 'suggestive'
+  if (hasEcchi || hasNudity) return 'slightly-suggestive'
+  return 'safe'
+}
+
+function passesMaturity(deck: any, allowedLevels: string[]) {
+  if (isHardBlocked(deck)) return false
+  return allowedLevels.includes(classifyMaturity(deck))
 }
 
 async function browseMedia(params: any) {
-  const { mediaTypes, difficultyMin, difficultyMax, maturity = 'safe', sortBy = 'difficulty', sortDirection = 'asc', limit = 24 } = params ?? {}
+  const { mediaTypes, difficultyMin, difficultyMax, maturityLevels = ['safe'], sortBy = 'difficulty', sortDirection = 'asc', limit = 24 } = params ?? {}
 
   const qs = new URLSearchParams()
   qs.set('sortBy', sortBy)
@@ -102,7 +108,7 @@ async function browseMedia(params: any) {
   if (mediaTypes?.length) decks = decks.filter((d: any) => mediaTypes.includes(d.mediaType))
   if (difficultyMin != null) decks = decks.filter((d: any) => (d.difficultyRaw ?? d.difficulty ?? 0) >= difficultyMin)
   if (difficultyMax != null) decks = decks.filter((d: any) => (d.difficultyRaw ?? d.difficulty ?? 0) <= difficultyMax)
-  decks = decks.filter((d: any) => passesMaturity(d, maturity))
+  decks = decks.filter((d: any) => passesMaturity(d, maturityLevels))
   decks = decks.slice().sort(compareBy(SORT_FIELD[sortBy] ?? sortBy, sortDirection)).slice(0, clampedLimit)
 
   return decks.map((d: any) => ({

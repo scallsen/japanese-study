@@ -166,13 +166,19 @@ function isHardBlocked(deck) {
   return (deck?.tags ?? []).some(t => HARD_BLOCK_TAG_IDS.has(t.tagId))
 }
 
-function passesMaturity(deck, maturity) {
-  if (isHardBlocked(deck)) return false
-  if (maturity === 'suggestive') return true
+// Classifies a deck into exactly one bucket so the client's multi-select
+// maturity chips can OR across buckets the same way the difficulty chips do.
+function classifyMaturity(deck) {
   const hasEcchi = (deck?.genres ?? []).includes(ECCHI_GENRE_ID)
   const hasNudity = (deck?.tags ?? []).some(t => t.tagId === NUDITY_TAG_ID)
-  if (maturity === 'slightly-suggestive') return !(hasEcchi && hasNudity)
-  return !hasEcchi && !hasNudity // 'safe' (default) — either signal alone excludes
+  if (hasEcchi && hasNudity) return 'suggestive'
+  if (hasEcchi || hasNudity) return 'slightly-suggestive'
+  return 'safe'
+}
+
+function passesMaturity(deck, allowedLevels) {
+  if (isHardBlocked(deck)) return false
+  return allowedLevels.includes(classifyMaturity(deck))
 }
 
 // Browse/filter the show-level catalog (GET /api/media-deck/get-media-decks)
@@ -184,7 +190,7 @@ function passesMaturity(deck, maturity) {
 // ignored — but every result is always re-filtered/re-sorted/re-sliced here
 // in JS, so correctness never depends on Jiten having honored them.
 export async function browseMedia(params = {}, { apiKey } = {}) {
-  const { mediaTypes, difficultyMin, difficultyMax, maturity = 'safe', sortBy = 'difficulty', sortDirection = 'asc', limit = 24 } = params
+  const { mediaTypes, difficultyMin, difficultyMax, maturityLevels = ['safe'], sortBy = 'difficulty', sortDirection = 'asc', limit = 24 } = params
 
   const qs = new URLSearchParams()
   qs.set('sortBy', sortBy)
@@ -199,7 +205,7 @@ export async function browseMedia(params = {}, { apiKey } = {}) {
   if (mediaTypes?.length) decks = decks.filter(d => mediaTypes.includes(d.mediaType))
   if (difficultyMin != null) decks = decks.filter(d => (d.difficultyRaw ?? d.difficulty ?? 0) >= difficultyMin)
   if (difficultyMax != null) decks = decks.filter(d => (d.difficultyRaw ?? d.difficulty ?? 0) <= difficultyMax)
-  decks = decks.filter(d => passesMaturity(d, maturity))
+  decks = decks.filter(d => passesMaturity(d, maturityLevels))
   decks = decks.slice().sort(compareBy(SORT_FIELD[sortBy] ?? sortBy, sortDirection)).slice(0, limit)
 
   return decks.map(d => ({

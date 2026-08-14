@@ -21,10 +21,13 @@ const ALL_DIFFICULTY_LEVELS = [0, 1, 2, 3, 4, 5] // matches the coarse `difficul
 
 // Soft content-maturity tiers — the hard-block (server-side, non-optional)
 // floor is enforced regardless of this setting; see jitenClient.js's
-// browseMedia for the full reasoning behind these three levels.
+// browseMedia for the full reasoning behind these three buckets. Multi-select
+// (like difficulty): a title is classified into exactly one bucket server-side
+// (neither signal -> safe, one signal -> slightly-suggestive, both -> suggestive)
+// and shown if its bucket is in the selected set.
 const MATURITY_LEVELS = ['safe', 'slightly-suggestive', 'suggestive']
 const MATURITY_LABELS = { safe: 'Safe', 'slightly-suggestive': 'Slightly suggestive', suggestive: 'Suggestive' }
-const DEFAULT_MATURITY = 'safe'
+const DEFAULT_MATURITY = ['safe']
 
 function ViewModeButton({ label, active, onClick }) {
   const [hovered, setHovered] = useState(false)
@@ -79,17 +82,6 @@ function FilterSectionLabel({ children }) {
   return (
     <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0, width: 92, marginTop: 4 }}>
       {children}
-    </span>
-  )
-}
-
-function ChevronIcon({ expanded }) {
-  return (
-    <span style={{
-      display: 'inline-block', width: 10, fontSize: FS_BADGE, color: TEXT_MUTED,
-      transform: expanded ? 'rotate(90deg)' : 'none', transition: 'transform 120ms',
-    }}>
-      ▸
     </span>
   )
 }
@@ -206,8 +198,7 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
   const [selectingId, setSelectingId] = useState(null)
   const [mediaTypes, setMediaTypes] = useState(() => new Set(DEFAULT_MEDIA_TYPES))
   const [difficulties, setDifficulties] = useState(() => new Set(ALL_DIFFICULTY_LEVELS))
-  const [maturity, setMaturity] = useState(DEFAULT_MATURITY)
-  const [maturityExpanded, setMaturityExpanded] = useState(false)
+  const [maturity, setMaturity] = useState(() => new Set(DEFAULT_MATURITY))
   const [viewMode, setViewMode] = useState(() => safeLocalStorageGet('anime-vocab-view-mode') ?? 'tiles')
   const debounceRef = useRef(null)
 
@@ -249,9 +240,20 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
     setDifficulties(new Set(ALL_DIFFICULTY_LEVELS))
   }
 
+  // Plain multi-select toggle, same shape as toggleType — but snaps back to
+  // the default ("safe" only) rather than allowing zero levels selected,
+  // since an empty maturity set would silently show nothing.
+  function toggleMaturity(level) {
+    setMaturity(prev => {
+      const next = new Set(prev)
+      if (next.has(level)) next.delete(level); else next.add(level)
+      return next.size === 0 ? new Set(DEFAULT_MATURITY) : next
+    })
+  }
+
   const isDefaultMediaTypes = mediaTypes.size === DEFAULT_MEDIA_TYPES.length && DEFAULT_MEDIA_TYPES.every(t => mediaTypes.has(t))
   const isAllDifficulties = difficulties.size === ALL_DIFFICULTY_LEVELS.length
-  const isDefaultMaturity = maturity === DEFAULT_MATURITY
+  const isDefaultMaturity = maturity.size === DEFAULT_MATURITY.length && DEFAULT_MATURITY.every(l => maturity.has(l))
   const filterNarrowed = !isDefaultMediaTypes || !isAllDifficulties || !isDefaultMaturity
   const selectedLabels = new Set([...mediaTypes].map(t => MEDIA_TYPE_LABELS[t]))
   const isIdle = !query.trim() && !filterNarrowed
@@ -288,7 +290,7 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
         mediaTypes: [...mediaTypes],
         difficultyMin: isAllDifficulties ? null : Math.min(...difficulties),
         difficultyMax: isAllDifficulties ? null : Math.max(...difficulties) + 1,
-        maturity,
+        maturityLevels: [...maturity],
         sortBy: 'difficulty', sortDirection: 'asc', limit: 24,
       })
         .then(({ results: r }) => { setResults(r.filter(x => selectedLabels.has(x.mediaType) && matchesDifficulty(x))); setError(null) })
@@ -306,7 +308,7 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
       .catch(err => setError(err.message))
       .finally(() => setLoading(false))
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, [...mediaTypes].join(','), [...difficulties].sort().join(','), maturity])
+  }, [query, [...mediaTypes].join(','), [...difficulties].sort().join(','), [...maturity].sort().join(',')])
 
   async function handleSelect(result) {
     setSelectingId(result.externalId)
@@ -381,26 +383,17 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
         </div>
         <div style={{ height: 1, background: 'rgba(255,255,255,0.08)' }} />
         <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <button
-            type="button"
-            onClick={() => setMaturityExpanded(v => !v)}
-            style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', background: 'transparent', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left' }}
-          >
-            <ChevronIcon expanded={maturityExpanded} />
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
             <FilterSectionLabel>Maturity</FilterSectionLabel>
-          </button>
-          {maturityExpanded && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingLeft: 18 }}>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                {MATURITY_LEVELS.map(level => (
-                  <Chip key={level} label={MATURITY_LABELS[level]} active={maturity === level} onClick={() => setMaturity(level)} />
-                ))}
-              </div>
-              {query.trim() && !isDefaultMaturity && (
-                <div style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-                  Maturity filtering is not available for text search — clear the search box to browse by maturity.
-                </div>
-              )}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, flex: 1, minWidth: 0 }}>
+              {MATURITY_LEVELS.map(level => (
+                <Chip key={level} label={MATURITY_LABELS[level]} active={maturity.has(level)} onClick={() => toggleMaturity(level)} />
+              ))}
+            </div>
+          </div>
+          {query.trim() && !isDefaultMaturity && (
+            <div style={{ paddingLeft: 104, fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+              Maturity filtering is not available for text search — clear the search box to browse by maturity.
             </div>
           )}
         </div>
