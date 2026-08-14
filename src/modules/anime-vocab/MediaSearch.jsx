@@ -207,8 +207,10 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
   const busy = loading || selectingId !== null
   useEffect(() => {
     onLoadingChange?.(busy)
-    // Reset on unmount too — e.g. selecting a result unmounts this screen
-    // before `busy` ever gets a chance to go back to false on its own.
+    // Reset on unmount/prop-loss too, as a safety net — the real reset for
+    // a successful select is `setSelectingId(null)` in handleSelect itself,
+    // since this component stays mounted (just hidden) after selecting, so
+    // there's no unmount to rely on to clear `busy`.
     return () => onLoadingChange?.(false)
   }, [busy, onLoadingChange])
   const showSearching = useDelayedLoading(loading)
@@ -322,6 +324,7 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
       const {
         mediaId, title, mediaType, coverUrl, difficulty, originalTitle, description, tags, links, relationships, episodes,
       } = await selectMedia(result.externalId, [...maturity])
+      setSelectingId(null)
       onSelected({
         id: mediaId, title, mediaType, coverUrl, difficulty, externalId: result.externalId,
         originalTitle, description, tags, links, relationships,
