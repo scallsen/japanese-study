@@ -112,11 +112,17 @@ export default function AnimeVocabModule({ initialMediaId }) {
               {showResolvingMessage && <CenteredLoadingMessage text="Loading series details" />}
             </div>
           )}
-          {!resolving && !media && (
-            <>
-              {!trackedLoading && hasTrackedItems && <TrackedAnimeSection tracked={tracked} untrack={untrack} />}
-              <MediaSearch onSelected={handleMediaSelected} onLoadingChange={setChildLoading} />
-            </>
+          {!resolving && !media && !trackedLoading && hasTrackedItems && (
+            <TrackedAnimeSection tracked={tracked} untrack={untrack} />
+          )}
+          {!resolving && (
+            // Stays mounted (just hidden) once past the resolving screen, rather
+            // than being unmounted/remounted every time `media` clears — so its
+            // search/filter state survives navigating into a show and back via
+            // the "Anime Vocab" breadcrumb (backToSearch below).
+            <div style={{ display: media ? 'none' : undefined }}>
+              <MediaSearch onSelected={handleMediaSelected} onLoadingChange={media ? undefined : setChildLoading} />
+            </div>
           )}
           {media && !episode && <EpisodeList media={media} episodes={episodes} onSelectEpisode={setEpisode} />}
           {media && episode && !drillWords && (

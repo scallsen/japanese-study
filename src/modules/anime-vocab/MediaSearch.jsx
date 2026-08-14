@@ -16,6 +16,7 @@ const MEDIA_TYPE_LABELS = {
 }
 const ALL_MEDIA_TYPES = Object.keys(MEDIA_TYPE_LABELS).map(Number)
 const DEFAULT_MEDIA_TYPES = [1] // Anime only, by default
+const ALL_DIFFICULTY_LEVELS = [0, 1, 2, 3, 4, 5] // matches the coarse `difficulty` bucket's real range
 
 function checkboxRow(label, checked, onChange) {
   return (
@@ -36,6 +37,27 @@ function ViewModeButton({ label, active, onClick }) {
       onMouseLeave={() => setHovered(false)}
       style={{
         padding: '5px 12px', borderRadius: 6, cursor: 'pointer',
+        fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING,
+        background: active ? `${ACCENT}22` : hovered ? 'rgba(255,255,255,0.06)' : 'transparent',
+        color: active ? ACCENT : TEXT_MUTED,
+        border: `1px solid ${active ? `${ACCENT}55` : 'rgba(255,255,255,0.12)'}`,
+      }}
+    >
+      {label}
+    </button>
+  )
+}
+
+function DifficultyChip({ label, active, onClick }) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        padding: '4px 11px', borderRadius: 999, cursor: 'pointer',
         fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING,
         background: active ? `${ACCENT}22` : hovered ? 'rgba(255,255,255,0.06)' : 'transparent',
         color: active ? ACCENT : TEXT_MUTED,
@@ -158,8 +180,7 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
   const [error, setError] = useState(null)
   const [selectingId, setSelectingId] = useState(null)
   const [mediaTypes, setMediaTypes] = useState(() => new Set(DEFAULT_MEDIA_TYPES))
-  const [difficultyMin, setDifficultyMin] = useState('')
-  const [difficultyMax, setDifficultyMax] = useState('')
+  const [difficulties, setDifficulties] = useState(() => new Set(ALL_DIFFICULTY_LEVELS))
   const [viewMode, setViewMode] = useState(() => safeLocalStorageGet('anime-vocab-view-mode') ?? 'tiles')
   const debounceRef = useRef(null)
 
@@ -182,10 +203,29 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
     })
   }
 
+  // Clicking a level while "All" is active starts a fresh single-level
+  // selection (rather than toggling it out of the full set, which would
+  // leave a confusing 5-of-6 state). From there, clicks add/remove
+  // individual levels — a discontiguous set is fine, it's still a valid
+  // filter. Emptying the set entirely snaps back to "All" instead of
+  // leaving a selection that would match nothing.
+  function toggleDifficulty(level) {
+    setDifficulties(prev => {
+      if (prev.size === ALL_DIFFICULTY_LEVELS.length) return new Set([level])
+      const next = new Set(prev)
+      if (next.has(level)) next.delete(level); else next.add(level)
+      return next.size === 0 ? new Set(ALL_DIFFICULTY_LEVELS) : next
+    })
+  }
+
+  function selectAllDifficulties() {
+    setDifficulties(new Set(ALL_DIFFICULTY_LEVELS))
+  }
+
   const isDefaultMediaTypes = mediaTypes.size === DEFAULT_MEDIA_TYPES.length && DEFAULT_MEDIA_TYPES.every(t => mediaTypes.has(t))
-  const filterNarrowed = !isDefaultMediaTypes || difficultyMin !== '' || difficultyMax !== ''
+  const isAllDifficulties = difficulties.size === ALL_DIFFICULTY_LEVELS.length
+  const filterNarrowed = !isDefaultMediaTypes || !isAllDifficulties
   const selectedLabels = new Set([...mediaTypes].map(t => MEDIA_TYPE_LABELS[t]))
-  const hasDifficultyRange = difficultyMin !== '' || difficultyMax !== ''
   const isIdle = !query.trim() && !filterNarrowed
 
   useEffect(() => {
@@ -203,15 +243,21 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
       return () => clearTimeout(debounceRef.current)
     }
 
+    // Jiten's difficultyMin/Max is a continuous range, but chip selection can
+    // be a discontiguous set (e.g. levels 1 and 4 with 2-3 excluded) — query
+    // the superset range server-side, then enforce the exact set client-side.
+    const matchesDifficulty = x => isAllDifficulties
+      || (x.difficulty?.difficulty != null && difficulties.has(x.difficulty.difficulty))
+
     if (filterNarrowed) {
       setLoading(true)
       browseMedia({
         mediaTypes: [...mediaTypes],
-        difficultyMin: difficultyMin === '' ? null : Number(difficultyMin),
-        difficultyMax: difficultyMax === '' ? null : Number(difficultyMax),
+        difficultyMin: isAllDifficulties ? null : Math.min(...difficulties),
+        difficultyMax: isAllDifficulties ? null : Math.max(...difficulties),
         sortBy: 'difficulty', sortDirection: 'asc', limit: 24,
       })
-        .then(({ results: r }) => { setResults(r.filter(x => selectedLabels.has(x.mediaType))); setError(null) })
+        .then(({ results: r }) => { setResults(r.filter(x => selectedLabels.has(x.mediaType) && matchesDifficulty(x))); setError(null) })
         .catch(err => setError(err.message))
         .finally(() => setLoading(false))
       return
@@ -219,11 +265,11 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
 
     setLoading(true)
     fetchRecommendedMedia()
-      .then(r => { setResults(r.filter(x => selectedLabels.has(x.mediaType))); setError(null) })
+      .then(r => { setResults(r.filter(x => selectedLabels.has(x.mediaType) && matchesDifficulty(x))); setError(null) })
       .catch(err => setError(err.message))
       .finally(() => setLoading(false))
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, [...mediaTypes].join(','), difficultyMin, difficultyMax])
+  }, [query, [...mediaTypes].join(','), [...difficulties].sort().join(',')])
 
   async function handleSelect(result) {
     setSelectingId(result.externalId)
@@ -267,18 +313,11 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
           <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>Difficulty</span>
-          <input
-            type="number" step="0.5" placeholder="Min" value={difficultyMin}
-            onChange={e => setDifficultyMin(e.target.value)}
-            style={{ width: 64, padding: '4px 8px', fontFamily: FONT, background: '#1E1E1E', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 4, color: TEXT }}
-          />
-          <span style={{ color: TEXT_MUTED }}>–</span>
-          <input
-            type="number" step="0.5" placeholder="Max" value={difficultyMax}
-            onChange={e => setDifficultyMax(e.target.value)}
-            style={{ width: 64, padding: '4px 8px', fontFamily: FONT, background: '#1E1E1E', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 4, color: TEXT }}
-          />
-          {query.trim() && hasDifficultyRange && (
+          <DifficultyChip label="All" active={isAllDifficulties} onClick={selectAllDifficulties} />
+          {ALL_DIFFICULTY_LEVELS.map(level => (
+            <DifficultyChip key={level} label={String(level)} active={difficulties.has(level)} onClick={() => toggleDifficulty(level)} />
+          ))}
+          {query.trim() && !isAllDifficulties && (
             <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
               Difficulty filtering is not available for text search — clear the search box to browse by difficulty.
             </span>
