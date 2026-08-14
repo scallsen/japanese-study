@@ -28,3 +28,9 @@ export function selectMedia(jitenDeckId) {
 export function syncEpisodeVocab(mediaEpisodeId) {
   return invoke('anime-episode-vocab-sync', { mediaEpisodeId })
 }
+
+// params: { mediaTypes?: number[], difficultyMin?, difficultyMax?, sortBy?, sortDirection?, limit? }
+// → { results: [{ externalId, title, originalTitle, mediaType, coverUrl, difficulty, mediaId }] }
+export function browseMedia(params) {
+  return invoke('anime-media-browse', params)
+}

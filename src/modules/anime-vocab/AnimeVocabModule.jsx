@@ -10,6 +10,8 @@ import EpisodeList from './EpisodeList.jsx'
 import EpisodeVocabBrowser from './EpisodeVocabBrowser.jsx'
 import EpisodeDrill from './EpisodeDrill.jsx'
 import TrackedAnimeSection from './TrackedAnimeSection.jsx'
+import RecommendedCarousel from './RecommendedCarousel.jsx'
+import { useTrackedAnime } from './useTrackedAnime.js'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import { FONT, TRACKING } from '../../data/theme.js'
 
@@ -28,6 +30,8 @@ export default function AnimeVocabModule({ initialMediaId }) {
   const [drillWords, setDrillWords] = useState(null)
   const [resolving, setResolving] = useState(!!initialMediaId)
   const [childLoading, setChildLoading] = useState(false)
+  const { tracked, loading: trackedLoading, untrack } = useTrackedAnime()
+  const hasTrackedItems = Object.keys(tracked).length > 0
 
   const showProgressBar = useDelayedLoading(resolving || childLoading)
   const showResolvingMessage = useDelayedLoading(resolving)
@@ -37,13 +41,17 @@ export default function AnimeVocabModule({ initialMediaId }) {
     let cancelled = false
     setResolving(true)
     async function resolve() {
-      const { data: mediaRow } = await supabase.from('media').select('id, title, media_type').eq('id', initialMediaId).maybeSingle()
+      const { data: mediaRow } = await supabase
+        .from('media').select('id, title, media_type, cover_url, difficulty').eq('id', initialMediaId).maybeSingle()
       if (cancelled) return
       if (!mediaRow) { setResolving(false); return }
       const { data: episodeRows } = await supabase
         .from('media_episode').select('*').eq('media_id', initialMediaId).order('episode_number', { ascending: true })
       if (cancelled) return
-      setMedia({ id: mediaRow.id, title: mediaRow.title, mediaType: mediaRow.media_type })
+      setMedia({
+        id: mediaRow.id, title: mediaRow.title, mediaType: mediaRow.media_type,
+        coverUrl: mediaRow.cover_url, difficulty: mediaRow.difficulty,
+      })
       setEpisodes(episodeRows ?? [])
       setResolving(false)
     }
@@ -107,7 +115,10 @@ export default function AnimeVocabModule({ initialMediaId }) {
           )}
           {!resolving && !media && (
             <>
-              <TrackedAnimeSection />
+              {!trackedLoading && hasTrackedItems && <TrackedAnimeSection tracked={tracked} untrack={untrack} />}
+              {!trackedLoading && !hasTrackedItems && (
+                <RecommendedCarousel onSelected={handleMediaSelected} onLoadingChange={setChildLoading} />
+              )}
               <MediaSearch onSelected={handleMediaSelected} onLoadingChange={setChildLoading} />
             </>
           )}

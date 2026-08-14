@@ -48,6 +48,19 @@ export async function searchMedia(query, { limit = 10, apiKey } = {}) {
   }))
 }
 
+// A show's mainDeck carries the same difficulty/rating/cover fields as each
+// episode (subDeck) — this builds that shared 6-key shape from either.
+function deckDifficulty(deck) {
+  return {
+    difficulty: deck?.difficulty,
+    difficultyRaw: deck?.difficultyRaw,
+    difficultyAlgorithmic: deck?.difficultyAlgorithmic,
+    coverage: deck?.coverage,
+    uniqueCoverage: deck?.uniqueCoverage,
+    externalRating: deck?.externalRating,
+  }
+}
+
 // Episodes are modeled as child "decks" of the show's main deck. Paginates
 // through all subDecks (25/page) and returns them in provider order, which
 // matches sequential episode numbering (subDecks[0] = deckOrder 1, etc.).
@@ -66,22 +79,84 @@ export async function fetchEpisodeList(externalId, { apiKey } = {}) {
   return {
     title: mainDeck?.englishTitle || mainDeck?.romajiTitle || mainDeck?.originalTitle,
     mediaType: MEDIA_TYPE_LABELS[mainDeck?.mediaType] ?? 'Other',
+    coverUrl: mainDeck?.coverName,
+    difficulty: deckDifficulty(mainDeck),
     episodes: episodes.map((ep, i) => ({
       externalId: String(ep.deckId),
       episodeNumber: i + 1,
       title: ep.originalTitle,
       wordCount: ep.wordCount,
       uniqueWordCount: ep.uniqueWordCount,
-      difficulty: {
-        difficulty: ep.difficulty,
-        difficultyRaw: ep.difficultyRaw,
-        difficultyAlgorithmic: ep.difficultyAlgorithmic,
-        coverage: ep.coverage,
-        uniqueCoverage: ep.uniqueCoverage,
-        externalRating: ep.externalRating,
-      },
+      difficulty: deckDifficulty(ep),
     })),
   }
+}
+
+// Lightweight show-level-only fetch (single page, no episode pagination) —
+// for callers that only need mainDeck's own fields, e.g. a backfill script
+// refreshing cover_url/difficulty for shows already linked, where paging
+// through every episode just to re-read two show-level columns would be
+// wasteful for shows with 100+ episodes.
+export async function fetchMediaSummary(externalId, { apiKey } = {}) {
+  const body = await jitenFetch(`/api/media-deck/${externalId}/detail?offset=0`, apiKey)
+  const mainDeck = body.mainDeck
+  return {
+    title: mainDeck?.englishTitle || mainDeck?.romajiTitle || mainDeck?.originalTitle,
+    mediaType: MEDIA_TYPE_LABELS[mainDeck?.mediaType] ?? 'Other',
+    coverUrl: mainDeck?.coverName,
+    difficulty: deckDifficulty(mainDeck),
+  }
+}
+
+// Field to actually sort/compare on for a given sortBy value — 'difficulty'
+// maps to difficultyRaw (continuous) rather than the coarse 0-4 rounded
+// `difficulty` bucket, since most shows share the same coarse value.
+const SORT_FIELD = { difficulty: 'difficultyRaw' }
+
+function compareBy(field, direction) {
+  return (a, b) => {
+    const av = a[field], bv = b[field]
+    const cmp = typeof av === 'string' || typeof bv === 'string'
+      ? String(av ?? '').localeCompare(String(bv ?? ''))
+      : (av ?? 0) - (bv ?? 0)
+    return direction === 'desc' ? -cmp : cmp
+  }
+}
+
+// Browse/filter the show-level catalog (GET /api/media-deck/get-media-decks)
+// — confirmed live that Jiten's own query params for this endpoint aren't
+// reliably honored (repeated mediaType keys don't filter, limit is ignored,
+// sortDirection=desc on releaseDate returned ascending instead) except for
+// sortBy=difficulty&sortDirection=asc, which is confirmed correct. Query
+// params below are sent as best-effort hints regardless — harmless if
+// ignored — but every result is always re-filtered/re-sorted/re-sliced here
+// in JS, so correctness never depends on Jiten having honored them.
+export async function browseMedia(params = {}, { apiKey } = {}) {
+  const { mediaTypes, difficultyMin, difficultyMax, sortBy = 'difficulty', sortDirection = 'asc', limit = 24 } = params
+
+  const qs = new URLSearchParams()
+  qs.set('sortBy', sortBy)
+  qs.set('sortDirection', sortDirection)
+  for (const t of mediaTypes ?? []) qs.append('mediaType', String(t))
+  if (difficultyMin != null) qs.set('difficultyMin', String(difficultyMin))
+  if (difficultyMax != null) qs.set('difficultyMax', String(difficultyMax))
+
+  const body = await jitenFetch(`/api/media-deck/get-media-decks?${qs.toString()}`, apiKey)
+  let decks = Array.isArray(body) ? body : (body.data ?? [])
+
+  if (mediaTypes?.length) decks = decks.filter(d => mediaTypes.includes(d.mediaType))
+  if (difficultyMin != null) decks = decks.filter(d => (d.difficultyRaw ?? d.difficulty ?? 0) >= difficultyMin)
+  if (difficultyMax != null) decks = decks.filter(d => (d.difficultyRaw ?? d.difficulty ?? 0) <= difficultyMax)
+  decks = decks.slice().sort(compareBy(SORT_FIELD[sortBy] ?? sortBy, sortDirection)).slice(0, limit)
+
+  return decks.map(d => ({
+    externalId: String(d.deckId),
+    title: d.englishTitle || d.romajiTitle || d.originalTitle,
+    originalTitle: d.originalTitle,
+    mediaType: MEDIA_TYPE_LABELS[d.mediaType] ?? 'Other',
+    coverUrl: d.coverName,
+    difficulty: deckDifficulty(d),
+  }))
 }
 
 const VOCAB_PAGE_SIZE = 200

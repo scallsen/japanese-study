@@ -66,15 +66,32 @@ Deno.serve(async (req) => {
     if (!mainDeck) return jsonResponse({ error: `No media found for Jiten deck ${jitenDeckId}` }, 404)
     const title = mainDeck.englishTitle || mainDeck.romajiTitle || mainDeck.originalTitle
     const mediaType = MEDIA_TYPE_LABELS[mainDeck.mediaType] ?? 'Other'
+    const coverUrl = mainDeck.coverName
+    const difficulty = {
+      difficulty: mainDeck.difficulty,
+      difficultyRaw: mainDeck.difficultyRaw,
+      difficultyAlgorithmic: mainDeck.difficultyAlgorithmic,
+      coverage: mainDeck.coverage,
+      uniqueCoverage: mainDeck.uniqueCoverage,
+      externalRating: mainDeck.externalRating,
+    }
 
     let mediaId = existingRef?.media_id
     if (!mediaId) {
-      const { data: mediaRow, error: mediaErr } = await supabase.from('media').insert({ title, media_type: mediaType }).select('id').single()
+      const { data: mediaRow, error: mediaErr } = await supabase
+        .from('media').insert({ title, media_type: mediaType, cover_url: coverUrl, difficulty }).select('id').single()
       if (mediaErr) throw mediaErr
       mediaId = mediaRow.id
       const { error: refErr } = await supabase
         .from('media_provider_ref').insert({ media_id: mediaId, provider: PROVIDER, external_id: String(jitenDeckId) })
       if (refErr) throw refErr
+    } else {
+      // Refresh on every reopen, not just at link time — externalRating/
+      // difficulty are community-voted and can drift, and mainDeck is
+      // already fetched unconditionally above either way, so this only
+      // costs one cheap update, not an extra Jiten request.
+      const { error: updateErr } = await supabase.from('media').update({ cover_url: coverUrl, difficulty }).eq('id', mediaId)
+      if (updateErr) throw updateErr
     }
 
     const episodeRows = episodes.map((ep: any, i: number) => ({
@@ -102,7 +119,7 @@ Deno.serve(async (req) => {
       .from('media_episode').select('*').eq('media_id', mediaId).order('episode_number')
     if (fetchErr) throw fetchErr
 
-    return jsonResponse({ mediaId, title, mediaType, episodes: savedEpisodes })
+    return jsonResponse({ mediaId, title, mediaType, coverUrl, difficulty, episodes: savedEpisodes })
   } catch (err) {
     console.error('[anime-media-select]', err)
     return jsonResponse({ error: err?.message || 'Linking media failed' }, 500)

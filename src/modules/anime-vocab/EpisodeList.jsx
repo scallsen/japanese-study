@@ -86,15 +86,30 @@ export default function EpisodeList({ media, episodes, onSelectEpisode }) {
     if (tracked) untrack(media.id); else track(media)
   }
 
+  const showDifficulty = media.difficulty?.difficulty
+
   return (
     <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-        <div>
-          <div style={{ fontSize: FS_LIST_TITLE + 4, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, marginBottom: 4 }}>
-            {media.title}
-          </div>
-          <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-            {episodes.length} episode{episodes.length === 1 ? '' : 's'}
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, minWidth: 0 }}>
+          {media.coverUrl && (
+            <img src={media.coverUrl} alt="" style={{ width: 48, height: 67, objectFit: 'cover', borderRadius: 4, flexShrink: 0 }} />
+          )}
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontSize: FS_LIST_TITLE + 4, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, marginBottom: 4 }}>
+              {media.title}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+              {episodes.length} episode{episodes.length === 1 ? '' : 's'}
+              {showDifficulty != null && (
+                <span style={{
+                  fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, color: ACCENT,
+                  background: `${ACCENT}22`, border: `1px solid ${ACCENT}55`, borderRadius: 4, padding: '1px 7px', flexShrink: 0,
+                }}>
+                  Difficulty {Number(showDifficulty).toFixed(1)}
+                </span>
+              )}
+            </div>
           </div>
         </div>
         <TrackToggle tracked={tracked} signedIn={!!user} onClick={handleToggleTrack} />
