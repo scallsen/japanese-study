@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { searchMedia, selectMedia, browseMedia } from './api.js'
+import { fetchRecommendedMedia } from './recommendedMediaCache.js'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
+import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE } from '../../data/theme.js'
 
 const ACCENT = '#D46EA3'
@@ -23,9 +25,75 @@ function checkboxRow(label, checked, onChange) {
   )
 }
 
-function ResultRow({ result, onClick, busy }) {
+function ViewModeButton({ label, active, onClick }) {
   const [hovered, setHovered] = useState(false)
-  const difficulty = result.difficulty?.difficulty
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        padding: '5px 12px', borderRadius: 6, cursor: 'pointer',
+        fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING,
+        background: active ? `${ACCENT}22` : hovered ? 'rgba(255,255,255,0.06)' : 'transparent',
+        color: active ? ACCENT : TEXT_MUTED,
+        border: `1px solid ${active ? `${ACCENT}55` : 'rgba(255,255,255,0.12)'}`,
+      }}
+    >
+      {label}
+    </button>
+  )
+}
+
+function DifficultyBadge({ difficulty }) {
+  if (difficulty == null) return null
+  return (
+    <span style={{
+      fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, color: ACCENT,
+      background: `${ACCENT}22`, border: `1px solid ${ACCENT}55`, borderRadius: 4, padding: '1px 7px', flexShrink: 0,
+    }}>
+      Difficulty {Number(difficulty).toFixed(1)}
+    </span>
+  )
+}
+
+function ResultTile({ result, onClick, busy }) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <div
+      onClick={busy ? undefined : onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        background: hovered ? '#313131' : '#2A2A2A',
+        border: '1px solid rgba(255,255,255,0.07)',
+        borderRadius: 8,
+        overflow: 'hidden',
+        cursor: busy ? 'default' : 'pointer',
+        opacity: busy ? 0.5 : 1,
+        transition: 'background 130ms',
+      }}
+    >
+      {result.coverUrl ? (
+        <img src={result.coverUrl} alt="" style={{ width: '100%', aspectRatio: '5 / 7', objectFit: 'cover', display: 'block' }} />
+      ) : (
+        <div style={{ width: '100%', aspectRatio: '5 / 7', background: '#1E1E1E' }} />
+      )}
+      <div style={{ padding: '8px 10px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <div style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {result.title}
+        </div>
+        <div style={{ alignSelf: 'flex-start' }}>
+          <DifficultyBadge difficulty={result.difficulty?.difficulty} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ResultListRow({ result, onClick, busy }) {
+  const [hovered, setHovered] = useState(false)
   return (
     <div
       onClick={busy ? undefined : onClick}
@@ -55,14 +123,7 @@ function ResultRow({ result, onClick, busy }) {
           }}>
             {result.mediaType}
           </span>
-          {difficulty != null && (
-            <span style={{
-              fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, color: ACCENT,
-              background: `${ACCENT}22`, border: `1px solid ${ACCENT}55`, borderRadius: 4, padding: '1px 7px',
-            }}>
-              Difficulty {Number(difficulty).toFixed(1)}
-            </span>
-          )}
+          <DifficultyBadge difficulty={result.difficulty?.difficulty} />
         </div>
         <div style={{ fontSize: FS_LIST_TITLE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {result.title}
@@ -80,14 +141,15 @@ function ResultRow({ result, onClick, busy }) {
 // Search + select screen. On selecting a result, links it into media/media_provider_ref/
 // media_episode (via the anime-media-select edge function) and calls onSelected(media, episodes).
 //
-// Two fetch modes, chosen implicitly by current state (no explicit toggle):
+// Three fetch modes, chosen implicitly by current state (no explicit toggle):
 //   - query non-empty -> text search (searchMedia), client-side filtered by
 //     media type afterward (search-suggestions doesn't have a difficulty field
 //     at all, so a difficulty range can't apply here — shown as a note instead
 //     of silently ignored).
 //   - query empty + at least one filter narrowed -> browse/listing (browseMedia).
-//   - query empty + no filter narrowed -> nothing shown (existing behavior;
-//     the "nothing tracked yet" empty state is a separate component).
+//   - query empty + no filter narrowed -> idle/empty state, filled with the
+//     cached "recommended" listing (see recommendedMediaCache.js) rather than
+//     showing nothing.
 export default function MediaSearch({ onSelected, onLoadingChange }) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
@@ -97,7 +159,10 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
   const [mediaTypes, setMediaTypes] = useState(() => new Set(ALL_MEDIA_TYPES))
   const [difficultyMin, setDifficultyMin] = useState('')
   const [difficultyMax, setDifficultyMax] = useState('')
+  const [viewMode, setViewMode] = useState(() => safeLocalStorageGet('anime-vocab-view-mode') ?? 'tiles')
   const debounceRef = useRef(null)
+
+  useEffect(() => { safeLocalStorageSet('anime-vocab-view-mode', viewMode) }, [viewMode])
 
   const busy = loading || selectingId !== null
   useEffect(() => {
@@ -119,6 +184,7 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
   const filterNarrowed = mediaTypes.size < ALL_MEDIA_TYPES.length || difficultyMin !== '' || difficultyMax !== ''
   const selectedLabels = new Set([...mediaTypes].map(t => MEDIA_TYPE_LABELS[t]))
   const hasDifficultyRange = difficultyMin !== '' || difficultyMax !== ''
+  const isIdle = !query.trim() && !filterNarrowed
 
   useEffect(() => {
     clearTimeout(debounceRef.current)
@@ -135,16 +201,23 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
       return () => clearTimeout(debounceRef.current)
     }
 
-    if (!filterNarrowed) { setResults([]); setLoading(false); return }
+    if (filterNarrowed) {
+      setLoading(true)
+      browseMedia({
+        mediaTypes: [...mediaTypes],
+        difficultyMin: difficultyMin === '' ? null : Number(difficultyMin),
+        difficultyMax: difficultyMax === '' ? null : Number(difficultyMax),
+        sortBy: 'difficulty', sortDirection: 'asc', limit: 24,
+      })
+        .then(({ results: r }) => { setResults(r.filter(x => selectedLabels.has(x.mediaType))); setError(null) })
+        .catch(err => setError(err.message))
+        .finally(() => setLoading(false))
+      return
+    }
 
     setLoading(true)
-    browseMedia({
-      mediaTypes: [...mediaTypes],
-      difficultyMin: difficultyMin === '' ? null : Number(difficultyMin),
-      difficultyMax: difficultyMax === '' ? null : Number(difficultyMax),
-      sortBy: 'difficulty', sortDirection: 'asc', limit: 24,
-    })
-      .then(({ results: r }) => { setResults(r.filter(x => selectedLabels.has(x.mediaType))); setError(null) })
+    fetchRecommendedMedia()
+      .then(r => { setResults(r.filter(x => selectedLabels.has(x.mediaType))); setError(null) })
       .catch(err => setError(err.message))
       .finally(() => setLoading(false))
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -161,6 +234,8 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
       setSelectingId(null)
     }
   }
+
+  const ResultItem = viewMode === 'tiles' ? ResultTile : ResultListRow
 
   return (
     <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -212,15 +287,31 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
       {error && (
         <div style={{ fontSize: FS_BASE, color: '#f87171', fontFamily: FONT, letterSpacing: TRACKING }}>{error}</div>
       )}
+
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+        <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+          {isIdle ? 'Recommended — beginner friendly' : ''}
+        </span>
+        <div style={{ display: 'flex', gap: 6, marginLeft: 'auto' }}>
+          <ViewModeButton label="List" active={viewMode === 'list'} onClick={() => setViewMode('list')} />
+          <ViewModeButton label="Tiles" active={viewMode === 'tiles'} onClick={() => setViewMode('tiles')} />
+        </div>
+      </div>
+
       {showSearching && (
-        <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>Searching...</div>
+        <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+          {isIdle ? 'Loading recommended series...' : 'Searching...'}
+        </div>
       )}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={viewMode === 'tiles'
+        ? { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 12 }
+        : { display: 'flex', flexDirection: 'column', gap: 10 }
+      }>
         {results.map(r => (
-          <ResultRow key={r.externalId} result={r} busy={selectingId === r.externalId} onClick={() => handleSelect(r)} />
+          <ResultItem key={r.externalId} result={r} busy={selectingId === r.externalId} onClick={() => handleSelect(r)} />
         ))}
       </div>
-      {!loading && (query.trim() || filterNarrowed) && results.length === 0 && !error && (
+      {!loading && !isIdle && results.length === 0 && !error && (
         <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>No results.</div>
       )}
     </div>

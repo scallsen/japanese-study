@@ -10,7 +10,6 @@ import EpisodeList from './EpisodeList.jsx'
 import EpisodeVocabBrowser from './EpisodeVocabBrowser.jsx'
 import EpisodeDrill from './EpisodeDrill.jsx'
 import TrackedAnimeSection from './TrackedAnimeSection.jsx'
-import RecommendedCarousel from './RecommendedCarousel.jsx'
 import { useTrackedAnime } from './useTrackedAnime.js'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import { FONT, TRACKING } from '../../data/theme.js'
@@ -116,9 +115,6 @@ export default function AnimeVocabModule({ initialMediaId }) {
           {!resolving && !media && (
             <>
               {!trackedLoading && hasTrackedItems && <TrackedAnimeSection tracked={tracked} untrack={untrack} />}
-              {!trackedLoading && !hasTrackedItems && (
-                <RecommendedCarousel onSelected={handleMediaSelected} onLoadingChange={setChildLoading} />
-              )}
               <MediaSearch onSelected={handleMediaSelected} onLoadingChange={setChildLoading} />
             </>
           )}
