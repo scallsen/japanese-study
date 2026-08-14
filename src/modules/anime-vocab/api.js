@@ -14,14 +14,22 @@ async function invoke(name, body) {
   return data
 }
 
-// → { results: [{ externalId, title, originalTitle, mediaType, coverUrl, mediaId }] }
-export function searchMedia(query) {
-  return invoke('anime-media-search', { query })
+// params: { difficultyMin?, difficultyMax?, maturityLevels? } — search
+// results are enriched server-side (search-suggestions alone carries no
+// difficulty/tag/genre data) so the same filters browse mode applies can
+// apply here too, rather than search silently bypassing them.
+// → { results: [{ externalId, title, originalTitle, mediaType, coverUrl, difficulty, mediaId }] }
+export function searchMedia(query, params) {
+  return invoke('anime-media-search', { query, ...params })
 }
 
+// maturityLevels: the caller's currently-selected soft maturity tiers (see
+// MediaSearch.jsx) — enforced here too, not just in anime-media-browse's
+// listing, since search results carry no tag/genre data to pre-filter by
+// and so could otherwise be selected regardless of the filter setting.
 // → { mediaId, title, mediaType, episodes: media_episode[] }
-export function selectMedia(jitenDeckId) {
-  return invoke('anime-media-select', { jitenDeckId })
+export function selectMedia(jitenDeckId, maturityLevels) {
+  return invoke('anime-media-select', { jitenDeckId, maturityLevels })
 }
 
 // → { synced: true, wordCount? } | { synced: true, alreadySynced: true }

@@ -182,10 +182,10 @@ function ResultListRow({ result, onClick, busy }) {
 // media_episode (via the anime-media-select edge function) and calls onSelected(media, episodes).
 //
 // Three fetch modes, chosen implicitly by current state (no explicit toggle):
-//   - query non-empty -> text search (searchMedia), client-side filtered by
-//     media type afterward (search-suggestions doesn't have a difficulty field
-//     at all, so a difficulty range can't apply here — shown as a note instead
-//     of silently ignored).
+//   - query non-empty -> text search (searchMedia). search-suggestions alone
+//     carries no difficulty/tag/genre data, so the edge function fetches each
+//     candidate's full detail server-side to still apply content/difficulty/
+//     maturity filtering there too, rather than search bypassing them.
 //   - query empty + at least one filter narrowed -> browse/listing (browseMedia).
 //   - query empty + no filter narrowed -> idle/empty state, filled with the
 //     cached "recommended" listing (see recommendedMediaCache.js) rather than
@@ -262,17 +262,6 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
     clearTimeout(debounceRef.current)
     const q = query.trim()
 
-    if (q) {
-      setLoading(true)
-      debounceRef.current = setTimeout(() => {
-        searchMedia(q)
-          .then(({ results: r }) => { setResults(r.filter(x => selectedLabels.has(x.mediaType))); setError(null) })
-          .catch(err => setError(err.message))
-          .finally(() => setLoading(false))
-      }, DEBOUNCE_MS)
-      return () => clearTimeout(debounceRef.current)
-    }
-
     // Jiten's difficultyMin/Max filters the continuous difficultyRaw score,
     // not the rounded bucket a chip represents — bucket N covers raw scores
     // [N, N+1), so querying min=max=N (e.g. "Beginner" -> 0-0) matches
@@ -283,13 +272,29 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
     // 2-3 excluded), so the exact set is still enforced client-side after.
     const matchesDifficulty = x => isAllDifficulties
       || (x.difficulty?.difficulty != null && difficulties.has(x.difficulty.difficulty))
+    const difficultyMin = isAllDifficulties ? null : Math.min(...difficulties)
+    const difficultyMax = isAllDifficulties ? null : Math.max(...difficulties) + 1
+
+    if (q) {
+      setLoading(true)
+      debounceRef.current = setTimeout(() => {
+        // search-suggestions alone has no difficulty/tag/genre data — the
+        // edge function fetches each candidate's full detail server-side so
+        // difficulty/maturity (including the hard block) can still apply,
+        // instead of search silently bypassing every filter.
+        searchMedia(q, { difficultyMin, difficultyMax, maturityLevels: [...maturity] })
+          .then(({ results: r }) => { setResults(r.filter(x => selectedLabels.has(x.mediaType) && matchesDifficulty(x))); setError(null) })
+          .catch(err => setError(err.message))
+          .finally(() => setLoading(false))
+      }, DEBOUNCE_MS)
+      return () => clearTimeout(debounceRef.current)
+    }
 
     if (filterNarrowed) {
       setLoading(true)
       browseMedia({
         mediaTypes: [...mediaTypes],
-        difficultyMin: isAllDifficulties ? null : Math.min(...difficulties),
-        difficultyMax: isAllDifficulties ? null : Math.max(...difficulties) + 1,
+        difficultyMin, difficultyMax,
         maturityLevels: [...maturity],
         sortBy: 'difficulty', sortDirection: 'asc', limit: 24,
       })
@@ -316,7 +321,7 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
     try {
       const {
         mediaId, title, mediaType, coverUrl, difficulty, originalTitle, description, tags, links, relationships, episodes,
-      } = await selectMedia(result.externalId)
+      } = await selectMedia(result.externalId, [...maturity])
       onSelected({
         id: mediaId, title, mediaType, coverUrl, difficulty, externalId: result.externalId,
         originalTitle, description, tags, links, relationships,
@@ -375,11 +380,6 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
               ))}
             </div>
           </div>
-          {query.trim() && !isAllDifficulties && (
-            <div style={{ paddingLeft: 104, fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-              Difficulty filtering is not available for text search — clear the search box to browse by difficulty.
-            </div>
-          )}
         </div>
         <div style={{ height: 1, background: 'rgba(255,255,255,0.08)' }} />
         <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -391,11 +391,6 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
               ))}
             </div>
           </div>
-          {query.trim() && !isDefaultMaturity && (
-            <div style={{ paddingLeft: 104, fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-              Maturity filtering is not available for text search — clear the search box to browse by maturity.
-            </div>
-          )}
         </div>
       </div>
 
