@@ -7,6 +7,8 @@ import { useProgress } from '../../hooks/useProgress.js'
 import { migrateProgress } from '../vocab-srs/migrate.js'
 import { buildJmdictIdCardIndex, resolveStatus } from './srsStatusResolver.js'
 import DrawerSelect from '../../components/DrawerSelect.jsx'
+import CenteredLoadingMessage from '../../components/CenteredLoadingMessage.jsx'
+import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_LIST_TITLE } from '../../data/theme.js'
 
 const ACCENT = '#D46EA3'
@@ -81,11 +83,17 @@ function CaretButton({ open, onClick }) {
   )
 }
 
-export default function EpisodeVocabBrowser({ media, episode, onStartDrill }) {
+export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLoadingChange }) {
   const [occurrences, setOccurrences] = useState([])
   const [loading, setLoading] = useState(true)
   const [syncing, setSyncing] = useState(false)
   const [error, setError] = useState(null)
+
+  useEffect(() => {
+    onLoadingChange?.(loading)
+    return () => onLoadingChange?.(false)
+  }, [loading, onLoadingChange])
+  const showLoadingMessage = useDelayedLoading(loading)
 
   const [includeGrammar, setIncludeGrammar] = useState(false)
   const [includeNames, setIncludeNames] = useState(false)
@@ -233,8 +241,10 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill }) {
 
   if (loading) {
     return (
-      <div style={{ maxWidth: 640, margin: '0 auto', fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-        {syncing ? 'Fetching vocabulary from Jiten.moe (first view of this episode)...' : 'Loading...'}
+      <div style={{ maxWidth: 640, margin: '0 auto' }}>
+        {showLoadingMessage && (
+          <CenteredLoadingMessage text={syncing ? 'Syncing details from Jiten' : 'Loading episode vocabulary'} />
+        )}
       </div>
     )
   }

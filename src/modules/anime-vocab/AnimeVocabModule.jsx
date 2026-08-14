@@ -3,12 +3,17 @@ import { supabase } from '../../lib/supabase.js'
 import PageHeader from '../../components/PageHeader.jsx'
 import AuthSlot from '../../components/AuthSlot.jsx'
 import AttributionFooter from '../../components/AttributionFooter.jsx'
+import TopProgressBar from '../../components/TopProgressBar.jsx'
+import CenteredLoadingMessage from '../../components/CenteredLoadingMessage.jsx'
 import MediaSearch from './MediaSearch.jsx'
 import EpisodeList from './EpisodeList.jsx'
 import EpisodeVocabBrowser from './EpisodeVocabBrowser.jsx'
 import EpisodeDrill from './EpisodeDrill.jsx'
 import TrackedAnimeSection from './TrackedAnimeSection.jsx'
-import { FONT, TRACKING, TEXT_MUTED, FS_BASE } from '../../data/theme.js'
+import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
+import { FONT, TRACKING } from '../../data/theme.js'
+
+const ACCENT = '#D46EA3'
 
 // Self-contained module: anime lookup -> episode list -> episode vocab browser
 // -> one-off drill, all as in-component state under a single #/anime-vocab
@@ -22,6 +27,10 @@ export default function AnimeVocabModule({ initialMediaId }) {
   const [episode, setEpisode] = useState(null)
   const [drillWords, setDrillWords] = useState(null)
   const [resolving, setResolving] = useState(!!initialMediaId)
+  const [childLoading, setChildLoading] = useState(false)
+
+  const showProgressBar = useDelayedLoading(resolving || childLoading)
+  const showResolvingMessage = useDelayedLoading(resolving)
 
   useEffect(() => {
     if (!initialMediaId) return
@@ -86,23 +95,25 @@ export default function AnimeVocabModule({ initialMediaId }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', background: '#1E1E1E', fontFamily: FONT, letterSpacing: TRACKING }}>
-      <PageHeader crumbs={crumbs} rightSlot={<AuthSlot />} />
+      <PageHeader crumbs={crumbs} rightSlot={<AuthSlot />}>
+        <TopProgressBar loading={showProgressBar} color={ACCENT} />
+      </PageHeader>
       <div style={{ flex: 1, overflowY: 'auto', padding: showDrillBar ? '32px 24px 84px' : '32px 24px', display: 'flex', flexDirection: 'column' }}>
         <div style={{ flex: 1 }}>
           {resolving && (
-            <div style={{ maxWidth: 640, margin: '0 auto', fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-              Loading...
+            <div style={{ maxWidth: 640, margin: '0 auto' }}>
+              {showResolvingMessage && <CenteredLoadingMessage text="Loading series details" />}
             </div>
           )}
           {!resolving && !media && (
             <>
               <TrackedAnimeSection />
-              <MediaSearch onSelected={handleMediaSelected} />
+              <MediaSearch onSelected={handleMediaSelected} onLoadingChange={setChildLoading} />
             </>
           )}
           {media && !episode && <EpisodeList media={media} episodes={episodes} onSelectEpisode={setEpisode} />}
           {media && episode && !drillWords && (
-            <EpisodeVocabBrowser media={media} episode={episode} onStartDrill={setDrillWords} />
+            <EpisodeVocabBrowser media={media} episode={episode} onStartDrill={setDrillWords} onLoadingChange={setChildLoading} />
           )}
           {media && episode && drillWords && (
             <EpisodeDrill words={drillWords} onBack={backToBrowser} />

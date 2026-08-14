@@ -2,12 +2,16 @@ import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { toKana } from 'wanakana'
 import PageHeader from '../components/PageHeader.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
+import TopProgressBar from '../components/TopProgressBar.jsx'
+import CenteredLoadingMessage from '../components/CenteredLoadingMessage.jsx'
+import { useDelayedLoading } from '../hooks/useDelayedLoading.js'
 import { supabase } from '../lib/supabase.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_NAV, FS_BADGE, FS_CAPTION, FS_ENTRY_KANJI, FS_ENTRY_WORD, FS_CONTENT_HEADING } from '../data/theme.js'
 import AttributionFooter from '../components/AttributionFooter.jsx'
 
 const BG = '#1E1E1E'
 const SURFACE = '#2A2A2A'
+const ACCENT = '#3ABDA4'
 const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
 
 const PAGE_SIZE = 20
@@ -411,6 +415,7 @@ export default function DictionaryPage() {
   const [loadingMore, setLoadingMore] = useState(false)
   const [hasMore, setHasMore] = useState(saved?.hasMore ?? false)
   const [offset, setOffset] = useState(saved?.offset ?? 0)
+  const showLoadingMessage = useDelayedLoading(loading)
   const [commonOnly, setCommonOnly] = useState(saved?.commonOnly ?? false)
   const [error, setError] = useState(null)
   const [inputFocused, setInputFocused] = useState(false)
@@ -511,7 +516,9 @@ export default function DictionaryPage() {
           { label: 'Dictionary' },
         ]}
         rightSlot={<AuthSlot />}
-      />
+      >
+        <TopProgressBar loading={showLoadingMessage} color={ACCENT} />
+      </PageHeader>
       <div ref={scrollRef} onScroll={handleScroll} style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 48px', display: 'flex', flexDirection: 'column' }}>
         <div style={{ maxWidth: 600, margin: '0 auto', width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
         <div style={{ flex: 1 }}>
@@ -576,10 +583,8 @@ export default function DictionaryPage() {
             )}
           </div>
 
-          {loading && (
-            <div style={{ textAlign: 'center', padding: '48px 0', color: TEXT_MUTED, fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING }}>
-              Searching...
-            </div>
+          {loading && showLoadingMessage && (
+            <CenteredLoadingMessage text="Searching JMdict" />
           )}
 
           {!loading && error && (

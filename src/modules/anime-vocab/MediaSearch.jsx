@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { searchMedia, selectMedia } from './api.js'
+import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE } from '../../data/theme.js'
 
 const ACCENT = '#D46EA3'
@@ -52,13 +53,22 @@ function ResultRow({ result, onClick, busy }) {
 
 // Search + select screen. On selecting a result, links it into media/media_provider_ref/
 // media_episode (via the anime-media-select edge function) and calls onSelected(media, episodes).
-export default function MediaSearch({ onSelected }) {
+export default function MediaSearch({ onSelected, onLoadingChange }) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [selectingId, setSelectingId] = useState(null)
   const debounceRef = useRef(null)
+
+  const busy = loading || selectingId !== null
+  useEffect(() => {
+    onLoadingChange?.(busy)
+    // Reset on unmount too — e.g. selecting a result unmounts this screen
+    // before `busy` ever gets a chance to go back to false on its own.
+    return () => onLoadingChange?.(false)
+  }, [busy, onLoadingChange])
+  const showSearching = useDelayedLoading(loading)
 
   useEffect(() => {
     clearTimeout(debounceRef.current)
@@ -109,7 +119,7 @@ export default function MediaSearch({ onSelected }) {
       {error && (
         <div style={{ fontSize: FS_BASE, color: '#f87171', fontFamily: FONT, letterSpacing: TRACKING }}>{error}</div>
       )}
-      {loading && (
+      {showSearching && (
         <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>Searching...</div>
       )}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
