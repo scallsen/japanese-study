@@ -1,13 +1,19 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import * as SimpleQueue from '../../engines/simpleQueue.js'
 import { useDrill } from '../../hooks/useDrill.js'
-import { useTTS } from '../../hooks/useTTS.js'
+import { useTTS, useJaVoices } from '../../hooks/useTTS.js'
+import { useSFX } from '../../hooks/useSFX.js'
 import VocabCard from '../../components/VocabCard.jsx'
 import DrillHUD from '../../components/DrillHUD.jsx'
 import SpeedModeControls from '../../components/SpeedModeControls.jsx'
+import DrawerSectionHeader from '../../components/DrawerSectionHeader.jsx'
+import DrawerCheckbox from '../../components/DrawerCheckbox.jsx'
+import DrawerSelect from '../../components/DrawerSelect.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useProgress } from '../../hooks/useProgress.js'
 import { createCard } from '../vocab-srs/srs.js'
+import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
+import { SENTENCE_SOURCE_OPTIONS, DEFAULT_SENTENCE_SOURCE } from '../../data/sentenceSource.js'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION,
   FS_DISPLAY_HEADING, FS_STAT_VALUE, FS_LIST_TITLE,
@@ -20,13 +26,17 @@ const ANIME_WORDS_DECK_ID = 'anime-words'
 // (FlipCard/VocabCard/DrillHUD/SpeedModeControls/useDrill+SimpleQueue), just
 // self-contained inside this module and not persisted to any SRS deck unless
 // the user explicitly adds words from the done screen. Deliberately skips
-// Voicevox/gamepad/sfx — those are Vocab Drill specifics, not core to the flow.
-function ActiveEpisodeDrill({ drill }) {
+// gamepad support — Vocab Drill specific, not core to the flow.
+function ActiveEpisodeDrill({
+  drill, ttsVoice, audioEnabled, sfxEnabled, disableKeyboard,
+  showStreak, showFurigana, showTranslation, showSentence, sentenceSource, showKanjiMeaning, pixelFont, showVisualEffects,
+}) {
   const [flippedCardId, setFlippedCardId] = useState(null)
   const [transitioning, setTransitioning] = useState(false)
   const { currentCard, streak, bestStreak, correct, troubled, remaining, canUndo, onUndo } = drill
   const isFlipped = flippedCardId === currentCard.id
-  const tts = useTTS()
+  const tts = useTTS(ttsVoice)
+  const sfx = useSFX()
 
   const transitioningRef = useRef(false)
   useEffect(() => { transitioningRef.current = transitioning }, [transitioning])
@@ -37,37 +47,41 @@ function ActiveEpisodeDrill({ drill }) {
   handleVerdictRef.current = (isCorrect) => {
     if (transitioningRef.current) return
     const action = isCorrect ? drill.onCorrect : drill.onWrong
+    if (sfxEnabled) sfx.play(isCorrect ? 'flip_card_correct' : 'flip_card_wrong')
     setTransitioning(true)
     setTimeout(() => { action() }, 200)
     setTimeout(() => { setTransitioning(false) }, 240)
   }
 
   useEffect(() => {
-    if (isFlipped) tts.speak(currentCard.word.kana)
+    if (isFlipped) { if (audioEnabled) tts.speak(currentCard.word.kana) }
     else tts.cancel()
     return () => tts.cancel()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFlipped, currentCard.id])
+  }, [isFlipped, currentCard.id, audioEnabled])
 
   useEffect(() => { setFlippedCardId(null) }, [currentCard.id])
 
   function handleFlip(next) {
+    if (sfxEnabled) sfx.play('flip_card')
     setFlippedCardId(next ? currentCard.id : null)
   }
 
   function handleUndo() {
     if (transitioningRef.current || !canUndo) return
+    if (sfxEnabled) sfx.play('undo')
     setFlippedCardId(null)
     onUndo()
   }
 
   useEffect(() => {
     function onKey(e) {
-      if (transitioningRef.current) return
+      if (transitioningRef.current || disableKeyboard) return
       const t = e.target
       if (['BUTTON', 'INPUT', 'SELECT', 'TEXTAREA'].includes(t.tagName)) return
       if (e.code === 'Space') {
         e.preventDefault()
+        if (sfxEnabled) sfx.play('flip_card')
         setFlippedCardId(prev => (prev === currentCard.id ? null : currentCard.id))
       } else if (e.code === 'KeyZ' && isFlippedRef.current) {
         handleVerdictRef.current(false)
@@ -77,7 +91,8 @@ function ActiveEpisodeDrill({ drill }) {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [currentCard.id])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentCard.id, sfxEnabled, disableKeyboard])
 
   return (
     <DrillHUD
@@ -88,22 +103,22 @@ function ActiveEpisodeDrill({ drill }) {
       remaining={remaining}
       canUndo={canUndo}
       onUndo={handleUndo}
-      showStreak
-      showVisualEffects={false}
+      showStreak={showStreak}
+      showVisualEffects={showVisualEffects}
     >
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 15 }}>
         <VocabCard
           word={currentCard.word}
           flipped={isFlipped}
           onFlip={handleFlip}
-          animate={false}
+          animate={showVisualEffects}
           reviewMode="kanji-front"
-          showFurigana
-          showTranslation
-          showSentence={false}
-          sentenceSource="custom"
-          showKanjiMeaning={false}
-          pixelFont
+          showFurigana={showFurigana}
+          showTranslation={showTranslation}
+          showSentence={showSentence}
+          sentenceSource={sentenceSource}
+          showKanjiMeaning={showKanjiMeaning}
+          pixelFont={pixelFont}
         />
         <SpeedModeControls isFlipped={isFlipped} transitioning={transitioning} onVerdict={v => handleVerdictRef.current(v)} />
       </div>
@@ -203,12 +218,152 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onBack,
   )
 }
 
+// Settings panel — deliberately reuses Vocab Drill's own localStorage keys
+// (vocab-*) rather than a separate anime-vocab-* namespace, so display/audio
+// preferences carry over between the two drills automatically, in both
+// directions. Rendered as a fixed slide-over (not VocabPage's desktop
+// sidebar+chevron layout) since this module doesn't own its page's overall
+// layout — it's embedded content inside AnimeVocabModule's scroll area — so a
+// self-contained overlay is the simplest way to make it reachable from here,
+// on both desktop and mobile with one implementation.
+//
+// No "Text to speech" (Voicevox) source picker like VocabPage's — Anime Vocab
+// words are drawn from episode vocabulary, never Voicevox-pre-generated, so
+// that control would always silently do nothing. Just the browser-voice
+// picker (vocab-tts-voice) is exposed here, under the same "Enable audio"
+// checkbox VocabPage uses.
+function OptionsPanel({
+  onClose, jaVoices,
+  showStreak, setShowStreak, showFurigana, setShowFurigana, showVisualEffects, setShowVisualEffects,
+  pixelFont, setPixelFont, showTranslation, setShowTranslation, showSentence, setShowSentence,
+  sentenceSource, setSentenceSource, showKanjiMeaning, setShowKanjiMeaning,
+  audioEnabled, setAudioEnabled, sfxEnabled, setSfxEnabled, ttsVoice, setTtsVoice,
+}) {
+  return (
+    <>
+      <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 40 }} />
+      <div style={{
+        position: 'fixed', top: 0, right: 0, bottom: 0, width: 'min(360px, 100vw)', zIndex: 50,
+        background: '#2E2E2E', borderLeft: '1px solid rgba(255,255,255,0.08)',
+        display: 'flex', flexDirection: 'column', overflow: 'hidden',
+      }}>
+        <div style={{
+          padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0,
+        }}>
+          <div style={{ color: '#fff', fontSize: FS_BASE, fontWeight: 700 }}>Options</div>
+          <button
+            onClick={onClose}
+            style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: FS_BASE, fontFamily: 'inherit', cursor: 'pointer', padding: 0 }}
+          >
+            Close
+          </button>
+        </div>
+        <div className="sidebar-scroll" style={{ flex: 1, overflowY: 'auto', padding: '16px 20px' }}>
+          <DrawerSectionHeader title="Settings" />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <DrawerCheckbox checked={showStreak}        onChange={() => setShowStreak(v => !v)}        label="Show streak" />
+            <DrawerCheckbox checked={showFurigana}      onChange={() => setShowFurigana(v => !v)}      label="Show furigana" />
+            <DrawerCheckbox checked={showVisualEffects} onChange={() => setShowVisualEffects(v => !v)} label="Show visual effects" />
+            <DrawerCheckbox checked={pixelFont}         onChange={() => setPixelFont(v => !v)}         label="Use pixel font" />
+            <DrawerCheckbox checked={showTranslation}   onChange={() => setShowTranslation(v => !v)}   label="Show translation" />
+            <DrawerCheckbox checked={showSentence}      onChange={() => setShowSentence(v => !v)}       label="Show sentence" />
+            {showSentence && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
+                <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Sentence source</span>
+                <DrawerSelect
+                  value={sentenceSource}
+                  onChange={setSentenceSource}
+                  options={SENTENCE_SOURCE_OPTIONS}
+                  label="Sentence source"
+                />
+              </div>
+            )}
+            <DrawerCheckbox checked={showKanjiMeaning}  onChange={() => setShowKanjiMeaning(v => !v)}   label="Show kanji meaning" />
+            <DrawerCheckbox
+              checked={audioEnabled}
+              onChange={() => setAudioEnabled(v => !v)}
+              label="Enable audio"
+            />
+            {audioEnabled && (
+              <>
+                {jaVoices.length > 0 && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
+                    <DrawerSelect
+                      value={ttsVoice}
+                      onChange={setTtsVoice}
+                      options={[{ value: '', label: 'Default' }, ...jaVoices.map(v => ({ value: v.name, label: v.name }))]}
+                      label="Voice"
+                      subtext="Availability based on your device or browser"
+                    />
+                  </div>
+                )}
+                <DrawerCheckbox
+                  checked={sfxEnabled}
+                  onChange={() => setSfxEnabled(v => !v)}
+                  label="Sound effects"
+                  subtext="Silent mode may mute sound effects"
+                  indent={1}
+                />
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
 // words: [{ id, kanji, kana, english, sentence, jmdictId }]
 export default function EpisodeDrill({ words, onBack }) {
   const pool = useMemo(() => words.map(w => ({ id: w.id, word: w })), [words])
   const drill = useDrill(pool, { engine: SimpleQueue })
   const { user, signIn } = useAuth()
   const { data: srsData, save: saveSrs } = useProgress('vocab-srs')
+  const jaVoices = useJaVoices()
+
+  const [showOptions, setShowOptions] = useState(false)
+  const [showStreak,       setShowStreak]       = useState(() => {
+    const s = safeLocalStorageGet('vocab-show-streak'); return s === null ? true : s === 'true'
+  })
+  const [showFurigana,     setShowFurigana]     = useState(() => {
+    const s = safeLocalStorageGet('vocab-show-furigana'); return s === null ? true : s === 'true'
+  })
+  const [showVisualEffects, setShowVisualEffects] = useState(() => {
+    const s = safeLocalStorageGet('vocab-visual-effects'); return s === null ? true : s === 'true'
+  })
+  const [pixelFont,        setPixelFont]        = useState(() => {
+    const s = safeLocalStorageGet('vocab-pixel-font'); return s === null ? true : s === 'true'
+  })
+  const [showTranslation,  setShowTranslation]  = useState(() => {
+    const s = safeLocalStorageGet('vocab-show-translation'); return s === null ? true : s === 'true'
+  })
+  const [showSentence,     setShowSentence]     = useState(() => {
+    const s = safeLocalStorageGet('vocab-show-sentence'); return s === null ? false : s === 'true'
+  })
+  const [sentenceSource, setSentenceSource] = useState(() => safeLocalStorageGet('vocab-sentence-source') ?? DEFAULT_SENTENCE_SOURCE)
+  const [showKanjiMeaning, setShowKanjiMeaning] = useState(() => {
+    const s = safeLocalStorageGet('vocab-show-kanji-meaning'); return s === null ? false : s === 'true'
+  })
+  const [audioEnabled,     setAudioEnabled]     = useState(() => {
+    const s = safeLocalStorageGet('vocab-audio-enabled'); return s === null ? true : s === 'true'
+  })
+  const [sfxEnabled,       setSfxEnabled]       = useState(() => {
+    const s = safeLocalStorageGet('vocab-sfx-enabled'); return s === null ? true : s === 'true'
+  })
+  const [ttsVoice,         setTtsVoice]         = useState(() => safeLocalStorageGet('vocab-tts-voice') ?? '')
+
+  useEffect(() => { safeLocalStorageSet('vocab-show-streak',       showStreak) },        [showStreak])
+  useEffect(() => { safeLocalStorageSet('vocab-show-furigana',     showFurigana) },       [showFurigana])
+  useEffect(() => { safeLocalStorageSet('vocab-visual-effects',    showVisualEffects) },  [showVisualEffects])
+  useEffect(() => { safeLocalStorageSet('vocab-pixel-font',        pixelFont) },          [pixelFont])
+  useEffect(() => { safeLocalStorageSet('vocab-show-translation',  showTranslation) },    [showTranslation])
+  useEffect(() => { safeLocalStorageSet('vocab-show-sentence',     showSentence) },       [showSentence])
+  useEffect(() => { safeLocalStorageSet('vocab-sentence-source',   sentenceSource) },     [sentenceSource])
+  useEffect(() => { safeLocalStorageSet('vocab-show-kanji-meaning', showKanjiMeaning) },  [showKanjiMeaning])
+  useEffect(() => { safeLocalStorageSet('vocab-audio-enabled',     audioEnabled) },       [audioEnabled])
+  useEffect(() => { safeLocalStorageSet('vocab-sfx-enabled',       sfxEnabled) },         [sfxEnabled])
+  useEffect(() => { safeLocalStorageSet('vocab-tts-voice',         ttsVoice) },           [ttsVoice])
 
   function handleAddToSrs(addedWords) {
     const current = srsData ?? { decks: {}, cards: {}, lastSession: null, totalReviews: 0, newCardDay: { date: '', count: 0 } }
@@ -235,7 +390,21 @@ export default function EpisodeDrill({ words, onBack }) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+      <div style={{ width: 'min(380px, calc(100vw - 32px))', display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
+        <button
+          type="button"
+          onClick={() => setShowOptions(true)}
+          style={{
+            padding: '5px 14px', fontSize: FS_BASE, fontFamily: 'inherit', letterSpacing: TRACKING,
+            borderRadius: 6, cursor: 'pointer', background: 'rgba(255,255,255,0.06)', color: TEXT_MUTED,
+            border: '1px solid rgba(255,255,255,0.15)',
+          }}
+        >
+          Options
+        </button>
+      </div>
+
       {drill.done ? (
         <DoneScreen
           pool={pool}
@@ -249,7 +418,39 @@ export default function EpisodeDrill({ words, onBack }) {
           onSignIn={signIn}
         />
       ) : (
-        <ActiveEpisodeDrill drill={drill} />
+        <ActiveEpisodeDrill
+          drill={drill}
+          ttsVoice={ttsVoice}
+          audioEnabled={audioEnabled}
+          sfxEnabled={audioEnabled && sfxEnabled}
+          disableKeyboard={showOptions}
+          showStreak={showStreak}
+          showFurigana={showFurigana}
+          showTranslation={showTranslation}
+          showSentence={showSentence}
+          sentenceSource={sentenceSource}
+          showKanjiMeaning={showKanjiMeaning}
+          pixelFont={pixelFont}
+          showVisualEffects={showVisualEffects}
+        />
+      )}
+
+      {showOptions && (
+        <OptionsPanel
+          onClose={() => setShowOptions(false)}
+          jaVoices={jaVoices}
+          showStreak={showStreak} setShowStreak={setShowStreak}
+          showFurigana={showFurigana} setShowFurigana={setShowFurigana}
+          showVisualEffects={showVisualEffects} setShowVisualEffects={setShowVisualEffects}
+          pixelFont={pixelFont} setPixelFont={setPixelFont}
+          showTranslation={showTranslation} setShowTranslation={setShowTranslation}
+          showSentence={showSentence} setShowSentence={setShowSentence}
+          sentenceSource={sentenceSource} setSentenceSource={setSentenceSource}
+          showKanjiMeaning={showKanjiMeaning} setShowKanjiMeaning={setShowKanjiMeaning}
+          audioEnabled={audioEnabled} setAudioEnabled={setAudioEnabled}
+          sfxEnabled={sfxEnabled} setSfxEnabled={setSfxEnabled}
+          ttsVoice={ttsVoice} setTtsVoice={setTtsVoice}
+        />
       )}
     </div>
   )
