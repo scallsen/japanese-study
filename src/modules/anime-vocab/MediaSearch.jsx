@@ -63,9 +63,14 @@ function Chip({ label, active, onClick }) {
   )
 }
 
+// Fixed width (not just flexShrink: 0) so every section's chips start at the
+// same x position regardless of label length, and a top margin to match a
+// chip's own vertical padding — needed once alignItems switches to
+// flex-start so the label sits level with the first line of chips instead
+// of vertically centering against however many lines they wrap onto.
 function FilterSectionLabel({ children }) {
   return (
-    <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0, width: 84 }}>
+    <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0, width: 92, marginTop: 4 }}>
       {children}
     </span>
   )
@@ -320,7 +325,7 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
       />
 
       <div style={{ display: 'flex', flexDirection: 'column', background: '#2A2A2A', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, overflow: 'hidden' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', padding: '12px 16px' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap', padding: '12px 16px' }}>
           <FilterSectionLabel>Content</FilterSectionLabel>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {ALL_MEDIA_TYPES.map(t => (
@@ -329,7 +334,7 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
           </div>
         </div>
         <div style={{ height: 1, background: 'rgba(255,255,255,0.08)' }} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', padding: '12px 16px' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap', padding: '12px 16px' }}>
           <FilterSectionLabel>Difficulty</FilterSectionLabel>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             <Chip label="All" active={isAllDifficulties} onClick={selectAllDifficulties} />
