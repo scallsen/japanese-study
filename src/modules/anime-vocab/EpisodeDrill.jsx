@@ -235,7 +235,7 @@ export default function EpisodeDrill({ words, onBack }) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, overflowY: 'auto', padding: '32px 24px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       {drill.done ? (
         <DoneScreen
           pool={pool}
