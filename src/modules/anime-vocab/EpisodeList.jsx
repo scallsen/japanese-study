@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useTrackedAnime } from './useTrackedAnime.js'
 import { difficultyLabel } from './difficultyLabels.js'
@@ -8,9 +8,28 @@ const ACCENT = '#D46EA3'
 const TRACKED_COLOR = '#6BCB6B'
 const REMOVE_COLOR = '#f87171'
 
-function EpisodeRow({ episode, onClick }) {
+// Duplicated per-file (matches this module's own established convention —
+// see e.g. AnimeVocabModule.jsx — each self-contained module keeps its own
+// small copy rather than a shared hook).
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= breakpoint)
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`)
+    const handler = e => setIsMobile(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [breakpoint])
+  return isMobile
+}
+
+function EpisodeRow({ episode, onClick, isMobile }) {
   const [hovered, setHovered] = useState(false)
   const difficulty = episode.difficulty?.difficulty
+  const wordCount = episode.unique_word_count != null && (
+    <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>
+      {episode.unique_word_count} unique words
+    </span>
+  )
   return (
     <div
       onClick={onClick}
@@ -24,26 +43,26 @@ function EpisodeRow({ episode, onClick }) {
         cursor: 'pointer',
         transition: 'background 130ms',
         display: 'flex',
-        alignItems: 'center',
-        gap: 12,
+        flexDirection: isMobile ? 'column' : 'row',
+        alignItems: isMobile ? 'stretch' : 'center',
+        gap: isMobile ? 4 : 12,
       }}
     >
-      <span style={{ fontSize: FS_LIST_TITLE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-        {episode.title || `Episode ${episode.episode_number}`}
-      </span>
-      {episode.unique_word_count != null && (
-        <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>
-          {episode.unique_word_count} unique words
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+        <span style={{ fontSize: FS_LIST_TITLE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {episode.title || `Episode ${episode.episode_number}`}
         </span>
-      )}
-      {difficulty != null && (
-        <span style={{
-          fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, color: ACCENT,
-          background: `${ACCENT}22`, border: `1px solid ${ACCENT}55`, borderRadius: 4, padding: '1px 7px', flexShrink: 0,
-        }}>
-          {difficultyLabel(difficulty)} ({Number(difficulty).toFixed(1)})
-        </span>
-      )}
+        {!isMobile && wordCount}
+        {difficulty != null && (
+          <span style={{
+            fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, color: ACCENT,
+            background: `${ACCENT}22`, border: `1px solid ${ACCENT}55`, borderRadius: 4, padding: '1px 7px', flexShrink: 0,
+          }}>
+            {difficultyLabel(difficulty)} ({Number(difficulty).toFixed(1)})
+          </span>
+        )}
+      </div>
+      {isMobile && wordCount}
     </div>
   )
 }
@@ -144,6 +163,7 @@ export default function EpisodeList({ media, episodes, onSelectEpisode }) {
   const { user } = useAuth()
   const { isTracked, track, untrack } = useTrackedAnime()
   const tracked = isTracked(media.id)
+  const isMobile = useIsMobile()
 
   function handleToggleTrack() {
     if (!user) return
@@ -224,7 +244,7 @@ export default function EpisodeList({ media, episodes, onSelectEpisode }) {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         {episodes.map(ep => (
-          <EpisodeRow key={ep.id} episode={ep} onClick={() => onSelectEpisode(ep)} />
+          <EpisodeRow key={ep.id} episode={ep} onClick={() => onSelectEpisode(ep)} isMobile={isMobile} />
         ))}
       </div>
     </div>
