@@ -131,20 +131,13 @@ export async function fetchMediaSummary(externalId, { apiKey } = {}) {
   }
 }
 
-// Field to actually sort/compare on for a given sortBy value — 'difficulty'
-// maps to difficultyRaw (continuous) rather than the coarse 0-4 rounded
-// `difficulty` bucket, since most shows share the same coarse value.
-const SORT_FIELD = { difficulty: 'difficultyRaw' }
-
-function compareBy(field, direction) {
-  return (a, b) => {
-    const av = a[field], bv = b[field]
-    const cmp = typeof av === 'string' || typeof bv === 'string'
-      ? String(av ?? '').localeCompare(String(bv ?? ''))
-      : (av ?? 0) - (bv ?? 0)
-    return direction === 'desc' ? -cmp : cmp
-  }
-}
+// App-level sort key -> exact Jiten field name. Confirmed live: `sortBy`
+// only takes effect with this EXACT casing (e.g. 'difficulty', 'wordCount',
+// 'releaseDate', 'romajiTitle' all sort correctly; 'difficultyRaw' does not
+// — it silently no-ops back to unsorted default order, despite being the
+// more granular field). See anime-media-browse's header comment for the
+// full confirmed-live findings this mirrors.
+const SORT_FIELD = { difficulty: 'difficulty', releaseDate: 'releaseDate', title: 'romajiTitle', wordCount: 'wordCount' }
 
 // Content-maturity filtering for browse results. Hard-blocked tags are
 // always excluded regardless of the caller's maturity level — this is the
@@ -181,20 +174,27 @@ function passesMaturity(deck, allowedLevels) {
   return allowedLevels.includes(classifyMaturity(deck))
 }
 
-// Browse/filter the show-level catalog (GET /api/media-deck/get-media-decks)
-// — confirmed live that Jiten's own query params for this endpoint aren't
-// reliably honored (repeated mediaType keys don't filter, limit is ignored,
-// sortDirection=desc on releaseDate returned ascending instead) except for
-// sortBy=difficulty&sortDirection=asc, which is confirmed correct. Query
-// params below are sent as best-effort hints regardless — harmless if
-// ignored — but every result is always re-filtered/re-sorted/re-sliced here
-// in JS, so correctness never depends on Jiten having honored them.
+// Browse/filter/search the show-level catalog (GET /api/media-deck/get-media-decks)
+// — confirmed live: `offset` genuinely paginates (response includes a real
+// `totalItems`) and `titleFilter` genuinely full-text-searches title/alias
+// fields (romaji or Japanese) — this one endpoint covers both browsing and
+// text search, no separate search-suggestions call needed. `limit`/`pageSize`
+// are ignored (always a fixed 50-item page); repeated `mediaType` keys don't
+// filter (single value does); `sortDirection`/`sortOrder` are both dead — see
+// SORT_FIELD's comment for the sortBy casing requirement. Query params below
+// are sent as best-effort hints regardless — harmless if ignored — but every
+// result is always re-filtered/re-sorted/re-sliced here in JS, so correctness
+// never depends on Jiten having honored them. This reference copy doesn't
+// implement anime-media-browse's cursor-based "Load more" pagination (no
+// caller needs it — see that function for the full approach if one ever does).
 export async function browseMedia(params = {}, { apiKey } = {}) {
-  const { mediaTypes, difficultyMin, difficultyMax, maturityLevels = ['safe'], sortBy = 'difficulty', sortDirection = 'asc', limit = 24 } = params
+  const { titleFilter, mediaTypes, difficultyMin, difficultyMax, maturityLevels = ['safe'], sortBy = 'difficulty', sortDirection = 'asc', limit = 24, offset = 0 } = params
 
   const qs = new URLSearchParams()
-  qs.set('sortBy', sortBy)
-  qs.set('sortDirection', sortDirection)
+  qs.set('offset', String(offset))
+  qs.set('sortBy', SORT_FIELD[sortBy] ?? sortBy)
+  qs.set('sortDirection', 'asc') // the only direction Jiten honors at all
+  if (titleFilter) qs.set('titleFilter', titleFilter)
   for (const t of mediaTypes ?? []) qs.append('mediaType', String(t))
   if (difficultyMin != null) qs.set('difficultyMin', String(difficultyMin))
   if (difficultyMax != null) qs.set('difficultyMax', String(difficultyMax))
@@ -206,7 +206,8 @@ export async function browseMedia(params = {}, { apiKey } = {}) {
   if (difficultyMin != null) decks = decks.filter(d => (d.difficultyRaw ?? d.difficulty ?? 0) >= difficultyMin)
   if (difficultyMax != null) decks = decks.filter(d => (d.difficultyRaw ?? d.difficulty ?? 0) <= difficultyMax)
   decks = decks.filter(d => passesMaturity(d, maturityLevels))
-  decks = decks.slice().sort(compareBy(SORT_FIELD[sortBy] ?? sortBy, sortDirection)).slice(0, limit)
+  if (sortDirection === 'desc') decks = decks.slice().reverse()
+  decks = decks.slice(0, limit)
 
   return decks.map(d => ({
     externalId: String(d.deckId),

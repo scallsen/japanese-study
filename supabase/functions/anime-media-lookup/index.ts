@@ -8,7 +8,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 // ENTIRE catalog, with no regard for whether it's actually something people
 // recommend. Duplicated fetch/mapping logic from
 // src/modules/anime-vocab/providers/jitenClient.js's fetchMediaSummary —
-// kept in sync manually, see anime-media-search for why.
+// kept in sync manually, see anime-media-browse for why.
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -68,7 +68,7 @@ Deno.serve(async (req) => {
     const summaries = (await Promise.all(externalIds.map((id: unknown) => fetchSummary(String(id))))).filter(Boolean) as any[]
 
     // Cross-reference already-linked media so the client can route straight
-    // to the episode list — same pattern as anime-media-search/anime-media-browse.
+    // to the episode list — same pattern as anime-media-browse.
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
     const { data: existingRefs } = summaries.length
       ? await supabase.from('media_provider_ref').select('media_id, external_id').eq('provider', 'jiten').in('external_id', summaries.map(s => s.externalId))

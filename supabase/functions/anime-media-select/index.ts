@@ -1,11 +1,11 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
 
-// Links a Jiten media-deck result the user picked in anime-media-search into
-// `media`/`media_provider_ref`, and upserts its episode list into
+// Links a Jiten media-deck result the user picked (via anime-media-browse)
+// into `media`/`media_provider_ref`, and upserts its episode list into
 // `media_episode`. No vocabulary sync here — that's the separate, heavier
 // anime-episode-vocab-sync function, gated behind a user opening a specific
 // episode. Duplicated fetch/upsert logic from scripts/import-anime-vocab.mjs's
-// `linkMedia` — kept in sync manually, see anime-media-search for why.
+// `linkMedia` — kept in sync manually, see anime-media-browse for why.
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',

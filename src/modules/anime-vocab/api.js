@@ -14,15 +14,6 @@ async function invoke(name, body) {
   return data
 }
 
-// params: { difficultyMin?, difficultyMax?, maturityLevels? } — search
-// results are enriched server-side (search-suggestions alone carries no
-// difficulty/tag/genre data) so the same filters browse mode applies can
-// apply here too, rather than search silently bypassing them.
-// → { results: [{ externalId, title, originalTitle, mediaType, coverUrl, difficulty, mediaId }] }
-export function searchMedia(query, params) {
-  return invoke('anime-media-search', { query, ...params })
-}
-
 // maturityLevels: the caller's currently-selected soft maturity tiers (see
 // MediaSearch.jsx) — enforced here too, not just in anime-media-browse's
 // listing, since search results carry no tag/genre data to pre-filter by
@@ -37,8 +28,19 @@ export function syncEpisodeVocab(mediaEpisodeId) {
   return invoke('anime-episode-vocab-sync', { mediaEpisodeId })
 }
 
-// params: { mediaTypes?: number[], difficultyMin?, difficultyMax?, sortBy?, sortDirection?, limit? }
-// → { results: [{ externalId, title, originalTitle, mediaType, coverUrl, difficulty, mediaId }] }
+// Also the text-search path — pass `query` to filter by title text (matches
+// romaji or Japanese, server-side via Jiten's titleFilter param). Every
+// result already carries tags/genres/difficulty inline, so difficulty/
+// maturity filters apply identically whether or not a query is set — search
+// no longer bypasses them the way the old search-suggestions-based endpoint
+// did (see anime-media-browse's header comment).
+//
+// params: { query?, mediaTypes?: number[], difficultyMin?, difficultyMax?,
+//   maturityLevels?, sortBy?, sortDirection?, limit?, cursor? }
+// `cursor`: opaque — omit for the first page, then pass back whatever
+// `nextCursor` the previous response returned to fetch the next page
+// ("Load more"). `nextCursor` is `null` once there's nothing more to load.
+// → { results: [{ externalId, title, originalTitle, mediaType, coverUrl, difficulty, mediaId }], nextCursor }
 export function browseMedia(params) {
   return invoke('anime-media-browse', params)
 }

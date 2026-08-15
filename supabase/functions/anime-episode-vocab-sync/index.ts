@@ -8,7 +8,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 // no further edge function calls needed. Duplicated fetch/classification/
 // resolution logic from src/modules/anime-vocab/providers/*.js and
 // scripts/import-anime-vocab.mjs's `syncEpisodeVocab` — kept in sync
-// manually, see anime-media-search for why edge functions duplicate rather
+// manually, see anime-media-browse for why edge functions duplicate rather
 // than share.
 
 const CORS_HEADERS = {

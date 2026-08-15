@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { searchMedia, selectMedia, browseMedia } from './api.js'
+import { selectMedia, browseMedia } from './api.js'
 import { fetchRecommendedMedia } from './recommendedMediaCache.js'
 import { difficultyLabel } from './difficultyLabels.js'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
@@ -29,6 +29,25 @@ const MATURITY_LEVELS = ['safe', 'slightly-suggestive', 'suggestive']
 const MATURITY_LABELS = { safe: 'Safe', 'slightly-suggestive': 'Slightly suggestive', suggestive: 'Suggestive' }
 const DEFAULT_MATURITY = ['safe']
 
+// Only fields confirmed live to sort correctly server-side (see
+// anime-media-browse's header comment) — externalRating/creationDate/
+// distinctVoterCount were tried and aren't reliably ordered, so they're not
+// offered here. Each combines a sortBy key with a direction; "descending"
+// is simulated server-side by walking from the end backward (still true
+// global order, not just a locally-reversed page — see anime-media-browse).
+const SORT_OPTIONS = [
+  { value: 'difficulty-asc', label: 'Difficulty: Easiest first' },
+  { value: 'difficulty-desc', label: 'Difficulty: Hardest first' },
+  { value: 'releaseDate-desc', label: 'Release date: Newest first' },
+  { value: 'releaseDate-asc', label: 'Release date: Oldest first' },
+  { value: 'title-asc', label: 'Title: A–Z' },
+  { value: 'title-desc', label: 'Title: Z–A' },
+  { value: 'wordCount-asc', label: 'Word count: Shortest first' },
+  { value: 'wordCount-desc', label: 'Word count: Longest first' },
+]
+const DEFAULT_SORT = 'difficulty-asc'
+const RESULTS_PAGE_SIZE = 24
+
 function ViewModeButton({ label, active, onClick }) {
   const [hovered, setHovered] = useState(false)
   return (
@@ -47,6 +66,35 @@ function ViewModeButton({ label, active, onClick }) {
     >
       {label}
     </button>
+  )
+}
+
+function SortSelect({ value, onChange }) {
+  return (
+    <select
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      style={{
+        padding: '5px 26px 5px 10px',
+        fontSize: FS_BASE,
+        fontFamily: FONT,
+        letterSpacing: TRACKING,
+        borderRadius: 4,
+        cursor: 'pointer',
+        background: 'rgba(255,255,255,0.06)',
+        color: TEXT_MUTED,
+        border: '1px solid rgba(255,255,255,0.12)',
+        outline: 'none',
+        appearance: 'none',
+        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'right 8px center',
+      }}
+    >
+      {SORT_OPTIONS.map(o => (
+        <option key={o.value} value={o.value}>{o.label}</option>
+      ))}
+    </select>
   )
 }
 
@@ -181,28 +229,34 @@ function ResultListRow({ result, onClick, busy }) {
 // Search + select screen. On selecting a result, links it into media/media_provider_ref/
 // media_episode (via the anime-media-select edge function) and calls onSelected(media, episodes).
 //
-// Three fetch modes, chosen implicitly by current state (no explicit toggle):
-//   - query non-empty -> text search (searchMedia). search-suggestions alone
-//     carries no difficulty/tag/genre data, so the edge function fetches each
-//     candidate's full detail server-side to still apply content/difficulty/
-//     maturity filtering there too, rather than search bypassing them.
-//   - query empty + at least one filter narrowed -> browse/listing (browseMedia).
-//   - query empty + no filter narrowed -> idle/empty state, filled with the
-//     cached "recommended" listing (see recommendedMediaCache.js) rather than
-//     showing nothing.
+// Two fetch modes, chosen implicitly by current state (no explicit toggle):
+//   - idle (query empty + no filter narrowed) -> the cached "recommended"
+//     listing (see recommendedMediaCache.js) rather than showing nothing.
+//   - otherwise -> browseMedia, for BOTH text search and filter-only
+//     browsing. A query is passed straight through as a title filter
+//     (Jiten's own titleFilter param, confirmed to match romaji or Japanese
+//     title text server-side) rather than hitting a separate search
+//     endpoint, so difficulty/maturity filtering and "Load more" pagination
+//     both work identically whether or not there's a query — search no
+//     longer bypasses filters or caps out at a fixed handful of results.
 export default function MediaSearch({ onSelected, onLoadingChange }) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [cursor, setCursor] = useState(null)
   const [error, setError] = useState(null)
   const [selectingId, setSelectingId] = useState(null)
   const [mediaTypes, setMediaTypes] = useState(() => new Set(DEFAULT_MEDIA_TYPES))
   const [difficulties, setDifficulties] = useState(() => new Set(ALL_DIFFICULTY_LEVELS))
   const [maturity, setMaturity] = useState(() => new Set(DEFAULT_MATURITY))
+  const [sortValue, setSortValue] = useState(() => safeLocalStorageGet('anime-vocab-sort') ?? DEFAULT_SORT)
   const [viewMode, setViewMode] = useState(() => safeLocalStorageGet('anime-vocab-view-mode') ?? 'tiles')
   const debounceRef = useRef(null)
+  const fetchTokenRef = useRef(0)
 
   useEffect(() => { safeLocalStorageSet('anime-vocab-view-mode', viewMode) }, [viewMode])
+  useEffect(() => { safeLocalStorageSet('anime-vocab-sort', sortValue) }, [sortValue])
 
   const busy = loading || selectingId !== null
   useEffect(() => {
@@ -259,63 +313,106 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
   const filterNarrowed = !isDefaultMediaTypes || !isAllDifficulties || !isDefaultMaturity
   const selectedLabels = new Set([...mediaTypes].map(t => MEDIA_TYPE_LABELS[t]))
   const isIdle = !query.trim() && !filterNarrowed
+  const [sortBy, sortDirection] = sortValue.split('-')
+
+  // Jiten's difficultyMin/Max filters the continuous difficultyRaw score,
+  // not the rounded bucket a chip represents — bucket N covers raw scores
+  // [N, N+1), so querying min=max=N (e.g. "Beginner" -> 0-0) matches
+  // essentially nothing (confirmed live: 0 results) where 0-0.99 correctly
+  // returns real matches. Widen the upper bound by 1 bucket-width so the
+  // superset query actually captures the bucket's real range; chip
+  // selection can also be a discontiguous set (e.g. levels 1 and 4 with
+  // 2-3 excluded), so the exact set is still enforced client-side below —
+  // the server only ever gets the continuous range as a hint.
+  const difficultyMin = isAllDifficulties ? null : Math.min(...difficulties)
+  const difficultyMax = isAllDifficulties ? null : Math.max(...difficulties) + 1
+  function matchesDifficulty(x) {
+    return isAllDifficulties || (x.difficulty?.difficulty != null && difficulties.has(x.difficulty.difficulty))
+  }
+  function passesClientFilters(x) {
+    return selectedLabels.has(x.mediaType) && matchesDifficulty(x)
+  }
 
   useEffect(() => {
     clearTimeout(debounceRef.current)
     const q = query.trim()
+    const requestId = ++fetchTokenRef.current
 
-    // Jiten's difficultyMin/Max filters the continuous difficultyRaw score,
-    // not the rounded bucket a chip represents — bucket N covers raw scores
-    // [N, N+1), so querying min=max=N (e.g. "Beginner" -> 0-0) matches
-    // essentially nothing (confirmed live: 0 results) where 0-0.99 correctly
-    // returns real matches. Widen the upper bound by 1 bucket-width so the
-    // superset query actually captures the bucket's real range; chip
-    // selection can also be a discontiguous set (e.g. levels 1 and 4 with
-    // 2-3 excluded), so the exact set is still enforced client-side after.
-    const matchesDifficulty = x => isAllDifficulties
-      || (x.difficulty?.difficulty != null && difficulties.has(x.difficulty.difficulty))
-    const difficultyMin = isAllDifficulties ? null : Math.min(...difficulties)
-    const difficultyMax = isAllDifficulties ? null : Math.max(...difficulties) + 1
-
-    if (q) {
-      setLoading(true)
-      debounceRef.current = setTimeout(() => {
-        // search-suggestions alone has no difficulty/tag/genre data — the
-        // edge function fetches each candidate's full detail server-side so
-        // difficulty/maturity (including the hard block) can still apply,
-        // instead of search silently bypassing every filter.
-        searchMedia(q, { difficultyMin, difficultyMax, maturityLevels: [...maturity] })
-          .then(({ results: r }) => { setResults(r.filter(x => selectedLabels.has(x.mediaType) && matchesDifficulty(x))); setError(null) })
-          .catch(err => setError(err.message))
-          .finally(() => setLoading(false))
-      }, DEBOUNCE_MS)
-      return () => clearTimeout(debounceRef.current)
+    function commit(r, nextCursor) {
+      if (fetchTokenRef.current !== requestId) return
+      setResults(r.filter(passesClientFilters))
+      setCursor(nextCursor)
+      setError(null)
+    }
+    function fail(err) {
+      if (fetchTokenRef.current === requestId) setError(err.message)
+    }
+    function done() {
+      if (fetchTokenRef.current === requestId) setLoading(false)
     }
 
-    if (filterNarrowed) {
+    if (isIdle) {
+      // The curated recommended list (recommendedMediaCache.js) is a small,
+      // hand-picked set of wholesome beginner titles — safe by construction,
+      // so it's never run back through the maturity filter, and there's
+      // nothing to paginate.
       setLoading(true)
-      browseMedia({
-        mediaTypes: [...mediaTypes],
-        difficultyMin, difficultyMax,
-        maturityLevels: [...maturity],
-        sortBy: 'difficulty', sortDirection: 'asc', limit: 24,
-      })
-        .then(({ results: r }) => { setResults(r.filter(x => selectedLabels.has(x.mediaType) && matchesDifficulty(x))); setError(null) })
-        .catch(err => setError(err.message))
-        .finally(() => setLoading(false))
+      setCursor(null)
+      fetchRecommendedMedia().then(r => commit(r, null)).catch(fail).finally(done)
       return
     }
 
-    // The curated recommended list (recommendedMediaCache.js) is a small,
-    // hand-picked set of wholesome beginner titles — safe by construction,
-    // so it's never run back through the maturity filter here.
-    setLoading(true)
-    fetchRecommendedMedia()
-      .then(r => { setResults(r.filter(x => selectedLabels.has(x.mediaType) && matchesDifficulty(x))); setError(null) })
-      .catch(err => setError(err.message))
-      .finally(() => setLoading(false))
+    function runFetch() {
+      setLoading(true)
+      setCursor(null)
+      browseMedia({
+        query: q || undefined,
+        mediaTypes: [...mediaTypes],
+        difficultyMin, difficultyMax,
+        maturityLevels: [...maturity],
+        sortBy, sortDirection,
+        limit: RESULTS_PAGE_SIZE,
+      })
+        .then(({ results: r, nextCursor }) => commit(r, nextCursor))
+        .catch(fail)
+        .finally(done)
+    }
+
+    if (q) {
+      setLoading(true)
+      debounceRef.current = setTimeout(runFetch, DEBOUNCE_MS)
+      return () => clearTimeout(debounceRef.current)
+    }
+    runFetch()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, [...mediaTypes].join(','), [...difficulties].sort().join(','), [...maturity].sort().join(',')])
+  }, [query, [...mediaTypes].join(','), [...difficulties].sort().join(','), [...maturity].sort().join(','), sortValue])
+
+  function handleLoadMore() {
+    if (!cursor || loading || loadingMore) return
+    const requestId = ++fetchTokenRef.current
+    setLoadingMore(true)
+    browseMedia({
+      query: query.trim() || undefined,
+      mediaTypes: [...mediaTypes],
+      difficultyMin, difficultyMax,
+      maturityLevels: [...maturity],
+      sortBy, sortDirection,
+      limit: RESULTS_PAGE_SIZE,
+      cursor,
+    })
+      .then(({ results: r, nextCursor }) => {
+        if (fetchTokenRef.current !== requestId) return
+        const filtered = r.filter(passesClientFilters)
+        setResults(prev => {
+          const seen = new Set(prev.map(p => p.externalId))
+          return [...prev, ...filtered.filter(x => !seen.has(x.externalId))]
+        })
+        setCursor(nextCursor)
+        setError(null)
+      })
+      .catch(err => { if (fetchTokenRef.current === requestId) setError(err.message) })
+      .finally(() => { if (fetchTokenRef.current === requestId) setLoadingMore(false) })
+  }
 
   async function handleSelect(result) {
     setSelectingId(result.externalId)
@@ -405,9 +502,12 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
         <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
           {isIdle ? 'Recommended — beginner friendly' : ''}
         </span>
-        <div style={{ display: 'flex', gap: 6, marginLeft: 'auto' }}>
-          <ViewModeButton label="List" active={viewMode === 'list'} onClick={() => setViewMode('list')} />
-          <ViewModeButton label="Tiles" active={viewMode === 'tiles'} onClick={() => setViewMode('tiles')} />
+        <div style={{ display: 'flex', gap: 8, marginLeft: 'auto', alignItems: 'center' }}>
+          {!isIdle && <SortSelect value={sortValue} onChange={setSortValue} />}
+          <div style={{ display: 'flex', gap: 6 }}>
+            <ViewModeButton label="List" active={viewMode === 'list'} onClick={() => setViewMode('list')} />
+            <ViewModeButton label="Tiles" active={viewMode === 'tiles'} onClick={() => setViewMode('tiles')} />
+          </div>
         </div>
       </div>
 
@@ -426,6 +526,27 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
       </div>
       {!loading && !isIdle && results.length === 0 && !error && (
         <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>No results.</div>
+      )}
+      {!isIdle && !loading && cursor && (
+        <button
+          type="button"
+          onClick={handleLoadMore}
+          disabled={loadingMore}
+          style={{
+            alignSelf: 'center',
+            padding: '8px 20px',
+            fontSize: FS_BASE,
+            fontFamily: FONT,
+            letterSpacing: TRACKING,
+            borderRadius: 6,
+            cursor: loadingMore ? 'default' : 'pointer',
+            background: 'rgba(255,255,255,0.06)',
+            color: loadingMore ? 'rgba(255,255,255,0.3)' : TEXT_MUTED,
+            border: '1px solid rgba(255,255,255,0.15)',
+          }}
+        >
+          {loadingMore ? 'Loading more...' : 'Load more'}
+        </button>
       )}
     </div>
   )
