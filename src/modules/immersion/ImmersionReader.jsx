@@ -84,7 +84,7 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
       <PageHeader
         crumbs={[
           { label: 'Japanese Study', href: '#/' },
-          { label: 'Immersion', onClick: onBack },
+          { label: 'News reader', onClick: onBack },
           { label: 'Read' },
         ]}
         rightSlot={<AuthSlot />}

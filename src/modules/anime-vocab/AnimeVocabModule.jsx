@@ -164,16 +164,16 @@ export default function AnimeVocabModule({ initialMediaId }) {
 
   const crumbs = [{ label: 'Japanese Study', href: '#/' }]
   if (!media) {
-    crumbs.push({ label: 'Anime Vocab' })
+    crumbs.push({ label: 'Anime vocabulary' })
   } else if (!episode) {
-    crumbs.push({ label: 'Anime Vocab', onClick: backToSearch })
+    crumbs.push({ label: 'Anime vocabulary', onClick: backToSearch })
     crumbs.push({ label: media.title })
   } else if (!drillWords) {
-    crumbs.push({ label: 'Anime Vocab', onClick: backToSearch })
+    crumbs.push({ label: 'Anime vocabulary', onClick: backToSearch })
     crumbs.push({ label: media.title, onClick: backToEpisodes })
     crumbs.push({ label: episode.title || `Episode ${episode.episode_number}` })
   } else {
-    crumbs.push({ label: 'Anime Vocab', onClick: backToSearch })
+    crumbs.push({ label: 'Anime vocabulary', onClick: backToSearch })
     crumbs.push({ label: media.title, onClick: backToEpisodes })
     crumbs.push({ label: episode.title || `Episode ${episode.episode_number}`, onClick: backToBrowser })
     crumbs.push({ label: 'Drill' })

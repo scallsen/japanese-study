@@ -149,7 +149,7 @@ export default function ImmersionModule() {
       <PageHeader
         crumbs={[
           { label: 'Japanese Study', href: '#/' },
-          { label: 'Immersion' },
+          { label: 'News reader' },
         ]}
         rightSlot={<AuthSlot />}
       >
