@@ -1,7 +1,9 @@
 import { useState, useMemo, useEffect } from 'react'
 import PageHeader from '../../components/PageHeader.jsx'
 import AuthSlot from '../../components/AuthSlot.jsx'
-import { Button, KANJI_FONT, BG, SURFACE } from './storyUI.jsx'
+import TopProgressBar from '../../components/TopProgressBar.jsx'
+import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
+import { Button, KANJI_FONT, BG, SURFACE, ACCENT } from './storyUI.jsx'
 import { labelStyle, fieldStyle, selectFieldStyle } from './storyFieldStyles.js'
 import { FONT, TRACKING, BORDER, TEXT, TEXT_MUTED, FS_BADGE, FS_CAPTION, FS_HEADING, FS_LIST_TITLE } from '../../data/theme.js'
 import { WORD_SOURCES } from '../../data/wordLists.js'
@@ -139,6 +141,7 @@ export default function StoryModule() {
   const [showPreview, setShowPreview] = useState(false)
   const [generating, setGenerating] = useState(false)
   const [error, setError] = useState(null)
+  const showGenerating = useDelayedLoading(generating)
 
   const setSource = v => { setSourceRaw(v); safeLocalStorageSet('story-source', v) }
   const setMaturity = v => { setMaturityRaw(v); safeLocalStorageSet('story-maturity', v) }
@@ -212,7 +215,9 @@ export default function StoryModule() {
       <PageHeader
         crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Story generator' }]}
         rightSlot={<AuthSlot />}
-      />
+      >
+        <TopProgressBar loading={showGenerating} color={ACCENT} />
+      </PageHeader>
       <div style={{ flex: 1, overflowY: 'auto' }}>
         <div style={{ maxWidth: 760, margin: '0 auto', padding: isMobile ? '18px 14px 70px' : '24px 20px 80px' }}>
           <Field label="Vocabulary source">

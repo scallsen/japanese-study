@@ -9,6 +9,7 @@ import StoryModule from './modules/story/StoryModule.jsx'
 import StoryReviewPage from './modules/story/StoryReviewPage.jsx'
 import DictionaryPage from './pages/DictionaryPage.jsx'
 import DictionaryEntryPage from './pages/DictionaryEntryPage.jsx'
+import AnimeVocabModule from './modules/anime-vocab/AnimeVocabModule.jsx'
 
 function getRoute() {
   return window.location.hash.slice(1) || '/'
@@ -41,5 +42,7 @@ export default function App() {
   if (route.startsWith('/story/')) return <StoryReviewPage storyId={route.slice('/story/'.length)} />
   if (route === '/dictionary') return <DictionaryPage />
   if (route.startsWith('/dictionary/entry/')) return <DictionaryEntryPage entryId={route.slice('/dictionary/entry/'.length)} />
+  if (route === '/anime-vocab') return <AnimeVocabModule />
+  if (route.startsWith('/anime-vocab/')) return <AnimeVocabModule initialMediaId={route.slice('/anime-vocab/'.length)} />
   return <DashboardPage />
 }

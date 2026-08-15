@@ -3,7 +3,6 @@
     "id": "nsm-n3-w1d1-001",
     "kanji": "駐車",
     "kana": "ちゅうしゃ",
-    "english": "parking",
     "sentence": "ここに駐車してはいけません。",
     "listKey": "nsm-n3-w1d1",
     "voicevoxVoices": [
@@ -16,7 +15,6 @@
     "id": "nsm-n3-w1d1-002",
     "kanji": "駐車場",
     "kana": "ちゅうしゃじょう",
-    "english": "parking lot",
     "sentence": "となりの駐車場をご利用ください。",
     "listKey": "nsm-n3-w1d1",
     "voicevoxVoices": [
@@ -29,7 +27,6 @@
     "id": "nsm-n3-w1d1-003",
     "kanji": "無休",
     "kana": "むきゅう",
-    "english": "no holidays / open year-round",
     "sentence": "コンビニは年中無休です。",
     "listKey": "nsm-n3-w1d1",
     "voicevoxVoices": [
@@ -42,7 +39,6 @@
     "id": "nsm-n3-w1d1-004",
     "kanji": "無料",
     "kana": "むりょう",
-    "english": "free of charge",
     "sentence": "この美術館、今日は無料だそうです。",
     "listKey": "nsm-n3-w1d1",
     "voicevoxVoices": [
@@ -67,7 +63,6 @@
     "id": "nsm-n3-w1d1-006",
     "kanji": "無い",
     "kana": "ない",
-    "english": "nonexistent / there is none",
     "sentence": "忘れ物は無いですか？",
     "listKey": "nsm-n3-w1d1",
     "voicevoxVoices": [
@@ -80,7 +75,6 @@
     "id": "nsm-n3-w1d1-007",
     "kanji": "満車",
     "kana": "まんしゃ",
-    "english": "full (parking lot)",
     "sentence": "この駐車場は今、満車です。",
     "listKey": "nsm-n3-w1d1",
     "voicevoxVoices": [
@@ -93,7 +87,6 @@
     "id": "nsm-n3-w1d1-008",
     "kanji": "満員",
     "kana": "まんいん",
-    "english": "full capacity / packed",
     "sentence": "満員電車に乗りたくないです。",
     "listKey": "nsm-n3-w1d1",
     "voicevoxVoices": [
@@ -118,7 +111,6 @@
     "id": "nsm-n3-w1d1-010",
     "kanji": "方向",
     "kana": "ほうこう",
-    "english": "direction",
     "sentence": "トイレはあっちの方向ですよ。",
     "listKey": "nsm-n3-w1d1",
     "voicevoxVoices": [
@@ -131,7 +123,6 @@
     "id": "nsm-n3-w1d1-011",
     "kanji": "向こう",
     "kana": "むこう",
-    "english": "over there / the other side",
     "sentence": "向こうの駐車場なら空いています。",
     "listKey": "nsm-n3-w1d1",
     "voicevoxVoices": [
@@ -144,7 +135,6 @@
     "id": "nsm-n3-w1d1-012",
     "kanji": "向かう",
     "kana": "むかう",
-    "english": "to head towards / to face",
     "sentence": "少し遅れますが、今、そちらに向かっています。",
     "listKey": "nsm-n3-w1d1",
     "voicevoxVoices": [
@@ -169,7 +159,6 @@
     "id": "nsm-n3-w1d1-014",
     "kanji": "禁止",
     "kana": "きんし",
-    "english": "prohibition / ban",
     "sentence": "ここはポイ捨て禁止ですよ。",
     "listKey": "nsm-n3-w1d1",
     "voicevoxVoices": [
@@ -182,7 +171,6 @@
     "id": "nsm-n3-w1d1-015",
     "kanji": "禁じる",
     "kana": "きんじる",
-    "english": "to forbid / to prohibit",
     "sentence": "テストでは辞書の使用を禁じます。",
     "listKey": "nsm-n3-w1d1",
     "voicevoxVoices": [
@@ -195,7 +183,6 @@
     "id": "nsm-n3-w1d1-016",
     "kanji": "関心",
     "kana": "かんしん",
-    "english": "interest / concern",
     "sentence": "最近、何に関心がありますか。",
     "listKey": "nsm-n3-w1d1",
     "voicevoxVoices": [
@@ -208,7 +195,6 @@
     "id": "nsm-n3-w1d1-017",
     "kanji": "関する",
     "kana": "かんする",
-    "english": "to relate to / concerning",
     "sentence": "最近はAIに関するニュースをよく聞きますね。",
     "listKey": "nsm-n3-w1d1",
     "voicevoxVoices": [
@@ -221,7 +207,6 @@
     "id": "nsm-n3-w1d1-018",
     "kanji": "関係",
     "kana": "かんけい",
-    "english": "relationship / connection",
     "sentence": "関係者以外、立入禁止です。",
     "listKey": "nsm-n3-w1d1",
     "voicevoxVoices": [
@@ -234,7 +219,6 @@
     "id": "nsm-n3-w1d1-019",
     "kanji": "係",
     "kana": "かかり",
-    "english": "person in charge / staff",
     "sentence": "係の方、いらっしゃいますか？",
     "listKey": "nsm-n3-w1d1",
     "voicevoxVoices": [
@@ -247,7 +231,6 @@
     "id": "nsm-n3-w1d1-020",
     "kanji": "無断",
     "kana": "むだん",
-    "english": "without permission",
     "sentence": "無断で使ったら怒られますよ。",
     "listKey": "nsm-n3-w1d1",
     "voicevoxVoices": [
@@ -260,7 +243,6 @@
     "id": "nsm-n3-w1d1-021",
     "kanji": "断水",
     "kana": "だんすい",
-    "english": "water outage / water cut-off",
     "sentence": "5月10日は断水になるそうです。",
     "listKey": "nsm-n3-w1d1",
     "voicevoxVoices": [
@@ -273,7 +255,6 @@
     "id": "nsm-n3-w1d1-022",
     "kanji": "断る",
     "kana": "ことわる",
-    "english": "to decline / to refuse",
     "sentence": "飲み会を上手に断る方法を教えてください。",
     "listKey": "nsm-n3-w1d1",
     "voicevoxVoices": [
@@ -286,7 +267,6 @@
     "id": "nsm-n3-w1d2-001",
     "kanji": "横断",
     "kana": "おうだん",
-    "english": "crossing / traversal",
     "sentence": "アメリカをバイクで横断したことがあります。",
     "listKey": "nsm-n3-w1d2",
     "voicevoxVoices": [
@@ -299,7 +279,6 @@
     "id": "nsm-n3-w1d2-002",
     "kanji": "横断歩道",
     "kana": "おうだんほどう",
-    "english": "pedestrian crossing / crosswalk",
     "sentence": "横断歩道を渡りましょう。",
     "listKey": "nsm-n3-w1d2",
     "voicevoxVoices": [
@@ -312,7 +291,6 @@
     "id": "nsm-n3-w1d2-003",
     "kanji": "横",
     "kana": "よこ",
-    "english": "side / horizontal / width",
     "sentence": "かばんは横に置かないで、いすの下に入れましょう。",
     "listKey": "nsm-n3-w1d2",
     "voicevoxVoices": [
@@ -325,7 +303,6 @@
     "id": "nsm-n3-w1d2-004",
     "kanji": "押す",
     "kana": "おす",
-    "english": "to push / to press",
     "sentence": "ここを押すと切符が出ます。",
     "listKey": "nsm-n3-w1d2",
     "voicevoxVoices": [
@@ -338,7 +315,6 @@
     "id": "nsm-n3-w1d2-005",
     "kanji": "押さえる",
     "kana": "おさえる",
-    "english": "to hold down / to press",
     "sentence": "ちょっとここを押さえてもらえますか。",
     "listKey": "nsm-n3-w1d2",
     "voicevoxVoices": [
@@ -351,7 +327,6 @@
     "id": "nsm-n3-w1d2-006",
     "kanji": "押し入れ",
     "kana": "おしいれ",
-    "english": "Japanese-style closet",
     "sentence": "私のアパートには押し入れがありません。",
     "listKey": "nsm-n3-w1d2",
     "voicevoxVoices": [
@@ -376,7 +351,6 @@
     "id": "nsm-n3-w1d2-008",
     "kanji": "入学式",
     "kana": "にゅうがくしき",
-    "english": "school entrance ceremony",
     "sentence": "大学の入学式は４月の初めです。",
     "listKey": "nsm-n3-w1d2",
     "voicevoxVoices": [
@@ -389,7 +363,6 @@
     "id": "nsm-n3-w1d2-009",
     "kanji": "数式",
     "kana": "すうしき",
-    "english": "mathematical formula",
     "sentence": "数式がわかれば、答えはすぐ出ると思います。",
     "listKey": "nsm-n3-w1d2",
     "voicevoxVoices": [
@@ -402,7 +375,6 @@
     "id": "nsm-n3-w1d2-010",
     "kanji": "送信",
     "kana": "そうしん",
-    "english": "sending / transmission",
     "sentence": "メールを送信する前に、内容を確認しましょう。",
     "listKey": "nsm-n3-w1d2",
     "voicevoxVoices": [
@@ -415,7 +387,6 @@
     "id": "nsm-n3-w1d2-011",
     "kanji": "信じる",
     "kana": "しんじる",
-    "english": "to believe / to trust",
     "sentence": "私を信じてください。",
     "listKey": "nsm-n3-w1d2",
     "voicevoxVoices": [
@@ -428,7 +399,6 @@
     "id": "nsm-n3-w1d2-012",
     "kanji": "自信",
     "kana": "じしん",
-    "english": "self-confidence",
     "sentence": "もっと自信を持ってくださいね。",
     "listKey": "nsm-n3-w1d2",
     "voicevoxVoices": [
@@ -441,7 +411,6 @@
     "id": "nsm-n3-w1d2-013",
     "kanji": "信用",
     "kana": "しんよう",
-    "english": "trust / credibility",
     "sentence": "あの人はあまり信用できませんね。",
     "listKey": "nsm-n3-w1d2",
     "voicevoxVoices": [
@@ -454,7 +423,6 @@
     "id": "nsm-n3-w1d2-014",
     "kanji": "信号",
     "kana": "しんごう",
-    "english": "traffic light / signal",
     "sentence": "次の信号を右に曲がってください。",
     "listKey": "nsm-n3-w1d2",
     "voicevoxVoices": [
@@ -491,7 +459,6 @@
     "id": "nsm-n3-w1d2-017",
     "kanji": "確かめる",
     "kana": "たしかめる",
-    "english": "to confirm / to verify",
     "sentence": "フライトの時間、確かめておきますね。",
     "listKey": "nsm-n3-w1d2",
     "voicevoxVoices": [
@@ -516,7 +483,6 @@
     "id": "nsm-n3-w1d2-019",
     "kanji": "確認",
     "kana": "かくにん",
-    "english": "confirmation / verification",
     "sentence": "次の予約時間を確認したいんですが。",
     "listKey": "nsm-n3-w1d2",
     "voicevoxVoices": [
@@ -529,7 +495,6 @@
     "id": "nsm-n3-w1d2-020",
     "kanji": "認める",
     "kana": "みとめる",
-    "english": "to recognize / to approve",
     "sentence": "大学院への入学が認められました。",
     "listKey": "nsm-n3-w1d2",
     "voicevoxVoices": [
@@ -542,7 +507,6 @@
     "id": "nsm-n3-w1d2-021",
     "kanji": "飛行場",
     "kana": "ひこうじょう",
-    "english": "airfield / small airport",
     "sentence": "この飛行場では、ライセンスを取るための練習が行われています。",
     "listKey": "nsm-n3-w1d2",
     "voicevoxVoices": [
@@ -555,7 +519,6 @@
     "id": "nsm-n3-w1d2-022",
     "kanji": "飛ぶ",
     "kana": "とぶ",
-    "english": "to fly / to jump",
     "sentence": "空を飛ぶのが夢でした。",
     "listKey": "nsm-n3-w1d2",
     "voicevoxVoices": [
@@ -580,7 +543,6 @@
     "id": "nsm-n3-w1d3-002",
     "kanji": "非常に",
     "kana": "ひじょうに",
-    "english": "extremely / very",
     "sentence": "日本の夏は非常に暑いですね。",
     "listKey": "nsm-n3-w1d3",
     "voicevoxVoices": [
@@ -593,7 +555,6 @@
     "id": "nsm-n3-w1d3-003",
     "kanji": "非常口",
     "kana": "ひじょうぐち",
-    "english": "emergency exit",
     "sentence": "地震の時は、非常口から外に出てください。",
     "listKey": "nsm-n3-w1d3",
     "voicevoxVoices": [
@@ -630,7 +591,6 @@
     "id": "nsm-n3-w1d3-006",
     "kanji": "～階",
     "kana": "かい",
-    "english": "~~th floor",
     "sentence": "男子トイレは３階と５階です。",
     "listKey": "nsm-n3-w1d3",
     "voicevoxVoices": [
@@ -643,7 +603,6 @@
     "id": "nsm-n3-w1d3-007",
     "kanji": "階段",
     "kana": "かいだん",
-    "english": "stairs / staircase",
     "sentence": "ダイエットのために毎日階段を使っています。",
     "listKey": "nsm-n3-w1d3",
     "voicevoxVoices": [
@@ -656,7 +615,6 @@
     "id": "nsm-n3-w1d3-008",
     "kanji": "段落",
     "kana": "だんらく",
-    "english": "paragraph",
     "sentence": "次の段落を読んでください。",
     "listKey": "nsm-n3-w1d3",
     "voicevoxVoices": [
@@ -669,7 +627,6 @@
     "id": "nsm-n3-w1d3-009",
     "kanji": "箱",
     "kana": "はこ",
-    "english": "box",
     "sentence": "プレゼントなので、箱に入れてラッピングしていただけますか。",
     "listKey": "nsm-n3-w1d3",
     "voicevoxVoices": [
@@ -682,7 +639,6 @@
     "id": "nsm-n3-w1d3-010",
     "kanji": "ごみ箱",
     "kana": "ごみばこ",
-    "english": "trash can / rubbish bin",
     "sentence": "日本の町にはゴミ箱が少ないと思います。",
     "listKey": "nsm-n3-w1d3",
     "voicevoxVoices": [
@@ -707,7 +663,6 @@
     "id": "nsm-n3-w1d3-012",
     "kanji": "危ない",
     "kana": "あぶない",
-    "english": "dangerous / watch out",
     "sentence": "歩きながらスマホを使うのは危ないですよ。",
     "listKey": "nsm-n3-w1d3",
     "voicevoxVoices": [
@@ -720,7 +675,6 @@
     "id": "nsm-n3-w1d3-013",
     "kanji": "険しい",
     "kana": "けわしい",
-    "english": "steep / rugged",
     "sentence": "この山は道が険しいので、気をつけて下さい。",
     "listKey": "nsm-n3-w1d3",
     "voicevoxVoices": [
@@ -733,7 +687,6 @@
     "id": "nsm-n3-w1d3-014",
     "kanji": "捨てる",
     "kana": "すてる",
-    "english": "to throw away / to discard",
     "sentence": "道にゴミを捨てないでくださいね。",
     "listKey": "nsm-n3-w1d3",
     "voicevoxVoices": [
@@ -746,7 +699,6 @@
     "id": "nsm-n3-w1d3-015",
     "kanji": "四捨五入",
     "kana": "ししゃごにゅう",
-    "english": "rounding (mathematical)",
     "sentence": "小数点以下は四捨五入してください。",
     "listKey": "nsm-n3-w1d3",
     "voicevoxVoices": [
@@ -759,7 +711,6 @@
     "id": "nsm-n3-w2d1-001",
     "kanji": "線",
     "kana": "せん",
-    "english": "line / stripe",
     "sentence": "黄色い線の内側にお下がりください。",
     "listKey": "nsm-n3-w2d1",
     "voicevoxVoices": [
@@ -784,7 +735,6 @@
     "id": "nsm-n3-w2d1-003",
     "kanji": "全面",
     "kana": "ぜんめん",
-    "english": "entirely / whole surface",
     "sentence": "この店は全面禁煙です。",
     "listKey": "nsm-n3-w2d1",
     "voicevoxVoices": [
@@ -797,7 +747,6 @@
     "id": "nsm-n3-w2d1-004",
     "kanji": "画面",
     "kana": "がめん",
-    "english": "screen / display",
     "sentence": "このスマホ、画面が大きくて見やすいですね。",
     "listKey": "nsm-n3-w2d1",
     "voicevoxVoices": [
@@ -834,7 +783,6 @@
     "id": "nsm-n3-w2d1-007",
     "kanji": "普及",
     "kana": "ふきゅう",
-    "english": "widespread use / prevalence",
     "sentence": "今はインターネットが普及しています。",
     "listKey": "nsm-n3-w2d1",
     "voicevoxVoices": [
@@ -847,7 +795,6 @@
     "id": "nsm-n3-w2d1-008",
     "kanji": "各駅",
     "kana": "かくえき",
-    "english": "every station / local (train)",
     "sentence": "この電車は各駅に停まります。",
     "listKey": "nsm-n3-w2d1",
     "voicevoxVoices": [
@@ -860,7 +807,6 @@
     "id": "nsm-n3-w2d1-009",
     "kanji": "各国",
     "kana": "かっこく",
-    "english": "each country / various countries",
     "sentence": "各国の代表が集まりました。",
     "listKey": "nsm-n3-w2d1",
     "voicevoxVoices": [
@@ -873,7 +819,6 @@
     "id": "nsm-n3-w2d1-010",
     "kanji": "各自",
     "kana": "かくじ",
-    "english": "each person / individually",
     "sentence": "ごみは各自でお持ち帰りください。",
     "listKey": "nsm-n3-w2d1",
     "voicevoxVoices": [
@@ -886,7 +831,6 @@
     "id": "nsm-n3-w2d1-011",
     "kanji": "目次",
     "kana": "もくじ",
-    "english": "table of contents",
     "sentence": "目次を見れば、本の内容が大体わかります。",
     "listKey": "nsm-n3-w2d1",
     "voicevoxVoices": [
@@ -899,7 +843,6 @@
     "id": "nsm-n3-w2d1-012",
     "kanji": "次回",
     "kana": "じかい",
-    "english": "next time",
     "sentence": "この続きは、また次回話しましょう。",
     "listKey": "nsm-n3-w2d1",
     "voicevoxVoices": [
@@ -912,7 +855,6 @@
     "id": "nsm-n3-w2d1-013",
     "kanji": "次",
     "kana": "つぎ",
-    "english": "next",
     "sentence": "次の電車は何時ですか？",
     "listKey": "nsm-n3-w2d1",
     "voicevoxVoices": [
@@ -925,7 +867,6 @@
     "id": "nsm-n3-w2d1-014",
     "kanji": "快速",
     "kana": "かいそく",
-    "english": "rapid (train)",
     "sentence": "この駅は快速電車が停まりませんよ。",
     "listKey": "nsm-n3-w2d1",
     "voicevoxVoices": [
@@ -938,7 +879,6 @@
     "id": "nsm-n3-w2d1-015",
     "kanji": "快適",
     "kana": "かいてき",
-    "english": "comfortable / pleasant",
     "sentence": "この家は快適ですね。",
     "listKey": "nsm-n3-w2d1",
     "voicevoxVoices": [
@@ -951,7 +891,6 @@
     "id": "nsm-n3-w2d1-016",
     "kanji": "高速道路",
     "kana": "こうそくどうろ",
-    "english": "highway / expressway",
     "sentence": "ゴールデンウィークは高速道路が混みますね。",
     "listKey": "nsm-n3-w2d1",
     "voicevoxVoices": [
@@ -964,7 +903,6 @@
     "id": "nsm-n3-w2d1-017",
     "kanji": "速度",
     "kana": "そくど",
-    "english": "speed / velocity",
     "sentence": "速度の出しすぎに注意してください。",
     "listKey": "nsm-n3-w2d1",
     "voicevoxVoices": [
@@ -977,7 +915,6 @@
     "id": "nsm-n3-w2d1-018",
     "kanji": "速い",
     "kana": "はやい",
-    "english": "fast / quick",
     "sentence": "こっちの道のほうが速く行けますよ。",
     "listKey": "nsm-n3-w2d1",
     "voicevoxVoices": [
@@ -990,7 +927,6 @@
     "id": "nsm-n3-w2d1-019",
     "kanji": "通過",
     "kana": "つうか",
-    "english": "passing through / transit",
     "sentence": "電車が通過しますので、ご注意ください。",
     "listKey": "nsm-n3-w2d1",
     "voicevoxVoices": [
@@ -1003,7 +939,6 @@
     "id": "nsm-n3-w2d1-020",
     "kanji": "過去",
     "kana": "かこ",
-    "english": "the past",
     "sentence": "それは過去の話です。",
     "listKey": "nsm-n3-w2d1",
     "voicevoxVoices": [
@@ -1016,7 +951,6 @@
     "id": "nsm-n3-w2d1-021",
     "kanji": "過ぎる",
     "kana": "すぎる",
-    "english": "to pass / to go by / to exceed",
     "sentence": "日本に来て、もう10年が過ぎました。",
     "listKey": "nsm-n3-w2d1",
     "voicevoxVoices": [
@@ -1029,7 +963,6 @@
     "id": "nsm-n3-w2d1-022",
     "kanji": "地下鉄",
     "kana": "ちかてつ",
-    "english": "subway / underground",
     "sentence": "東京駅で地下鉄に乗りかえてください。",
     "listKey": "nsm-n3-w2d1",
     "voicevoxVoices": [
@@ -1042,7 +975,6 @@
     "id": "nsm-n3-w2d1-023",
     "kanji": "鉄道",
     "kana": "てつどう",
-    "english": "railway / railroad",
     "sentence": "父は鉄道会社に勤めています。",
     "listKey": "nsm-n3-w2d1",
     "voicevoxVoices": [
@@ -1055,7 +987,6 @@
     "id": "nsm-n3-w2d1-024",
     "kanji": "鉄",
     "kana": "てつ",
-    "english": "iron / steel",
     "sentence": "このフライパンは鉄でできているから重いですよ。",
     "listKey": "nsm-n3-w2d1",
     "voicevoxVoices": [
@@ -1068,7 +999,6 @@
     "id": "nsm-n3-w2d2-001",
     "kanji": "指定",
     "kana": "してい",
-    "english": "designated / specified",
     "sentence": "ゴミは指定日に捨ててください。",
     "listKey": "nsm-n3-w2d2",
     "voicevoxVoices": [
@@ -1081,7 +1011,6 @@
     "id": "nsm-n3-w2d2-002",
     "kanji": "指定席",
     "kana": "していせき",
-    "english": "reserved seat",
     "sentence": "京都までの指定席をお願いします。",
     "listKey": "nsm-n3-w2d2",
     "voicevoxVoices": [
@@ -1094,7 +1023,6 @@
     "id": "nsm-n3-w2d2-003",
     "kanji": "指",
     "kana": "ゆび",
-    "english": "finger",
     "sentence": "昨日料理をしていて、指を切っちゃった。",
     "listKey": "nsm-n3-w2d2",
     "voicevoxVoices": [
@@ -1107,7 +1035,6 @@
     "id": "nsm-n3-w2d2-004",
     "kanji": "指輪",
     "kana": "ゆびわ",
-    "english": "ring (finger ring)",
     "sentence": "彼女のプレゼント、指輪がいいかな？",
     "listKey": "nsm-n3-w2d2",
     "voicevoxVoices": [
@@ -1120,7 +1047,6 @@
     "id": "nsm-n3-w2d2-005",
     "kanji": "定休日",
     "kana": "ていきゅうび",
-    "english": "regular closing day",
     "sentence": "定休日は毎週水曜日です。",
     "listKey": "nsm-n3-w2d2",
     "voicevoxVoices": [
@@ -1133,7 +1059,6 @@
     "id": "nsm-n3-w2d2-006",
     "kanji": "安定",
     "kana": "あんてい",
-    "english": "stability / stable",
     "sentence": "安定した仕事が欲しいです。",
     "listKey": "nsm-n3-w2d2",
     "voicevoxVoices": [
@@ -1146,7 +1071,6 @@
     "id": "nsm-n3-w2d2-007",
     "kanji": "不安定",
     "kana": "ふあんてい",
-    "english": "unstable / insecure",
     "sentence": "仕事はアルバイトだけなので、生活が不安定です。",
     "listKey": "nsm-n3-w2d2",
     "voicevoxVoices": [
@@ -1159,7 +1083,6 @@
     "id": "nsm-n3-w2d2-008",
     "kanji": "席",
     "kana": "せき",
-    "english": "seat",
     "sentence": "この席、空いてますか？",
     "listKey": "nsm-n3-w2d2",
     "voicevoxVoices": [
@@ -1172,7 +1095,6 @@
     "id": "nsm-n3-w2d2-009",
     "kanji": "出席",
     "kana": "しゅっせき",
-    "english": "attendance / present",
     "sentence": "明日の会議、出席しますか？",
     "listKey": "nsm-n3-w2d2",
     "voicevoxVoices": [
@@ -1185,7 +1107,6 @@
     "id": "nsm-n3-w2d2-010",
     "kanji": "欠席",
     "kana": "けっせき",
-    "english": "absence / absent",
     "sentence": "会議の欠席者には後で資料を送ります。",
     "listKey": "nsm-n3-w2d2",
     "voicevoxVoices": [
@@ -1210,7 +1131,6 @@
     "id": "nsm-n3-w2d2-012",
     "kanji": "自由席",
     "kana": "じゆうせき",
-    "english": "unreserved seat",
     "sentence": "自由席だと座れないかもしれません。",
     "listKey": "nsm-n3-w2d2",
     "voicevoxVoices": [
@@ -1223,7 +1143,6 @@
     "id": "nsm-n3-w2d2-013",
     "kanji": "理由",
     "kana": "りゆう",
-    "english": "reason / cause",
     "sentence": "欠席する場合は、理由も言ってください。",
     "listKey": "nsm-n3-w2d2",
     "voicevoxVoices": [
@@ -1236,7 +1155,6 @@
     "id": "nsm-n3-w2d2-014",
     "kanji": "番号",
     "kana": "ばんごう",
-    "english": "number",
     "sentence": "こちらにご住所とお電話番号をご記入ください。",
     "listKey": "nsm-n3-w2d2",
     "voicevoxVoices": [
@@ -1273,7 +1191,6 @@
     "id": "nsm-n3-w2d2-017",
     "kanji": "窓",
     "kana": "まど",
-    "english": "window",
     "sentence": "暑いから窓を開けますね。",
     "listKey": "nsm-n3-w2d2",
     "voicevoxVoices": [
@@ -1286,7 +1203,6 @@
     "id": "nsm-n3-w2d2-018",
     "kanji": "窓口",
     "kana": "まどぐち",
-    "english": "service counter / window",
     "sentence": "それは窓口で相談してください。",
     "listKey": "nsm-n3-w2d2",
     "voicevoxVoices": [
@@ -1299,7 +1215,6 @@
     "id": "nsm-n3-w2d2-019",
     "kanji": "両側",
     "kana": "りょうがわ",
-    "english": "both sides",
     "sentence": "道の両側に桜が咲いています。",
     "listKey": "nsm-n3-w2d2",
     "voicevoxVoices": [
@@ -1312,7 +1227,6 @@
     "id": "nsm-n3-w2d2-020",
     "kanji": "窓側",
     "kana": "まどがわ",
-    "english": "window side",
     "sentence": "景色が見たいから窓側の席がいいです。",
     "listKey": "nsm-n3-w2d2",
     "voicevoxVoices": [
@@ -1325,7 +1239,6 @@
     "id": "nsm-n3-w2d2-021",
     "kanji": "右側",
     "kana": "みぎがわ",
-    "english": "right side",
     "sentence": "道が混むので右側を歩いてください。",
     "listKey": "nsm-n3-w2d2",
     "voicevoxVoices": [
@@ -1338,7 +1251,6 @@
     "id": "nsm-n3-w2d2-022",
     "kanji": "通路",
     "kana": "つうろ",
-    "english": "aisle / passage",
     "sentence": "通路側の席をお願いします。",
     "listKey": "nsm-n3-w2d2",
     "voicevoxVoices": [
@@ -1351,7 +1263,6 @@
     "id": "nsm-n3-w2d2-023",
     "kanji": "道路",
     "kana": "どうろ",
-    "english": "road / street",
     "sentence": "夕方は道路が混みますね。",
     "listKey": "nsm-n3-w2d2",
     "voicevoxVoices": [
@@ -1364,7 +1275,6 @@
     "id": "nsm-n3-w2d2-024",
     "kanji": "線路",
     "kana": "せんろ",
-    "english": "railway track",
     "sentence": "危ないから、線路で遊んじゃだめですよ。",
     "listKey": "nsm-n3-w2d2",
     "voicevoxVoices": [
@@ -1377,7 +1287,6 @@
     "id": "nsm-n3-w2d3-001",
     "kanji": "停車",
     "kana": "ていしゃ",
-    "english": "stopping (vehicle)",
     "sentence": "次の停車駅は、品川です。",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1390,7 +1299,6 @@
     "id": "nsm-n3-w2d3-002",
     "kanji": "バス停",
     "kana": "バスてい",
-    "english": "bus stop",
     "sentence": "ここから一番近いバス停はどこですか？",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1403,7 +1311,6 @@
     "id": "nsm-n3-w2d3-003",
     "kanji": "整理",
     "kana": "せいり",
-    "english": "organization / tidying up",
     "sentence": "書類を整理してください。",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1416,7 +1323,6 @@
     "id": "nsm-n3-w2d3-004",
     "kanji": "整理券",
     "kana": "せいりけん",
-    "english": "numbered / queue ticket",
     "sentence": "整理券をお渡しします。",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1429,7 +1335,6 @@
     "id": "nsm-n3-w2d3-005",
     "kanji": "整える",
     "kana": "ととのえる",
-    "english": "to prepare / to arrange",
     "sentence": "大切な会議ですから、準備を整えてください。",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1442,7 +1347,6 @@
     "id": "nsm-n3-w2d3-006",
     "kanji": "駐車券",
     "kana": "ちゅうしゃけん",
-    "english": "parking ticket",
     "sentence": "駐車券はお持ちですか？",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1455,7 +1359,6 @@
     "id": "nsm-n3-w2d3-007",
     "kanji": "乗車券",
     "kana": "じょうしゃけん",
-    "english": "boarding ticket",
     "sentence": "乗車券を見せてください。",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1468,7 +1371,6 @@
     "id": "nsm-n3-w2d3-008",
     "kanji": "回数券",
     "kana": "かいすうけん",
-    "english": "book of tickets",
     "sentence": "回数券を買いたいんですが。",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1481,7 +1383,6 @@
     "id": "nsm-n3-w2d3-009",
     "kanji": "現金",
     "kana": "げんきん",
-    "english": "cash",
     "sentence": "危ないから、現金はあまり持ち歩きません。",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1494,7 +1395,6 @@
     "id": "nsm-n3-w2d3-010",
     "kanji": "表現",
     "kana": "ひょうげん",
-    "english": "expression",
     "sentence": "言葉では表現できません。",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1507,7 +1407,6 @@
     "id": "nsm-n3-w2d3-011",
     "kanji": "現れる",
     "kana": "あらわれる",
-    "english": "to appear / to show up",
     "sentence": "彼はいつも急に現れるからびっくりする。",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1520,7 +1419,6 @@
     "id": "nsm-n3-w2d3-012",
     "kanji": "両親",
     "kana": "りょうしん",
-    "english": "parents",
     "sentence": "ご両親はお元気ですか？",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1545,7 +1443,6 @@
     "id": "nsm-n3-w2d3-014",
     "kanji": "取り替える",
     "kana": "とりかえる",
-    "english": "to replace / to exchange",
     "sentence": "このお皿、汚れているので取り替えてください。",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1558,7 +1455,6 @@
     "id": "nsm-n3-w2d3-015",
     "kanji": "両替",
     "kana": "りょうがえ",
-    "english": "currency / money exchange",
     "sentence": "これ、五千円札と千円札に両替してもらえませんか？",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1571,7 +1467,6 @@
     "id": "nsm-n3-w2d3-016",
     "kanji": "着替える",
     "kana": "きがえる",
-    "english": "to change clothes",
     "sentence": "汗をかいたので着替えてきます。",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1584,7 +1479,6 @@
     "id": "nsm-n3-w2d3-017",
     "kanji": "優先席",
     "kana": "ゆうせんせき",
-    "english": "priority seat",
     "sentence": "そこは優先席ですよ。",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1597,7 +1491,6 @@
     "id": "nsm-n3-w2d3-018",
     "kanji": "女優",
     "kana": "じょゆう",
-    "english": "actress",
     "sentence": "彼女、女優の仕事をしているんだって。",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1610,7 +1503,6 @@
     "id": "nsm-n3-w2d3-019",
     "kanji": "優しい",
     "kana": "やさしい",
-    "english": "kind / gentle",
     "sentence": "彼女のお母さんは優しくていいな。",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1623,7 +1515,6 @@
     "id": "nsm-n3-w2d3-020",
     "kanji": "座席",
     "kana": "ざせき",
-    "english": "seat",
     "sentence": "どの座席になさいますか？",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1636,7 +1527,6 @@
     "id": "nsm-n3-w2d3-021",
     "kanji": "正座",
     "kana": "せいざ",
-    "english": "seiza / formal kneeling",
     "sentence": "長時間正座すると、足が痛くなりますね。",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1649,7 +1539,6 @@
     "id": "nsm-n3-w2d3-022",
     "kanji": "座る",
     "kana": "すわる",
-    "english": "to sit",
     "sentence": "ここ、座ってもいいですか？",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1662,7 +1551,6 @@
     "id": "nsm-n3-w2d3-023",
     "kanji": "降車口",
     "kana": "こうしゃぐち",
-    "english": "exit door (vehicle)",
     "sentence": "ここは降車口ですから、向こうから乗ってください。",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1675,7 +1563,6 @@
     "id": "nsm-n3-w2d3-024",
     "kanji": "以降",
     "kana": "いこう",
-    "english": "from ~~ onwards / after",
     "sentence": "6時以降はこちらに連絡してください。",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1688,7 +1575,6 @@
     "id": "nsm-n3-w2d3-025",
     "kanji": "降りる",
     "kana": "おりる",
-    "english": "to get off / to disembark",
     "sentence": "電車を降りてからかけ直しますね。",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1701,7 +1587,6 @@
     "id": "nsm-n3-w2d3-026",
     "kanji": "降る",
     "kana": "ふる",
-    "english": "to fall (rain/snow)",
     "sentence": "明日は雪が降るそうですよ。",
     "listKey": "nsm-n3-w2d3",
     "voicevoxVoices": [
@@ -1714,7 +1599,6 @@
     "id": "nsm-n3-w3d1-001",
     "kanji": "準備",
     "kana": "じゅんび",
-    "english": "preparation",
     "sentence": "明日の会議の資料、準備しておいてください。",
     "listKey": "nsm-n3-w3d1",
     "voicevoxVoices": [
@@ -1727,7 +1611,6 @@
     "id": "nsm-n3-w3d1-002",
     "kanji": "準優勝",
     "kana": "じゅんゆうしょう",
-    "english": "runner-up / second place",
     "sentence": "このチームは全国大会で準優勝したことがあるんですよ。",
     "listKey": "nsm-n3-w3d1",
     "voicevoxVoices": [
@@ -1740,7 +1623,6 @@
     "id": "nsm-n3-w3d1-003",
     "kanji": "予備",
     "kana": "よび",
-    "english": "spare / reserve / backup",
     "sentence": "予備の電池を買っておきますね。",
     "listKey": "nsm-n3-w3d1",
     "voicevoxVoices": [
@@ -1753,7 +1635,6 @@
     "id": "nsm-n3-w3d1-004",
     "kanji": "備える",
     "kana": "そなえる",
-    "english": "to prepare for / to equip",
     "sentence": "万一に備えて、保険に入っておいたほうがいいですよ。",
     "listKey": "nsm-n3-w3d1",
     "voicevoxVoices": [
@@ -1766,7 +1647,6 @@
     "id": "nsm-n3-w3d1-005",
     "kanji": "営業",
     "kana": "えいぎょう",
-    "english": "business / open for business",
     "sentence": "祝日も営業してますか？",
     "listKey": "nsm-n3-w3d1",
     "voicevoxVoices": [
@@ -1779,7 +1659,6 @@
     "id": "nsm-n3-w3d1-006",
     "kanji": "営む",
     "kana": "いとなむ",
-    "english": "to run / to operate (a business)",
     "sentence": "父は小さい旅館を営んでいます。",
     "listKey": "nsm-n3-w3d1",
     "voicevoxVoices": [
@@ -1792,7 +1671,6 @@
     "id": "nsm-n3-w3d1-007",
     "kanji": "開閉",
     "kana": "かいへい",
-    "english": "opening and closing",
     "sentence": "開閉ボタンはそこにありますよ。",
     "listKey": "nsm-n3-w3d1",
     "voicevoxVoices": [
@@ -1805,7 +1683,6 @@
     "id": "nsm-n3-w3d1-008",
     "kanji": "閉まる",
     "kana": "しまる",
-    "english": "to close (intransitive)",
     "sentence": "扉が閉まります。ご注意ください。",
     "listKey": "nsm-n3-w3d1",
     "voicevoxVoices": [
@@ -1818,7 +1695,6 @@
     "id": "nsm-n3-w3d1-009",
     "kanji": "閉める",
     "kana": "しめる",
-    "english": "to close (transitive)",
     "sentence": "風が強いから窓を閉めますね。",
     "listKey": "nsm-n3-w3d1",
     "voicevoxVoices": [
@@ -1831,7 +1707,6 @@
     "id": "nsm-n3-w3d1-010",
     "kanji": "案内",
     "kana": "あんない",
-    "english": "guidance / to guide",
     "sentence": "国から友達が来たから、東京を案内してあげました。",
     "listKey": "nsm-n3-w3d1",
     "voicevoxVoices": [
@@ -1844,7 +1719,6 @@
     "id": "nsm-n3-w3d1-011",
     "kanji": "案",
     "kana": "あん",
-    "english": "idea / plan / proposal",
     "sentence": "いい案ですね。そうしましょう！",
     "listKey": "nsm-n3-w3d1",
     "voicevoxVoices": [
@@ -1857,7 +1731,6 @@
     "id": "nsm-n3-w3d1-012",
     "kanji": "家内",
     "kana": "かない",
-    "english": "one's wife (humble)",
     "sentence": "家内も連れていきますね。",
     "listKey": "nsm-n3-w3d1",
     "voicevoxVoices": [
@@ -1870,7 +1743,6 @@
     "id": "nsm-n3-w3d1-013",
     "kanji": "以内",
     "kana": "いない",
-    "english": "within / inside of",
     "sentence": "スピーチは５分以内でお願いします。",
     "listKey": "nsm-n3-w3d1",
     "voicevoxVoices": [
@@ -1883,7 +1755,6 @@
     "id": "nsm-n3-w3d1-014",
     "kanji": "内側",
     "kana": "うちがわ",
-    "english": "inside / inner side",
     "sentence": "黄色い線の内側にお下がりください。",
     "listKey": "nsm-n3-w3d1",
     "voicevoxVoices": [
@@ -1896,7 +1767,6 @@
     "id": "nsm-n3-w3d1-015",
     "kanji": "国内",
     "kana": "こくない",
-    "english": "domestic / within the country",
     "sentence": "去年海外に行ったから、今年は国内旅行にします。",
     "listKey": "nsm-n3-w3d1",
     "voicevoxVoices": [
@@ -1909,7 +1779,6 @@
     "id": "nsm-n3-w3d1-016",
     "kanji": "予定",
     "kana": "よてい",
-    "english": "plan / schedule",
     "sentence": "週末は出かける予定です。",
     "listKey": "nsm-n3-w3d1",
     "voicevoxVoices": [
@@ -1922,7 +1791,6 @@
     "id": "nsm-n3-w3d1-017",
     "kanji": "予習",
     "kana": "よしゅう",
-    "english": "pre-study / preparation",
     "sentence": "授業が難しいから、予習したほうがいいですね。",
     "listKey": "nsm-n3-w3d1",
     "voicevoxVoices": [
@@ -1935,7 +1803,6 @@
     "id": "nsm-n3-w3d1-018",
     "kanji": "予約",
     "kana": "よやく",
-    "english": "reservation / booking",
     "sentence": "あの店はいつも混んでいるから、予約したほうがいいですよ。",
     "listKey": "nsm-n3-w3d1",
     "voicevoxVoices": [
@@ -1960,7 +1827,6 @@
     "id": "nsm-n3-w3d2-001",
     "kanji": "禁煙",
     "kana": "きんえん",
-    "english": "no smoking / smoke-free",
     "sentence": "禁煙席はこちらです。",
     "listKey": "nsm-n3-w3d2",
     "voicevoxVoices": [
@@ -1973,7 +1839,6 @@
     "id": "nsm-n3-w3d2-002",
     "kanji": "煙",
     "kana": "けむり",
-    "english": "smoke",
     "sentence": "たばこの煙はくさいからいやですね。",
     "listKey": "nsm-n3-w3d2",
     "voicevoxVoices": [
@@ -1986,7 +1851,6 @@
     "id": "nsm-n3-w3d2-003",
     "kanji": "本当",
     "kana": "ほんとう",
-    "english": "truth / real / truly",
     "sentence": "本当のことを話してください。",
     "listKey": "nsm-n3-w3d2",
     "voicevoxVoices": [
@@ -2011,7 +1875,6 @@
     "id": "nsm-n3-w3d2-005",
     "kanji": "当たる",
     "kana": "あたる",
-    "english": "to hit / to be sunny / to apply",
     "sentence": "この部屋は日がよく当たりますね。",
     "listKey": "nsm-n3-w3d2",
     "voicevoxVoices": [
@@ -2024,7 +1887,6 @@
     "id": "nsm-n3-w3d2-006",
     "kanji": "当たり前",
     "kana": "あたりまえ",
-    "english": "natural / obvious / of course",
     "sentence": "知らなかったんですか？そんなこと、当たり前ですよ。",
     "listKey": "nsm-n3-w3d2",
     "voicevoxVoices": [
@@ -2037,7 +1899,6 @@
     "id": "nsm-n3-w3d2-007",
     "kanji": "全部",
     "kana": "ぜんぶ",
-    "english": "all / everything / entirely",
     "sentence": "ごめん、全部食べちゃった！",
     "listKey": "nsm-n3-w3d2",
     "voicevoxVoices": [
@@ -2050,7 +1911,6 @@
     "id": "nsm-n3-w3d2-008",
     "kanji": "全席",
     "kana": "ぜんせき",
-    "english": "all seats",
     "sentence": "この電車は全席指定席です。",
     "listKey": "nsm-n3-w3d2",
     "voicevoxVoices": [
@@ -2075,7 +1935,6 @@
     "id": "nsm-n3-w3d2-010",
     "kanji": "客",
     "kana": "きゃく",
-    "english": "guest / customer",
     "sentence": "週末なのに、客が少ないですね。",
     "listKey": "nsm-n3-w3d2",
     "voicevoxVoices": [
@@ -2088,7 +1947,6 @@
     "id": "nsm-n3-w3d2-011",
     "kanji": "お客様",
     "kana": "おきゃくさま",
-    "english": "customer (honorific)",
     "sentence": "お客様には敬語を使いましょう。",
     "listKey": "nsm-n3-w3d2",
     "voicevoxVoices": [
@@ -2101,7 +1959,6 @@
     "id": "nsm-n3-w3d2-012",
     "kanji": "様子",
     "kana": "ようす",
-    "english": "situation / condition / state",
     "sentence": "最近、子供の様子が変なんです。学校で何かあったんでしょうか？",
     "listKey": "nsm-n3-w3d2",
     "voicevoxVoices": [
@@ -2126,7 +1983,6 @@
     "id": "nsm-n3-w3d2-014",
     "kanji": "理解",
     "kana": "りかい",
-    "english": "understanding / comprehension",
     "sentence": "彼の考え方が理解できません。",
     "listKey": "nsm-n3-w3d2",
     "voicevoxVoices": [
@@ -2139,7 +1995,6 @@
     "id": "nsm-n3-w3d2-015",
     "kanji": "解答",
     "kana": "かいとう",
-    "english": "answer / solution",
     "sentence": "解答は本の後ろにあります。",
     "listKey": "nsm-n3-w3d2",
     "voicevoxVoices": [
@@ -2152,7 +2007,6 @@
     "id": "nsm-n3-w3d2-016",
     "kanji": "解説",
     "kana": "かいせつ",
-    "english": "explanation / commentary",
     "sentence": "あの専門家の解説はとてもわかりやすかったです。",
     "listKey": "nsm-n3-w3d2",
     "voicevoxVoices": [
@@ -2165,7 +2019,6 @@
     "id": "nsm-n3-w3d2-017",
     "kanji": "分解",
     "kana": "ぶんかい",
-    "english": "disassembly / decomposition",
     "sentence": "分解してみないと、どこが故障しているのかわかりませんね。",
     "listKey": "nsm-n3-w3d2",
     "voicevoxVoices": [
@@ -2178,7 +2031,6 @@
     "id": "nsm-n3-w3d2-018",
     "kanji": "協力",
     "kana": "きょうりょく",
-    "english": "cooperation / collaboration",
     "sentence": "みんなで協力したら、早く終わりますよ。",
     "listKey": "nsm-n3-w3d2",
     "voicevoxVoices": [
@@ -2191,7 +2043,6 @@
     "id": "nsm-n3-w3d2-019",
     "kanji": "妥協",
     "kana": "だきょう",
-    "english": "compromise",
     "sentence": "ビジネスでは、妥協することも必要です。",
     "listKey": "nsm-n3-w3d2",
     "voicevoxVoices": [
@@ -2204,7 +2055,6 @@
     "id": "nsm-n3-w3d2-020",
     "kanji": "願う",
     "kana": "ねがう",
-    "english": "to wish / to hope / to request",
     "sentence": "子供が元気に育つように願っています。",
     "listKey": "nsm-n3-w3d2",
     "voicevoxVoices": [
@@ -2217,7 +2067,6 @@
     "id": "nsm-n3-w3d2-021",
     "kanji": "願望",
     "kana": "がんぼう",
-    "english": "wish / desire",
     "sentence": "結婚願望はあまりありません。",
     "listKey": "nsm-n3-w3d2",
     "voicevoxVoices": [
@@ -2230,7 +2079,6 @@
     "id": "nsm-n3-w3d3-001",
     "kanji": "観光",
     "kana": "かんこう",
-    "english": "sightseeing / tourism",
     "sentence": "最近、外国人観光客が増えてきました。",
     "listKey": "nsm-n3-w3d3",
     "voicevoxVoices": [
@@ -2243,7 +2091,6 @@
     "id": "nsm-n3-w3d3-002",
     "kanji": "観客",
     "kana": "かんきゃく",
-    "english": "audience / spectators",
     "sentence": "このスタジアムは5万人の観客が入れます。",
     "listKey": "nsm-n3-w3d3",
     "voicevoxVoices": [
@@ -2256,7 +2103,6 @@
     "id": "nsm-n3-w3d3-003",
     "kanji": "動物園",
     "kana": "どうぶつえん",
-    "english": "zoo",
     "sentence": "週末は、子供と動物園に行きました。",
     "listKey": "nsm-n3-w3d3",
     "voicevoxVoices": [
@@ -2269,7 +2115,6 @@
     "id": "nsm-n3-w3d3-004",
     "kanji": "空港",
     "kana": "くうこう",
-    "english": "airport",
     "sentence": "両親が日本に来るので、空港まで迎えに行きます。",
     "listKey": "nsm-n3-w3d3",
     "voicevoxVoices": [
@@ -2294,7 +2139,6 @@
     "id": "nsm-n3-w3d3-006",
     "kanji": "港",
     "kana": "みなと",
-    "english": "port / harbour",
     "sentence": "今、港区に住んでいます。",
     "listKey": "nsm-n3-w3d3",
     "voicevoxVoices": [
@@ -2307,7 +2151,6 @@
     "id": "nsm-n3-w3d3-007",
     "kanji": "遊園地",
     "kana": "ゆうえんち",
-    "english": "amusement park",
     "sentence": "来週、家族で遊園地に行きます。",
     "listKey": "nsm-n3-w3d3",
     "voicevoxVoices": [
@@ -2320,7 +2163,6 @@
     "id": "nsm-n3-w3d3-008",
     "kanji": "遊ぶ",
     "kana": "あそぶ",
-    "english": "to play / to have fun",
     "sentence": "最近は、外で遊ぶ子供が減りましたね。",
     "listKey": "nsm-n3-w3d3",
     "voicevoxVoices": [
@@ -2333,7 +2175,6 @@
     "id": "nsm-n3-w3d3-009",
     "kanji": "美術館",
     "kana": "びじゅつかん",
-    "english": "art museum",
     "sentence": "パリでは、いろいろな美術館に行きました。",
     "listKey": "nsm-n3-w3d3",
     "voicevoxVoices": [
@@ -2346,7 +2187,6 @@
     "id": "nsm-n3-w3d3-010",
     "kanji": "美人",
     "kana": "びじん",
-    "english": "beautiful person",
     "sentence": "あの人、とても美人ですね。",
     "listKey": "nsm-n3-w3d3",
     "voicevoxVoices": [
@@ -2359,7 +2199,6 @@
     "id": "nsm-n3-w3d3-011",
     "kanji": "美しい",
     "kana": "うつくしい",
-    "english": "beautiful",
     "sentence": "北海道には、美しい自然がたくさんあります。",
     "listKey": "nsm-n3-w3d3",
     "voicevoxVoices": [
@@ -2372,7 +2211,6 @@
     "id": "nsm-n3-w3d3-012",
     "kanji": "美術",
     "kana": "びじゅつ",
-    "english": "art / fine arts",
     "sentence": "大学で美術の勉強をしています。",
     "listKey": "nsm-n3-w3d3",
     "voicevoxVoices": [
@@ -2385,7 +2223,6 @@
     "id": "nsm-n3-w3d3-013",
     "kanji": "技術",
     "kana": "ぎじゅつ",
-    "english": "technology / skill / technique",
     "sentence": "新しい技術のおかげで、生活が便利になりました。",
     "listKey": "nsm-n3-w3d3",
     "voicevoxVoices": [
@@ -2398,7 +2235,6 @@
     "id": "nsm-n3-w3d3-014",
     "kanji": "手術",
     "kana": "しゅじゅつ",
-    "english": "surgery / operation",
     "sentence": "病気を治すために、手術を受けなければいけません。",
     "listKey": "nsm-n3-w3d3",
     "voicevoxVoices": [
@@ -2411,7 +2247,6 @@
     "id": "nsm-n3-w3d3-015",
     "kanji": "神社",
     "kana": "じんじゃ",
-    "english": "Shinto shrine",
     "sentence": "毎年お正月に、神社に行きます。",
     "listKey": "nsm-n3-w3d3",
     "voicevoxVoices": [
@@ -2436,7 +2271,6 @@
     "id": "nsm-n3-w3d3-017",
     "kanji": "神様",
     "kana": "かみさま",
-    "english": "god / deity",
     "sentence": "自分でできることはやったから、あとは神様にお願いします。",
     "listKey": "nsm-n3-w3d3",
     "voicevoxVoices": [
@@ -2461,7 +2295,6 @@
     "id": "nsm-n3-w3d3-019",
     "kanji": "お寺",
     "kana": "おてら",
-    "english": "Buddhist temple",
     "sentence": "お寺の静かな雰囲気が好きです。",
     "listKey": "nsm-n3-w3d3",
     "voicevoxVoices": [
@@ -2474,7 +2307,6 @@
     "id": "nsm-n3-w4d1-001",
     "kanji": "市役所",
     "kana": "しやくしょ",
-    "english": "city hall",
     "sentence": "引っ越したので、市役所に届けを出さなければいけません。",
     "listKey": "nsm-n3-w4d1",
     "voicevoxVoices": [
@@ -2487,7 +2319,6 @@
     "id": "nsm-n3-w4d1-002",
     "kanji": "役に立つ",
     "kana": "やくにたつ",
-    "english": "to be useful / to be helpful",
     "sentence": "先輩のアドバイスは本当に役に立ちました。",
     "listKey": "nsm-n3-w4d1",
     "voicevoxVoices": [
@@ -2500,7 +2331,6 @@
     "id": "nsm-n3-w4d1-003",
     "kanji": "役員",
     "kana": "やくいん",
-    "english": "officer / committee member",
     "sentence": "PTAの役員に選ばれました。",
     "listKey": "nsm-n3-w4d1",
     "voicevoxVoices": [
@@ -2513,7 +2343,6 @@
     "id": "nsm-n3-w4d1-004",
     "kanji": "郵便",
     "kana": "ゆうびん",
-    "english": "mail / post",
     "sentence": "郵便番号がわかりません。",
     "listKey": "nsm-n3-w4d1",
     "voicevoxVoices": [
@@ -2526,7 +2355,6 @@
     "id": "nsm-n3-w4d1-005",
     "kanji": "郵送",
     "kana": "ゆうそう",
-    "english": "mailing / sending by post",
     "sentence": "申込書を郵送しました。",
     "listKey": "nsm-n3-w4d1",
     "voicevoxVoices": [
@@ -2539,7 +2367,6 @@
     "id": "nsm-n3-w4d1-006",
     "kanji": "郵便局",
     "kana": "ゆうびんきょく",
-    "english": "post office",
     "sentence": "荷物を送りたいので、郵便局に行ってきます。",
     "listKey": "nsm-n3-w4d1",
     "voicevoxVoices": [
@@ -2552,7 +2379,6 @@
     "id": "nsm-n3-w4d1-007",
     "kanji": "薬局",
     "kana": "やっきょく",
-    "english": "pharmacy / drugstore",
     "sentence": "かぜ薬がほしいので、薬局に行ってきます。",
     "listKey": "nsm-n3-w4d1",
     "voicevoxVoices": [
@@ -2565,7 +2391,6 @@
     "id": "nsm-n3-w4d1-008",
     "kanji": "交番",
     "kana": "こうばん",
-    "english": "police box",
     "sentence": "財布を拾ったので、交番に届けました。",
     "listKey": "nsm-n3-w4d1",
     "voicevoxVoices": [
@@ -2578,7 +2403,6 @@
     "id": "nsm-n3-w4d1-009",
     "kanji": "交通",
     "kana": "こうつう",
-    "english": "traffic / transportation",
     "sentence": "この町は、ちょっと交通が不便です。",
     "listKey": "nsm-n3-w4d1",
     "voicevoxVoices": [
@@ -2591,7 +2415,6 @@
     "id": "nsm-n3-w4d1-010",
     "kanji": "交換",
     "kana": "こうかん",
-    "english": "exchange / swap",
     "sentence": "サイズが合わないので、交換してもらいました。",
     "listKey": "nsm-n3-w4d1",
     "voicevoxVoices": [
@@ -2604,7 +2427,6 @@
     "id": "nsm-n3-w4d1-011",
     "kanji": "差",
     "kana": "さ",
-    "english": "difference / gap",
     "sentence": "あのカップルは年の差がありますが、とても仲がいいですね。",
     "listKey": "nsm-n3-w4d1",
     "voicevoxVoices": [
@@ -2617,7 +2439,6 @@
     "id": "nsm-n3-w4d1-012",
     "kanji": "差し出す",
     "kana": "さしだす",
-    "english": "to hold out / to present",
     "sentence": "日本では、名刺を渡す時、両手で差し出します。",
     "listKey": "nsm-n3-w4d1",
     "voicevoxVoices": [
@@ -2630,7 +2451,6 @@
     "id": "nsm-n3-w4d1-013",
     "kanji": "差出人",
     "kana": "さしだしにん",
-    "english": "sender (of a letter)",
     "sentence": "この手紙、差出人が書いてありませんね。",
     "listKey": "nsm-n3-w4d1",
     "voicevoxVoices": [
@@ -2643,7 +2463,6 @@
     "id": "nsm-n3-w4d1-014",
     "kanji": "交差点",
     "kana": "こうさてん",
-    "english": "intersection / crossroads",
     "sentence": "次の交差点を右に曲がってください。",
     "listKey": "nsm-n3-w4d1",
     "voicevoxVoices": [
@@ -2656,7 +2475,6 @@
     "id": "nsm-n3-w4d1-015",
     "kanji": "点数",
     "kana": "てんすう",
-    "english": "score / marks",
     "sentence": "この前のテスト、今までで一番悪い点数でした。",
     "listKey": "nsm-n3-w4d1",
     "voicevoxVoices": [
@@ -2681,7 +2499,6 @@
     "id": "nsm-n3-w4d1-017",
     "kanji": "歩道橋",
     "kana": "ほどうきょう",
-    "english": "pedestrian overpass / footbridge",
     "sentence": "ここは横断歩道がないから歩道橋を渡りましょう。",
     "listKey": "nsm-n3-w4d1",
     "voicevoxVoices": [
@@ -2694,7 +2511,6 @@
     "id": "nsm-n3-w4d1-018",
     "kanji": "橋",
     "kana": "はし",
-    "english": "bridge",
     "sentence": "橋を渡ったところに公園があります。",
     "listKey": "nsm-n3-w4d1",
     "voicevoxVoices": [
@@ -2707,7 +2523,6 @@
     "id": "nsm-n3-w4d1-019",
     "kanji": "公園",
     "kana": "こうえん",
-    "english": "park",
     "sentence": "この公園はいつも静かでいいですね。",
     "listKey": "nsm-n3-w4d1",
     "voicevoxVoices": [
@@ -2720,7 +2535,6 @@
     "id": "nsm-n3-w4d1-020",
     "kanji": "公務員",
     "kana": "こうむいん",
-    "english": "civil servant / government employee",
     "sentence": "兄は公務員です。",
     "listKey": "nsm-n3-w4d1",
     "voicevoxVoices": [
@@ -2733,7 +2547,6 @@
     "id": "nsm-n3-w4d2-001",
     "kanji": "受信",
     "kana": "じゅしん",
-    "english": "receiving messages / inbox",
     "sentence": "受信トレイに未読メールがたくさんあります。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -2746,7 +2559,6 @@
     "id": "nsm-n3-w4d2-002",
     "kanji": "受験",
     "kana": "じゅけん",
-    "english": "taking an exam",
     "sentence": "子供は今年大学を受験します。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -2759,7 +2571,6 @@
     "id": "nsm-n3-w4d2-003",
     "kanji": "受ける",
     "kana": "うける",
-    "english": "to take (exam) / to receive",
     "sentence": "今年JLPTのN3を受けるつもりです。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -2772,7 +2583,6 @@
     "id": "nsm-n3-w4d2-004",
     "kanji": "付ける",
     "kana": "つける",
-    "english": "to attach / to put on",
     "sentence": "このシャツ、ボタンが取れちゃったから付けておかなきゃ。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -2785,7 +2595,6 @@
     "id": "nsm-n3-w4d2-005",
     "kanji": "片付ける",
     "kana": "かたづける",
-    "english": "to tidy up / to put away",
     "sentence": "お客さんが来るから、部屋を片付けておいてね。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -2798,7 +2607,6 @@
     "id": "nsm-n3-w4d2-006",
     "kanji": "受付",
     "kana": "うけつけ",
-    "english": "reception / front desk",
     "sentence": "受付時間は9時から18時です。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -2811,7 +2619,6 @@
     "id": "nsm-n3-w4d2-007",
     "kanji": "付く",
     "kana": "つく",
-    "english": "to stick / to be attached",
     "sentence": "服にゴミが付いてますよ。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -2824,7 +2631,6 @@
     "id": "nsm-n3-w4d2-008",
     "kanji": "科学",
     "kana": "かがく",
-    "english": "science",
     "sentence": "将来、科学者になりたいです。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -2837,7 +2643,6 @@
     "id": "nsm-n3-w4d2-009",
     "kanji": "外科",
     "kana": "げか",
-    "english": "surgery (medical)",
     "sentence": "姉は外科医です。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -2850,7 +2655,6 @@
     "id": "nsm-n3-w4d2-010",
     "kanji": "内科",
     "kana": "ないか",
-    "english": "internal medicine / GP",
     "sentence": "内科に行ったほうがいいですよ。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -2863,7 +2667,6 @@
     "id": "nsm-n3-w4d2-011",
     "kanji": "教科書",
     "kana": "きょうかしょ",
-    "english": "textbook",
     "sentence": "この教科書はわかりやすいです。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -2876,7 +2679,6 @@
     "id": "nsm-n3-w4d2-012",
     "kanji": "耳鼻科",
     "kana": "じびか",
-    "english": "ENT / ear, nose & throat",
     "sentence": "アレルギーがあるので、耳鼻科に通っています。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -2889,7 +2691,6 @@
     "id": "nsm-n3-w4d2-013",
     "kanji": "鼻",
     "kana": "はな",
-    "english": "nose",
     "sentence": "風邪をひいて鼻水が止まりません。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -2902,7 +2703,6 @@
     "id": "nsm-n3-w4d2-014",
     "kanji": "婦人",
     "kana": "ふじん",
-    "english": "woman / lady",
     "sentence": "婦人服売り場は3階です。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -2915,7 +2715,6 @@
     "id": "nsm-n3-w4d2-015",
     "kanji": "産婦人科",
     "kana": "さんふじんか",
-    "english": "obstetrics & gynaecology",
     "sentence": "この産婦人科はどの先生もやさしいです。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -2928,7 +2727,6 @@
     "id": "nsm-n3-w4d2-016",
     "kanji": "主婦",
     "kana": "しゅふ",
-    "english": "housewife",
     "sentence": "母は主婦です。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -2941,7 +2739,6 @@
     "id": "nsm-n3-w4d2-017",
     "kanji": "形式",
     "kana": "けいしき",
-    "english": "format / style / formality",
     "sentence": "日本の履歴書はどんな形式ですか？",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -2954,7 +2751,6 @@
     "id": "nsm-n3-w4d2-018",
     "kanji": "図形",
     "kana": "ずけい",
-    "english": "shape / figure / diagram",
     "sentence": "言葉だけではわかりにくいので、図形を描いて説明します。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -2967,7 +2763,6 @@
     "id": "nsm-n3-w4d2-019",
     "kanji": "整形外科",
     "kana": "せいけいげか",
-    "english": "orthopaedics / plastic surgery",
     "sentence": "腰が痛いので、整形外科に行ってきます。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -2980,7 +2775,6 @@
     "id": "nsm-n3-w4d2-020",
     "kanji": "人形",
     "kana": "にんぎょう",
-    "english": "doll / puppet",
     "sentence": "子供の時は人形で遊ぶのが好きでした。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -2993,7 +2787,6 @@
     "id": "nsm-n3-w4d2-021",
     "kanji": "形",
     "kana": "かたち",
-    "english": "shape / form",
     "sentence": "このかばん、形は好きなんですが、ちょっと小さいんですよね。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -3006,7 +2799,6 @@
     "id": "nsm-n3-w4d2-022",
     "kanji": "骨折",
     "kana": "こっせつ",
-    "english": "bone fracture",
     "sentence": "階段で転んで、骨折しちゃったんです。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -3019,7 +2811,6 @@
     "id": "nsm-n3-w4d2-023",
     "kanji": "骨",
     "kana": "ほね",
-    "english": "bone",
     "sentence": "骨にひびが入っていますね。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -3032,7 +2823,6 @@
     "id": "nsm-n3-w4d2-024",
     "kanji": "右折",
     "kana": "うせつ",
-    "english": "turning right",
     "sentence": "次の交差点を右折してください。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -3045,7 +2835,6 @@
     "id": "nsm-n3-w4d2-025",
     "kanji": "左折",
     "kana": "させつ",
-    "english": "turning left",
     "sentence": "そこを左折すると、病院があります。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -3058,7 +2847,6 @@
     "id": "nsm-n3-w4d2-026",
     "kanji": "折る",
     "kana": "おる",
-    "english": "to fold / to break (a branch)",
     "sentence": "木の枝を折らないでください。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -3071,7 +2859,6 @@
     "id": "nsm-n3-w4d2-027",
     "kanji": "折り紙",
     "kana": "おりがみ",
-    "english": "origami / paper folding",
     "sentence": "子供に折り紙を教えてあげました。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -3084,7 +2871,6 @@
     "id": "nsm-n3-w4d2-028",
     "kanji": "折れる",
     "kana": "おれる",
-    "english": "to snap / to break (intransitive)",
     "sentence": "風が強かったので、かさが折れてしまいました。",
     "listKey": "nsm-n3-w4d2",
     "voicevoxVoices": [
@@ -3097,7 +2883,6 @@
     "id": "nsm-n3-w4d3-001",
     "kanji": "困る",
     "kana": "こまる",
-    "english": "to be troubled / in difficulty",
     "sentence": "困っていることがあったら、なんでも相談してください。",
     "listKey": "nsm-n3-w4d3",
     "voicevoxVoices": [
@@ -3122,7 +2907,6 @@
     "id": "nsm-n3-w4d3-003",
     "kanji": "消防",
     "kana": "しょうぼう",
-    "english": "fire fighting / fire brigade",
     "sentence": "消防士の仕事は危険です。",
     "listKey": "nsm-n3-w4d3",
     "voicevoxVoices": [
@@ -3135,7 +2919,6 @@
     "id": "nsm-n3-w4d3-004",
     "kanji": "消える",
     "kana": "きえる",
-    "english": "to disappear / to go out",
     "sentence": "あ、ろうそくの火が消えそうですね。",
     "listKey": "nsm-n3-w4d3",
     "voicevoxVoices": [
@@ -3148,7 +2931,6 @@
     "id": "nsm-n3-w4d3-005",
     "kanji": "消す",
     "kana": "けす",
-    "english": "to turn off / to erase",
     "sentence": "もうテレビ見ないから、消してくれる？",
     "listKey": "nsm-n3-w4d3",
     "voicevoxVoices": [
@@ -3161,7 +2943,6 @@
     "id": "nsm-n3-w4d3-006",
     "kanji": "消しゴム",
     "kana": "けしゴム",
-    "english": "eraser",
     "sentence": "消しゴム忘れちゃったから、貸してくれる？",
     "listKey": "nsm-n3-w4d3",
     "voicevoxVoices": [
@@ -3174,7 +2955,6 @@
     "id": "nsm-n3-w4d3-007",
     "kanji": "予防",
     "kana": "よぼう",
-    "english": "prevention",
     "sentence": "風邪の予防のために、手洗いやうがいをしたほうがいいですよ。",
     "listKey": "nsm-n3-w4d3",
     "voicevoxVoices": [
@@ -3187,7 +2967,6 @@
     "id": "nsm-n3-w4d3-008",
     "kanji": "防ぐ",
     "kana": "ふせぐ",
-    "english": "to prevent / to protect against",
     "sentence": "事故を防ぐために、交通ルールを守りましょう。",
     "listKey": "nsm-n3-w4d3",
     "voicevoxVoices": [
@@ -3200,7 +2979,6 @@
     "id": "nsm-n3-w4d3-009",
     "kanji": "救急車",
     "kana": "きゅうきゅうしゃ",
-    "english": "ambulance",
     "sentence": "誰か、救急車を呼んでくれませんか！？",
     "listKey": "nsm-n3-w4d3",
     "voicevoxVoices": [
@@ -3213,7 +2991,6 @@
     "id": "nsm-n3-w4d3-010",
     "kanji": "救う",
     "kana": "すくう",
-    "english": "to save / to rescue",
     "sentence": "人を救う仕事がしたいです。",
     "listKey": "nsm-n3-w4d3",
     "voicevoxVoices": [
@@ -3226,7 +3003,6 @@
     "id": "nsm-n3-w4d3-011",
     "kanji": "警官",
     "kana": "けいかん",
-    "english": "police officer",
     "sentence": "信号が赤なのに道を渡ったから、警官に怒られちゃった。",
     "listKey": "nsm-n3-w4d3",
     "voicevoxVoices": [
@@ -3239,7 +3015,6 @@
     "id": "nsm-n3-w4d3-012",
     "kanji": "警報",
     "kana": "けいほう",
-    "english": "warning / alarm",
     "sentence": "さっき、大雨警報が発表されました。",
     "listKey": "nsm-n3-w4d3",
     "voicevoxVoices": [
@@ -3252,7 +3027,6 @@
     "id": "nsm-n3-w4d3-013",
     "kanji": "警察",
     "kana": "けいさつ",
-    "english": "police",
     "sentence": "家にどろぼうが入ったから、警察に連絡しました。",
     "listKey": "nsm-n3-w4d3",
     "voicevoxVoices": [
@@ -3265,7 +3039,6 @@
     "id": "nsm-n3-w4d3-014",
     "kanji": "警察署",
     "kana": "けいさつしょ",
-    "english": "police station",
     "sentence": "この道をまっすぐ行くと警察署がありますよ。",
     "listKey": "nsm-n3-w4d3",
     "voicevoxVoices": [
@@ -3278,7 +3051,6 @@
     "id": "nsm-n3-w4d3-015",
     "kanji": "事故",
     "kana": "じこ",
-    "english": "accident",
     "sentence": "スピードを出しすぎて、事故を起こしてしまいました。",
     "listKey": "nsm-n3-w4d3",
     "voicevoxVoices": [
@@ -3291,7 +3063,6 @@
     "id": "nsm-n3-w4d3-016",
     "kanji": "故障",
     "kana": "こしょう",
-    "english": "breakdown / malfunction",
     "sentence": "車が故障したから、修理に出さなきゃ。",
     "listKey": "nsm-n3-w4d3",
     "voicevoxVoices": [
@@ -3316,7 +3087,6 @@
     "id": "nsm-n3-w4d3-018",
     "kanji": "伝言",
     "kana": "でんごん",
-    "english": "message / verbal message",
     "sentence": "留守番電話に伝言を残しました。",
     "listKey": "nsm-n3-w4d3",
     "voicevoxVoices": [
@@ -3329,7 +3099,6 @@
     "id": "nsm-n3-w4d3-019",
     "kanji": "伝える",
     "kana": "つたえる",
-    "english": "to convey / to tell / to pass on",
     "sentence": "それでは、またお電話しますとお伝えください。",
     "listKey": "nsm-n3-w4d3",
     "voicevoxVoices": [
@@ -3342,7 +3111,6 @@
     "id": "nsm-n3-w4d3-020",
     "kanji": "手伝う",
     "kana": "てつだう",
-    "english": "to help / to assist",
     "sentence": "何か手伝いましょうか？",
     "listKey": "nsm-n3-w4d3",
     "voicevoxVoices": [

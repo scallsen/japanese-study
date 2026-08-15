@@ -9,6 +9,7 @@ import SpeedModeControls from '../components/SpeedModeControls.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import SpeakerIcon from '../components/SpeakerIcon.jsx'
 import HeaderMenu from '../components/HeaderMenu.jsx'
+import SettingsSidebar from '../components/SettingsSidebar.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_BADGE, FS_ENTRY_WORD, FS_STAT_VALUE, FS_DISPLAY_HEADING } from '../data/theme.js'
 import { WORD_SOURCES } from '../data/wordLists.js'
 import { SENTENCE_SOURCE_OPTIONS, DEFAULT_SENTENCE_SOURCE } from '../data/sentenceSource.js'
@@ -20,6 +21,7 @@ import { useAuth } from '../context/AuthContext.jsx'
 import { useProgress } from '../hooks/useProgress.js'
 import { useAudioGenerationStatus } from '../hooks/useAudioGenerationStatus.js'
 import { useDictionaryEntries } from '../hooks/useDictionaryEntries.js'
+import { briefGloss } from '../utils/dictionaryEntryLookup.js'
 import { useSentencesForWords } from '../hooks/useSentenceForWord.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../utils/storage.js'
 import { supabase } from '../lib/supabase.js'
@@ -30,9 +32,6 @@ import { AUDIO_SOURCE_OPTIONS, DEFAULT_AUDIO_SOURCE, getVoicevoxAudioUrl, getVoi
 import AttributionFooter from '../components/AttributionFooter.jsx'
 import { renderAttributionSegments } from '../utils/attributionSegments.jsx'
 
-const PANEL_W = 420
-const CHEVRON_W = 28
-const PANEL_CONTENT_W = PANEL_W - CHEVRON_W
 const ACCENT = '#3ABDA4'
 const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
 
@@ -133,6 +132,16 @@ function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, rev
   const voicevoxAudioRef = useRef(null)
   const audioPreloadCacheRef = useRef(new Map())
 
+  const nearbyJmdictIds = useMemo(
+    () => [currentCard, ...upcoming].map(c => c.word.jmdictId).filter(Boolean),
+    [currentCard, upcoming]
+  )
+  const { entries: nearbyDictEntries } = useDictionaryEntries(nearbyJmdictIds, true)
+
+  function resolveReading(word) {
+    return word.kana ?? (word.jmdictId ? nearbyDictEntries[word.jmdictId]?.kana_forms?.[0] : undefined)
+  }
+
   function voicevoxUrlForWord(word) {
     const speakerId = speakerIdFromAudioSource(audioSource)
     return speakerId && word.voicevoxVoices?.includes(speakerId) ? getVoicevoxAudioUrl(speakerId, word.id) : null
@@ -152,7 +161,8 @@ function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, rev
       }
       voicevoxAudioRef.current.play().catch(() => {})
     } else if (audioSource === 'browser') {
-      tts.speak(word.kana)
+      const reading = resolveReading(word)
+      if (reading) tts.speak(reading)
     }
   }
 
@@ -356,6 +366,8 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
       .sort((a, b) => b.mistakes - a.mistakes),
     [pool, mistakeCounts]
   )
+  const jmdictIds = useMemo(() => rows.map(r => r.word.jmdictId).filter(Boolean), [rows])
+  const { entries: dictEntries } = useDictionaryEntries(jmdictIds, true)
   const [selected, setSelected] = useState(() => new Set(rows.filter(r => r.mistakes > 0).map(r => r.id)))
   const [addedCount, setAddedCount] = useState(null)
 
@@ -445,40 +457,45 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
             </div>
           )}
           <div style={{ background: '#2A2A2A', borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
-            {rows.map(row => (
-              <label
-                key={row.id}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 12,
-                  padding: '10px 14px',
-                  borderBottom: '1px solid rgba(255,255,255,0.05)',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                  letterSpacing: TRACKING,
-                }}
-              >
-                <input
-                  type="checkbox"
-                  checked={selected.has(row.id)}
-                  onChange={() => toggleRow(row.id)}
-                  style={{ flexShrink: 0, width: 16, height: 16, accentColor: ACCENT }}
-                />
-                <span style={{ width: 8, height: 8, borderRadius: '50%', background: MISTAKE_TIER_COLOR[mistakeTier(row.mistakes)], flexShrink: 0 }} />
-                <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, flexShrink: 0 }}>
-                  {row.word.kanji || row.word.kana}
-                </span>
-                <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {row.word.english}
-                </span>
-                {row.mistakes > 0 && (
-                  <span style={{ fontSize: FS_BADGE, color: MISTAKE_TIER_COLOR[mistakeTier(row.mistakes)], flexShrink: 0 }}>
-                    {row.mistakes}×
+            {rows.map(row => {
+              const dictEntry = row.word.jmdictId ? dictEntries[row.word.jmdictId] : null
+              const displayForm = row.word.kanji ?? dictEntry?.primary_form ?? row.word.kana
+              const resolvedEnglish = row.word.english ?? briefGloss(dictEntry)
+              return (
+                <label
+                  key={row.id}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    padding: '10px 14px',
+                    borderBottom: '1px solid rgba(255,255,255,0.05)',
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    letterSpacing: TRACKING,
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={selected.has(row.id)}
+                    onChange={() => toggleRow(row.id)}
+                    style={{ flexShrink: 0, width: 16, height: 16, accentColor: ACCENT }}
+                  />
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: MISTAKE_TIER_COLOR[mistakeTier(row.mistakes)], flexShrink: 0 }} />
+                  <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, flexShrink: 0 }}>
+                    {displayForm}
                   </span>
-                )}
-              </label>
-            ))}
+                  <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {resolvedEnglish}
+                  </span>
+                  {row.mistakes > 0 && (
+                    <span style={{ fontSize: FS_BADGE, color: MISTAKE_TIER_COLOR[mistakeTier(row.mistakes)], flexShrink: 0 }}>
+                      {row.mistakes}×
+                    </span>
+                  )}
+                </label>
+              )
+            })}
           </div>
         </div>
       )}
@@ -506,7 +523,7 @@ class GlanceErrorBoundary extends Component {
 
 function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSource }) {
   const jmdictIds = useMemo(() => words.map(w => w.jmdictId).filter(Boolean), [words])
-  const dictEntries = useDictionaryEntries(jmdictIds, true)
+  const { entries: dictEntries } = useDictionaryEntries(jmdictIds, true)
   const tanakaSentences = useSentencesForWords(jmdictIds, true)
   const [expandedId, setExpandedId] = useState(null)
   const [expandedKanji, setExpandedKanji] = useState([])
@@ -518,7 +535,8 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
     setExpandedKanji([])
     if (!next) return
 
-    const chars = (word.kanji ?? '').split('').filter(ch => /\p{Script=Han}/u.test(ch))
+    const displayForm = word.kanji ?? dictEntries[word.jmdictId]?.primary_form ?? word.kana
+    const chars = (displayForm ?? '').split('').filter(ch => /\p{Script=Han}/u.test(ch))
     const missing = chars.filter(ch => !kanjiCache.current[ch])
     if (missing.length > 0 && supabase) {
       const { data } = await supabase
@@ -560,7 +578,8 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
             const useTanakaSentence = sentenceSource === 'tanaka' ? !!tanakaSentence : (!word.sentence && !!tanakaSentence)
             const sentenceText = useTanakaSentence ? tanakaSentence.japanese : word.sentence
             const isExpanded = expandedId === word.id
-            const kanjiChars = (word.kanji ?? '').split('').filter(ch => /\p{Script=Han}/u.test(ch))
+            const displayForm = word.kanji ?? dictEntry?.primary_form ?? word.kana
+            const kanjiChars = (displayForm ?? '').split('').filter(ch => /\p{Script=Han}/u.test(ch))
             return (
               <div key={word.id}>
                 <button
@@ -585,11 +604,11 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 5 }}>
                       <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
-                        {word.kanji || word.kana}
+                        {displayForm}
                       </span>
                       {(() => {
-                        const kana = dictEntry?.kana_forms?.[0] ?? word.kana
-                        return kana && kana !== (word.kanji || word.kana) ? (
+                        const kana = word.kana ?? dictEntry?.kana_forms?.[0]
+                        return kana && kana !== displayForm ? (
                           <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{kana}</span>
                         ) : null
                       })()}
@@ -966,7 +985,6 @@ export default function VocabPage() {
   const [headerHeight,     setHeaderHeight]     = useState(72)
   const headerRef   = useRef(null)
   const [optionsHovered, setOptionsHovered] = useState(false)
-  const [chevronHovered, setChevronHovered] = useState(false)
   const isMobile = useIsMobile()
   const isShort  = useIsShort()
   const jaVoices = useJaVoices()
@@ -1029,6 +1047,13 @@ export default function VocabPage() {
 
   const drill = useDrill(pool, { engine: SimpleQueue })
 
+  // Warm the shared dictionary-entry cache for the whole selected pool as
+  // soon as it's chosen — well before "Start Drill" — so ActiveDrill/
+  // DoneScreen/GlanceScreen's own useDictionaryEntries calls resolve from
+  // cache instead of flashing a loading state per card.
+  const poolJmdictIds = useMemo(() => pool.map(p => p.word.jmdictId).filter(Boolean), [pool])
+  const { entries: poolDictEntries } = useDictionaryEntries(poolJmdictIds, true)
+
   // Save progress when session completes
   useEffect(() => {
     if (!isDrilling || !drill.done || !user) return
@@ -1061,34 +1086,28 @@ export default function VocabPage() {
     const newCards = {}
     let addedCount = 0
     words.forEach((word, i) => {
-      const front = word.kanji || word.kana
+      const dictEntry = word.jmdictId ? poolDictEntries[word.jmdictId] : null
+      const front = word.kanji ?? dictEntry?.primary_form ?? word.kana
       if (existingFronts.has(front)) return
       existingFronts.add(front)
       const cardId = `${VOCAB_DRILL_DECK_ID}-${Date.now()}-${i}`
+      const kana = word.kana ?? dictEntry?.kana_forms?.[0]
+      const english = word.english ?? briefGloss(dictEntry)
       const extras = {}
-      if (word.kana) extras.kana = word.kana
+      if (kana) extras.kana = kana
       if (word.sentence) extras.sentence = word.sentence
       if (word.jmdictId) extras.jmdictId = word.jmdictId
       if (word.voicevoxVoices?.length) {
         extras.voicevoxVoices = word.voicevoxVoices
         extras.voicevoxId = word.id
       }
-      newCards[cardId] = createCard(front, word.english, cardId, VOCAB_DRILL_DECK_ID, extras)
+      newCards[cardId] = createCard(front, english, cardId, VOCAB_DRILL_DECK_ID, extras)
       addedCount++
     })
     if (addedCount > 0) {
       saveSrs({ ...current, decks, cards: { ...current.cards, ...newCards } })
     }
     return addedCount
-  }
-
-  function handleSidebarFocus(e) {
-    const container = e.currentTarget
-    const target = e.target
-    const cRect = container.getBoundingClientRect()
-    const tRect = target.getBoundingClientRect()
-    if (tRect.top < cRect.top + 8) container.scrollTop += tRect.top - cRect.top - 8
-    else if (tRect.bottom > cRect.bottom - 8) container.scrollTop += tRect.bottom - cRect.bottom + 8
   }
 
   function handleSelectSource(sourceId) {
@@ -1324,75 +1343,14 @@ export default function VocabPage() {
         </div>
       </div>
 
-      {/* ── Desktop sidebar ── */}
-      {!isMobile && (
-        <>
-          <div
-            onClick={() => setShowOptions(v => !v)}
-            onMouseEnter={() => setChevronHovered(true)}
-            onMouseLeave={() => setChevronHovered(false)}
-            style={{
-              flexShrink: 0,
-              width: CHEVRON_W,
-              borderLeft: '1px solid rgba(255,255,255,0.1)',
-              borderRight: showOptions ? '1px solid rgba(255,255,255,0.1)' : 'none',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer',
-              background: chevronHovered ? 'rgba(255,255,255,0.05)' : 'transparent',
-              transition: 'background 130ms',
-            }}>
-            <button style={{
-              width: CHEVRON_W, height: 44,
-              background: 'none', border: 'none',
-              color: 'rgba(255,255,255,0.5)', fontSize: FS_BASE,
-              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontFamily: 'inherit', padding: 0,
-            }}>
-              {showOptions ? '›' : '‹'}
-            </button>
-          </div>
-          <div style={{
-            flexShrink: 0,
-            width: showOptions ? PANEL_CONTENT_W : 0,
-            overflow: 'hidden',
-            transition: 'width 220ms ease',
-          }}>
-            <div className="sidebar-scroll" style={{ width: PANEL_CONTENT_W, height: '100%', overflowY: 'auto' }} onFocus={handleSidebarFocus}>
-              {renderPanelContent(16)}
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* ── Mobile overlay ── */}
-      {isMobile && showOptions && (
-        <>
-          <div onClick={() => setShowOptions(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 20 }} />
-          <div style={{
-            position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-            zIndex: 30, background: '#2E2E2E',
-            display: 'flex', flexDirection: 'column', overflow: 'hidden',
-          }}>
-            <div style={{
-              padding: '16px 20px',
-              borderBottom: '1px solid rgba(255,255,255,0.08)',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              flexShrink: 0,
-            }}>
-              <div style={{ color: '#fff', fontSize: FS_BASE, fontWeight: 700 }}>Options</div>
-              <button
-                onClick={() => setShowOptions(false)}
-                style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: FS_BASE, fontFamily: 'inherit', cursor: 'pointer', padding: 0 }}
-              >
-                Back
-              </button>
-            </div>
-            <div className="sidebar-scroll" style={{ flex: 1, overflowY: 'auto', paddingBottom: 'env(safe-area-inset-bottom)' }} onFocus={handleSidebarFocus}>
-              {renderPanelContent(20)}
-            </div>
-          </div>
-        </>
-      )}
+      <SettingsSidebar
+        open={showOptions}
+        onToggle={() => setShowOptions(v => !v)}
+        onClose={() => setShowOptions(false)}
+        isMobile={isMobile}
+      >
+        {paddingH => renderPanelContent(paddingH)}
+      </SettingsSidebar>
 
     </div>
   )

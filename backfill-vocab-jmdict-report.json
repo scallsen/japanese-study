@@ -734,11 +734,6 @@
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-100",
-    "form": "どこ"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-110",
     "form": "あげる"
   },
@@ -754,11 +749,6 @@
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-140",
-    "form": "かなり"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-160",
     "form": "そこ"
   },
@@ -769,28 +759,8 @@
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-180",
-    "form": "もらう"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-187",
-    "form": "まだ"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-188",
     "form": "ある"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-190",
-    "form": "とても"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-200",
-    "form": "みんな"
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
@@ -800,23 +770,8 @@
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-210",
-    "form": "いつも"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-220",
     "form": "いつ"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-230",
-    "form": "どちら"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-240",
-    "form": "どれ"
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
@@ -825,23 +780,8 @@
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-290",
-    "form": "どうして"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-300",
-    "form": "おなか"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-320",
     "form": "つける"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-340",
-    "form": "まずい"
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
@@ -855,31 +795,6 @@
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-380",
-    "form": "あそこ"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-390",
-    "form": "おいしい"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-394",
-    "form": "だめ"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-397",
-    "form": "きれい"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-406",
-    "form": "ドル"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-419",
     "form": "まず"
   },
@@ -887,11 +802,6 @@
     "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-421",
     "form": "やる"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-431",
-    "form": "ほとんど"
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
@@ -910,24 +820,9 @@
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-476",
-    "form": "これら"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-481",
-    "form": "いずれ"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-482",
     "form": "空く",
     "kana": "あく"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-486",
-    "form": "あまり"
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
@@ -938,31 +833,6 @@
     "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-496",
     "form": "ほぼ"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-516",
-    "form": "まとめる"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-521",
-    "form": "やはり"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-531",
-    "form": "つまり"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-541",
-    "form": "もちろん"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-546",
-    "form": "かつて"
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
@@ -978,39 +848,14 @@
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-556",
-    "form": "なぜ"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-561",
-    "form": "そのまま"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-571",
     "form": "つもり"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-576",
-    "form": "やっと"
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-594",
     "form": "ローマ字",
     "kana": "ろーまじ"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-601",
-    "form": "しばらく"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-606",
-    "form": "ガス"
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
@@ -1024,24 +869,9 @@
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-646",
-    "form": "ガラス"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-686",
-    "form": "ページ"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-695",
     "form": "たばこ屋",
     "kana": "たばこや"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-706",
-    "form": "あちこち"
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
@@ -1056,43 +886,8 @@
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-786",
-    "form": "おかしい"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-821",
-    "form": "なかなか"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-851",
     "form": "びっくりする"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-856",
-    "form": "ズボン"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-861",
-    "form": "おもちゃ"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-866",
-    "form": "グラム"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-871",
-    "form": "コーヒー"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-896",
-    "form": "ひどい"
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
@@ -1101,43 +896,13 @@
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-916",
-    "form": "いつでも"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-926",
-    "form": "こちら"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-931",
     "form": "ボタン"
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-936",
-    "form": "おかしい"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-966",
     "form": "ぶどう"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-971",
-    "form": "めったに"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1001",
-    "form": "ゴム"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1016",
-    "form": "やっぱり"
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
@@ -1156,29 +921,9 @@
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1091",
-    "form": "おしゃべり"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1096",
-    "form": "きっと"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-1110",
     "form": "似ている",
     "kana": "にている"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1111",
-    "form": "おしゃれ"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1121",
-    "form": "ゼロ"
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
@@ -1193,11 +938,6 @@
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1161",
-    "form": "うるさい"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-1191",
     "form": "みかん"
   },
@@ -1206,16 +946,6 @@
     "id": "anki-1195",
     "form": "歯ブラシ",
     "kana": "はぶらし"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1226",
-    "form": "チャンネル"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1231",
-    "form": "つまらない"
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
@@ -1229,43 +959,13 @@
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1266",
-    "form": "レモン"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-1296",
     "form": "ひげ"
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1331",
-    "form": "おかず"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1371",
-    "form": "おじさん"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1391",
-    "form": "ワイシャツ"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1401",
-    "form": "うどん"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-1406",
     "form": "ごみ"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1451",
-    "form": "いかが"
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
@@ -1280,18 +980,8 @@
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1471",
-    "form": "きらきら"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-1496",
     "form": "すいか"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1501",
-    "form": "そちら"
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
@@ -1300,63 +990,8 @@
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1511",
-    "form": "どっち"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1526",
-    "form": "にこにこ"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1546",
-    "form": "どなた"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1596",
-    "form": "かゆい"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1601",
-    "form": "ぐらぐら"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1621",
-    "form": "よろしい"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1641",
-    "form": "たくさん"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1651",
-    "form": "あちら"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1656",
-    "form": "どきどき"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-1676",
     "form": "あくび"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1685",
-    "form": "はがき"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1691",
-    "form": "こぼす"
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
@@ -1365,58 +1000,8 @@
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1726",
-    "form": "がらがら"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1731",
-    "form": "ぎらぎら"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1736",
-    "form": "そっち"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1746",
-    "form": "ぺこぺこ"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1751",
-    "form": "ぺらぺら"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1766",
-    "form": "いつごろ"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1771",
-    "form": "ウィスキー"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1791",
-    "form": "やけど"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1801",
-    "form": "あっち"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-1811",
     "form": "いたずら"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1816",
-    "form": "ウェートレス"
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
@@ -1430,11 +1015,6 @@
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1836",
-    "form": "ごちそう"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-1841",
     "form": "ごちそうする"
   },
@@ -1442,16 +1022,6 @@
     "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-1846",
     "form": "こぼれる"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1856",
-    "form": "ざあざあ"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1861",
-    "form": "ジャガイモ"
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
@@ -1465,53 +1035,13 @@
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1881",
-    "form": "ちょっと"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1883",
-    "form": "いくつ"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-1886",
     "form": "つく"
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1890",
-    "form": "かわいそう"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1891",
-    "form": "てんぷら"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1906",
-    "form": "ぬるい"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1916",
-    "form": "ひざ"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1918",
-    "form": "ぜひ"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-1921",
     "form": "ひじ"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1926",
-    "form": "ひも"
   },
   {
     "file": "src/modules/vocab-srs/decks/core2000.json",
@@ -1527,16 +1057,6 @@
     "file": "src/modules/vocab-srs/decks/core2000.json",
     "id": "anki-1938",
     "form": "また"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1946",
-    "form": "ウェーター"
-  },
-  {
-    "file": "src/modules/vocab-srs/decks/core2000.json",
-    "id": "anki-1961",
-    "form": "おじょうさん"
   },
   {
     "file": "src/modules/vocab-srs/decks/keigo.json",

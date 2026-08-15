@@ -707,16 +707,23 @@ create table if not exists dictionary (
   gloss_en     text,                   -- all English glosses joined with '; ' (flattened, for search/preview)
   pos          text[],                 -- partOfSpeech codes across all senses
   common       boolean not null default false,
-  senses       jsonb                   -- full per-sense breakdown, see below
+  senses       jsonb,                  -- full per-sense breakdown, see below
+  jlpt_level   text,                   -- 'N5'..'N1', community-estimated (see below) — null for unmatched entries
+  jlpt_level_inferred boolean not null default false -- true when jlpt_level came from suffix-stripping inference, not a direct source match
 );
 create index dictionary_primary_form_idx on dictionary (primary_form);
 create index dictionary_kana_forms_gin   on dictionary using gin (kana_forms);
 create index dictionary_common_idx       on dictionary (common);
+create index dictionary_jlpt_level_idx   on dictionary (jlpt_level);
 grant select on dictionary to anon, authenticated;
 grant all on dictionary to service_role;
 ```
 
 `senses` is an array of `{ gloss[], pos?[], field?[], misc?[], info?[], dialect?[], languageSource?[{lang, text?, wasei?}], related?[], antonym?[] }` — one entry per JMdict sense, built by `transformEntry()` in `scripts/import-jmdict.mjs`. It powers the full-detail view in `DictionaryEntryPage.jsx` (grouped by part-of-speech, with field/misc/dialect tags and cross-references); rows imported before this column existed fall back to rendering `gloss_en` as a flat block.
+
+**`jlpt_level`** — no official JLPT vocabulary list exists (the Japan Foundation stopped publishing one when the test moved from 4 levels to N1–N5 in 2010; this is also why JMdict's own former JLPT field was dropped), so this is a **community-estimated approximation**, populated by `scripts/import-jlpt-vocab.mjs` from [stephenmk/yomitan-jlpt-vocab](https://github.com/stephenmk/yomitan-jlpt-vocab) (CC BY-SA 4.0 — a JMdict-id-matched conversion of Jonathan Waller's JLPT Resources list, tanos.co.uk, CC BY; same de-facto list Jisho.org uses). Matching is a direct `jmdict_seq` → `dictionary.id` join, reading-verified against `kana_forms` the same way `backfill-vocab-jmdict.mjs` verifies matches elsewhere, since JMdict snapshots can drift between when this app's `dictionary` table was built and when the JLPT source list was last generated — mismatches are skipped and logged rather than trusted. UI copy referencing this data should say "estimated"/"approximate", never "official". Attribution: `ATTRIBUTIONS['jlpt-vocab']` in `src/data/attributions.js`. If this source is ever swapped, the next-best fallback found during research was [elzup/jlpt-word-list](https://github.com/elzup/jlpt-word-list) (MIT, same Waller/tanos.co.uk root data) — no JMdict ids though, so it would need the same reading-verified matching pipeline the Jiten integration below already uses rather than a direct id join.
+
+Waller's list only tags root vocabulary, not derived/compound forms (e.g. 刺激 is N3 but 刺激的/刺激性/刺激剤 aren't listed at all — confirmed live, only ~60% of a real anime episode's content words get a direct tag). `scripts/infer-jlpt-vocab.mjs` fills in some of the gap by stripping 1–2 trailing characters off an untagged word's kanji forms and checking whether the remainder is a directly-tagged root — reading-verified against `kana_forms` (not just a kanji-substring match), since the same kanji can carry very different levels across different dictionary entries (confirmed live: 人 ranges N5 as a standalone noun to N1 as a counter-suffix; 私 has 11 entries from N5 to N1 depending on reading). If multiple reading-verified candidates disagree on level, the word is left untagged rather than guessed. Matches are written with `jlpt_level_inferred = true` and rendered dimmer/prefixed `~` wherever `jlpt_level` is shown (`EpisodeVocabBrowser.jsx`), since it's an approximation of an already-unofficial approximation. Never chains through another inferred row — only directly-sourced (`jlpt_level_inferred = false`) rows are used as strip targets.
 
 Lookup in the pipeline uses a two-stage query: stage 1 matches `primary_form` against Kuromoji `basic_form`; stage 2 uses GIN array overlap on `kana_forms` for entries where the basic form is kana but the JMdict primary form is kanji (e.g. `ある` → `有る`).
 

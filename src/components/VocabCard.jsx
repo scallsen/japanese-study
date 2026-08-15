@@ -37,14 +37,14 @@ const FRONT_TEXT_STYLE = {
   textAlign: 'center',
 }
 
-function FrontContent({ word, resolvedEnglish, reviewMode, pixelFont }) {
+function FrontContent({ word, displayForm, resolvedEnglish, reviewMode, pixelFont }) {
   const jaFont = pixelFont ? FONT : 'system-ui, sans-serif'
   const isMeaningFront = reviewMode === 'meaning-front'
   return (
     <CardShell isReview={word.isReview}>
       <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: isMeaningFront ? '0 16px' : 0 }}>
         <div style={{ ...FRONT_TEXT_STYLE, fontFamily: isMeaningFront ? FONT : jaFont }}>
-          {isMeaningFront ? resolvedEnglish : word.kanji}
+          {isMeaningFront ? resolvedEnglish : displayForm}
         </div>
       </div>
     </CardShell>
@@ -73,9 +73,9 @@ function KanjiMeaningBar({ chars, meanings, jaFont }) {
   )
 }
 
-function BackContent({ word, resolvedEnglish, sentenceText, showFurigana, showTranslation, showSentence, showKanjiMeaning, pixelFont }) {
+function BackContent({ word, displayForm, reading, resolvedEnglish, sentenceText, showFurigana, showTranslation, showSentence, showKanjiMeaning, pixelFont }) {
   const jaFont = pixelFont ? FONT : 'system-ui, sans-serif'
-  const furiganaParts = showFurigana ? buildFurigana(word.kanji, word.kana) : null
+  const furiganaParts = showFurigana ? buildFurigana(displayForm, reading) : null
 
   const kanjiDisplay = furiganaParts ? (
     <span>
@@ -90,10 +90,10 @@ function BackContent({ word, resolvedEnglish, sentenceText, showFurigana, showTr
         <span key={i}>{part.text}</span>
       ))}
     </span>
-  ) : word.kanji
+  ) : displayForm
 
-  const kanjiMeanings = useKanjiMeanings(word.kanji, showKanjiMeaning)
-  const kanjiChars = showKanjiMeaning ? kanjiCharsOf(word.kanji) : []
+  const kanjiMeanings = useKanjiMeanings(displayForm, showKanjiMeaning)
+  const kanjiChars = showKanjiMeaning ? kanjiCharsOf(displayForm) : []
   const meaningBarReady = kanjiChars.length > 0 && kanjiChars.every(ch => ch in kanjiMeanings)
 
   return (
@@ -145,11 +145,15 @@ function BackContent({ word, resolvedEnglish, sentenceText, showFurigana, showTr
 }
 
 export default function VocabCard({ word, flipped, onFlip, animate, reviewMode, showFurigana, showTranslation, showSentence, showKanjiMeaning, pixelFont, sentenceSource }) {
-  // Dictionary is the source of truth for the definition when this word is
-  // linked (word.jmdictId); the static `english` field is only a fallback for
-  // words that don't have (or don't yet have) a dictionary match.
-  const dictEntry = useDictionaryEntry(word.jmdictId, true)
+  // Dictionary is the source of truth for the definition — and, whenever the
+  // word doesn't carry its own kanji/kana override, for the display form and
+  // reading too — when this word is linked (word.jmdictId). The word's own
+  // fields are only a fallback for words that don't have (or don't yet have)
+  // a dictionary match.
+  const { entry: dictEntry, loading: dictLoading } = useDictionaryEntry(word.jmdictId, true)
   const resolvedEnglish = briefGloss(dictEntry) ?? word.english
+  const displayForm = word.kanji ?? dictEntry?.primary_form
+  const reading = word.kana ?? dictEntry?.kana_forms?.[0]
 
   // The word's own curated sentence wins by default ('custom'); a Tanaka
   // Corpus sentence fills the gap when there isn't one, or takes priority
@@ -158,8 +162,22 @@ export default function VocabCard({ word, flipped, onFlip, animate, reviewMode, 
   const useTanaka = sentenceSource === 'tanaka' ? !!tanakaSentence : (!word.sentence && !!tanakaSentence)
   const sentenceText = useTanaka ? tanakaSentence.japanese : word.sentence
 
-  const front = <FrontContent word={word} resolvedEnglish={resolvedEnglish} reviewMode={reviewMode} pixelFont={pixelFont} />
-  const back  = <BackContent word={word} resolvedEnglish={resolvedEnglish} sentenceText={sentenceText} showFurigana={showFurigana} showTranslation={showTranslation} showSentence={showSentence} showKanjiMeaning={showKanjiMeaning} pixelFont={pixelFont} />
+  // dictLoading is only ever true while a dictionary fetch is genuinely in
+  // flight (see useDictionaryEntry) — once it resolves, or immediately for a
+  // word with no jmdictId, displayForm/reading/resolvedEnglish are already
+  // final via the fallbacks above. Avoids flashing blank/undefined content
+  // (or crashing buildFurigana on a missing reading) for a word that relies
+  // on the dictionary for its kanji/kana/english.
+  if (dictLoading) {
+    return (
+      <div style={{ width: 'min(380px, calc(100vw - 32px), calc(var(--card-max-h, 9999px) * 380 / 280))', aspectRatio: '380 / 280', containerType: 'size' }}>
+        <CardShell isReview={word.isReview} />
+      </div>
+    )
+  }
+
+  const front = <FrontContent word={word} displayForm={displayForm} resolvedEnglish={resolvedEnglish} reviewMode={reviewMode} pixelFont={pixelFont} />
+  const back  = <BackContent word={word} displayForm={displayForm} reading={reading} resolvedEnglish={resolvedEnglish} sentenceText={sentenceText} showFurigana={showFurigana} showTranslation={showTranslation} showSentence={showSentence} showKanjiMeaning={showKanjiMeaning} pixelFont={pixelFont} />
 
   const ants = flipped && animate ? (
     <svg viewBox="0 0 380 280" className="mc-overlay" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 10, overflow: 'visible' }} aria-hidden="true">

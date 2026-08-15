@@ -95,7 +95,7 @@ function SrsCardFace({ text, kana, isBack, backText, jmdictId, sentence, sentenc
   // Dictionary is the source of truth for the definition when this card is
   // linked (jmdictId); the card's own `back` text is only a fallback for cards
   // that don't have (or don't yet have) a dictionary match.
-  const dictEntry = useDictionaryEntry(jmdictId, true)
+  const { entry: dictEntry } = useDictionaryEntry(jmdictId, true)
   const resolvedBackText = briefGloss(dictEntry) ?? backText
 
   // The card's own sentence wins by default ('custom'); a Tanaka Corpus

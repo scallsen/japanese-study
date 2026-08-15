@@ -11,24 +11,31 @@ button, input, select, textarea {
   letter-spacing: inherit;
 }
 
-.sidebar-scroll::-webkit-scrollbar {
+/* Dark, low-profile scrollbar (ported from katsuyou-drill) — applied
+   app-wide rather than opt-in per element, so every scrollable region
+   matches the dark UI instead of falling back to the OS's default light
+   scrollbar. .sidebar-scroll below is now a redundant subset of this but
+   is left in place since a couple of components still reference it. */
+*::-webkit-scrollbar {
   width: 5px;
+  height: 5px;
 }
 
-.sidebar-scroll::-webkit-scrollbar-track {
+*::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.sidebar-scroll::-webkit-scrollbar-thumb {
+*::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.18);
   border-radius: 3px;
 }
 
-.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+*::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.32);
 }
 
-.sidebar-scroll {
+/* Firefox */
+* {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
 }
@@ -147,4 +154,13 @@ button, input, select, textarea {
 
 .dict-deck-row:hover {
   background: #313131;
+}
+
+@keyframes top-progress-sweep {
+  0%   { left: -40%; }
+  100% { left: 100%; }
+}
+
+.top-progress-sweep {
+  animation: top-progress-sweep 1.1s ease-in-out infinite;
 }

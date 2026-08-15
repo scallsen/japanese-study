@@ -23,7 +23,9 @@ function segment(str) {
 }
 
 // Returns an array of parts describing how to render `kanjiStr` with furigana
-// from `kanaStr`, or null if `kanjiStr` has no kanji. Each part is either
+// from `kanaStr`, or null if `kanjiStr` has no kanji (including when either
+// string is missing — e.g. a dictionary-resolved reading that hasn't loaded
+// yet). Each part is either
 //   { type: 'kanji', text, furigana } — render as <ruby>text<rt>furigana</rt></ruby>
 //   { type: 'kana', text }            — render as plain text
 //
@@ -32,6 +34,8 @@ function segment(str) {
 // against the full reading: kana runs anchor the match literally, kanji runs
 // become non-greedy wildcard capture groups.
 export function buildFurigana(kanjiStr, kanaStr) {
+  if (!kanjiStr || !kanaStr) return null
+
   const segments = segment(kanjiStr)
   if (!segments.some(s => s.kanji)) return null
 

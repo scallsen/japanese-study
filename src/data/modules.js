@@ -42,7 +42,7 @@ export const MODULES = [
   },
   {
     id: 'immersion',
-    label: 'Immersion',
+    label: 'News reader',
     sublabel: 'Practice reading up-to-date Japanese content at your level',
     stats: null,
     href: '#/immersion',
@@ -68,6 +68,16 @@ export const MODULES = [
     href: '#/dictionary',
     external: false,
     accent: '#D4A84B',
+    requiresAuth: false,
+  },
+  {
+    id: 'anime-vocab',
+    label: 'Anime vocabulary',
+    sublabel: 'Drill vocabulary from anime, drama, and more',
+    stats: null,
+    href: '#/anime-vocab',
+    external: false,
+    accent: '#D46EA3',
     requiresAuth: false,
   },
 ]
