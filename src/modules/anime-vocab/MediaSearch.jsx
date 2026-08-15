@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { selectMedia, browseMedia } from './api.js'
 import { fetchRecommendedMedia } from './recommendedMediaCache.js'
 import { difficultyLabel } from './difficultyLabels.js'
@@ -98,19 +99,61 @@ function SortSelect({ value, onChange }) {
   )
 }
 
-// Small "i" info icon — hover reveals the popover via a pure-CSS :hover rule
-// (see .info-icon-wrap in global.css, per this app's no-useState-for-hover
-// convention); click toggles it open/closed via `open`, for touch devices
-// that have no hover state. The two mechanisms combine in CSS: the popover
-// is shown when EITHER the wrapper is hovered OR it carries the "-open"
-// class.
+// Small "i" info icon. Hovering shows the popover; clicking pins it open
+// (stays open after the mouse leaves) until a click outside closes it.
+// Portaled to document.body and positioned via the icon's own screen
+// coordinates (position: fixed) rather than a plain position:absolute
+// child, since the filter card it lives in has overflow:hidden (for its
+// rounded corners) and would otherwise clip the popover.
 function InfoIcon({ text }) {
   const [open, setOpen] = useState(false)
+  const [pinned, setPinned] = useState(false)
+  const [coords, setCoords] = useState(null)
+  const wrapRef = useRef(null)
+  const popoverRef = useRef(null)
+
+  function updateCoords() {
+    const rect = wrapRef.current?.getBoundingClientRect()
+    if (rect) setCoords({ top: rect.bottom + 6, left: rect.left })
+  }
+
+  function handleMouseEnter() {
+    if (pinned) return
+    updateCoords()
+    setOpen(true)
+  }
+  function handleMouseLeave() {
+    if (pinned) return
+    setOpen(false)
+  }
+  function handleClick(e) {
+    e.stopPropagation()
+    updateCoords()
+    setOpen(true)
+    setPinned(true)
+  }
+
+  useEffect(() => {
+    if (!pinned) return
+    function handleOutsideClick(e) {
+      if (wrapRef.current?.contains(e.target) || popoverRef.current?.contains(e.target)) return
+      setOpen(false)
+      setPinned(false)
+    }
+    document.addEventListener('mousedown', handleOutsideClick)
+    return () => document.removeEventListener('mousedown', handleOutsideClick)
+  }, [pinned])
+
   return (
-    <span className="info-icon-wrap" style={{ position: 'relative', display: 'inline-flex', verticalAlign: 'middle', marginLeft: 6 }}>
+    <span
+      ref={wrapRef}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      style={{ position: 'relative', display: 'inline-flex', verticalAlign: 'middle', marginLeft: 6 }}
+    >
       <button
         type="button"
-        onClick={() => setOpen(v => !v)}
+        onClick={handleClick}
         aria-label="More info"
         style={{
           width: 14, height: 14, borderRadius: '50%', padding: 0,
@@ -122,14 +165,17 @@ function InfoIcon({ text }) {
       >
         i
       </button>
-      <span className={`info-icon-popover${open ? ' info-icon-popover-open' : ''}`} style={{
-        position: 'absolute', top: '140%', left: 0, zIndex: 5,
-        width: 220, padding: '8px 10px', borderRadius: 6,
-        background: '#1E1E1E', border: '1px solid rgba(255,255,255,0.15)',
-        color: TEXT_MUTED, fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, lineHeight: 1.4,
-      }}>
-        {text}
-      </span>
+      {open && coords && createPortal(
+        <span ref={popoverRef} style={{
+          position: 'fixed', top: coords.top, left: coords.left, zIndex: 1000,
+          width: 220, padding: '8px 10px', borderRadius: 6,
+          background: '#1E1E1E', border: '1px solid rgba(255,255,255,0.15)',
+          color: TEXT_MUTED, fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, lineHeight: 1.4,
+        }}>
+          {text}
+        </span>,
+        document.body
+      )}
     </span>
   )
 }

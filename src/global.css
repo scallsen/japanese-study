@@ -156,20 +156,6 @@ button, input, select, textarea {
   background: #313131;
 }
 
-.info-icon-popover {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity 120ms;
-}
-
-.info-icon-wrap:hover .info-icon-popover,
-.info-icon-popover.info-icon-popover-open {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-
 @keyframes top-progress-sweep {
   0%   { left: -40%; }
   100% { left: 100%; }
