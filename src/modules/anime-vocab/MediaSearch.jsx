@@ -499,15 +499,16 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
       )}
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-        <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-          {isIdle ? 'Recommended — beginner friendly' : ''}
-        </span>
-        <div style={{ display: 'flex', gap: 8, marginLeft: 'auto', alignItems: 'center' }}>
-          {!isIdle && <SortSelect value={sortValue} onChange={setSortValue} />}
-          <div style={{ display: 'flex', gap: 6 }}>
-            <ViewModeButton label="List" active={viewMode === 'list'} onClick={() => setViewMode('list')} />
-            <ViewModeButton label="Tiles" active={viewMode === 'tiles'} onClick={() => setViewMode('tiles')} />
-          </div>
+        {isIdle ? (
+          <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+            Recommended — beginner friendly
+          </span>
+        ) : (
+          <SortSelect value={sortValue} onChange={setSortValue} />
+        )}
+        <div style={{ display: 'flex', gap: 6, marginLeft: 'auto' }}>
+          <ViewModeButton label="List" active={viewMode === 'list'} onClick={() => setViewMode('list')} />
+          <ViewModeButton label="Tiles" active={viewMode === 'tiles'} onClick={() => setViewMode('tiles')} />
         </div>
       </div>
 
