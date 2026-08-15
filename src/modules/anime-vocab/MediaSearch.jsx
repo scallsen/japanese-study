@@ -98,6 +98,42 @@ function SortSelect({ value, onChange }) {
   )
 }
 
+// Small "i" info icon — hover reveals the popover via a pure-CSS :hover rule
+// (see .info-icon-wrap in global.css, per this app's no-useState-for-hover
+// convention); click toggles it open/closed via `open`, for touch devices
+// that have no hover state. The two mechanisms combine in CSS: the popover
+// is shown when EITHER the wrapper is hovered OR it carries the "-open"
+// class.
+function InfoIcon({ text }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <span className="info-icon-wrap" style={{ position: 'relative', display: 'inline-flex', verticalAlign: 'middle', marginLeft: 6 }}>
+      <button
+        type="button"
+        onClick={() => setOpen(v => !v)}
+        aria-label="More info"
+        style={{
+          width: 14, height: 14, borderRadius: '50%', padding: 0,
+          border: '1px solid rgba(255,255,255,0.35)', background: 'none',
+          color: 'rgba(255,255,255,0.55)', fontSize: 10, lineHeight: '12px',
+          fontFamily: FONT, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          cursor: 'pointer',
+        }}
+      >
+        i
+      </button>
+      <span className={`info-icon-popover${open ? ' info-icon-popover-open' : ''}`} style={{
+        position: 'absolute', top: '140%', left: 0, zIndex: 5,
+        width: 220, padding: '8px 10px', borderRadius: 6,
+        background: '#1E1E1E', border: '1px solid rgba(255,255,255,0.15)',
+        color: TEXT_MUTED, fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, lineHeight: 1.4,
+      }}>
+        {text}
+      </span>
+    </span>
+  )
+}
+
 // Shared toggle chip — used for both the media-type and difficulty filter
 // rows (same click-to-select/click-to-deselect interaction either way).
 function Chip({ label, active, onClick }) {
@@ -440,7 +476,7 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
         type="text"
         value={query}
         onChange={e => setQuery(e.target.value)}
-        placeholder="Search for an anime..."
+        placeholder="Search Jiten.moe"
         autoFocus
         style={{
           width: '100%',
@@ -484,7 +520,10 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
         <div style={{ height: 1, background: 'rgba(255,255,255,0.08)' }} />
         <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-            <FilterSectionLabel>Maturity</FilterSectionLabel>
+            <FilterSectionLabel>
+              Maturity
+              <InfoIcon text="Content maturity rating is estimated based on tags, and is not always accurate." />
+            </FilterSectionLabel>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, flex: 1, minWidth: 0 }}>
               {MATURITY_LEVELS.map(level => (
                 <Chip key={level} label={MATURITY_LABELS[level]} active={maturity.has(level)} onClick={() => toggleMaturity(level)} />
