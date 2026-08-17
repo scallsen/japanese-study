@@ -16,6 +16,7 @@ import { SENTENCE_SOURCE_OPTIONS, DEFAULT_SENTENCE_SOURCE } from '../data/senten
 import { useDrill } from '../hooks/useDrill.js'
 import { useTTS, useJaVoices } from '../hooks/useTTS.js'
 import { useSFX } from '../hooks/useSFX.js'
+import { useVoicevoxPlayer } from '../hooks/useVoicevoxPlayer.js'
 import { useGamepad } from '../hooks/useGamepad.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useProgress } from '../hooks/useProgress.js'
@@ -129,8 +130,7 @@ function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, rev
   const { currentCard, upcoming, streak, bestStreak, correct, troubled, remaining, canUndo, onUndo } = drill
   const isFlipped = flippedCardId === currentCard.id
   const tts = useTTS(ttsVoice)
-  const voicevoxAudioRef = useRef(null)
-  const audioPreloadCacheRef = useRef(new Map())
+  const voicevox = useVoicevoxPlayer()
 
   const nearbyJmdictIds = useMemo(
     () => [currentCard, ...upcoming].map(c => c.word.jmdictId).filter(Boolean),
@@ -148,18 +148,10 @@ function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, rev
   }
 
   function playWordAudio(word) {
-    if (voicevoxAudioRef.current) voicevoxAudioRef.current.pause()
+    voicevox.stop()
     const url = voicevoxUrlForWord(word)
     if (url) {
-      const cache = audioPreloadCacheRef.current
-      const cached = cache.get(url)
-      if (cached) {
-        cache.delete(url)
-        voicevoxAudioRef.current = cached
-      } else {
-        voicevoxAudioRef.current = new Audio(url)
-      }
-      voicevoxAudioRef.current.play().catch(() => {})
+      voicevox.play(url)
     } else if (audioSource === 'browser') {
       const reading = resolveReading(word)
       if (reading) tts.speak(reading)
@@ -168,7 +160,7 @@ function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, rev
 
   function stopWordAudio() {
     tts.cancel()
-    if (voicevoxAudioRef.current) voicevoxAudioRef.current.pause()
+    voicevox.stop()
   }
 
   // Preload the current card's audio plus the next few upcoming cards so flipping
@@ -177,18 +169,8 @@ function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, rev
     const desiredUrls = [currentCard, ...upcoming.slice(0, AUDIO_PRELOAD_COUNT)]
       .map(c => voicevoxUrlForWord(c.word))
       .filter(Boolean)
-    const desiredSet = new Set(desiredUrls)
-    const cache = audioPreloadCacheRef.current
-    for (const url of cache.keys()) {
-      if (!desiredSet.has(url)) cache.delete(url)
-    }
-    for (const url of desiredUrls) {
-      if (!cache.has(url)) {
-        const audio = new Audio(url)
-        audio.preload = 'auto'
-        cache.set(url, audio)
-      }
-    }
+    voicevox.trimPreload(desiredUrls)
+    desiredUrls.forEach(url => voicevox.preload(url))
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentCard.id, audioSource])
 
