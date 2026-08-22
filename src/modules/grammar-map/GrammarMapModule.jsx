@@ -3,6 +3,7 @@ import { ReactFlow, Background, Controls, MarkerType } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import PageHeader from '../../components/PageHeader.jsx'
 import DrawerSectionHeader from '../../components/DrawerSectionHeader.jsx'
+import { useAuth } from '../../context/AuthContext.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_CONTENT_HEADING } from '../../data/theme.js'
 import { GRAMMAR_NODES } from './grammarNodes.js'
 import { computeGroupedLayout } from './layout.js'
@@ -40,6 +41,7 @@ const CORE_LEVELS = new Set(['N5', 'N4'])
 
 
 export default function GrammarMapModule() {
+  const { user, signIn, loading: authLoading } = useAuth()
   const [known, setKnown] = useState(loadKnown)
   const [selectedId, setSelectedId] = useState(null)
   const [showOptions, setShowOptions] = useState(true)
@@ -155,6 +157,23 @@ export default function GrammarMapModule() {
     })
     return result
   }, [layout, visibleGrammarNodes, visibleIds, known])
+
+  if (!authLoading && !user) {
+    return (
+      <div style={{ width: '100vw', height: '100dvh', background: '#1E1E1E', fontFamily: FONT, letterSpacing: TRACKING, display: 'flex', flexDirection: 'column', color: TEXT }}>
+        <PageHeader crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Grammar Map' }]} />
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+          <div style={{ fontSize: FS_BASE, color: TEXT }}>Sign in to use Grammar Map</div>
+          <button
+            onClick={signIn}
+            style={{ padding: '10px 24px', background: ACCENT, border: 'none', borderRadius: 8, color: '#fff', fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING, cursor: 'pointer' }}
+          >
+            Sign in with GitHub
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   function renderPanelContent(px = 16) {
     if (selectedNode) {

@@ -38,7 +38,7 @@ export const MODULES = [
     href: '#/grammar-map',
     external: false,
     accent: '#8B7CF8',
-    requiresAuth: false,
+    requiresAuth: true,
   },
   {
     id: 'immersion',
