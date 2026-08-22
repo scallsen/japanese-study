@@ -58,7 +58,7 @@ export default function DashboardPage() {
             fontSize: FS_BASE,
             color: '#93C5FD',
           }}>
-            Sign in to unlock all features
+            New accounts are currently disabled. Most features are available without logging in!
           </div>
         )}
       </PageHeader>
@@ -66,24 +66,60 @@ export default function DashboardPage() {
       <main style={{
         flex: 1,
         overflowY: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
         padding: isMobile ? '20px 16px' : '28px 28px',
       }}>
 
-        <div ref={gridRef} style={{
-          display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-          gap: 10,
-          maxWidth: 900,
-          margin: '0 auto',
-        }}>
-          {MODULES.map(mod => (
-            <ModuleCard
-              key={mod.id}
-              module={mod}
-              disabled={signedOut && mod.requiresAuth}
-            />
-          ))}
+        <div style={{ flex: 1 }}>
+          <div ref={gridRef} style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+            gap: 10,
+            maxWidth: 900,
+            margin: '0 auto',
+          }}>
+            {MODULES.map(mod => (
+              <ModuleCard
+                key={mod.id}
+                module={mod}
+                disabled={signedOut && mod.requiresAuth}
+              />
+            ))}
 
+          </div>
+        </div>
+
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 16,
+          paddingTop: 24,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <a
+              href="https://scallsen.ca"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: 'rgba(232,232,232,0.55)', fontSize: 13, textDecoration: 'none' }}
+              onMouseEnter={e => e.currentTarget.style.color = 'rgba(232,232,232,0.85)'}
+              onMouseLeave={e => e.currentTarget.style.color = 'rgba(232,232,232,0.55)'}
+            >
+              Developed by Simon Callsen
+            </a>
+            <span style={{ color: 'rgba(232,232,232,0.55)', fontSize: 13 }}>·</span>
+            <a
+              href="https://github.com/scallsen/japanese-study"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: 'rgba(232,232,232,0.55)', fontSize: 13, textDecoration: 'none' }}
+              onMouseEnter={e => e.currentTarget.style.color = 'rgba(232,232,232,0.85)'}
+              onMouseLeave={e => e.currentTarget.style.color = 'rgba(232,232,232,0.55)'}
+            >
+              GitHub
+            </a>
+          </div>
         </div>
       </main>
     </div>
