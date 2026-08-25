@@ -351,7 +351,7 @@ function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, rev
   )
 }
 
-function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoTroubled, onBack, onAddToSrs }) {
+function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoTroubled, onRedoSelected, onBack, onAddToSrs }) {
   const rows = useMemo(() =>
     pool
       .map(({ id, word }) => ({ id, word, mistakes: mistakeCounts[id] ?? 0 }))
@@ -360,8 +360,10 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
   )
   const jmdictIds = useMemo(() => rows.map(r => r.word.jmdictId).filter(Boolean), [rows])
   const { entries: dictEntries } = useDictionaryEntries(jmdictIds, true)
-  const [selected, setSelected] = useState(() => new Set(rows.filter(r => r.mistakes > 0).map(r => r.id)))
+  const defaultSelectedIds = useMemo(() => new Set(rows.filter(r => r.mistakes > 0).map(r => r.id)), [rows])
+  const [selected, setSelected] = useState(() => new Set(defaultSelectedIds))
   const [addedCount, setAddedCount] = useState(null)
+  const selectionChanged = selected.size !== defaultSelectedIds.size || [...selected].some(id => !defaultSelectedIds.has(id))
 
   const btnBase = {
     padding: '10px 28px',
@@ -401,23 +403,37 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
         </div>
       </div>
       <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
-        {troubled > 0 && (
+        {(troubled > 0 || selectionChanged) && (
           <button
-            onClick={onRedoTroubled}
-            style={{ ...btnBase, background: 'rgba(251,191,36,0.15)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.4)' }}
+            onClick={() => {
+              if (selectionChanged) onRedoSelected(pool.filter(p => selected.has(p.id)))
+              else onRedoTroubled()
+            }}
+            disabled={selectionChanged && selected.size === 0}
+            className="done-btn"
+            style={{
+              ...btnBase,
+              background: 'rgba(251,191,36,0.15)',
+              color: '#fbbf24',
+              border: '1px solid rgba(251,191,36,0.4)',
+              opacity: selectionChanged && selected.size === 0 ? 0.4 : 1,
+              cursor: selectionChanged && selected.size === 0 ? 'not-allowed' : 'pointer',
+            }}
           >
-            Redo Troubled ({troubled})
+            {selectionChanged ? `Redo Selected (${selected.size})` : `Redo Troubled (${troubled})`}
           </button>
         )}
         <button
           onClick={onRestart}
+          className="done-btn-neutral"
           style={{ ...btnBase, background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.15)' }}
         >
           Restart
         </button>
         <button
           onClick={onBack}
-          style={{ ...btnBase, background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.1)' }}
+          className="done-btn-neutral"
+          style={{ ...btnBase, background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.15)' }}
         >
           Back to lists
         </button>
@@ -430,6 +446,7 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
             <button
               onClick={handleAdd}
               disabled={selected.size === 0}
+              className="done-btn"
               style={{
                 ...btnBase,
                 padding: '6px 16px',
@@ -1284,6 +1301,7 @@ export default function VocabPage() {
                   troubled={drill.troubled}
                   onRestart={drill.restart}
                   onRedoTroubled={drill.redoTroubled}
+                  onRedoSelected={drill.redoSelection}
                   onBack={() => setIsDrilling(false)}
                   onAddToSrs={handleAddToSrs}
                 />

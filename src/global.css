@@ -98,6 +98,33 @@ button, input, select, textarea {
   filter: brightness(0.92);
 }
 
+.done-btn {
+  transition: filter 120ms, background 120ms, border-color 120ms;
+}
+
+.done-btn:hover:not(:disabled) {
+  filter: brightness(1.2);
+}
+
+.done-btn:active:not(:disabled) {
+  filter: brightness(0.92);
+}
+
+/* filter: brightness() can't visibly lighten these — their background is
+   white at low alpha, already clamped near-white, so bump the alpha instead. */
+.done-btn-neutral {
+  transition: background 120ms, border-color 120ms;
+}
+
+.done-btn-neutral:hover:not(:disabled) {
+  background: rgba(255,255,255,0.14) !important;
+  border-color: rgba(255,255,255,0.25) !important;
+}
+
+.done-btn-neutral:active:not(:disabled) {
+  background: rgba(255,255,255,0.06) !important;
+}
+
 .story-field {
   transition: border-color 120ms, background 120ms;
 }
