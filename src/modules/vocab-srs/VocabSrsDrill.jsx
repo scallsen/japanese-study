@@ -14,6 +14,7 @@ import { useDictionaryEntry } from '../../hooks/useDictionaryEntries.js'
 import { briefGloss } from '../../utils/dictionaryEntryLookup.js'
 import { useSentenceForWord } from '../../hooks/useSentenceForWord.js'
 import AttributionFooter from '../../components/AttributionFooter.jsx'
+import { getMainTextScale, getSecondaryTextScale, cqw } from '../../utils/cardTextFit.js'
 
 const CARD_BG = '#E8E4DE'
 const RELEARN_STEP_LABEL = '10m'
@@ -61,7 +62,7 @@ function formatTime(secs) {
   return m > 0 ? `${m}m ${s}s` : `${s}s`
 }
 
-function KanjiMeaningBar({ chars, meanings, jaFont }) {
+function KanjiMeaningBar({ chars, meanings, jaFont, scale }) {
   return (
     <div style={{ display: 'flex', borderTop: '1px solid rgba(0,0,0,0.14)', backgroundColor: 'rgba(0,0,0,0.035)' }}>
       {chars.map((ch, i) => (
@@ -70,9 +71,9 @@ function KanjiMeaningBar({ chars, meanings, jaFont }) {
           padding: '1.8cqw 1cqw', gap: 2,
           borderLeft: i > 0 ? '1px solid rgba(0,0,0,0.1)' : 'none',
         }}>
-          <span style={{ fontFamily: jaFont, fontSize: '5cqw', color: '#333' }}>{ch}</span>
+          <span style={{ fontFamily: jaFont, fontSize: cqw(5, scale), color: '#333' }}>{ch}</span>
           <div style={{
-            fontFamily: FONT, fontSize: '2.6cqw', color: '#777', textAlign: 'center',
+            fontFamily: FONT, fontSize: cqw(2.6, scale), color: '#777', textAlign: 'center',
             whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%',
           }}>
             {meanings[ch]}
@@ -106,6 +107,14 @@ function SrsCardFace({ text, kana, isBack, backText, jmdictId, sentence, sentenc
   const resolvedSentence = useTanaka ? tanakaSentence.japanese : sentence
   const resolvedSentenceEnglish = useTanaka ? tanakaSentence.english : sentenceEnglish
 
+  const mainScale = getMainTextScale(text)
+  const secondaryScale = getSecondaryTextScale({
+    translation: isBack && showTranslation ? resolvedBackText : null,
+    sentence: isBack && showSentence ? resolvedSentence : null,
+    sentenceEnglish: isBack && showSentence ? resolvedSentenceEnglish : null,
+    showKanjiMeaning: isBack && meaningBarReady,
+  })
+
   return (
     <div style={{ backgroundColor: CARD_BG, width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
       <div style={{
@@ -121,7 +130,7 @@ function SrsCardFace({ text, kana, isBack, backText, jmdictId, sentence, sentenc
         <div style={{ textAlign: 'center' }}>
           <div style={{
             fontFamily: cardFont,
-            fontSize: isBack ? '10cqw' : '12.63cqw',
+            fontSize: cqw(isBack ? 10 : 12.63, mainScale),
             color: '#222',
             letterSpacing: 'normal',
             lineHeight: 1.3,
@@ -132,7 +141,7 @@ function SrsCardFace({ text, kana, isBack, backText, jmdictId, sentence, sentenc
           {showReading && (
             <div style={{
               fontFamily: cardFont,
-              fontSize: '5.26cqw',
+              fontSize: cqw(5.26, mainScale),
               color: '#666',
               marginTop: 4,
             }}>
@@ -143,7 +152,7 @@ function SrsCardFace({ text, kana, isBack, backText, jmdictId, sentence, sentenc
         {isBack && resolvedBackText && showTranslation && (
           <div style={{
             fontFamily: cardFont,
-            fontSize: '5.26cqw',
+            fontSize: cqw(5.26, secondaryScale),
             color: '#555',
             textAlign: 'center',
             lineHeight: 1.5,
@@ -155,7 +164,7 @@ function SrsCardFace({ text, kana, isBack, backText, jmdictId, sentence, sentenc
           <div style={{ textAlign: 'center' }}>
             <div style={{
               fontFamily: cardFont,
-              fontSize: '4.2cqw',
+              fontSize: cqw(4.2, secondaryScale),
               color: '#666',
               lineHeight: 1.5,
             }}>
@@ -164,7 +173,7 @@ function SrsCardFace({ text, kana, isBack, backText, jmdictId, sentence, sentenc
             {resolvedSentenceEnglish && (
               <div style={{
                 fontFamily: cardFont,
-                fontSize: '3.5cqw',
+                fontSize: cqw(3.5, secondaryScale),
                 color: '#888',
                 lineHeight: 1.5,
                 fontStyle: 'italic',
@@ -176,7 +185,7 @@ function SrsCardFace({ text, kana, isBack, backText, jmdictId, sentence, sentenc
           </div>
         )}
       </div>
-      {isBack && meaningBarReady && <KanjiMeaningBar chars={kanjiChars} meanings={kanjiMeanings} jaFont={cardFont} />}
+      {isBack && meaningBarReady && <KanjiMeaningBar chars={kanjiChars} meanings={kanjiMeanings} jaFont={cardFont} scale={secondaryScale} />}
     </div>
   )
 }

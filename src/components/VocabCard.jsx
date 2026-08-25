@@ -6,6 +6,7 @@ import { kanjiCharsOf } from '../utils/kanjiMeaningLookup.js'
 import { useDictionaryEntry } from '../hooks/useDictionaryEntries.js'
 import { briefGloss } from '../utils/dictionaryEntryLookup.js'
 import { useSentenceForWord } from '../hooks/useSentenceForWord.js'
+import { getMainTextScale, getSecondaryTextScale, cqw } from '../utils/cardTextFit.js'
 
 const CARD_BG = '#E8E4DE'
 
@@ -27,31 +28,35 @@ function CardShell({ isReview, children }) {
   )
 }
 
-const FRONT_TEXT_STYLE = {
-  fontSize: '12.63cqw',
-  fontWeight: 400,
-  color: '#222',
-  letterSpacing: 'normal',
-  lineHeight: 1.2,
-  textShadow: '2px 2px 0 rgba(0,0,0,0.25)',
-  textAlign: 'center',
+function frontTextStyle(scale) {
+  return {
+    fontSize: cqw(12.63, scale),
+    fontWeight: 400,
+    color: '#222',
+    letterSpacing: 'normal',
+    lineHeight: 1.2,
+    textShadow: '2px 2px 0 rgba(0,0,0,0.25)',
+    textAlign: 'center',
+  }
 }
 
 function FrontContent({ word, displayForm, resolvedEnglish, reviewMode, pixelFont }) {
   const jaFont = pixelFont ? FONT : 'system-ui, sans-serif'
   const isMeaningFront = reviewMode === 'meaning-front'
+  const frontText = isMeaningFront ? resolvedEnglish : displayForm
+  const scale = getMainTextScale(frontText)
   return (
     <CardShell isReview={word.isReview}>
       <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: isMeaningFront ? '0 16px' : 0 }}>
-        <div style={{ ...FRONT_TEXT_STYLE, fontFamily: isMeaningFront ? FONT : jaFont }}>
-          {isMeaningFront ? resolvedEnglish : displayForm}
+        <div style={{ ...frontTextStyle(scale), fontFamily: isMeaningFront ? FONT : jaFont }}>
+          {frontText}
         </div>
       </div>
     </CardShell>
   )
 }
 
-function KanjiMeaningBar({ chars, meanings, jaFont }) {
+function KanjiMeaningBar({ chars, meanings, jaFont, scale }) {
   return (
     <div style={{ display: 'flex', borderTop: '1px solid rgba(0,0,0,0.14)', backgroundColor: 'rgba(0,0,0,0.035)' }}>
       {chars.map((ch, i) => (
@@ -60,9 +65,9 @@ function KanjiMeaningBar({ chars, meanings, jaFont }) {
           padding: '1.8cqw 1cqw', gap: 2,
           borderLeft: i > 0 ? '1px solid rgba(0,0,0,0.1)' : 'none',
         }}>
-          <span style={{ fontFamily: jaFont, fontSize: '5cqw', color: '#333' }}>{ch}</span>
+          <span style={{ fontFamily: jaFont, fontSize: cqw(5, scale), color: '#333' }}>{ch}</span>
           <div style={{
-            fontFamily: FONT, fontSize: '2.6cqw', color: '#777', textAlign: 'center',
+            fontFamily: FONT, fontSize: cqw(2.6, scale), color: '#777', textAlign: 'center',
             whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%',
           }}>
             {meanings[ch]}
@@ -96,13 +101,20 @@ function BackContent({ word, displayForm, reading, resolvedEnglish, sentenceText
   const kanjiChars = showKanjiMeaning ? kanjiCharsOf(displayForm) : []
   const meaningBarReady = kanjiChars.length > 0 && kanjiChars.every(ch => ch in kanjiMeanings)
 
+  const mainScale = getMainTextScale(displayForm)
+  const secondaryScale = getSecondaryTextScale({
+    translation: showTranslation ? resolvedEnglish : null,
+    sentence: showSentence ? sentenceText : null,
+    showKanjiMeaning: meaningBarReady,
+  })
+
   return (
     <CardShell isReview={word.isReview}>
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, padding: '0 16px' }}>
           <div style={{
             fontFamily: jaFont,
-            fontSize: '12.63cqw',
+            fontSize: cqw(12.63, mainScale),
             fontWeight: 400,
             color: '#222',
             letterSpacing: 'normal',
@@ -115,7 +127,7 @@ function BackContent({ word, displayForm, reading, resolvedEnglish, sentenceText
           {showTranslation && (
             <div style={{
               fontFamily: FONT,
-              fontSize: '5.26cqw',
+              fontSize: cqw(5.26, secondaryScale),
               fontWeight: 400,
               letterSpacing: '0.04em',
               color: '#555',
@@ -127,7 +139,7 @@ function BackContent({ word, displayForm, reading, resolvedEnglish, sentenceText
           {showSentence && sentenceText && (
             <div style={{
               fontFamily: jaFont,
-              fontSize: '4.2cqw',
+              fontSize: cqw(4.2, secondaryScale),
               fontWeight: 400,
               letterSpacing: '0.03em',
               color: '#888',
@@ -138,7 +150,7 @@ function BackContent({ word, displayForm, reading, resolvedEnglish, sentenceText
             </div>
           )}
         </div>
-        {meaningBarReady && <KanjiMeaningBar chars={kanjiChars} meanings={kanjiMeanings} jaFont={jaFont} />}
+        {meaningBarReady && <KanjiMeaningBar chars={kanjiChars} meanings={kanjiMeanings} jaFont={jaFont} scale={secondaryScale} />}
       </div>
     </CardShell>
   )
