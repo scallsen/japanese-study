@@ -62,6 +62,23 @@ button, input, select, textarea {
   background: rgba(255,255,255,0.04);
 }
 
+.vocab-review-row {
+  background: transparent;
+  transition: background 120ms;
+}
+
+.vocab-review-row:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+.vocab-review-row--selected {
+  background: rgba(58,189,164,0.08);
+}
+
+.vocab-review-row--selected:hover {
+  background: rgba(58,189,164,0.14);
+}
+
 .vocab-glance-btn {
   background: rgba(255,255,255,0.04);
 }

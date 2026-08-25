@@ -473,6 +473,7 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
               return (
                 <label
                   key={row.id}
+                  className={selected.has(row.id) ? 'vocab-review-row vocab-review-row--selected' : 'vocab-review-row'}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
