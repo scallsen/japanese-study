@@ -31,6 +31,7 @@ export function useDrill(pool, { engine = SimpleQueue, floatSize = 7, seekCardId
   const onUndo        = useCallback(() => setState(s => engine.onUndo ? engine.onUndo(s) : s), [engine])
   const restart       = useCallback(() => setState(engine.init(poolRef.current, floatSize)), [engine, floatSize])
   const redoTroubled  = useCallback(() => setState(s => engine.init(s.troubled, floatSize)), [engine, floatSize])
+  const redoSelection = useCallback(specs => setState(engine.init(specs, floatSize)), [engine, floatSize])
 
   return {
     currentCard:  state.float[0] ?? null,
@@ -50,5 +51,6 @@ export function useDrill(pool, { engine = SimpleQueue, floatSize = 7, seekCardId
     onUndo,
     restart,
     redoTroubled,
+    redoSelection,
   }
 }

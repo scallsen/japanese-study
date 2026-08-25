@@ -45,6 +45,16 @@ function mistakeTier(count) {
   return 'many'
 }
 
+// Shared displayForm/reading resolution for word-list rows (DoneScreen,
+// GlanceScreen) — dictionary is the source of truth when jmdictId matches
+// (see CLAUDE.md's "Dictionary as source of truth" section), the word's own
+// kanji/kana are the fallback. reading is null when it'd just repeat displayForm.
+function resolveWordDisplay(word, dictEntry) {
+  const displayForm = word.kanji ?? dictEntry?.primary_form ?? word.kana
+  const readingRaw = word.kana ?? dictEntry?.kana_forms?.[0]
+  return { displayForm, reading: readingRaw && readingRaw !== displayForm ? readingRaw : null }
+}
+
 function shortPos(raw) {
   if (!raw) return null
   if (raw.startsWith('Godan verb')) return 'v5'
@@ -341,7 +351,69 @@ function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, rev
   )
 }
 
-function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoTroubled, onBack, onAddToSrs }) {
+// Chrome always draws the native indeterminate dash in white regardless of
+// accent-color, so a custom-drawn box is the only way to make it match the
+// black checkmark on checked boxes. The native input stays underneath
+// (visually hidden) for click/keyboard/screen-reader behavior, including
+// the "indeterminate" DOM property, which can only be set imperatively.
+function SelectAllCheckbox({ checked, indeterminate, onChange }) {
+  const ref = useRef(null)
+  useEffect(() => {
+    if (ref.current) ref.current.indeterminate = indeterminate
+  }, [indeterminate])
+  return (
+    <label style={{ position: 'relative', width: 16, height: 16, flexShrink: 0, display: 'inline-flex', cursor: 'pointer' }}>
+      <input
+        ref={ref}
+        type="checkbox"
+        checked={checked}
+        onChange={onChange}
+        style={{ position: 'absolute', inset: 0, margin: 0, opacity: 0, cursor: 'pointer' }}
+      />
+      <span style={{
+        width: 16,
+        height: 16,
+        borderRadius: 3,
+        background: checked || indeterminate ? ACCENT : 'transparent',
+        border: checked || indeterminate ? 'none' : '1px solid rgba(255,255,255,0.3)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        pointerEvents: 'none',
+      }}>
+        {(checked || indeterminate) && (
+          <svg width={16} height={16} viewBox="0 0 16 16" style={{ display: 'block' }}>
+            {indeterminate && !checked ? (
+              <line x1={4} y1={8} x2={12} y2={8} stroke="#3B3B3B" strokeWidth={2.4} strokeLinecap="round" />
+            ) : (
+              <polyline points="3.5,8.3 6.5,11.3 12.5,4.7" fill="none" stroke="#3B3B3B" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" />
+            )}
+          </svg>
+        )}
+      </span>
+    </label>
+  )
+}
+
+function CaretButton({ open, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={open ? 'Collapse bulk select' : 'Expand bulk select'}
+      style={{ background: 'none', border: 'none', padding: 2, cursor: 'pointer', display: 'flex', alignItems: 'center', flexShrink: 0 }}
+    >
+      <span style={{
+        color: TEXT_MUTED, fontSize: '1.1rem', display: 'inline-block',
+        transform: open ? 'rotate(90deg)' : 'none', transition: 'transform 150ms',
+      }}>
+        ›
+      </span>
+    </button>
+  )
+}
+
+function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoTroubled, onRedoSelected, onBack, onAddToSrs }) {
   const rows = useMemo(() =>
     pool
       .map(({ id, word }) => ({ id, word, mistakes: mistakeCounts[id] ?? 0 }))
@@ -350,8 +422,14 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
   )
   const jmdictIds = useMemo(() => rows.map(r => r.word.jmdictId).filter(Boolean), [rows])
   const { entries: dictEntries } = useDictionaryEntries(jmdictIds, true)
-  const [selected, setSelected] = useState(() => new Set(rows.filter(r => r.mistakes > 0).map(r => r.id)))
+  const defaultSelectedIds = useMemo(() => new Set(rows.filter(r => r.mistakes > 0).map(r => r.id)), [rows])
+  const [selected, setSelected] = useState(() => new Set(defaultSelectedIds))
   const [addedCount, setAddedCount] = useState(null)
+  const [bulkOpen, setBulkOpen] = useState(false)
+  const [bulkCountInput, setBulkCountInput] = useState(() => String(Math.max(1, rows.length)))
+  const selectionChanged = selected.size !== defaultSelectedIds.size || [...selected].some(id => !defaultSelectedIds.has(id))
+  const allSelected = rows.length > 0 && rows.every(r => selected.has(r.id))
+  const someSelected = rows.some(r => selected.has(r.id))
 
   const btnBase = {
     padding: '10px 28px',
@@ -370,6 +448,27 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
     })
   }
 
+  function toggleSelectAll() {
+    setSelected(allSelected ? new Set() : new Set(rows.map(r => r.id)))
+  }
+
+  function toggleBulkOpen() {
+    setBulkOpen(open => {
+      if (!open) setBulkCountInput(String(Math.max(1, selected.size || rows.length)))
+      return !open
+    })
+  }
+
+  function handleCancelBulk() {
+    setBulkOpen(false)
+  }
+
+  function handleConfirmBulk() {
+    const n = Math.max(1, Math.min(Number(bulkCountInput) || 1, rows.length || 1))
+    setSelected(new Set(rows.slice(0, n).map(r => r.id)))
+    setBulkOpen(false)
+  }
+
   function handleAdd() {
     const words = rows.filter(r => selected.has(r.id)).map(r => r.word)
     if (words.length === 0) return
@@ -377,7 +476,7 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
   }
 
   return (
-    <div style={{ textAlign: 'center', fontFamily: FONT, width: '100%', maxWidth: 560, padding: '0 24px 48px' }}>
+    <div style={{ textAlign: 'center', fontFamily: FONT, width: '100%', maxWidth: 560, padding: '48px 24px 48px' }}>
       <div style={{ color: '#fff', fontSize: FS_DISPLAY_HEADING, letterSpacing: '0.05em', marginBottom: 16 }}>Session complete</div>
       <div style={{ display: 'flex', gap: 20, justifyContent: 'center', marginBottom: 32 }}>
         <div>
@@ -391,25 +490,39 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
         </div>
       </div>
       <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
-        {troubled > 0 && (
+        {(troubled > 0 || selectionChanged) && (
           <button
-            onClick={onRedoTroubled}
-            style={{ ...btnBase, background: 'rgba(251,191,36,0.15)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.4)' }}
+            onClick={() => {
+              if (selectionChanged) onRedoSelected(pool.filter(p => selected.has(p.id)))
+              else onRedoTroubled()
+            }}
+            disabled={selectionChanged && selected.size === 0}
+            className="done-btn"
+            style={{
+              ...btnBase,
+              background: 'rgba(251,191,36,0.15)',
+              color: '#fbbf24',
+              border: '1px solid rgba(251,191,36,0.4)',
+              opacity: selectionChanged && selected.size === 0 ? 0.4 : 1,
+              cursor: selectionChanged && selected.size === 0 ? 'not-allowed' : 'pointer',
+            }}
           >
-            Redo Troubled ({troubled})
+            {selectionChanged ? `Redo Selected (${selected.size})` : `Redo Troubled (${troubled})`}
           </button>
         )}
         <button
           onClick={onRestart}
+          className="done-btn-neutral"
           style={{ ...btnBase, background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.15)' }}
         >
           Restart
         </button>
         <button
           onClick={onBack}
-          style={{ ...btnBase, background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.1)' }}
+          className="done-btn-neutral"
+          style={{ ...btnBase, background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.15)' }}
         >
-          Back to lists
+          End review
         </button>
       </div>
 
@@ -420,6 +533,7 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
             <button
               onClick={handleAdd}
               disabled={selected.size === 0}
+              className="done-btn"
               style={{
                 ...btnBase,
                 padding: '6px 16px',
@@ -439,13 +553,53 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
             </div>
           )}
           <div style={{ background: '#2A2A2A', borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.08)', background: 'rgba(0,0,0,0.14)' }}>
+              <SelectAllCheckbox checked={allSelected} indeterminate={!allSelected && someSelected} onChange={toggleSelectAll} />
+              <CaretButton open={bulkOpen} onClick={toggleBulkOpen} />
+              {!bulkOpen ? (
+                <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+                  {selected.size} of {rows.length} selected
+                </span>
+              ) : (
+                <>
+                  <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>Select first</span>
+                  <input
+                    type="number"
+                    min={1}
+                    max={Math.max(rows.length, 1)}
+                    value={bulkCountInput}
+                    onChange={e => setBulkCountInput(e.target.value)}
+                    autoFocus
+                    style={{ width: 56, padding: '4px 8px', fontFamily: FONT, background: '#1E1E1E', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 4, color: TEXT }}
+                  />
+                  <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>words</span>
+                  <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, flexShrink: 0 }}>
+                    <button
+                      onClick={handleCancelBulk}
+                      className="done-btn-neutral"
+                      style={{ padding: '5px 14px', fontSize: FS_CAPTION, fontFamily: FONT, letterSpacing: TRACKING, borderRadius: 6, cursor: 'pointer', background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.15)' }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleConfirmBulk}
+                      className="done-btn"
+                      style={{ padding: '5px 14px', fontSize: FS_CAPTION, fontFamily: FONT, letterSpacing: TRACKING, borderRadius: 6, cursor: 'pointer', background: 'rgba(58,189,164,0.15)', color: ACCENT, border: '1px solid rgba(58,189,164,0.4)' }}
+                    >
+                      Confirm
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
             {rows.map(row => {
               const dictEntry = row.word.jmdictId ? dictEntries[row.word.jmdictId] : null
-              const displayForm = row.word.kanji ?? dictEntry?.primary_form ?? row.word.kana
+              const { displayForm, reading } = resolveWordDisplay(row.word, dictEntry)
               const resolvedEnglish = row.word.english ?? briefGloss(dictEntry)
               return (
                 <label
                   key={row.id}
+                  className={selected.has(row.id) ? 'vocab-review-row vocab-review-row--selected' : 'vocab-review-row'}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -461,13 +615,22 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
                     type="checkbox"
                     checked={selected.has(row.id)}
                     onChange={() => toggleRow(row.id)}
-                    style={{ flexShrink: 0, width: 16, height: 16, accentColor: ACCENT }}
+                    style={{ flexShrink: 0, width: 16, height: 16, margin: 0, accentColor: ACCENT }}
                   />
-                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: MISTAKE_TIER_COLOR[mistakeTier(row.mistakes)], flexShrink: 0 }} />
-                  <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, flexShrink: 0 }}>
-                    {displayForm}
+                  <span style={{ display: 'flex', flexDirection: 'column', gap: 2, width: 100, flexShrink: 0, overflow: 'hidden' }}>
+                    <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {displayForm}
+                    </span>
+                    {reading && (
+                      <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0, lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {reading}
+                      </span>
+                    )}
                   </span>
-                  <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <span style={{
+                    fontSize: FS_BASE, color: TEXT_MUTED, flex: 1, minWidth: 0, lineHeight: 1.35,
+                    display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+                  }}>
                     {resolvedEnglish}
                   </span>
                   {row.mistakes > 0 && (
@@ -560,7 +723,7 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
             const useTanakaSentence = sentenceSource === 'tanaka' ? !!tanakaSentence : (!word.sentence && !!tanakaSentence)
             const sentenceText = useTanakaSentence ? tanakaSentence.japanese : word.sentence
             const isExpanded = expandedId === word.id
-            const displayForm = word.kanji ?? dictEntry?.primary_form ?? word.kana
+            const { displayForm, reading } = resolveWordDisplay(word, dictEntry)
             const kanjiChars = (displayForm ?? '').split('').filter(ch => /\p{Script=Han}/u.test(ch))
             return (
               <div key={word.id}>
@@ -588,12 +751,9 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
                       <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
                         {displayForm}
                       </span>
-                      {(() => {
-                        const kana = word.kana ?? dictEntry?.kana_forms?.[0]
-                        return kana && kana !== displayForm ? (
-                          <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{kana}</span>
-                        ) : null
-                      })()}
+                      {reading && (
+                        <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{reading}</span>
+                      )}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       {(() => {
@@ -1193,7 +1353,7 @@ export default function VocabPage() {
         <div ref={headerRef} style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 }}>
           <PageHeader
             crumbs={
-              isDrilling && !drill.done
+              isDrilling
                 ? [{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary Training', onClick: () => setIsDrilling(false) }, { label: 'Reviewing' }]
                 : isGlancing
                 ? [{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary Training', onClick: () => setIsGlancing(false) }, { label: 'Preview' }]
@@ -1267,6 +1427,7 @@ export default function VocabPage() {
                   troubled={drill.troubled}
                   onRestart={drill.restart}
                   onRedoTroubled={drill.redoTroubled}
+                  onRedoSelected={drill.redoSelection}
                   onBack={() => setIsDrilling(false)}
                   onAddToSrs={handleAddToSrs}
                 />
