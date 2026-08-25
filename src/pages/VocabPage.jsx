@@ -45,6 +45,16 @@ function mistakeTier(count) {
   return 'many'
 }
 
+// Shared displayForm/reading resolution for word-list rows (DoneScreen,
+// GlanceScreen) — dictionary is the source of truth when jmdictId matches
+// (see CLAUDE.md's "Dictionary as source of truth" section), the word's own
+// kanji/kana are the fallback. reading is null when it'd just repeat displayForm.
+function resolveWordDisplay(word, dictEntry) {
+  const displayForm = word.kanji ?? dictEntry?.primary_form ?? word.kana
+  const readingRaw = word.kana ?? dictEntry?.kana_forms?.[0]
+  return { displayForm, reading: readingRaw && readingRaw !== displayForm ? readingRaw : null }
+}
+
 function shortPos(raw) {
   if (!raw) return null
   if (raw.startsWith('Godan verb')) return 'v5'
@@ -441,7 +451,7 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
           <div style={{ background: '#2A2A2A', borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
             {rows.map(row => {
               const dictEntry = row.word.jmdictId ? dictEntries[row.word.jmdictId] : null
-              const displayForm = row.word.kanji ?? dictEntry?.primary_form ?? row.word.kana
+              const { displayForm, reading } = resolveWordDisplay(row.word, dictEntry)
               const resolvedEnglish = row.word.english ?? briefGloss(dictEntry)
               return (
                 <label
@@ -464,8 +474,15 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
                     style={{ flexShrink: 0, width: 16, height: 16, accentColor: ACCENT }}
                   />
                   <span style={{ width: 8, height: 8, borderRadius: '50%', background: MISTAKE_TIER_COLOR[mistakeTier(row.mistakes)], flexShrink: 0 }} />
-                  <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, flexShrink: 0 }}>
-                    {displayForm}
+                  <span style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexShrink: 0 }}>
+                    <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
+                      {displayForm}
+                    </span>
+                    {reading && (
+                      <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
+                        {reading}
+                      </span>
+                    )}
                   </span>
                   <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {resolvedEnglish}
@@ -560,7 +577,7 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
             const useTanakaSentence = sentenceSource === 'tanaka' ? !!tanakaSentence : (!word.sentence && !!tanakaSentence)
             const sentenceText = useTanakaSentence ? tanakaSentence.japanese : word.sentence
             const isExpanded = expandedId === word.id
-            const displayForm = word.kanji ?? dictEntry?.primary_form ?? word.kana
+            const { displayForm, reading } = resolveWordDisplay(word, dictEntry)
             const kanjiChars = (displayForm ?? '').split('').filter(ch => /\p{Script=Han}/u.test(ch))
             return (
               <div key={word.id}>
@@ -588,12 +605,9 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
                       <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
                         {displayForm}
                       </span>
-                      {(() => {
-                        const kana = word.kana ?? dictEntry?.kana_forms?.[0]
-                        return kana && kana !== displayForm ? (
-                          <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{kana}</span>
-                        ) : null
-                      })()}
+                      {reading && (
+                        <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{reading}</span>
+                      )}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       {(() => {
