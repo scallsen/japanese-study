@@ -351,6 +351,42 @@ function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, rev
   )
 }
 
+// Native checkboxes don't expose an "indeterminate" prop — it can only be set
+// as a DOM property, hence the ref + effect instead of a plain <input>.
+function SelectAllCheckbox({ checked, indeterminate, onChange }) {
+  const ref = useRef(null)
+  useEffect(() => {
+    if (ref.current) ref.current.indeterminate = indeterminate
+  }, [indeterminate])
+  return (
+    <input
+      ref={ref}
+      type="checkbox"
+      checked={checked}
+      onChange={onChange}
+      style={{ flexShrink: 0, width: 16, height: 16, accentColor: ACCENT, color: '#000' }}
+    />
+  )
+}
+
+function CaretButton({ open, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={open ? 'Collapse bulk select' : 'Expand bulk select'}
+      style={{ background: 'none', border: 'none', padding: 2, cursor: 'pointer', display: 'flex', alignItems: 'center', flexShrink: 0 }}
+    >
+      <span style={{
+        color: TEXT_MUTED, fontSize: '1.1rem', display: 'inline-block',
+        transform: open ? 'rotate(90deg)' : 'none', transition: 'transform 150ms',
+      }}>
+        ›
+      </span>
+    </button>
+  )
+}
+
 function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoTroubled, onRedoSelected, onBack, onAddToSrs }) {
   const rows = useMemo(() =>
     pool
@@ -363,7 +399,11 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
   const defaultSelectedIds = useMemo(() => new Set(rows.filter(r => r.mistakes > 0).map(r => r.id)), [rows])
   const [selected, setSelected] = useState(() => new Set(defaultSelectedIds))
   const [addedCount, setAddedCount] = useState(null)
+  const [bulkOpen, setBulkOpen] = useState(false)
+  const [bulkCountInput, setBulkCountInput] = useState(() => String(Math.max(1, rows.length)))
   const selectionChanged = selected.size !== defaultSelectedIds.size || [...selected].some(id => !defaultSelectedIds.has(id))
+  const allSelected = rows.length > 0 && rows.every(r => selected.has(r.id))
+  const someSelected = rows.some(r => selected.has(r.id))
 
   const btnBase = {
     padding: '10px 28px',
@@ -382,6 +422,27 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
     })
   }
 
+  function toggleSelectAll() {
+    setSelected(allSelected ? new Set() : new Set(rows.map(r => r.id)))
+  }
+
+  function toggleBulkOpen() {
+    setBulkOpen(open => {
+      if (!open) setBulkCountInput(String(Math.max(1, selected.size || rows.length)))
+      return !open
+    })
+  }
+
+  function handleCancelBulk() {
+    setBulkOpen(false)
+  }
+
+  function handleConfirmBulk() {
+    const n = Math.max(1, Math.min(Number(bulkCountInput) || 1, rows.length || 1))
+    setSelected(new Set(rows.slice(0, n).map(r => r.id)))
+    setBulkOpen(false)
+  }
+
   function handleAdd() {
     const words = rows.filter(r => selected.has(r.id)).map(r => r.word)
     if (words.length === 0) return
@@ -389,7 +450,7 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
   }
 
   return (
-    <div style={{ textAlign: 'center', fontFamily: FONT, width: '100%', maxWidth: 560, padding: '0 24px 48px' }}>
+    <div style={{ textAlign: 'center', fontFamily: FONT, width: '100%', maxWidth: 560, padding: '48px 24px 48px' }}>
       <div style={{ color: '#fff', fontSize: FS_DISPLAY_HEADING, letterSpacing: '0.05em', marginBottom: 16 }}>Session complete</div>
       <div style={{ display: 'flex', gap: 20, justifyContent: 'center', marginBottom: 32 }}>
         <div>
@@ -466,6 +527,45 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
             </div>
           )}
           <div style={{ background: '#2A2A2A', borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.08)', background: 'rgba(0,0,0,0.14)' }}>
+              <SelectAllCheckbox checked={allSelected} indeterminate={!allSelected && someSelected} onChange={toggleSelectAll} />
+              <CaretButton open={bulkOpen} onClick={toggleBulkOpen} />
+              {!bulkOpen ? (
+                <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+                  {selected.size} of {rows.length} selected
+                </span>
+              ) : (
+                <>
+                  <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>Select first</span>
+                  <input
+                    type="number"
+                    min={1}
+                    max={Math.max(rows.length, 1)}
+                    value={bulkCountInput}
+                    onChange={e => setBulkCountInput(e.target.value)}
+                    autoFocus
+                    style={{ width: 56, padding: '4px 8px', fontFamily: FONT, background: '#1E1E1E', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 4, color: TEXT }}
+                  />
+                  <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>words</span>
+                  <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, flexShrink: 0 }}>
+                    <button
+                      onClick={handleCancelBulk}
+                      className="done-btn-neutral"
+                      style={{ padding: '5px 14px', fontSize: FS_CAPTION, fontFamily: FONT, letterSpacing: TRACKING, borderRadius: 6, cursor: 'pointer', background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.15)' }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleConfirmBulk}
+                      className="done-btn"
+                      style={{ padding: '5px 14px', fontSize: FS_CAPTION, fontFamily: FONT, letterSpacing: TRACKING, borderRadius: 6, cursor: 'pointer', background: 'rgba(58,189,164,0.15)', color: ACCENT, border: '1px solid rgba(58,189,164,0.4)' }}
+                    >
+                      Confirm
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
             {rows.map(row => {
               const dictEntry = row.word.jmdictId ? dictEntries[row.word.jmdictId] : null
               const { displayForm, reading } = resolveWordDisplay(row.word, dictEntry)
@@ -491,7 +591,6 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
                     onChange={() => toggleRow(row.id)}
                     style={{ flexShrink: 0, width: 16, height: 16, accentColor: ACCENT }}
                   />
-                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: MISTAKE_TIER_COLOR[mistakeTier(row.mistakes)], flexShrink: 0 }} />
                   <span style={{ display: 'flex', flexDirection: 'column', gap: 2, width: 100, flexShrink: 0, overflow: 'hidden' }}>
                     <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {displayForm}
