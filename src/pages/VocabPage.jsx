@@ -474,17 +474,20 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
                     style={{ flexShrink: 0, width: 16, height: 16, accentColor: ACCENT }}
                   />
                   <span style={{ width: 8, height: 8, borderRadius: '50%', background: MISTAKE_TIER_COLOR[mistakeTier(row.mistakes)], flexShrink: 0 }} />
-                  <span style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexShrink: 0 }}>
-                    <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
+                  <span style={{ display: 'flex', flexDirection: 'column', gap: 2, width: 100, flexShrink: 0, overflow: 'hidden' }}>
+                    <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {displayForm}
                     </span>
                     {reading && (
-                      <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
+                      <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0, lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {reading}
                       </span>
                     )}
                   </span>
-                  <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <span style={{
+                    fontSize: FS_BASE, color: TEXT_MUTED, flex: 1, minWidth: 0, lineHeight: 1.35,
+                    display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+                  }}>
                     {resolvedEnglish}
                   </span>
                   {row.mistakes > 0 && (
