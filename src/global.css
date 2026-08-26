@@ -298,9 +298,13 @@ button, input, select, textarea {
   filter: brightness(1.15);
 }
 
+.deck-row-delete-btn {
+  transition: background 120ms, border-color 120ms;
+}
+
 .deck-row-delete-btn:hover {
-  background: rgba(192,57,43,0.15) !important;
-  color: #f87171 !important;
+  background: rgba(192,57,43,0.28) !important;
+  border-color: rgba(192,57,43,0.65) !important;
 }
 
 .deck-chip-btn:hover {
