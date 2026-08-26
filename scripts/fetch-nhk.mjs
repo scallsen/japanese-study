@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
- * Fetches Japanese news headlines from Yahoo Japan RSS, then uses Claude Haiku
- * to write N4-level article bodies for each headline and generate AI fields.
+ * Uses Claude's web search tool to discover current Japanese news topics across
+ * a broad range of sources (no single outlet), then uses Claude Haiku to write
+ * N4-level original article bodies for each topic and generate AI fields.
  * Upserts to the Supabase `articles` table.
  *
  * Run manually: node --env-file=.env scripts/fetch-nhk.mjs
@@ -22,7 +23,8 @@ const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? proce
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY
 
 const MAX_ARTICLES = 5
-const YAHOO_RSS_URL = 'https://news.yahoo.co.jp/rss/topics/top-picks.xml'
+const TOPIC_DISCOVERY_MODEL = 'claude-sonnet-5'
+const ARTICLE_MODEL = 'claude-haiku-4-5-20251001'
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   console.error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY')
@@ -109,37 +111,52 @@ async function lookupJmdict(wordInfos) {
   return result
 }
 
-function slugFromUrl(url) {
-  const m = url.match(/\/(\d+)(?:\?|$)/)
-  return m ? `yahoo-${m[1]}` : `yahoo-${Buffer.from(url).toString('base64').slice(0, 16)}`
+function slugify(text) {
+  return text
+    .toString()
+    .toLowerCase()
+    .replace(/[^\p{Letter}\p{Number}]+/gu, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60)
 }
 
-async function fetchHeadlines() {
-  const res = await fetch(YAHOO_RSS_URL, {
-    headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/rss+xml, application/xml, text/xml' },
-  })
-  if (!res.ok) throw new Error(`Yahoo RSS fetch failed: ${res.status}`)
-  const xml = await res.text()
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/
 
-  const items = []
-  const itemMatches = xml.matchAll(/<item>([\s\S]*?)<\/item>/g)
-  for (const match of itemMatches) {
-    const block = match[1]
-    const title = block.match(/<title>([\s\S]*?)<\/title>/)?.[1]?.replace(/<!\[CDATA\[(.*?)\]\]>/s, '$1').trim()
-    const link = block.match(/<link>([\s\S]*?)<\/link>/)?.[1]?.trim()
-      ?? block.match(/<comments>([\s\S]*?)<\/comments>/)?.[1]?.trim()
-    const pubDate = block.match(/<pubDate>([\s\S]*?)<\/pubDate>/)?.[1]?.trim()
-    if (title && link) {
-      items.push({ title, link, pubDate })
-    }
-    if (items.length >= MAX_ARTICLES * 2) break
+async function discoverTopics(count) {
+  const params = {
+    model: TOPIC_DISCOVERY_MODEL,
+    max_tokens: 4000,
+    tools: [{ type: 'web_search_20260209', name: 'web_search', max_uses: 6 }],
+    messages: [
+      {
+        role: 'user',
+        content: `Search the web for real, current Japanese-language news stories from the last day or two. Draw from a variety of reputable Japanese news outlets and topics — do not rely on a single source. Find ${count} distinct, general-interest stories that would work well for Japanese language learners (avoid graphic, sensitive, or overly niche stories).
+
+For each story, report the real Japanese headline as it was actually reported, a short English topic slug (kebab-case, ASCII, 2-5 words), and its approximate publish date.
+
+After searching, reply with ONLY a raw JSON array (no markdown, no commentary) in this exact shape:
+[{"headline": "Japanese headline text", "topicSlug": "kebab-case-slug", "publishedDate": "YYYY-MM-DD"}]`,
+      },
+    ],
   }
-  return items
+
+  let messages = params.messages
+  let response = await anthropic.messages.create(params)
+  while (response.stop_reason === 'pause_turn') {
+    messages = [...messages, { role: 'assistant', content: response.content }]
+    response = await anthropic.messages.create({ ...params, messages })
+  }
+
+  const text = response.content.filter(b => b.type === 'text').map(b => b.text).join('\n')
+  const jsonStart = text.indexOf('[')
+  const jsonEnd = text.lastIndexOf(']')
+  if (jsonStart === -1 || jsonEnd === -1) throw new Error('No JSON array in topic discovery response')
+  return JSON.parse(text.slice(jsonStart, jsonEnd + 1))
 }
 
 async function generateArticle(headline, pubDate) {
   const message = await anthropic.messages.create({
-    model: 'claude-haiku-4-5-20251001',
+    model: ARTICLE_MODEL,
     max_tokens: 1600,
     messages: [
       {
@@ -192,9 +209,9 @@ async function main() {
   const tokenizer = await buildTokenizerInstance()
   console.log('Tokenizer ready.')
 
-  console.log('Fetching Yahoo Japan News headlines...')
-  const headlines = await fetchHeadlines()
-  console.log(`Found ${headlines.length} headlines`)
+  console.log('Discovering current news topics via web search...')
+  const topics = await discoverTopics(MAX_ARTICLES * 2)
+  console.log(`Found ${topics.length} candidate topics`)
 
   const existingSlugs = await getExistingSlugs()
   console.log(`Existing articles: ${existingSlugs.size}`)
@@ -202,27 +219,38 @@ async function main() {
   let processed = 0
   let skipped = 0
 
-  for (const item of headlines) {
+  for (const topic of topics) {
     if (processed >= MAX_ARTICLES) break
 
-    const slug = slugFromUrl(item.link)
+    if (!topic.headline || !topic.topicSlug) {
+      skipped++
+      continue
+    }
+
+    const dateStr = DATE_RE.test(topic.publishedDate ?? '')
+      ? topic.publishedDate
+      : new Date().toISOString().split('T')[0]
+    const slug = `news-${dateStr}-${slugify(topic.topicSlug)}`
 
     if (existingSlugs.has(slug)) {
       skipped++
       continue
     }
+    existingSlugs.add(slug)
 
-    console.log(`Generating: ${item.title}`)
+    console.log(`Generating: ${topic.headline}`)
 
     let ai
     try {
-      ai = await generateArticle(item.title, item.pubDate)
+      ai = await generateArticle(topic.headline, topic.publishedDate)
     } catch (err) {
       console.warn(`  Claude failed: ${err.message}`)
       continue
     }
 
-    const publishedAt = item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString()
+    const publishedAt = DATE_RE.test(topic.publishedDate ?? '')
+      ? new Date(topic.publishedDate).toISOString()
+      : new Date().toISOString()
 
     const richJa = ai.body_ja ? tokenizeTextRich(tokenizer, ai.body_ja) : null
     const richSimple = ai.body_simple ? tokenizeTextRich(tokenizer, ai.body_simple) : null
@@ -256,8 +284,8 @@ async function main() {
     try {
       await upsertArticle({
         slug,
-        source: 'yahoo',
-        title: ai.title ?? item.title,
+        source: 'news',
+        title: ai.title ?? topic.headline,
         title_en: ai.title_en ?? null,
         published_at: publishedAt,
         body_ja: ai.body_ja,

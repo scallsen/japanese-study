@@ -661,7 +661,7 @@ Visible in the settings sidebar when `import.meta.env.DEV` and cards exist. "Adv
 |---|---|
 | `src/modules/immersion/ImmersionModule.jsx` | Article list screen — fetches from Supabase, reading history |
 | `src/modules/immersion/ImmersionReader.jsx` | Reader — tokenized body, word popup, furigana toggle, SRS bridge |
-| `scripts/fetch-nhk.mjs` | Nightly pipeline — fetches Yahoo Japan RSS, generates articles via Claude Haiku, tokenizes with Kuromoji, looks up JMdict definitions |
+| `scripts/fetch-nhk.mjs` | Nightly pipeline — discovers current news topics across a broad range of sources via Claude's web search tool, generates articles via Claude Haiku, tokenizes with Kuromoji, looks up JMdict definitions |
 | `scripts/import-jmdict.mjs` | One-time import — downloads jmdict-simplified JSON and populates the Supabase `dictionary` table |
 | `scripts/backfill-jmdict.mjs` | One-off backfill — re-tokenizes existing articles and regenerates `vocabulary_ja` from JMdict |
 | `scripts/backfill-definitions.mjs` | Legacy — original Claude Haiku definition backfill, superseded by `backfill-jmdict.mjs` |

@@ -12,7 +12,7 @@ import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_LIS
 const ACCENT = '#E05A4E'
 
 const DIFFICULTY_LABEL = { 1: 'N5', 2: 'N4', 3: 'N3', 4: 'N2', 5: 'N1' }
-const SOURCE_LABEL = { yahoo: 'Yahoo News', nhk: 'NHK Easy', tadoku: 'Tadoku' }
+const SOURCE_LABEL = { news: 'News', yahoo: 'News', nhk: 'NHK Easy', tadoku: 'Tadoku' }
 
 function formatDate(iso) {
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
