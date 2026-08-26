@@ -873,7 +873,7 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
 
 // ── HomeScreen ────────────────────────────────────────────────────────────────
 
-function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selectedSubLists, onToggleSubList, wordCountByList, hasReviewWords, includeReview, onToggleIncludeReview, vocabProgress, reviewMode, onChangeReviewMode, onStart, onGlance }) {
+function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selectedSubLists, onToggleSubList, wordCountByList, reviewWordCount, includeReview, onToggleIncludeReview, sentenceVocabWordCount, includeSentenceVocab, onToggleIncludeSentenceVocab, vocabProgress, reviewMode, onChangeReviewMode, onStart, onGlance }) {
   const [startHovered, setStartHovered] = useState(false)
   const canStart = selectedSubLists.length > 0
 
@@ -926,9 +926,14 @@ function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selec
           <option key={source.id} value={source.id}>{source.label}</option>
         ))}
       </select>
-      {hasReviewWords && (
+      {reviewWordCount > 0 && (
         <div style={{ marginTop: 4 }}>
-          <DrawerCheckbox checked={includeReview} onChange={onToggleIncludeReview} label="Include review words" />
+          <DrawerCheckbox checked={includeReview} onChange={onToggleIncludeReview} label={`Include review words (${reviewWordCount})`} />
+        </div>
+      )}
+      {sentenceVocabWordCount > 0 && (
+        <div style={{ marginTop: 4 }}>
+          <DrawerCheckbox checked={includeSentenceVocab} onChange={onToggleIncludeSentenceVocab} label={`Include sentence review words (${sentenceVocabWordCount})`} />
         </div>
       )}
       </div>
@@ -1123,6 +1128,9 @@ export default function VocabPage() {
   const [includeReview, setIncludeReview] = useState(() => {
     const s = safeLocalStorageGet('vocab-include-review'); return s === null ? true : s === 'true'
   })
+  const [includeSentenceVocab, setIncludeSentenceVocab] = useState(() => {
+    const s = safeLocalStorageGet('vocab-include-sentence-vocab'); return s === null ? false : s === 'true'
+  })
   const [pulseColor,       setPulseColor]       = useState(null)
   const [headerHeight,     setHeaderHeight]     = useState(72)
   const headerRef   = useRef(null)
@@ -1147,6 +1155,7 @@ export default function VocabPage() {
   useEffect(() => { safeLocalStorageSet('vocab-sentence-source', sentenceSource) }, [sentenceSource])
   useEffect(() => { safeLocalStorageSet('vocab-show-kanji-meaning', showKanjiMeaning) }, [showKanjiMeaning])
   useEffect(() => { safeLocalStorageSet('vocab-include-review', includeReview) }, [includeReview])
+  useEffect(() => { safeLocalStorageSet('vocab-include-sentence-vocab', includeSentenceVocab) }, [includeSentenceVocab])
 
   useEffect(() => {
     const el = headerRef.current
@@ -1161,30 +1170,38 @@ export default function VocabPage() {
     return source?.lists ?? [{ id: source?.id, label: source?.label }]
   }, [selectedSourceId])
 
-  const hasReviewWords = useMemo(() => {
-    const sourceListKeys = new Set(availableSubLists.map(l => l.id))
-    return WORD_DATA.some(w => sourceListKeys.has(w.listKey) && w.isReview)
-  }, [availableSubLists])
+  const reviewWordCount = useMemo(() =>
+    WORD_DATA.filter(w => selectedSubLists.includes(w.listKey) && w.isReview).length,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedSubLists.join(',')]
+  )
+
+  const sentenceVocabWordCount = useMemo(() =>
+    WORD_DATA.filter(w => selectedSubLists.includes(w.listKey) && w.isSentenceVocab).length,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedSubLists.join(',')]
+  )
 
   const wordCountByList = useMemo(() => {
     const map = {}
     for (const w of WORD_DATA) {
       if (!includeReview && w.isReview) continue
+      if (!includeSentenceVocab && w.isSentenceVocab) continue
       map[w.listKey] = (map[w.listKey] ?? 0) + 1
     }
     return map
-  }, [includeReview])
+  }, [includeReview, includeSentenceVocab])
 
   const glanceWords = useMemo(() =>
-    WORD_DATA.filter(w => selectedSubLists.includes(w.listKey) && (includeReview || !w.isReview)),
+    WORD_DATA.filter(w => selectedSubLists.includes(w.listKey) && (includeReview || !w.isReview) && (includeSentenceVocab || !w.isSentenceVocab)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedSubLists.join(','), includeReview]
+    [selectedSubLists.join(','), includeReview, includeSentenceVocab]
   )
 
   const pool = useMemo(() =>
     glanceWords.map(w => ({ id: w.id, word: w })),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedSubLists.join(','), includeReview]
+    [selectedSubLists.join(','), includeReview, includeSentenceVocab]
   )
 
   const drill = useDrill(pool, { engine: SimpleQueue })
@@ -1467,9 +1484,12 @@ export default function VocabPage() {
                 selectedSubLists={selectedSubLists}
                 onToggleSubList={id => setSelectedSubLists(prev => toggle(prev, id))}
                 wordCountByList={wordCountByList}
-                hasReviewWords={hasReviewWords}
+                reviewWordCount={reviewWordCount}
                 includeReview={includeReview}
                 onToggleIncludeReview={() => setIncludeReview(v => !v)}
+                sentenceVocabWordCount={sentenceVocabWordCount}
+                includeSentenceVocab={includeSentenceVocab}
+                onToggleIncludeSentenceVocab={() => setIncludeSentenceVocab(v => !v)}
                 vocabProgress={vocabProgress}
                 reviewMode={reviewMode}
                 onChangeReviewMode={setReviewMode}

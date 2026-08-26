@@ -1,0 +1,7070 @@
+[
+  {
+    "listKey": "nsm-n3-w1d1",
+    "sourceId": "nsm-n3-w1d1-001",
+    "base": "ここ",
+    "sentence": "ここに駐車してはいけません。"
+  },
+  {
+    "listKey": "nsm-n3-w1d1",
+    "sourceId": "nsm-n3-w1d1-001",
+    "base": "する",
+    "sentence": "ここに駐車してはいけません。"
+  },
+  {
+    "listKey": "nsm-n3-w1d1",
+    "sourceId": "nsm-n3-w1d1-004",
+    "base": "この",
+    "sentence": "この美術館、今日は無料だそうです。"
+  },
+  {
+    "listKey": "nsm-n3-w1d1",
+    "sourceId": "nsm-n3-w1d1-005",
+    "base": "する",
+    "sentence": "風邪ですか？無理しないでくださいね。"
+  },
+  {
+    "listKey": "nsm-n3-w1d1",
+    "sourceId": "nsm-n3-w1d1-007",
+    "base": "この",
+    "sentence": "この駐車場は今、満車です。"
+  },
+  {
+    "listKey": "nsm-n3-w1d1",
+    "sourceId": "nsm-n3-w1d1-009",
+    "base": "ある",
+    "sentence": "何か不満があれば言ってください。"
+  },
+  {
+    "listKey": "nsm-n3-w1d1",
+    "sourceId": "nsm-n3-w1d1-011",
+    "base": "いる",
+    "sentence": "向こうの駐車場なら空いています。"
+  },
+  {
+    "listKey": "nsm-n3-w1d1",
+    "sourceId": "nsm-n3-w1d1-012",
+    "base": "いる",
+    "sentence": "少し遅れますが、今、そちらに向かっています。"
+  },
+  {
+    "listKey": "nsm-n3-w1d1",
+    "sourceId": "nsm-n3-w1d1-013",
+    "base": "この",
+    "sentence": "この部屋は南向きです。"
+  },
+  {
+    "listKey": "nsm-n3-w1d1",
+    "sourceId": "nsm-n3-w1d1-014",
+    "base": "ここ",
+    "sentence": "ここはポイ捨て禁止ですよ。"
+  },
+  {
+    "listKey": "nsm-n3-w1d1",
+    "sourceId": "nsm-n3-w1d1-016",
+    "base": "ある",
+    "sentence": "最近、何に関心がありますか。"
+  },
+  {
+    "listKey": "nsm-n3-w1d1",
+    "sourceId": "nsm-n3-w1d1-017",
+    "base": "よく",
+    "sentence": "最近はAIに関するニュースをよく聞きますね。"
+  },
+  {
+    "listKey": "nsm-n3-w1d1",
+    "sourceId": "nsm-n3-w1d1-018",
+    "base": "立入禁止",
+    "sentence": "関係者以外、立入禁止です。"
+  },
+  {
+    "listKey": "nsm-n3-w1d1",
+    "sourceId": "nsm-n3-w1d1-021",
+    "base": "なる",
+    "sentence": "5月10日は断水になるそうです。"
+  },
+  {
+    "listKey": "nsm-n3-w1d2",
+    "sourceId": "nsm-n3-w1d2-001",
+    "base": "する",
+    "sentence": "アメリカをバイクで横断したことがあります。"
+  },
+  {
+    "listKey": "nsm-n3-w1d2",
+    "sourceId": "nsm-n3-w1d2-001",
+    "base": "こと",
+    "sentence": "アメリカをバイクで横断したことがあります。"
+  },
+  {
+    "listKey": "nsm-n3-w1d2",
+    "sourceId": "nsm-n3-w1d2-001",
+    "base": "ある",
+    "sentence": "アメリカをバイクで横断したことがあります。"
+  },
+  {
+    "listKey": "nsm-n3-w1d2",
+    "sourceId": "nsm-n3-w1d2-004",
+    "base": "ここ",
+    "sentence": "ここを押すと切符が出ます。"
+  },
+  {
+    "listKey": "nsm-n3-w1d2",
+    "sourceId": "nsm-n3-w1d2-005",
+    "base": "ここ",
+    "sentence": "ちょっとここを押さえてもらえますか。"
+  },
+  {
+    "listKey": "nsm-n3-w1d2",
+    "sourceId": "nsm-n3-w1d2-006",
+    "base": "押し入れ",
+    "sentence": "私のアパートには押し入れがありません。"
+  },
+  {
+    "listKey": "nsm-n3-w1d2",
+    "sourceId": "nsm-n3-w1d2-006",
+    "base": "ある",
+    "sentence": "私のアパートには押し入れがありません。"
+  },
+  {
+    "listKey": "nsm-n3-w1d2",
+    "sourceId": "nsm-n3-w1d2-007",
+    "base": "この",
+    "sentence": "この信号は押しボタン式です。"
+  },
+  {
+    "listKey": "nsm-n3-w1d2",
+    "sourceId": "nsm-n3-w1d2-010",
+    "base": "する",
+    "sentence": "メールを送信する前に、内容を確認しましょう。"
+  },
+  {
+    "listKey": "nsm-n3-w1d2",
+    "sourceId": "nsm-n3-w1d2-013",
+    "base": "あの",
+    "sentence": "あの人はあまり信用できませんね。"
+  },
+  {
+    "listKey": "nsm-n3-w1d2",
+    "sourceId": "nsm-n3-w1d2-017",
+    "base": "おく",
+    "sentence": "フライトの時間、確かめておきますね。"
+  },
+  {
+    "listKey": "nsm-n3-w1d2",
+    "sourceId": "nsm-n3-w1d2-018",
+    "base": "その",
+    "sentence": "その話は確かなんですか？"
+  },
+  {
+    "listKey": "nsm-n3-w1d2",
+    "sourceId": "nsm-n3-w1d2-018",
+    "base": "ん",
+    "sentence": "その話は確かなんですか？"
+  },
+  {
+    "listKey": "nsm-n3-w1d2",
+    "sourceId": "nsm-n3-w1d2-019",
+    "base": "する",
+    "sentence": "次の予約時間を確認したいんですが。"
+  },
+  {
+    "listKey": "nsm-n3-w1d2",
+    "sourceId": "nsm-n3-w1d2-019",
+    "base": "ん",
+    "sentence": "次の予約時間を確認したいんですが。"
+  },
+  {
+    "listKey": "nsm-n3-w1d2",
+    "sourceId": "nsm-n3-w1d2-021",
+    "base": "この",
+    "sentence": "この飛行場では、ライセンスを取るための練習が行われています。"
+  },
+  {
+    "listKey": "nsm-n3-w1d2",
+    "sourceId": "nsm-n3-w1d2-021",
+    "base": "いる",
+    "sentence": "この飛行場では、ライセンスを取るための練習が行われています。"
+  },
+  {
+    "listKey": "nsm-n3-w1d2",
+    "sourceId": "nsm-n3-w1d2-022",
+    "base": "の",
+    "sentence": "空を飛ぶのが夢でした。"
+  },
+  {
+    "listKey": "nsm-n3-w1d3",
+    "sourceId": "nsm-n3-w1d3-004",
+    "base": "なる",
+    "sentence": "日常会話がもっとうまくなりたいです。"
+  },
+  {
+    "listKey": "nsm-n3-w1d3",
+    "sourceId": "nsm-n3-w1d3-005",
+    "base": "いる",
+    "sentence": "エレベーターは正常に動いています。"
+  },
+  {
+    "listKey": "nsm-n3-w1d3",
+    "sourceId": "nsm-n3-w1d3-007",
+    "base": "いる",
+    "sentence": "ダイエットのために毎日階段を使っています。"
+  },
+  {
+    "listKey": "nsm-n3-w1d3",
+    "sourceId": "nsm-n3-w1d3-009",
+    "base": "する",
+    "sentence": "プレゼントなので、箱に入れてラッピングしていただけますか。"
+  },
+  {
+    "listKey": "nsm-n3-w1d3",
+    "sourceId": "nsm-n3-w1d3-011",
+    "base": "の",
+    "sentence": "お酒を飲んで自転車に乗るのは危険ですよ。"
+  },
+  {
+    "listKey": "nsm-n3-w1d3",
+    "sourceId": "nsm-n3-w1d3-012",
+    "base": "の",
+    "sentence": "歩きながらスマホを使うのは危ないですよ。"
+  },
+  {
+    "listKey": "nsm-n3-w1d3",
+    "sourceId": "nsm-n3-w1d3-013",
+    "base": "この",
+    "sentence": "この山は道が険しいので、気をつけて下さい。"
+  },
+  {
+    "listKey": "nsm-n3-w1d3",
+    "sourceId": "nsm-n3-w1d3-013",
+    "base": "つける",
+    "sentence": "この山は道が険しいので、気をつけて下さい。"
+  },
+  {
+    "listKey": "nsm-n3-w1d3",
+    "sourceId": "nsm-n3-w1d3-015",
+    "base": "する",
+    "sentence": "小数点以下は四捨五入してください。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-002",
+    "base": "新宿",
+    "sentence": "新宿行きの電車は2番線から出発します。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-002",
+    "base": "する",
+    "sentence": "新宿行きの電車は2番線から出発します。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-003",
+    "base": "この",
+    "sentence": "この店は全面禁煙です。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-004",
+    "base": "この",
+    "sentence": "このスマホ、画面が大きくて見やすいですね。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-005",
+    "base": "いる",
+    "sentence": "朝、東京方面に向かう道はいつも混んでいます。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-006",
+    "base": "この",
+    "sentence": "このレストラン、おいしいって聞いたけど、味は普通ですね。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-007",
+    "base": "する",
+    "sentence": "今はインターネットが普及しています。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-007",
+    "base": "いる",
+    "sentence": "今はインターネットが普及しています。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-008",
+    "base": "この",
+    "sentence": "この電車は各駅に停まります。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-008",
+    "base": "停る",
+    "sentence": "この電車は各駅に停まります。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-012",
+    "base": "この",
+    "sentence": "この続きは、また次回話しましょう。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-012",
+    "base": "また",
+    "sentence": "この続きは、また次回話しましょう。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-014",
+    "base": "この",
+    "sentence": "この駅は快速電車が停まりませんよ。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-014",
+    "base": "停る",
+    "sentence": "この駅は快速電車が停まりませんよ。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-015",
+    "base": "この",
+    "sentence": "この家は快適ですね。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-017",
+    "base": "すぎ",
+    "sentence": "速度の出しすぎに注意してください。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-017",
+    "base": "する",
+    "sentence": "速度の出しすぎに注意してください。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-018",
+    "base": "ほう",
+    "sentence": "こっちの道のほうが速く行けますよ。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-018",
+    "base": "速い",
+    "sentence": "こっちの道のほうが速く行けますよ。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-019",
+    "base": "する",
+    "sentence": "電車が通過しますので、ご注意ください。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-022",
+    "base": "乗りかえる",
+    "sentence": "東京駅で地下鉄に乗りかえてください。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-023",
+    "base": "いる",
+    "sentence": "父は鉄道会社に勤めています。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-024",
+    "base": "この",
+    "sentence": "このフライパンは鉄でできているから重いですよ。"
+  },
+  {
+    "listKey": "nsm-n3-w2d1",
+    "sourceId": "nsm-n3-w2d1-024",
+    "base": "いる",
+    "sentence": "このフライパンは鉄でできているから重いですよ。"
+  },
+  {
+    "listKey": "nsm-n3-w2d2",
+    "sourceId": "nsm-n3-w2d2-002",
+    "base": "する",
+    "sentence": "京都までの指定席をお願いします。"
+  },
+  {
+    "listKey": "nsm-n3-w2d2",
+    "sourceId": "nsm-n3-w2d2-003",
+    "base": "する",
+    "sentence": "昨日料理をしていて、指を切っちゃった。"
+  },
+  {
+    "listKey": "nsm-n3-w2d2",
+    "sourceId": "nsm-n3-w2d2-003",
+    "base": "いる",
+    "sentence": "昨日料理をしていて、指を切っちゃった。"
+  },
+  {
+    "listKey": "nsm-n3-w2d2",
+    "sourceId": "nsm-n3-w2d2-003",
+    "base": "ちゃう",
+    "sentence": "昨日料理をしていて、指を切っちゃった。"
+  },
+  {
+    "listKey": "nsm-n3-w2d2",
+    "sourceId": "nsm-n3-w2d2-006",
+    "base": "する",
+    "sentence": "安定した仕事が欲しいです。"
+  },
+  {
+    "listKey": "nsm-n3-w2d2",
+    "sourceId": "nsm-n3-w2d2-008",
+    "base": "この",
+    "sentence": "この席、空いてますか？"
+  },
+  {
+    "listKey": "nsm-n3-w2d2",
+    "sourceId": "nsm-n3-w2d2-009",
+    "base": "する",
+    "sentence": "明日の会議、出席しますか？"
+  },
+  {
+    "listKey": "nsm-n3-w2d2",
+    "sourceId": "nsm-n3-w2d2-012",
+    "base": "座れる",
+    "sentence": "自由席だと座れないかもしれません。"
+  },
+  {
+    "listKey": "nsm-n3-w2d2",
+    "sourceId": "nsm-n3-w2d2-013",
+    "base": "する",
+    "sentence": "欠席する場合は、理由も言ってください。"
+  },
+  {
+    "listKey": "nsm-n3-w2d2",
+    "sourceId": "nsm-n3-w2d2-016",
+    "base": "新宿",
+    "sentence": "新宿行きの電車は2番線から出発します。"
+  },
+  {
+    "listKey": "nsm-n3-w2d2",
+    "sourceId": "nsm-n3-w2d2-016",
+    "base": "する",
+    "sentence": "新宿行きの電車は2番線から出発します。"
+  },
+  {
+    "listKey": "nsm-n3-w2d2",
+    "sourceId": "nsm-n3-w2d2-018",
+    "base": "する",
+    "sentence": "それは窓口で相談してください。"
+  },
+  {
+    "listKey": "nsm-n3-w2d2",
+    "sourceId": "nsm-n3-w2d2-019",
+    "base": "いる",
+    "sentence": "道の両側に桜が咲いています。"
+  },
+  {
+    "listKey": "nsm-n3-w2d2",
+    "sourceId": "nsm-n3-w2d2-022",
+    "base": "する",
+    "sentence": "通路側の席をお願いします。"
+  },
+  {
+    "listKey": "nsm-n3-w2d3",
+    "sourceId": "nsm-n3-w2d3-001",
+    "base": "品川",
+    "sentence": "次の停車駅は、品川です。"
+  },
+  {
+    "listKey": "nsm-n3-w2d3",
+    "sourceId": "nsm-n3-w2d3-002",
+    "base": "ここ",
+    "sentence": "ここから一番近いバス停はどこですか？"
+  },
+  {
+    "listKey": "nsm-n3-w2d3",
+    "sourceId": "nsm-n3-w2d3-003",
+    "base": "する",
+    "sentence": "書類を整理してください。"
+  },
+  {
+    "listKey": "nsm-n3-w2d3",
+    "sourceId": "nsm-n3-w2d3-004",
+    "base": "する",
+    "sentence": "整理券をお渡しします。"
+  },
+  {
+    "listKey": "nsm-n3-w2d3",
+    "sourceId": "nsm-n3-w2d3-008",
+    "base": "ん",
+    "sentence": "回数券を買いたいんですが。"
+  },
+  {
+    "listKey": "nsm-n3-w2d3",
+    "sourceId": "nsm-n3-w2d3-011",
+    "base": "する",
+    "sentence": "彼はいつも急に現れるからびっくりする。"
+  },
+  {
+    "listKey": "nsm-n3-w2d3",
+    "sourceId": "nsm-n3-w2d3-013",
+    "base": "いる",
+    "sentence": "いつも前から3両目に乗っています。"
+  },
+  {
+    "listKey": "nsm-n3-w2d3",
+    "sourceId": "nsm-n3-w2d3-014",
+    "base": "この",
+    "sentence": "このお皿、汚れているので取り替えてください。"
+  },
+  {
+    "listKey": "nsm-n3-w2d3",
+    "sourceId": "nsm-n3-w2d3-014",
+    "base": "いる",
+    "sentence": "このお皿、汚れているので取り替えてください。"
+  },
+  {
+    "listKey": "nsm-n3-w2d3",
+    "sourceId": "nsm-n3-w2d3-015",
+    "base": "する",
+    "sentence": "これ、五千円札と千円札に両替してもらえませんか？"
+  },
+  {
+    "listKey": "nsm-n3-w2d3",
+    "sourceId": "nsm-n3-w2d3-016",
+    "base": "かく",
+    "sentence": "汗をかいたので着替えてきます。"
+  },
+  {
+    "listKey": "nsm-n3-w2d3",
+    "sourceId": "nsm-n3-w2d3-016",
+    "base": "くる",
+    "sentence": "汗をかいたので着替えてきます。"
+  },
+  {
+    "listKey": "nsm-n3-w2d3",
+    "sourceId": "nsm-n3-w2d3-017",
+    "base": "そこ",
+    "sentence": "そこは優先席ですよ。"
+  },
+  {
+    "listKey": "nsm-n3-w2d3",
+    "sourceId": "nsm-n3-w2d3-018",
+    "base": "する",
+    "sentence": "彼女、女優の仕事をしているんだって。"
+  },
+  {
+    "listKey": "nsm-n3-w2d3",
+    "sourceId": "nsm-n3-w2d3-018",
+    "base": "いる",
+    "sentence": "彼女、女優の仕事をしているんだって。"
+  },
+  {
+    "listKey": "nsm-n3-w2d3",
+    "sourceId": "nsm-n3-w2d3-018",
+    "base": "ん",
+    "sentence": "彼女、女優の仕事をしているんだって。"
+  },
+  {
+    "listKey": "nsm-n3-w2d3",
+    "sourceId": "nsm-n3-w2d3-020",
+    "base": "どの",
+    "sentence": "どの座席になさいますか？"
+  },
+  {
+    "listKey": "nsm-n3-w2d3",
+    "sourceId": "nsm-n3-w2d3-021",
+    "base": "する",
+    "sentence": "長時間正座すると、足が痛くなりますね。"
+  },
+  {
+    "listKey": "nsm-n3-w2d3",
+    "sourceId": "nsm-n3-w2d3-021",
+    "base": "なる",
+    "sentence": "長時間正座すると、足が痛くなりますね。"
+  },
+  {
+    "listKey": "nsm-n3-w2d3",
+    "sourceId": "nsm-n3-w2d3-022",
+    "base": "ここ",
+    "sentence": "ここ、座ってもいいですか？"
+  },
+  {
+    "listKey": "nsm-n3-w2d3",
+    "sourceId": "nsm-n3-w2d3-023",
+    "base": "ここ",
+    "sentence": "ここは降車口ですから、向こうから乗ってください。"
+  },
+  {
+    "listKey": "nsm-n3-w2d3",
+    "sourceId": "nsm-n3-w2d3-024",
+    "base": "する",
+    "sentence": "6時以降はこちらに連絡してください。"
+  },
+  {
+    "listKey": "nsm-n3-w2d3",
+    "sourceId": "nsm-n3-w2d3-025",
+    "base": "かける",
+    "sentence": "電車を降りてからかけ直しますね。"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-001",
+    "base": "する",
+    "sentence": "明日の会議の資料、準備しておいてください。"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-001",
+    "base": "おく",
+    "sentence": "明日の会議の資料、準備しておいてください。"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-002",
+    "base": "この",
+    "sentence": "このチームは全国大会で準優勝したことがあるんですよ。"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-002",
+    "base": "する",
+    "sentence": "このチームは全国大会で準優勝したことがあるんですよ。"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-002",
+    "base": "こと",
+    "sentence": "このチームは全国大会で準優勝したことがあるんですよ。"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-002",
+    "base": "ある",
+    "sentence": "このチームは全国大会で準優勝したことがあるんですよ。"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-002",
+    "base": "ん",
+    "sentence": "このチームは全国大会で準優勝したことがあるんですよ。"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-003",
+    "base": "おく",
+    "sentence": "予備の電池を買っておきますね。"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-004",
+    "base": "おく",
+    "sentence": "万一に備えて、保険に入っておいたほうがいいですよ。"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-004",
+    "base": "ほう",
+    "sentence": "万一に備えて、保険に入っておいたほうがいいですよ。"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-005",
+    "base": "する",
+    "sentence": "祝日も営業してますか？"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-006",
+    "base": "いる",
+    "sentence": "父は小さい旅館を営んでいます。"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-007",
+    "base": "そこ",
+    "sentence": "開閉ボタンはそこにありますよ。"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-007",
+    "base": "ある",
+    "sentence": "開閉ボタンはそこにありますよ。"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-010",
+    "base": "する",
+    "sentence": "国から友達が来たから、東京を案内してあげました。"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-011",
+    "base": "する",
+    "sentence": "いい案ですね。そうしましょう！"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-012",
+    "base": "いく",
+    "sentence": "家内も連れていきますね。"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-013",
+    "base": "する",
+    "sentence": "スピーチは５分以内でお願いします。"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-015",
+    "base": "する",
+    "sentence": "去年海外に行ったから、今年は国内旅行にします。"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-017",
+    "base": "する",
+    "sentence": "授業が難しいから、予習したほうがいいですね。"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-017",
+    "base": "ほう",
+    "sentence": "授業が難しいから、予習したほうがいいですね。"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-018",
+    "base": "あの",
+    "sentence": "あの店はいつも混んでいるから、予約したほうがいいですよ。"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-018",
+    "base": "いる",
+    "sentence": "あの店はいつも混んでいるから、予約したほうがいいですよ。"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-018",
+    "base": "する",
+    "sentence": "あの店はいつも混んでいるから、予約したほうがいいですよ。"
+  },
+  {
+    "listKey": "nsm-n3-w3d1",
+    "sourceId": "nsm-n3-w3d1-018",
+    "base": "ほう",
+    "sentence": "あの店はいつも混んでいるから、予約したほうがいいですよ。"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-002",
+    "base": "いや",
+    "sentence": "たばこの煙はくさいからいやですね。"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-003",
+    "base": "こと",
+    "sentence": "本当のことを話してください。"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-004",
+    "base": "する",
+    "sentence": "当店は年末も営業します。"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-005",
+    "base": "この",
+    "sentence": "この部屋は日がよく当たりますね。"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-005",
+    "base": "よく",
+    "sentence": "この部屋は日がよく当たりますね。"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-006",
+    "base": "ん",
+    "sentence": "知らなかったんですか？そんなこと、当たり前ですよ。"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-006",
+    "base": "こと",
+    "sentence": "知らなかったんですか？そんなこと、当たり前ですよ。"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-007",
+    "base": "ちゃう",
+    "sentence": "ごめん、全部食べちゃった！"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-008",
+    "base": "この",
+    "sentence": "この電車は全席指定席です。"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-009",
+    "base": "つける",
+    "sentence": "安全のためにシートベルトをつけましょう。"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-012",
+    "base": "ん",
+    "sentence": "最近、子供の様子が変なんです。学校で何かあったんでしょうか？"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-012",
+    "base": "ある",
+    "sentence": "最近、子供の様子が変なんです。学校で何かあったんでしょうか？"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-013",
+    "base": "山田",
+    "sentence": "山田様、お待たせいたしました。"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-015",
+    "base": "ある",
+    "sentence": "解答は本の後ろにあります。"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-016",
+    "base": "あの",
+    "sentence": "あの専門家の解説はとてもわかりやすかったです。"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-016",
+    "base": "やすい",
+    "sentence": "あの専門家の解説はとてもわかりやすかったです。"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-017",
+    "base": "する",
+    "sentence": "分解してみないと、どこが故障しているのかわかりませんね。"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-017",
+    "base": "みる",
+    "sentence": "分解してみないと、どこが故障しているのかわかりませんね。"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-017",
+    "base": "いる",
+    "sentence": "分解してみないと、どこが故障しているのかわかりませんね。"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-017",
+    "base": "の",
+    "sentence": "分解してみないと、どこが故障しているのかわかりませんね。"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-018",
+    "base": "する",
+    "sentence": "みんなで協力したら、早く終わりますよ。"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-019",
+    "base": "する",
+    "sentence": "ビジネスでは、妥協することも必要です。"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-019",
+    "base": "こと",
+    "sentence": "ビジネスでは、妥協することも必要です。"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-020",
+    "base": "いる",
+    "sentence": "子供が元気に育つように願っています。"
+  },
+  {
+    "listKey": "nsm-n3-w3d2",
+    "sourceId": "nsm-n3-w3d2-021",
+    "base": "ある",
+    "sentence": "結婚願望はあまりありません。"
+  },
+  {
+    "listKey": "nsm-n3-w3d3",
+    "sourceId": "nsm-n3-w3d3-001",
+    "base": "くる",
+    "sentence": "最近、外国人観光客が増えてきました。"
+  },
+  {
+    "listKey": "nsm-n3-w3d3",
+    "sourceId": "nsm-n3-w3d3-002",
+    "base": "この",
+    "sentence": "このスタジアムは5万人の観客が入れます。"
+  },
+  {
+    "listKey": "nsm-n3-w3d3",
+    "sourceId": "nsm-n3-w3d3-006",
+    "base": "いる",
+    "sentence": "今、港区に住んでいます。"
+  },
+  {
+    "listKey": "nsm-n3-w3d3",
+    "sourceId": "nsm-n3-w3d3-010",
+    "base": "あの",
+    "sentence": "あの人、とても美人ですね。"
+  },
+  {
+    "listKey": "nsm-n3-w3d3",
+    "sourceId": "nsm-n3-w3d3-011",
+    "base": "ある",
+    "sentence": "北海道には、美しい自然がたくさんあります。"
+  },
+  {
+    "listKey": "nsm-n3-w3d3",
+    "sourceId": "nsm-n3-w3d3-012",
+    "base": "する",
+    "sentence": "大学で美術の勉強をしています。"
+  },
+  {
+    "listKey": "nsm-n3-w3d3",
+    "sourceId": "nsm-n3-w3d3-012",
+    "base": "いる",
+    "sentence": "大学で美術の勉強をしています。"
+  },
+  {
+    "listKey": "nsm-n3-w3d3",
+    "sourceId": "nsm-n3-w3d3-013",
+    "base": "なる",
+    "sentence": "新しい技術のおかげで、生活が便利になりました。"
+  },
+  {
+    "listKey": "nsm-n3-w3d3",
+    "sourceId": "nsm-n3-w3d3-016",
+    "base": "あの",
+    "sentence": "あの人はちょっと神経質ですね。"
+  },
+  {
+    "listKey": "nsm-n3-w3d3",
+    "sourceId": "nsm-n3-w3d3-017",
+    "base": "こと",
+    "sentence": "自分でできることはやったから、あとは神様にお願いします。"
+  },
+  {
+    "listKey": "nsm-n3-w3d3",
+    "sourceId": "nsm-n3-w3d3-017",
+    "base": "あと",
+    "sentence": "自分でできることはやったから、あとは神様にお願いします。"
+  },
+  {
+    "listKey": "nsm-n3-w3d3",
+    "sourceId": "nsm-n3-w3d3-017",
+    "base": "する",
+    "sentence": "自分でできることはやったから、あとは神様にお願いします。"
+  },
+  {
+    "listKey": "nsm-n3-w3d3",
+    "sourceId": "nsm-n3-w3d3-018",
+    "base": "ある",
+    "sentence": "金閣寺は観光客に人気があります。"
+  },
+  {
+    "listKey": "nsm-n3-w4d1",
+    "sourceId": "nsm-n3-w4d1-001",
+    "base": "届け",
+    "sentence": "引っ越したので、市役所に届けを出さなければいけません。"
+  },
+  {
+    "listKey": "nsm-n3-w4d1",
+    "sourceId": "nsm-n3-w4d1-005",
+    "base": "申込",
+    "sentence": "申込書を郵送しました。"
+  },
+  {
+    "listKey": "nsm-n3-w4d1",
+    "sourceId": "nsm-n3-w4d1-005",
+    "base": "する",
+    "sentence": "申込書を郵送しました。"
+  },
+  {
+    "listKey": "nsm-n3-w4d1",
+    "sourceId": "nsm-n3-w4d1-006",
+    "base": "くる",
+    "sentence": "荷物を送りたいので、郵便局に行ってきます。"
+  },
+  {
+    "listKey": "nsm-n3-w4d1",
+    "sourceId": "nsm-n3-w4d1-007",
+    "base": "かぜ",
+    "sentence": "かぜ薬がほしいので、薬局に行ってきます。"
+  },
+  {
+    "listKey": "nsm-n3-w4d1",
+    "sourceId": "nsm-n3-w4d1-007",
+    "base": "くる",
+    "sentence": "かぜ薬がほしいので、薬局に行ってきます。"
+  },
+  {
+    "listKey": "nsm-n3-w4d1",
+    "sourceId": "nsm-n3-w4d1-009",
+    "base": "この",
+    "sentence": "この町は、ちょっと交通が不便です。"
+  },
+  {
+    "listKey": "nsm-n3-w4d1",
+    "sourceId": "nsm-n3-w4d1-010",
+    "base": "する",
+    "sentence": "サイズが合わないので、交換してもらいました。"
+  },
+  {
+    "listKey": "nsm-n3-w4d1",
+    "sourceId": "nsm-n3-w4d1-011",
+    "base": "あの",
+    "sentence": "あのカップルは年の差がありますが、とても仲がいいですね。"
+  },
+  {
+    "listKey": "nsm-n3-w4d1",
+    "sourceId": "nsm-n3-w4d1-011",
+    "base": "ある",
+    "sentence": "あのカップルは年の差がありますが、とても仲がいいですね。"
+  },
+  {
+    "listKey": "nsm-n3-w4d1",
+    "sourceId": "nsm-n3-w4d1-013",
+    "base": "この",
+    "sentence": "この手紙、差出人が書いてありませんね。"
+  },
+  {
+    "listKey": "nsm-n3-w4d1",
+    "sourceId": "nsm-n3-w4d1-013",
+    "base": "ある",
+    "sentence": "この手紙、差出人が書いてありませんね。"
+  },
+  {
+    "listKey": "nsm-n3-w4d1",
+    "sourceId": "nsm-n3-w4d1-015",
+    "base": "この",
+    "sentence": "この前のテスト、今までで一番悪い点数でした。"
+  },
+  {
+    "listKey": "nsm-n3-w4d1",
+    "sourceId": "nsm-n3-w4d1-017",
+    "base": "ここ",
+    "sentence": "ここは横断歩道がないから歩道橋を渡りましょう。"
+  },
+  {
+    "listKey": "nsm-n3-w4d1",
+    "sourceId": "nsm-n3-w4d1-017",
+    "base": "ない",
+    "sentence": "ここは横断歩道がないから歩道橋を渡りましょう。"
+  },
+  {
+    "listKey": "nsm-n3-w4d1",
+    "sourceId": "nsm-n3-w4d1-018",
+    "base": "ある",
+    "sentence": "橋を渡ったところに公園があります。"
+  },
+  {
+    "listKey": "nsm-n3-w4d1",
+    "sourceId": "nsm-n3-w4d1-019",
+    "base": "この",
+    "sentence": "この公園はいつも静かでいいですね。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-001",
+    "base": "ある",
+    "sentence": "受信トレイに未読メールがたくさんあります。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-002",
+    "base": "する",
+    "sentence": "子供は今年大学を受験します。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-004",
+    "base": "この",
+    "sentence": "このシャツ、ボタンが取れちゃったから付けておかなきゃ。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-004",
+    "base": "ちゃう",
+    "sentence": "このシャツ、ボタンが取れちゃったから付けておかなきゃ。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-004",
+    "base": "おく",
+    "sentence": "このシャツ、ボタンが取れちゃったから付けておかなきゃ。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-005",
+    "base": "お客",
+    "sentence": "お客さんが来るから、部屋を片付けておいてね。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-005",
+    "base": "さん",
+    "sentence": "お客さんが来るから、部屋を片付けておいてね。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-005",
+    "base": "おく",
+    "sentence": "お客さんが来るから、部屋を片付けておいてね。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-008",
+    "base": "なる",
+    "sentence": "将来、科学者になりたいです。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-010",
+    "base": "ほう",
+    "sentence": "内科に行ったほうがいいですよ。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-011",
+    "base": "この",
+    "sentence": "この教科書はわかりやすいです。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-011",
+    "base": "やすい",
+    "sentence": "この教科書はわかりやすいです。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-012",
+    "base": "ある",
+    "sentence": "アレルギーがあるので、耳鼻科に通っています。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-012",
+    "base": "いる",
+    "sentence": "アレルギーがあるので、耳鼻科に通っています。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-013",
+    "base": "ひく",
+    "sentence": "風邪をひいて鼻水が止まりません。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-015",
+    "base": "この",
+    "sentence": "この産婦人科はどの先生もやさしいです。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-015",
+    "base": "どの",
+    "sentence": "この産婦人科はどの先生もやさしいです。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-015",
+    "base": "やさしい",
+    "sentence": "この産婦人科はどの先生もやさしいです。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-018",
+    "base": "にくい",
+    "sentence": "言葉だけではわかりにくいので、図形を描いて説明します。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-018",
+    "base": "する",
+    "sentence": "言葉だけではわかりにくいので、図形を描いて説明します。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-019",
+    "base": "くる",
+    "sentence": "腰が痛いので、整形外科に行ってきます。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-020",
+    "base": "の",
+    "sentence": "子供の時は人形で遊ぶのが好きでした。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-021",
+    "base": "この",
+    "sentence": "このかばん、形は好きなんですが、ちょっと小さいんですよね。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-021",
+    "base": "ん",
+    "sentence": "このかばん、形は好きなんですが、ちょっと小さいんですよね。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-022",
+    "base": "する",
+    "sentence": "階段で転んで、骨折しちゃったんです。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-022",
+    "base": "ちゃう",
+    "sentence": "階段で転んで、骨折しちゃったんです。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-022",
+    "base": "ん",
+    "sentence": "階段で転んで、骨折しちゃったんです。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-023",
+    "base": "ひび",
+    "sentence": "骨にひびが入っていますね。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-023",
+    "base": "いる",
+    "sentence": "骨にひびが入っていますね。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-024",
+    "base": "する",
+    "sentence": "次の交差点を右折してください。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-025",
+    "base": "そこ",
+    "sentence": "そこを左折すると、病院があります。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-025",
+    "base": "する",
+    "sentence": "そこを左折すると、病院があります。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-025",
+    "base": "ある",
+    "sentence": "そこを左折すると、病院があります。"
+  },
+  {
+    "listKey": "nsm-n3-w4d2",
+    "sourceId": "nsm-n3-w4d2-028",
+    "base": "かさ",
+    "sentence": "風が強かったので、かさが折れてしまいました。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-001",
+    "base": "いる",
+    "sentence": "困っていることがあったら、なんでも相談してください。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-001",
+    "base": "こと",
+    "sentence": "困っていることがあったら、なんでも相談してください。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-001",
+    "base": "ある",
+    "sentence": "困っていることがあったら、なんでも相談してください。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-001",
+    "base": "なん",
+    "sentence": "困っていることがあったら、なんでも相談してください。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-001",
+    "base": "する",
+    "sentence": "困っていることがあったら、なんでも相談してください。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-004",
+    "base": "あ",
+    "sentence": "あ、ろうそくの火が消えそうですね。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-005",
+    "base": "くれる",
+    "sentence": "もうテレビ見ないから、消してくれる？"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-006",
+    "base": "ちゃう",
+    "sentence": "消しゴム忘れちゃったから、貸してくれる？"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-006",
+    "base": "くれる",
+    "sentence": "消しゴム忘れちゃったから、貸してくれる？"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-007",
+    "base": "がい",
+    "sentence": "風邪の予防のために、手洗いやうがいをしたほうがいいですよ。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-007",
+    "base": "する",
+    "sentence": "風邪の予防のために、手洗いやうがいをしたほうがいいですよ。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-007",
+    "base": "ほう",
+    "sentence": "風邪の予防のために、手洗いやうがいをしたほうがいいですよ。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-009",
+    "base": "くれる",
+    "sentence": "誰か、救急車を呼んでくれませんか！？"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-010",
+    "base": "する",
+    "sentence": "人を救う仕事がしたいです。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-011",
+    "base": "ちゃう",
+    "sentence": "信号が赤なのに道を渡ったから、警官に怒られちゃった。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-012",
+    "base": "さっき",
+    "sentence": "さっき、大雨警報が発表されました。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-012",
+    "base": "する",
+    "sentence": "さっき、大雨警報が発表されました。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-013",
+    "base": "ど",
+    "sentence": "家にどろぼうが入ったから、警察に連絡しました。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-013",
+    "base": "ろ",
+    "sentence": "家にどろぼうが入ったから、警察に連絡しました。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-013",
+    "base": "ぼう",
+    "sentence": "家にどろぼうが入ったから、警察に連絡しました。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-013",
+    "base": "する",
+    "sentence": "家にどろぼうが入ったから、警察に連絡しました。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-014",
+    "base": "この",
+    "sentence": "この道をまっすぐ行くと警察署がありますよ。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-014",
+    "base": "ある",
+    "sentence": "この道をまっすぐ行くと警察署がありますよ。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-016",
+    "base": "する",
+    "sentence": "車が故障したから、修理に出さなきゃ。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-017",
+    "base": "山田",
+    "sentence": "これから故山田さんのお別れ会を始めます。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-017",
+    "base": "さん",
+    "sentence": "これから故山田さんのお別れ会を始めます。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-019",
+    "base": "また",
+    "sentence": "それでは、またお電話しますとお伝えください。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-019",
+    "base": "する",
+    "sentence": "それでは、またお電話しますとお伝えください。"
+  },
+  {
+    "listKey": "nsm-n3-w4d3",
+    "sourceId": "nsm-n3-w4d3-019",
+    "base": "お伝え",
+    "sentence": "それでは、またお電話しますとお伝えください。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d1",
+    "sourceId": "i4-nsm-n3-w1d1-002",
+    "base": "あ",
+    "sentence": "あ、袋は要りません。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d1",
+    "sourceId": "i4-nsm-n3-w1d1-003",
+    "base": "ある",
+    "sentence": "明日は重要な会議があるので、必ず出席してください。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d1",
+    "sourceId": "i4-nsm-n3-w1d1-003",
+    "base": "する",
+    "sentence": "明日は重要な会議があるので、必ず出席してください。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d1",
+    "sourceId": "i4-nsm-n3-w1d1-004",
+    "base": "つける",
+    "sentence": "暑いから冷房をつけますね。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d1",
+    "sourceId": "i4-nsm-n3-w1d1-006",
+    "base": "くる",
+    "sentence": "買ってきたビール、冷やしておいて。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d1",
+    "sourceId": "i4-nsm-n3-w1d1-006",
+    "base": "おく",
+    "sentence": "買ってきたビール、冷やしておいて。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d1",
+    "sourceId": "i4-nsm-n3-w1d1-009",
+    "base": "の",
+    "sentence": "熱いのは苦手だから、少し冷ましてから飲みます。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d1",
+    "sourceId": "i4-nsm-n3-w1d1-010",
+    "base": "とく",
+    "sentence": "全部食べないなら、残りは冷蔵庫に入れといて。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d1",
+    "sourceId": "i4-nsm-n3-w1d1-011",
+    "base": "ある",
+    "sentence": "アイスが冷凍庫にありますよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d1",
+    "sourceId": "i4-nsm-n3-w1d1-012",
+    "base": "おく",
+    "sentence": "冷蔵庫の奥に入れておいたら、凍っちゃった。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d1",
+    "sourceId": "i4-nsm-n3-w1d1-012",
+    "base": "ちゃう",
+    "sentence": "冷蔵庫の奥に入れておいたら、凍っちゃった。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d1",
+    "sourceId": "i4-nsm-n3-w1d1-013",
+    "base": "もの",
+    "sentence": "大切なものは金庫にしまってあります。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d1",
+    "sourceId": "i4-nsm-n3-w1d1-013",
+    "base": "ある",
+    "sentence": "大切なものは金庫にしまってあります。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d1",
+    "sourceId": "i4-nsm-n3-w1d1-014",
+    "base": "の",
+    "sentence": "家の車庫は小さいので、車を入れるのが難しいです。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d1",
+    "sourceId": "i4-nsm-n3-w1d1-016",
+    "base": "する",
+    "sentence": "冷暗所に保存してください。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d1",
+    "sourceId": "i4-nsm-n3-w1d1-017",
+    "base": "いる",
+    "sentence": "平日は子供を保育園に預けています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d1",
+    "sourceId": "i4-nsm-n3-w1d1-018",
+    "base": "山田",
+    "sentence": "山田さんが仕事を辞めるって、ご存じでしたか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d1",
+    "sourceId": "i4-nsm-n3-w1d1-018",
+    "base": "さん",
+    "sentence": "山田さんが仕事を辞めるって、ご存じでしたか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d1",
+    "sourceId": "i4-nsm-n3-w1d1-018",
+    "base": "ご存じ",
+    "sentence": "山田さんが仕事を辞めるって、ご存じでしたか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d1",
+    "sourceId": "i4-nsm-n3-w1d1-019",
+    "base": "ある",
+    "sentence": "申し訳ありません。その件については存じませんので…"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d1",
+    "sourceId": "i4-nsm-n3-w1d1-019",
+    "base": "その",
+    "sentence": "申し訳ありません。その件については存じませんので…"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d1",
+    "sourceId": "i4-nsm-n3-w1d1-020",
+    "base": "する",
+    "sentence": "絶対試験に合格したかったから、必死で勉強しました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-001",
+    "base": "どの",
+    "sentence": "結婚式の費用はどのくらいかかりますか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-001",
+    "base": "かかる",
+    "sentence": "結婚式の費用はどのくらいかかりますか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-002",
+    "base": "する",
+    "sentence": "消費者のニーズを調査します。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-003",
+    "base": "する",
+    "sentence": "旅費を節約するために、夜行バスを使いました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-005",
+    "base": "おかけ",
+    "sentence": "工事の期間、ご迷惑をおかけします。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-005",
+    "base": "する",
+    "sentence": "工事の期間、ご迷惑をおかけします。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-006",
+    "base": "ほう",
+    "sentence": "定期券を買ったほうが得ですよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-007",
+    "base": "この",
+    "sentence": "この会社は毎年長期休暇があります。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-007",
+    "base": "ある",
+    "sentence": "この会社は毎年長期休暇があります。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-008",
+    "base": "か月",
+    "sentence": "夏休みに1か月の短期留学をします。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-008",
+    "base": "する",
+    "sentence": "夏休みに1か月の短期留学をします。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-009",
+    "base": "申込",
+    "sentence": "申込期限はいつですか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-009",
+    "base": "いる",
+    "sentence": "申込期限はいつですか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-010",
+    "base": "超える",
+    "sentence": "クレジットカードの限度額を超えてしまいました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-012",
+    "base": "この",
+    "sentence": "この商品は期間限定です。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-013",
+    "base": "この",
+    "sentence": "この時計はスイス製です。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-014",
+    "base": "くる",
+    "sentence": "プラスチック製品を減らす動きが出てきました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-015",
+    "base": "この",
+    "sentence": "この工場ではパソコンを製造しています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-015",
+    "base": "する",
+    "sentence": "この工場ではパソコンを製造しています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-015",
+    "base": "いる",
+    "sentence": "この工場ではパソコンを製造しています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-016",
+    "base": "造る",
+    "sentence": "エジプトのピラミッドは4000年以上も前に造られました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-017",
+    "base": "ノーベル",
+    "sentence": "今年のノーベル賞は誰だと思いますか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-018",
+    "base": "あ",
+    "sentence": "あ、このお菓子、賞味期限が切れてる！"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-018",
+    "base": "この",
+    "sentence": "あ、このお菓子、賞味期限が切れてる！"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-021",
+    "base": "ある",
+    "sentence": "いい勉強方法はありませんか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-023",
+    "base": "する",
+    "sentence": "オーブンの温度は何度にしたらいいですか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-024",
+    "base": "なる",
+    "sentence": "明日は気温が高くなりますから、注意してください。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-024",
+    "base": "する",
+    "sentence": "明日は気温が高くなりますから、注意してください。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-025",
+    "base": "温かい",
+    "sentence": "温かい飲み物が欲しいです。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d2",
+    "sourceId": "i4-nsm-n3-w1d2-026",
+    "base": "する",
+    "sentence": "これは常温で保存しても大丈夫です。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-001",
+    "base": "する",
+    "sentence": "デパートで販売の仕事をしています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-001",
+    "base": "いる",
+    "sentence": "デパートで販売の仕事をしています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-002",
+    "base": "この",
+    "sentence": "この近くに自動販売機はありますか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-002",
+    "base": "ある",
+    "sentence": "この近くに自動販売機はありますか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-003",
+    "base": "なる",
+    "sentence": "飛行機の中で体調が悪くなって大変でした。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-004",
+    "base": "いる",
+    "sentence": "機械メーカーに勤めています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-005",
+    "base": "する",
+    "sentence": "いい機会だから、いろいろなイベントに参加しようと思います。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-006",
+    "base": "なる",
+    "sentence": "犯罪の増加が問題になっています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-006",
+    "base": "いる",
+    "sentence": "犯罪の増加が問題になっています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-009",
+    "base": "する",
+    "sentence": "子供の数が減少しています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-009",
+    "base": "いる",
+    "sentence": "子供の数が減少しています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-012",
+    "base": "この",
+    "sentence": "この店は質より量ですね。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-013",
+    "base": "する",
+    "sentence": "荷物の数量を確認してください。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-014",
+    "base": "ただ今",
+    "sentence": "ただ今10％増量中！"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-015",
+    "base": "する",
+    "sentence": "ボクシングの試合のために減量しています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-015",
+    "base": "いる",
+    "sentence": "ボクシングの試合のために減量しています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-016",
+    "base": "ない",
+    "sentence": "氷なしでお願いします。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-016",
+    "base": "する",
+    "sentence": "氷なしでお願いします。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-017",
+    "base": "する",
+    "sentence": "北海道で流氷を見るツアーに参加しました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-018",
+    "base": "なる",
+    "sentence": "返事が遅くなってごめん！"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-019",
+    "base": "する",
+    "sentence": "必ず期限までに返却してください。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-020",
+    "base": "あ",
+    "sentence": "あ、借りた本、返すの忘れてた！"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-020",
+    "base": "の",
+    "sentence": "あ、借りた本、返すの忘れてた！"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-021",
+    "base": "ここ",
+    "sentence": "お湯はここにありますから、お茶を飲みたいときはご自由にどうぞ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w1d3",
+    "sourceId": "i4-nsm-n3-w1d3-021",
+    "base": "ある",
+    "sentence": "お湯はここにありますから、お茶を飲みたいときはご自由にどうぞ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d1",
+    "sourceId": "i4-nsm-n3-w2d1-003",
+    "base": "あ",
+    "sentence": "あ、卵、割れちゃってる！"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d1",
+    "sourceId": "i4-nsm-n3-w2d1-003",
+    "base": "ちゃう",
+    "sentence": "あ、卵、割れちゃってる！"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d1",
+    "sourceId": "i4-nsm-n3-w2d1-004",
+    "base": "ほう",
+    "sentence": "目玉焼きより卵焼きのほうが好きです。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d1",
+    "sourceId": "i4-nsm-n3-w2d1-005",
+    "base": "ある",
+    "sentence": "私、牛乳アレルギーがあるんです。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d1",
+    "sourceId": "i4-nsm-n3-w2d1-005",
+    "base": "ん",
+    "sentence": "私、牛乳アレルギーがあるんです。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d1",
+    "sourceId": "i4-nsm-n3-w2d1-007",
+    "base": "ほう",
+    "sentence": "カプセルより粉薬のほうが飲みやすいです。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d1",
+    "sourceId": "i4-nsm-n3-w2d1-007",
+    "base": "やすい",
+    "sentence": "カプセルより粉薬のほうが飲みやすいです。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d1",
+    "sourceId": "i4-nsm-n3-w2d1-008",
+    "base": "いる",
+    "sentence": "小麦粉と卵と砂糖と… 他に何がいりますか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d1",
+    "sourceId": "i4-nsm-n3-w2d1-009",
+    "base": "あ",
+    "sentence": "あ、袋は結構です。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d1",
+    "sourceId": "i4-nsm-n3-w2d1-012",
+    "base": "する",
+    "sentence": "外は寒いから、手袋をしたほうがいいですよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d1",
+    "sourceId": "i4-nsm-n3-w2d1-012",
+    "base": "ほう",
+    "sentence": "外は寒いから、手袋をしたほうがいいですよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d1",
+    "sourceId": "i4-nsm-n3-w2d1-013",
+    "base": "はく",
+    "sentence": "着物を着る時は足袋をはきます。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d1",
+    "sourceId": "i4-nsm-n3-w2d1-015",
+    "base": "よく",
+    "sentence": "材料をよく混ぜてください。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d1",
+    "sourceId": "i4-nsm-n3-w2d1-017",
+    "base": "この",
+    "sentence": "この肉、もう焼けてるよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d1",
+    "sourceId": "i4-nsm-n3-w2d1-018",
+    "base": "する",
+    "sentence": "表にすると、変化がわかりやすいです。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d1",
+    "sourceId": "i4-nsm-n3-w2d1-018",
+    "base": "やすい",
+    "sentence": "表にすると、変化がわかりやすいです。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d1",
+    "sourceId": "i4-nsm-n3-w2d1-019",
+    "base": "する",
+    "sentence": "月の表面はでこぼこしています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d1",
+    "sourceId": "i4-nsm-n3-w2d1-019",
+    "base": "いる",
+    "sentence": "月の表面はでこぼこしています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d1",
+    "sourceId": "i4-nsm-n3-w2d1-020",
+    "base": "する",
+    "sentence": "試験の結果が発表されました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d1",
+    "sourceId": "i4-nsm-n3-w2d1-022",
+    "base": "この",
+    "sentence": "この紙、どっちが表ですか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d1",
+    "sourceId": "i4-nsm-n3-w2d1-023",
+    "base": "の",
+    "sentence": "彼は感情を表すのが苦手みたいです。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d1",
+    "sourceId": "i4-nsm-n3-w2d1-025",
+    "base": "よく",
+    "sentence": "裏返して反対側もよく焼いてください。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d2",
+    "sourceId": "i4-nsm-n3-w2d2-004",
+    "base": "ほう",
+    "sentence": "大切な書類だから、書留で送ったほうがいいですよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d2",
+    "sourceId": "i4-nsm-n3-w2d2-005",
+    "base": "この",
+    "sentence": "このチームは守備が強い。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d2",
+    "sourceId": "i4-nsm-n3-w2d2-006",
+    "base": "この",
+    "sentence": "私が留守の間に、このケーキ食べないでね！"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d2",
+    "sourceId": "i4-nsm-n3-w2d2-007",
+    "base": "する",
+    "sentence": "環境を守るために、できるだけリサイクルしましょう。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d2",
+    "sourceId": "i4-nsm-n3-w2d2-010",
+    "base": "この",
+    "sentence": "この部分の意味がわからないのでおしえてもらえませんか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d2",
+    "sourceId": "i4-nsm-n3-w2d2-012",
+    "base": "さっき",
+    "sentence": "さっき、部長が探してましたよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d2",
+    "sourceId": "i4-nsm-n3-w2d2-013",
+    "base": "ん",
+    "sentence": "もう少し部屋が広いといいんだけど。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d2",
+    "sourceId": "i4-nsm-n3-w2d2-014",
+    "base": "ん",
+    "sentence": "私は数字に弱いんです。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d2",
+    "sourceId": "i4-nsm-n3-w2d2-016",
+    "base": "いる",
+    "sentence": "最近、子供の数が減っています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d2",
+    "sourceId": "i4-nsm-n3-w2d2-017",
+    "base": "いる",
+    "sentence": "資料が何部残っているか数えてもらえますか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d2",
+    "sourceId": "i4-nsm-n3-w2d2-018",
+    "base": "やすい",
+    "sentence": "メールの件名は短くわかりやすく書きましょう。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d2",
+    "sourceId": "i4-nsm-n3-w2d2-020",
+    "base": "よい",
+    "sentence": "私でよければ、ご用件をおうかがいしますよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d2",
+    "sourceId": "i4-nsm-n3-w2d2-020",
+    "base": "いる",
+    "sentence": "私でよければ、ご用件をおうかがいしますよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d2",
+    "sourceId": "i4-nsm-n3-w2d2-020",
+    "base": "する",
+    "sentence": "私でよければ、ご用件をおうかがいしますよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d2",
+    "sourceId": "i4-nsm-n3-w2d2-021",
+    "base": "する",
+    "sentence": "再入国カードを記入してください。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d2",
+    "sourceId": "i4-nsm-n3-w2d2-022",
+    "base": "この",
+    "sentence": "このボタンで再ダイヤルできますよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d2",
+    "sourceId": "i4-nsm-n3-w2d2-023",
+    "base": "する",
+    "sentence": "留守電を再生します。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d2",
+    "sourceId": "i4-nsm-n3-w2d2-024",
+    "base": "じゃ",
+    "sentence": "じゃ、また再来週会いましょう！"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d2",
+    "sourceId": "i4-nsm-n3-w2d2-024",
+    "base": "また",
+    "sentence": "じゃ、また再来週会いましょう！"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d3",
+    "sourceId": "i4-nsm-n3-w2d3-001",
+    "base": "ん",
+    "sentence": "インターネットに接続できないんですが…"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d3",
+    "sourceId": "i4-nsm-n3-w2d3-002",
+    "base": "どう",
+    "sentence": "明日の面接、上手に話せるかどうか心配です。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d3",
+    "sourceId": "i4-nsm-n3-w2d3-003",
+    "base": "いや",
+    "sentence": "雨の日が続いていやですね。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d3",
+    "sourceId": "i4-nsm-n3-w2d3-005",
+    "base": "よく",
+    "sentence": "パッケージの表示をよく見て買うことにしています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d3",
+    "sourceId": "i4-nsm-n3-w2d3-005",
+    "base": "こと",
+    "sentence": "パッケージの表示をよく見て買うことにしています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d3",
+    "sourceId": "i4-nsm-n3-w2d3-005",
+    "base": "する",
+    "sentence": "パッケージの表示をよく見て買うことにしています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d3",
+    "sourceId": "i4-nsm-n3-w2d3-005",
+    "base": "いる",
+    "sentence": "パッケージの表示をよく見て買うことにしています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d3",
+    "sourceId": "i4-nsm-n3-w2d3-006",
+    "base": "する",
+    "sentence": "指示の通りに仕事をしました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d3",
+    "sourceId": "i4-nsm-n3-w2d3-007",
+    "base": "ほう",
+    "sentence": "違う色で示したほうがわかりやすいですよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d3",
+    "sourceId": "i4-nsm-n3-w2d3-007",
+    "base": "やすい",
+    "sentence": "違う色で示したほうがわかりやすいですよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d3",
+    "sourceId": "i4-nsm-n3-w2d3-010",
+    "base": "する",
+    "sentence": "もうすぐプロジェクトが完了します。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d3",
+    "sourceId": "i4-nsm-n3-w2d3-012",
+    "base": "する",
+    "sentence": "部長が了解したので、早速プロジェクトを始めましょう。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d3",
+    "sourceId": "i4-nsm-n3-w2d3-016",
+    "base": "登る",
+    "sentence": "去年、富士山に登りました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d3",
+    "sourceId": "i4-nsm-n3-w2d3-018",
+    "base": "する",
+    "sentence": "昔はCDを借りて録音していましたね。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d3",
+    "sourceId": "i4-nsm-n3-w2d3-018",
+    "base": "いる",
+    "sentence": "昔はCDを借りて録音していましたね。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d3",
+    "sourceId": "i4-nsm-n3-w2d3-019",
+    "base": "する",
+    "sentence": "見たい番組を録画しておきます。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w2d3",
+    "sourceId": "i4-nsm-n3-w2d3-019",
+    "base": "おく",
+    "sentence": "見たい番組を録画しておきます。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d1",
+    "sourceId": "i4-nsm-n3-w3d1-002",
+    "base": "この",
+    "sentence": "このビーチは砂がとてもきれいですね。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d1",
+    "sourceId": "i4-nsm-n3-w3d1-004",
+    "base": "する",
+    "sentence": "今日の晩ごはんはサバの塩焼きにするね。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d1",
+    "sourceId": "i4-nsm-n3-w3d1-005",
+    "base": "あ",
+    "sentence": "あ、醤油がなくなりそうだから、買っておかなくちゃ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d1",
+    "sourceId": "i4-nsm-n3-w3d1-005",
+    "base": "なくなる",
+    "sentence": "あ、醤油がなくなりそうだから、買っておかなくちゃ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d1",
+    "sourceId": "i4-nsm-n3-w3d1-005",
+    "base": "おく",
+    "sentence": "あ、醤油がなくなりそうだから、買っておかなくちゃ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d1",
+    "sourceId": "i4-nsm-n3-w3d1-006",
+    "base": "いる",
+    "sentence": "石油より自然エネルギーを使う動きが広がっています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d1",
+    "sourceId": "i4-nsm-n3-w3d1-007",
+    "base": "この",
+    "sentence": "このストーブは灯油を使います。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d1",
+    "sourceId": "i4-nsm-n3-w3d1-008",
+    "base": "油っこい",
+    "sentence": "油っこい料理ばかり食べていると体に悪いですよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d1",
+    "sourceId": "i4-nsm-n3-w3d1-008",
+    "base": "いる",
+    "sentence": "油っこい料理ばかり食べていると体に悪いですよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d1",
+    "sourceId": "i4-nsm-n3-w3d1-009",
+    "base": "ある",
+    "sentence": "緑茶は最近、海外でも人気があります。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d1",
+    "sourceId": "i4-nsm-n3-w3d1-010",
+    "base": "この",
+    "sentence": "この町は緑が多くて気持ちがいいですね。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d1",
+    "sourceId": "i4-nsm-n3-w3d1-011",
+    "base": "いう",
+    "sentence": "イギリスのお土産といえば、紅茶ですね。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d1",
+    "sourceId": "i4-nsm-n3-w3d1-013",
+    "base": "この",
+    "sentence": "このクラスは教科書を2冊使います。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d1",
+    "sourceId": "i4-nsm-n3-w3d1-015",
+    "base": "この",
+    "sentence": "この10個入りのを2箱ください。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d1",
+    "sourceId": "i4-nsm-n3-w3d1-015",
+    "base": "の",
+    "sentence": "この10個入りのを2箱ください。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d1",
+    "sourceId": "i4-nsm-n3-w3d1-016",
+    "base": "する",
+    "sentence": "商品の種類と個数を確認してください。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d1",
+    "sourceId": "i4-nsm-n3-w3d1-017",
+    "base": "こと",
+    "sentence": "個人的には反対ですが、会社が決めたことなので…"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d1",
+    "sourceId": "i4-nsm-n3-w3d1-018",
+    "base": "ある",
+    "sentence": "20名様以上なら団体割引があります。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d1",
+    "sourceId": "i4-nsm-n3-w3d1-019",
+    "base": "ある",
+    "sentence": "今日の宿題は3枚あります。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d2",
+    "sourceId": "i4-nsm-n3-w3d2-001",
+    "base": "この",
+    "sentence": "電車の広告を見て、この商品を知りました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d2",
+    "sourceId": "i4-nsm-n3-w3d2-002",
+    "base": "する",
+    "sentence": "彼女に告白する時、すごく緊張したよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d2",
+    "sourceId": "i4-nsm-n3-w3d2-004",
+    "base": "なる",
+    "sentence": "袋はご利用になりますか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d2",
+    "sourceId": "i4-nsm-n3-w3d2-005",
+    "base": "ボール",
+    "sentence": "子供がボールで遊んでいて、窓を割ってしまったんです。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d2",
+    "sourceId": "i4-nsm-n3-w3d2-005",
+    "base": "いる",
+    "sentence": "子供がボールで遊んでいて、窓を割ってしまったんです。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d2",
+    "sourceId": "i4-nsm-n3-w3d2-005",
+    "base": "ん",
+    "sentence": "子供がボールで遊んでいて、窓を割ってしまったんです。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d2",
+    "sourceId": "i4-nsm-n3-w3d2-006",
+    "base": "どの",
+    "sentence": "どのクラスも男女の割合は半々です。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d2",
+    "sourceId": "i4-nsm-n3-w3d2-008",
+    "base": "この",
+    "sentence": "この店は学生割引があります。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d2",
+    "sourceId": "i4-nsm-n3-w3d2-008",
+    "base": "ある",
+    "sentence": "この店は学生割引があります。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d2",
+    "sourceId": "i4-nsm-n3-w3d2-010",
+    "base": "売上げ",
+    "sentence": "お店の売上げが去年の倍に増えました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d2",
+    "sourceId": "i4-nsm-n3-w3d2-011",
+    "base": "この",
+    "sentence": "この値段はちょっと高すぎるかな…"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d2",
+    "sourceId": "i4-nsm-n3-w3d2-012",
+    "base": "する",
+    "sentence": "最近、値上げする店が増えてきました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d2",
+    "sourceId": "i4-nsm-n3-w3d2-012",
+    "base": "くる",
+    "sentence": "最近、値上げする店が増えてきました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d2",
+    "sourceId": "i4-nsm-n3-w3d2-013",
+    "base": "する",
+    "sentence": "全品値下げしました！"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d2",
+    "sourceId": "i4-nsm-n3-w3d2-014",
+    "base": "いる",
+    "sentence": "今、新商品のアイデアを考えています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d2",
+    "sourceId": "i4-nsm-n3-w3d2-015",
+    "base": "この",
+    "sentence": "この商店街はいつもにぎやかですね。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d2",
+    "sourceId": "i4-nsm-n3-w3d2-016",
+    "base": "ある",
+    "sentence": "海外にも支店があります。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d2",
+    "sourceId": "i4-nsm-n3-w3d2-017",
+    "base": "ある",
+    "sentence": "本店はどこにあるんですか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d2",
+    "sourceId": "i4-nsm-n3-w3d2-017",
+    "base": "ん",
+    "sentence": "本店はどこにあるんですか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d2",
+    "sourceId": "i4-nsm-n3-w3d2-018",
+    "base": "なる",
+    "sentence": "大阪支社に転勤になりました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d2",
+    "sourceId": "i4-nsm-n3-w3d2-019",
+    "base": "する",
+    "sentence": "明日、東京本社に出張します。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d2",
+    "sourceId": "i4-nsm-n3-w3d2-020",
+    "base": "払える",
+    "sentence": "カードで払えますか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d2",
+    "sourceId": "i4-nsm-n3-w3d2-021",
+    "base": "どう",
+    "sentence": "お支払い回数はどうなさいますか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d3",
+    "sourceId": "i4-nsm-n3-w3d3-001",
+    "base": "する",
+    "sentence": "来週、米国大統領が来日します。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d3",
+    "sourceId": "i4-nsm-n3-w3d3-003",
+    "base": "たま",
+    "sentence": "たまには高級レストランで食事しようよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d3",
+    "sourceId": "i4-nsm-n3-w3d3-003",
+    "base": "する",
+    "sentence": "たまには高級レストランで食事しようよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d3",
+    "sourceId": "i4-nsm-n3-w3d3-005",
+    "base": "なる",
+    "sentence": "早く上級レベルになりたいです。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d3",
+    "sourceId": "i4-nsm-n3-w3d3-006",
+    "base": "いる",
+    "sentence": "最近残業が多くて疲れています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d3",
+    "sourceId": "i4-nsm-n3-w3d3-007",
+    "base": "とく",
+    "sentence": "残りは冷蔵庫に入れてといて。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d3",
+    "sourceId": "i4-nsm-n3-w3d3-008",
+    "base": "いる",
+    "sentence": "京都には古い建物がたくさん残っています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d3",
+    "sourceId": "i4-nsm-n3-w3d3-011",
+    "base": "プードル",
+    "sentence": "プードルのような小型の犬が好きですね。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d3",
+    "sourceId": "i4-nsm-n3-w3d3-012",
+    "base": "アップル",
+    "sentence": "アップルがまた新型i-phoneを出すそうですよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d3",
+    "sourceId": "i4-nsm-n3-w3d3-012",
+    "base": "また",
+    "sentence": "アップルがまた新型i-phoneを出すそうですよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d3",
+    "sourceId": "i4-nsm-n3-w3d3-015",
+    "base": "この",
+    "sentence": "この店はいつも込んでいますね。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d3",
+    "sourceId": "i4-nsm-n3-w3d3-015",
+    "base": "いる",
+    "sentence": "この店はいつも込んでいますね。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d3",
+    "sourceId": "i4-nsm-n3-w3d3-017",
+    "base": "税込",
+    "sentence": "税込でいくらですか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d3",
+    "sourceId": "i4-nsm-n3-w3d3-017",
+    "base": "いくら",
+    "sentence": "税込でいくらですか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d3",
+    "sourceId": "i4-nsm-n3-w3d3-018",
+    "base": "税込",
+    "sentence": "価格は税込で表示しています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d3",
+    "sourceId": "i4-nsm-n3-w3d3-018",
+    "base": "する",
+    "sentence": "価格は税込で表示しています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d3",
+    "sourceId": "i4-nsm-n3-w3d3-018",
+    "base": "いる",
+    "sentence": "価格は税込で表示しています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d3",
+    "sourceId": "i4-nsm-n3-w3d3-019",
+    "base": "この",
+    "sentence": "このジャケット、定価の2割引で買えました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d3",
+    "sourceId": "i4-nsm-n3-w3d3-019",
+    "base": "買える",
+    "sentence": "このジャケット、定価の2割引で買えました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d3",
+    "sourceId": "i4-nsm-n3-w3d3-020",
+    "base": "する",
+    "sentence": "目標はN1に合格することです。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d3",
+    "sourceId": "i4-nsm-n3-w3d3-020",
+    "base": "こと",
+    "sentence": "目標はN1に合格することです。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w3d3",
+    "sourceId": "i4-nsm-n3-w3d3-021",
+    "base": "なる",
+    "sentence": "インターネットのおかげで、格安で旅行ができるようになりました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-001",
+    "base": "この",
+    "sentence": "このイベントに申し込みたいんですが。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-001",
+    "base": "ん",
+    "sentence": "このイベントに申し込みたいんですが。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-002",
+    "base": "申込",
+    "sentence": "申込書をもらえますか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-003",
+    "base": "する",
+    "sentence": "空港の税関で申告してください。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-004",
+    "base": "する",
+    "sentence": "ビザの申請をしなければいけません。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-005",
+    "base": "鈴木",
+    "sentence": "COTOアカデミーの鈴木と申します。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-006",
+    "base": "御礼",
+    "sentence": "心より御礼申し上げます。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-009",
+    "base": "この",
+    "sentence": "この記号はどんな意味ですか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-010",
+    "base": "よく",
+    "sentence": "フリーライターで、よく旅行の記事を書いています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-010",
+    "base": "いる",
+    "sentence": "フリーライターで、よく旅行の記事を書いています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-011",
+    "base": "する",
+    "sentence": "成功例と失敗例を研究したほうがいいですよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-011",
+    "base": "ほう",
+    "sentence": "成功例と失敗例を研究したほうがいいですよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-012",
+    "base": "する",
+    "sentence": "例えばハンバーガーやフライドチキンなど、カロリーが高い食べ物を食べないようにしています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-012",
+    "base": "いる",
+    "sentence": "例えばハンバーガーやフライドチキンなど、カロリーが高い食べ物を食べないようにしています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-013",
+    "base": "あの",
+    "sentence": "あの人、年齢よりずっと若く見えますね。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-014",
+    "base": "いる",
+    "sentence": "一人暮らしの高齢者が増えています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-016",
+    "base": "なる",
+    "sentence": "お酒は二十歳になってから！"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-017",
+    "base": "ない",
+    "sentence": "性別に関係なく、好きな仕事を選べるようになってきました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-017",
+    "base": "選べる",
+    "sentence": "性別に関係なく、好きな仕事を選べるようになってきました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-017",
+    "base": "なる",
+    "sentence": "性別に関係なく、好きな仕事を選べるようになってきました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-017",
+    "base": "くる",
+    "sentence": "性別に関係なく、好きな仕事を選べるようになってきました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-019",
+    "base": "する",
+    "sentence": "結婚や出産をしても、仕事を続ける女性が増えてきました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-019",
+    "base": "くる",
+    "sentence": "結婚や出産をしても、仕事を続ける女性が増えてきました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-020",
+    "base": "する",
+    "sentence": "歌舞伎は男性が女性の役もします。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d1",
+    "sourceId": "i4-nsm-n3-w4d1-024",
+    "base": "する",
+    "sentence": "駅に着いたら連絡してね。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d2",
+    "sourceId": "i4-nsm-n3-w4d2-007",
+    "base": "かかる",
+    "sentence": "配送料はかかりますか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d2",
+    "sourceId": "i4-nsm-n3-w4d2-008",
+    "base": "する",
+    "sentence": "私は大丈夫だから、そんなに心配しないで。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d2",
+    "sourceId": "i4-nsm-n3-w4d2-009",
+    "base": "する",
+    "sentence": "お配りした資料をご覧ください。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d2",
+    "sourceId": "i4-nsm-n3-w4d2-010",
+    "base": "よい",
+    "sentence": "希望通りの仕事が見つかってよかったです。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d2",
+    "sourceId": "i4-nsm-n3-w4d2-011",
+    "base": "する",
+    "sentence": "新しい大統領に期待していたのに、ちょっと失望しました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d2",
+    "sourceId": "i4-nsm-n3-w4d2-011",
+    "base": "いる",
+    "sentence": "新しい大統領に期待していたのに、ちょっと失望しました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d2",
+    "sourceId": "i4-nsm-n3-w4d2-012",
+    "base": "どの",
+    "sentence": "どのようなプランをお望みですか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d2",
+    "sourceId": "i4-nsm-n3-w4d2-013",
+    "base": "する",
+    "sentence": "新商品を入荷しました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d2",
+    "sourceId": "i4-nsm-n3-w4d2-014",
+    "base": "する",
+    "sentence": "今日出荷したので、そちらには明日届く予定です。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d2",
+    "sourceId": "i4-nsm-n3-w4d2-017",
+    "base": "する",
+    "sentence": "これ、大きいサイズに交換してもらえますか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d2",
+    "sourceId": "i4-nsm-n3-w4d2-018",
+    "base": "支払",
+    "sentence": "お支払方法は、クレジットカード、または代金引換をお選びください。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d2",
+    "sourceId": "i4-nsm-n3-w4d2-018",
+    "base": "引換",
+    "sentence": "お支払方法は、クレジットカード、または代金引換をお選びください。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d2",
+    "sourceId": "i4-nsm-n3-w4d2-019",
+    "base": "ここ",
+    "sentence": "ここから渋谷へ行くなら乗り換えが必要ですよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d2",
+    "sourceId": "i4-nsm-n3-w4d2-020",
+    "base": "する",
+    "sentence": "注文する前に、金額と数量をご確認ください。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d2",
+    "sourceId": "i4-nsm-n3-w4d2-021",
+    "base": "この",
+    "sentence": "この服、セールで半額になってたんです。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d2",
+    "sourceId": "i4-nsm-n3-w4d2-021",
+    "base": "なる",
+    "sentence": "この服、セールで半額になってたんです。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d2",
+    "sourceId": "i4-nsm-n3-w4d2-021",
+    "base": "ん",
+    "sentence": "この服、セールで半額になってたんです。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-001",
+    "base": "いる",
+    "sentence": "ポストに不在通知が入っていました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-002",
+    "base": "いる",
+    "sentence": "現在、中央線に遅れが出ています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-003",
+    "base": "ん",
+    "sentence": "部長、来月一週間休みを取りたいんですが。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-004",
+    "base": "する",
+    "sentence": "こちらに受け取りのサインをお願いします。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-005",
+    "base": "この",
+    "sentence": "この保険の受取人は妻です。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-005",
+    "base": "受取",
+    "sentence": "この保険の受取人は妻です。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-006",
+    "base": "ある",
+    "sentence": "銀行に預金が1000万円あります。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-007",
+    "base": "いる",
+    "sentence": "平日は子供を保育園に預けています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-008",
+    "base": "いっぱい",
+    "sentence": "クローゼットがいっぱいだから、衣類を整理しなきゃ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-008",
+    "base": "する",
+    "sentence": "クローゼットがいっぱいだから、衣類を整理しなきゃ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-009",
+    "base": "ある",
+    "sentence": "ファッションに興味があるので、衣服の歴史を研究しました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-009",
+    "base": "する",
+    "sentence": "ファッションに興味があるので、衣服の歴史を研究しました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-010",
+    "base": "する",
+    "sentence": "週末はボランティア活動に参加しています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-010",
+    "base": "いる",
+    "sentence": "週末はボランティア活動に参加しています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-011",
+    "base": "この",
+    "sentence": "この参考書は例文がたくさんあって、わかりやすいですよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-011",
+    "base": "ある",
+    "sentence": "この参考書は例文がたくさんあって、わかりやすいですよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-011",
+    "base": "やすい",
+    "sentence": "この参考書は例文がたくさんあって、わかりやすいですよ。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-013",
+    "base": "する",
+    "sentence": "1年前に比べると、かなり日本語が上達しました。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-014",
+    "base": "いくら",
+    "sentence": "速達料金はいくらですか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-015",
+    "base": "こと",
+    "sentence": "週末は友達と出かけることが多いです。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-016",
+    "base": "する",
+    "sentence": "健康のために自転車で通勤しています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-016",
+    "base": "いる",
+    "sentence": "健康のために自転車で通勤しています。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-018",
+    "base": "ある",
+    "sentence": "何かあったら、いつでも携帯に連絡してください。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-018",
+    "base": "いつ",
+    "sentence": "何かあったら、いつでも携帯に連絡してください。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-018",
+    "base": "する",
+    "sentence": "何かあったら、いつでも携帯に連絡してください。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-019",
+    "base": "この",
+    "sentence": "この時間帯はどの店も込んでいますね。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-019",
+    "base": "どの",
+    "sentence": "この時間帯はどの店も込んでいますね。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-019",
+    "base": "いる",
+    "sentence": "この時間帯はどの店も込んでいますね。"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-020",
+    "base": "どう",
+    "sentence": "着物の帯はどうやって結ぶんですか？"
+  },
+  {
+    "listKey": "nsm-n3-i4-w4d3",
+    "sourceId": "i4-nsm-n3-w4d3-020",
+    "base": "ん",
+    "sentence": "着物の帯はどうやって結ぶんですか？"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d1",
+    "sourceId": "nsm-n3-i5-w1d1-001",
+    "base": "この",
+    "sentence": "これ、この前手伝ってもらったお礼です。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d1",
+    "sourceId": "nsm-n3-i5-w1d1-002",
+    "base": "こと",
+    "sentence": "ちょっと伺いたいことがあるんですが。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d1",
+    "sourceId": "nsm-n3-i5-w1d1-002",
+    "base": "ある",
+    "sentence": "ちょっと伺いたいことがあるんですが。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d1",
+    "sourceId": "nsm-n3-i5-w1d1-002",
+    "base": "ん",
+    "sentence": "ちょっと伺いたいことがあるんですが。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d1",
+    "sourceId": "nsm-n3-i5-w1d1-003",
+    "base": "する",
+    "sentence": "遅刻しないように気を付けてください。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d1",
+    "sourceId": "nsm-n3-i5-w1d1-004",
+    "base": "なる",
+    "sentence": "返事が遅くなってごめんね。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d1",
+    "sourceId": "nsm-n3-i5-w1d1-005",
+    "base": "する",
+    "sentence": "遅れる場合は連絡してください。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d1",
+    "sourceId": "nsm-n3-i5-w1d1-006",
+    "base": "ない",
+    "sentence": "お客様に失礼がないように気をつけましょう。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d1",
+    "sourceId": "nsm-n3-i5-w1d1-006",
+    "base": "つける",
+    "sentence": "お客様に失礼がないように気をつけましょう。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d1",
+    "sourceId": "nsm-n3-i5-w1d1-007",
+    "base": "お話し",
+    "sentence": "お話し中、失礼します。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d1",
+    "sourceId": "nsm-n3-i5-w1d1-007",
+    "base": "する",
+    "sentence": "お話し中、失礼します。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d1",
+    "sourceId": "nsm-n3-i5-w1d1-008",
+    "base": "する",
+    "sentence": "誰でも失敗することはありますよ。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d1",
+    "sourceId": "nsm-n3-i5-w1d1-008",
+    "base": "こと",
+    "sentence": "誰でも失敗することはありますよ。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d1",
+    "sourceId": "nsm-n3-i5-w1d1-008",
+    "base": "ある",
+    "sentence": "誰でも失敗することはありますよ。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d1",
+    "sourceId": "nsm-n3-i5-w1d1-010",
+    "base": "かく",
+    "sentence": "汗をかいたから、シャワーを浴びてきます。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d1",
+    "sourceId": "nsm-n3-i5-w1d1-010",
+    "base": "くる",
+    "sentence": "汗をかいたから、シャワーを浴びてきます。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d1",
+    "sourceId": "nsm-n3-i5-w1d1-012",
+    "base": "する",
+    "sentence": "50周年を記念してパーティーを行います。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d1",
+    "sourceId": "nsm-n3-i5-w1d1-014",
+    "base": "その",
+    "sentence": "そのニュースを聞いて、多くの人が涙を流しました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d1",
+    "sourceId": "nsm-n3-i5-w1d1-016",
+    "base": "その",
+    "sentence": "その映画は、涙あり、笑いありのとてもいい映画です。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d1",
+    "sourceId": "nsm-n3-i5-w1d1-016",
+    "base": "ある",
+    "sentence": "その映画は、涙あり、笑いありのとてもいい映画です。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d1",
+    "sourceId": "nsm-n3-i5-w1d1-017",
+    "base": "する",
+    "sentence": "彼女はいつも笑顔であいさつしてくれます。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d1",
+    "sourceId": "nsm-n3-i5-w1d1-017",
+    "base": "くれる",
+    "sentence": "彼女はいつも笑顔であいさつしてくれます。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d2",
+    "sourceId": "nsm-n3-i5-w1d2-001",
+    "base": "その",
+    "sentence": "その調子でがんばって！"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d2",
+    "sourceId": "nsm-n3-i5-w1d2-002",
+    "base": "よい",
+    "sentence": "広告は商品のよさばかり強調しています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d2",
+    "sourceId": "nsm-n3-i5-w1d2-002",
+    "base": "さ",
+    "sentence": "広告は商品のよさばかり強調しています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d2",
+    "sourceId": "nsm-n3-i5-w1d2-002",
+    "base": "する",
+    "sentence": "広告は商品のよさばかり強調しています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d2",
+    "sourceId": "nsm-n3-i5-w1d2-002",
+    "base": "いる",
+    "sentence": "広告は商品のよさばかり強調しています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d2",
+    "sourceId": "nsm-n3-i5-w1d2-003",
+    "base": "おく",
+    "sentence": "いいお店を調べておきますね。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d2",
+    "sourceId": "nsm-n3-i5-w1d2-004",
+    "base": "いる",
+    "sentence": "警察が事故の調査を行っています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d2",
+    "sourceId": "nsm-n3-i5-w1d2-005",
+    "base": "する",
+    "sentence": "町の中で移動するなら、自転車が便利ですよ。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d2",
+    "sourceId": "nsm-n3-i5-w1d2-006",
+    "base": "の",
+    "sentence": "季節が移るのは早いですね。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d2",
+    "sourceId": "nsm-n3-i5-w1d2-007",
+    "base": "新宿",
+    "sentence": "来年、オフィスを新宿に移す予定です。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d2",
+    "sourceId": "nsm-n3-i5-w1d2-008",
+    "base": "この",
+    "sentence": "このプロジェクトは多くの困難を乗り越えて成功しました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d2",
+    "sourceId": "nsm-n3-i5-w1d2-008",
+    "base": "する",
+    "sentence": "このプロジェクトは多くの困難を乗り越えて成功しました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d2",
+    "sourceId": "nsm-n3-i5-w1d2-009",
+    "base": "この",
+    "sentence": "この国は今、多くの難問を抱えています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d2",
+    "sourceId": "nsm-n3-i5-w1d2-009",
+    "base": "いる",
+    "sentence": "この国は今、多くの難問を抱えています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d2",
+    "sourceId": "nsm-n3-i5-w1d2-011",
+    "base": "作れる",
+    "sentence": "簡単な料理しか作れません。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d2",
+    "sourceId": "nsm-n3-i5-w1d2-012",
+    "base": "いる",
+    "sentence": "毎日電車の中で単語を覚えています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d2",
+    "sourceId": "nsm-n3-i5-w1d2-015",
+    "base": "する",
+    "sentence": "これは今までに一番感動した本です。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d3",
+    "sourceId": "nsm-n3-i5-w1d3-001",
+    "base": "する",
+    "sentence": "練習すれば、必ず上手になりますよ。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d3",
+    "sourceId": "nsm-n3-i5-w1d3-001",
+    "base": "なる",
+    "sentence": "練習すれば、必ず上手になりますよ。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d3",
+    "sourceId": "nsm-n3-i5-w1d3-005",
+    "base": "なる",
+    "sentence": "今日は、今年で最も暑い日になりました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d3",
+    "sourceId": "nsm-n3-i5-w1d3-006",
+    "base": "さ",
+    "sentence": "野菜を適当な大きさに切って炒めてください。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d3",
+    "sourceId": "nsm-n3-i5-w1d3-007",
+    "base": "この",
+    "sentence": "このオフィスはきれいで快適ですね。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d3",
+    "sourceId": "nsm-n3-i5-w1d3-009",
+    "base": "する",
+    "sentence": "スポーツ選手はけがをしやすいです。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d3",
+    "sourceId": "nsm-n3-i5-w1d3-009",
+    "base": "やすい",
+    "sentence": "スポーツ選手はけがをしやすいです。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d3",
+    "sourceId": "nsm-n3-i5-w1d3-012",
+    "base": "ない",
+    "sentence": "データに間違いがないか確認してもらえますか？"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d3",
+    "sourceId": "nsm-n3-i5-w1d3-012",
+    "base": "する",
+    "sentence": "データに間違いがないか確認してもらえますか？"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d3",
+    "sourceId": "nsm-n3-i5-w1d3-016",
+    "base": "ほう",
+    "sentence": "彼に直接話したほうがいいですよ。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d3",
+    "sourceId": "nsm-n3-i5-w1d3-018",
+    "base": "くれる",
+    "sentence": "友達がパソコンを直してくれました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d3",
+    "sourceId": "nsm-n3-i5-w1d3-019",
+    "base": "する",
+    "sentence": "復習しないとすぐ忘れてしまいます。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d3",
+    "sourceId": "nsm-n3-i5-w1d3-020",
+    "base": "いくら",
+    "sentence": "京都まで往復でいくらですか？"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d3",
+    "sourceId": "nsm-n3-i5-w1d3-021",
+    "base": "する",
+    "sentence": "景気は少しずつ回復してきました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d3",
+    "sourceId": "nsm-n3-i5-w1d3-021",
+    "base": "くる",
+    "sentence": "景気は少しずつ回復してきました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d3",
+    "sourceId": "nsm-n3-i5-w1d3-022",
+    "base": "いる",
+    "sentence": "いい辞書アプリを知っていますか？"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d3",
+    "sourceId": "nsm-n3-i5-w1d3-025",
+    "base": "する",
+    "sentence": "大学生の時、下宿していました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d3",
+    "sourceId": "nsm-n3-i5-w1d3-025",
+    "base": "いる",
+    "sentence": "大学生の時、下宿していました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w1d3",
+    "sourceId": "nsm-n3-i5-w1d3-026",
+    "base": "する",
+    "sentence": "今日の宿を決めてから観光しましょう。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d1",
+    "sourceId": "nsm-n3-i5-w2d1-002",
+    "base": "お送り",
+    "sentence": "昨日資料をお送りしました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d1",
+    "sourceId": "nsm-n3-i5-w2d1-002",
+    "base": "する",
+    "sentence": "昨日資料をお送りしました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d1",
+    "sourceId": "nsm-n3-i5-w2d1-003",
+    "base": "ある",
+    "sentence": "昨夜遅く、駅前で事故がありました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d1",
+    "sourceId": "nsm-n3-i5-w2d1-007",
+    "base": "もの",
+    "sentence": "結構なものをいただいて、ありがとうございます。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d1",
+    "sourceId": "nsm-n3-i5-w2d1-008",
+    "base": "なる",
+    "sentence": "「袋はご利用になりますか？」「いいえ、結構です。」"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d1",
+    "sourceId": "nsm-n3-i5-w2d1-010",
+    "base": "結べる",
+    "sentence": "くつひもがうまく結べないんです。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d1",
+    "sourceId": "nsm-n3-i5-w2d1-010",
+    "base": "ん",
+    "sentence": "くつひもがうまく結べないんです。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d1",
+    "sourceId": "nsm-n3-i5-w2d1-012",
+    "base": "ん",
+    "sentence": "新婚旅行はどこに行くんですか？"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d1",
+    "sourceId": "nsm-n3-i5-w2d1-014",
+    "base": "この",
+    "sentence": "このクラスは祝日でも授業があります。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d1",
+    "sourceId": "nsm-n3-i5-w2d1-014",
+    "base": "ある",
+    "sentence": "このクラスは祝日でも授業があります。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d1",
+    "sourceId": "nsm-n3-i5-w2d1-017",
+    "base": "この",
+    "sentence": "このカフェは、いつもいい曲が流れていますね。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d1",
+    "sourceId": "nsm-n3-i5-w2d1-017",
+    "base": "いる",
+    "sentence": "このカフェは、いつもいい曲が流れていますね。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d1",
+    "sourceId": "nsm-n3-i5-w2d1-018",
+    "base": "この",
+    "sentence": "この建物は曲線を生かしたデザインです。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d1",
+    "sourceId": "nsm-n3-i5-w2d1-023",
+    "base": "なる",
+    "sentence": "最近早く寝るようになりました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d1",
+    "sourceId": "nsm-n3-i5-w2d1-024",
+    "base": "する",
+    "sentence": "寝坊しないように、今日は早く寝よう。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d1",
+    "sourceId": "nsm-n3-i5-w2d1-025",
+    "base": "いる",
+    "sentence": "疲れているから、ちょっと昼寝します。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d1",
+    "sourceId": "nsm-n3-i5-w2d1-025",
+    "base": "する",
+    "sentence": "疲れているから、ちょっと昼寝します。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d2",
+    "sourceId": "nsm-n3-i5-w2d2-001",
+    "base": "する",
+    "sentence": "頭痛がするので、早く帰ってもいいですか？"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d2",
+    "sourceId": "nsm-n3-i5-w2d2-002",
+    "base": "よく",
+    "sentence": "腹痛によく効く薬はありますか？"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d2",
+    "sourceId": "nsm-n3-i5-w2d2-002",
+    "base": "ある",
+    "sentence": "腹痛によく効く薬はありますか？"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d2",
+    "sourceId": "nsm-n3-i5-w2d2-003",
+    "base": "ある",
+    "sentence": "どこか痛いところはありますか？"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d2",
+    "sourceId": "nsm-n3-i5-w2d2-004",
+    "base": "ひく",
+    "sentence": "風邪をひいて、熱が40度も出ました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d2",
+    "sourceId": "nsm-n3-i5-w2d2-006",
+    "base": "この",
+    "sentence": "この温泉はちょっと熱すぎます。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d2",
+    "sourceId": "nsm-n3-i5-w2d2-008",
+    "base": "ほう",
+    "sentence": "毎年、歯科検診を受けたほうがいいですよ。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d2",
+    "sourceId": "nsm-n3-i5-w2d2-011",
+    "base": "なる",
+    "sentence": "歯を磨かないと、虫歯になりますよ。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d2",
+    "sourceId": "nsm-n3-i5-w2d2-013",
+    "base": "この",
+    "sentence": "この病院では最新の治療が受けられます。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d2",
+    "sourceId": "nsm-n3-i5-w2d2-015",
+    "base": "いる",
+    "sentence": "早く病気を治すために、食事に気を付けています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d2",
+    "sourceId": "nsm-n3-i5-w2d2-016",
+    "base": "この",
+    "sentence": "この公園はゴミが多くて汚いですね。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d2",
+    "sourceId": "nsm-n3-i5-w2d2-018",
+    "base": "あの",
+    "sentence": "あの店はいつも人が並んでいますね。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d2",
+    "sourceId": "nsm-n3-i5-w2d2-018",
+    "base": "いる",
+    "sentence": "あの店はいつも人が並んでいますね。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d2",
+    "sourceId": "nsm-n3-i5-w2d2-021",
+    "base": "かける",
+    "sentence": "他人に迷惑をかけないようにしましょう。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d2",
+    "sourceId": "nsm-n3-i5-w2d2-021",
+    "base": "する",
+    "sentence": "他人に迷惑をかけないようにしましょう。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d2",
+    "sourceId": "nsm-n3-i5-w2d2-022",
+    "base": "ある",
+    "sentence": "他の意見はありますか？"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d3",
+    "sourceId": "nsm-n3-i5-w2d3-002",
+    "base": "よく",
+    "sentence": "独身時代はよく海外旅行をしました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d3",
+    "sourceId": "nsm-n3-i5-w2d3-002",
+    "base": "する",
+    "sentence": "独身時代はよく海外旅行をしました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d3",
+    "sourceId": "nsm-n3-i5-w2d3-003",
+    "base": "する",
+    "sentence": "昔は身分の差がはっきりしていました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d3",
+    "sourceId": "nsm-n3-i5-w2d3-003",
+    "base": "いる",
+    "sentence": "昔は身分の差がはっきりしていました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d3",
+    "sourceId": "nsm-n3-i5-w2d3-004",
+    "base": "する",
+    "sentence": "刺身の盛り合わせを一つお願いします。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d3",
+    "sourceId": "nsm-n3-i5-w2d3-005",
+    "base": "この",
+    "sentence": "この料理は日本酒とよく合いますね。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d3",
+    "sourceId": "nsm-n3-i5-w2d3-005",
+    "base": "よく",
+    "sentence": "この料理は日本酒とよく合いますね。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d3",
+    "sourceId": "nsm-n3-i5-w2d3-006",
+    "base": "ない",
+    "sentence": "料理酒がなかったら、白ワインでも大丈夫です。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d3",
+    "sourceId": "nsm-n3-i5-w2d3-007",
+    "base": "すぎ",
+    "sentence": "お酒の飲みすぎに気を付けてね。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d3",
+    "sourceId": "nsm-n3-i5-w2d3-008",
+    "base": "する",
+    "sentence": "酒屋でまとめ買いをしたら、安くしてくれました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d3",
+    "sourceId": "nsm-n3-i5-w2d3-008",
+    "base": "くれる",
+    "sentence": "酒屋でまとめ買いをしたら、安くしてくれました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d3",
+    "sourceId": "nsm-n3-i5-w2d3-009",
+    "base": "する",
+    "sentence": "深呼吸すると落ち着きますよ。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d3",
+    "sourceId": "nsm-n3-i5-w2d3-011",
+    "base": "ある",
+    "sentence": "最近、食欲がありません。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d3",
+    "sourceId": "nsm-n3-i5-w2d3-012",
+    "base": "なる",
+    "sentence": "プロジェクトリーダーになって、仕事の意欲がわいてきました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d3",
+    "sourceId": "nsm-n3-i5-w2d3-012",
+    "base": "わく",
+    "sentence": "プロジェクトリーダーになって、仕事の意欲がわいてきました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d3",
+    "sourceId": "nsm-n3-i5-w2d3-012",
+    "base": "くる",
+    "sentence": "プロジェクトリーダーになって、仕事の意欲がわいてきました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d3",
+    "sourceId": "nsm-n3-i5-w2d3-014",
+    "base": "とる",
+    "sentence": "十分な睡眠をとっていますか？"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d3",
+    "sourceId": "nsm-n3-i5-w2d3-014",
+    "base": "いる",
+    "sentence": "十分な睡眠をとっていますか？"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d3",
+    "sourceId": "nsm-n3-i5-w2d3-015",
+    "base": "なる",
+    "sentence": "昼ごはんの後は眠くなりますね。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d3",
+    "sourceId": "nsm-n3-i5-w2d3-017",
+    "base": "いる",
+    "sentence": "最近疲れているみたいですね。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d3",
+    "sourceId": "nsm-n3-i5-w2d3-019",
+    "base": "する",
+    "sentence": "走って来たから、ちょっと息切れしています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d3",
+    "sourceId": "nsm-n3-i5-w2d3-019",
+    "base": "いる",
+    "sentence": "走って来たから、ちょっと息切れしています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w2d3",
+    "sourceId": "nsm-n3-i5-w2d3-020",
+    "base": "なる",
+    "sentence": "息子は今年10歳になりました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d1",
+    "sourceId": "nsm-n3-i5-w3d1-001",
+    "base": "する",
+    "sentence": "毎朝、天気予報をチェックします。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d1",
+    "sourceId": "nsm-n3-i5-w3d1-002",
+    "base": "する",
+    "sentence": "問題が起こったら、すぐ報告してください。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d1",
+    "sourceId": "nsm-n3-i5-w3d1-005",
+    "base": "なる",
+    "sentence": "今日は雲が多い一日になりそうです。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d1",
+    "sourceId": "nsm-n3-i5-w3d1-006",
+    "base": "する",
+    "sentence": "明日は強い風が吹くので、注意してください。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d1",
+    "sourceId": "nsm-n3-i5-w3d1-007",
+    "base": "つける",
+    "sentence": "寒いですか？暖房をつけましょうか？"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d1",
+    "sourceId": "nsm-n3-i5-w3d1-008",
+    "base": "この",
+    "sentence": "この町は一年中暖かくて過ごしやすいです。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d1",
+    "sourceId": "nsm-n3-i5-w3d1-008",
+    "base": "やすい",
+    "sentence": "この町は一年中暖かくて過ごしやすいです。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d1",
+    "sourceId": "nsm-n3-i5-w3d1-011",
+    "base": "この",
+    "sentence": "この建物は震度7の揺れでも大丈夫です。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d1",
+    "sourceId": "nsm-n3-i5-w3d1-012",
+    "base": "ここ",
+    "sentence": "ここは電波が届かないから、携帯が使えません。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d1",
+    "sourceId": "nsm-n3-i5-w3d1-013",
+    "base": "なる",
+    "sentence": "台風の時は波が高くなるので、海の近くは危ないですよ。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d1",
+    "sourceId": "nsm-n3-i5-w3d1-014",
+    "base": "する",
+    "sentence": "地震の時は、津波にも注意してください。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d2",
+    "sourceId": "nsm-n3-i5-w3d2-001",
+    "base": "する",
+    "sentence": "ストライキで会社に賃上げを要求しました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d2",
+    "sourceId": "nsm-n3-i5-w3d2-003",
+    "base": "ない",
+    "sentence": "請求書に間違いがないか確認してください。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d2",
+    "sourceId": "nsm-n3-i5-w3d2-003",
+    "base": "する",
+    "sentence": "請求書に間違いがないか確認してください。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d2",
+    "sourceId": "nsm-n3-i5-w3d2-004",
+    "base": "この",
+    "sentence": "この仕事では、高い日本語能力が求められます。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d2",
+    "sourceId": "nsm-n3-i5-w3d2-005",
+    "base": "働ける",
+    "sentence": "週末も働ける人を募集しています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d2",
+    "sourceId": "nsm-n3-i5-w3d2-005",
+    "base": "する",
+    "sentence": "週末も働ける人を募集しています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d2",
+    "sourceId": "nsm-n3-i5-w3d2-005",
+    "base": "いる",
+    "sentence": "週末も働ける人を募集しています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d2",
+    "sourceId": "nsm-n3-i5-w3d2-006",
+    "base": "ここ",
+    "sentence": "ここは、自由でいい職場ですよ。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d2",
+    "sourceId": "nsm-n3-i5-w3d2-007",
+    "base": "選べる",
+    "sentence": "今は自由に職業が選べるようになりました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d2",
+    "sourceId": "nsm-n3-i5-w3d2-007",
+    "base": "なる",
+    "sentence": "今は自由に職業が選べるようになりました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d2",
+    "sourceId": "nsm-n3-i5-w3d2-008",
+    "base": "する",
+    "sentence": "転職して給料が増えました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d2",
+    "sourceId": "nsm-n3-i5-w3d2-009",
+    "base": "この",
+    "sentence": "この駐車場は職員専用です。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d2",
+    "sourceId": "nsm-n3-i5-w3d2-010",
+    "base": "か月",
+    "sentence": "3か月に1回ぐらい美容院に行きます。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d2",
+    "sourceId": "nsm-n3-i5-w3d2-012",
+    "base": "なる",
+    "sentence": "新しい技術のおかげで、生活が便利になりました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d2",
+    "sourceId": "nsm-n3-i5-w3d2-014",
+    "base": "あの",
+    "sentence": "あの俳優は、一般人の女性と結婚しました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d2",
+    "sourceId": "nsm-n3-i5-w3d2-014",
+    "base": "する",
+    "sentence": "あの俳優は、一般人の女性と結婚しました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d2",
+    "sourceId": "nsm-n3-i5-w3d2-018",
+    "base": "いる",
+    "sentence": "もっと広い事務所を探しています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d2",
+    "sourceId": "nsm-n3-i5-w3d2-020",
+    "base": "する",
+    "sentence": "今日は第1課の文法を勉強します。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d2",
+    "sourceId": "nsm-n3-i5-w3d2-021",
+    "base": "する",
+    "sentence": "課長に出張の報告をしなければいけません。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d3",
+    "sourceId": "nsm-n3-i5-w3d3-002",
+    "base": "いる",
+    "sentence": "学生の時、野球部に入っていました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d3",
+    "sourceId": "nsm-n3-i5-w3d3-003",
+    "base": "の",
+    "sentence": "電球が切れたから、新しいのを買ってきます。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d3",
+    "sourceId": "nsm-n3-i5-w3d3-003",
+    "base": "くる",
+    "sentence": "電球が切れたから、新しいのを買ってきます。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d3",
+    "sourceId": "nsm-n3-i5-w3d3-005",
+    "base": "こと",
+    "sentence": "政府は税金を上げることを決定しました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d3",
+    "sourceId": "nsm-n3-i5-w3d3-005",
+    "base": "する",
+    "sentence": "政府は税金を上げることを決定しました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d3",
+    "sourceId": "nsm-n3-i5-w3d3-006",
+    "base": "どう",
+    "sentence": "夏休みの予定、どうするか決めましたか？"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d3",
+    "sourceId": "nsm-n3-i5-w3d3-006",
+    "base": "する",
+    "sentence": "夏休みの予定、どうするか決めましたか？"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d3",
+    "sourceId": "nsm-n3-i5-w3d3-010",
+    "base": "勝てる",
+    "sentence": "試合に勝てたのは、チームワークのおかげです。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d3",
+    "sourceId": "nsm-n3-i5-w3d3-010",
+    "base": "の",
+    "sentence": "試合に勝てたのは、チームワークのおかげです。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d3",
+    "sourceId": "nsm-n3-i5-w3d3-012",
+    "base": "ある",
+    "sentence": "反対意見はありませんか？"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d3",
+    "sourceId": "nsm-n3-i5-w3d3-013",
+    "base": "ん",
+    "sentence": "すみません、トイレの水が流れないんですが…"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d3",
+    "sourceId": "nsm-n3-i5-w3d3-014",
+    "base": "あの",
+    "sentence": "あの話は水に流してください。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d3",
+    "sourceId": "nsm-n3-i5-w3d3-015",
+    "base": "つく",
+    "sentence": "どちらのチームも強いので、なかなか勝負がつきません。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d3",
+    "sourceId": "nsm-n3-i5-w3d3-017",
+    "base": "この",
+    "sentence": "このチームはいい投手がたくさんいます。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d3",
+    "sourceId": "nsm-n3-i5-w3d3-017",
+    "base": "いる",
+    "sentence": "このチームはいい投手がたくさんいます。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d3",
+    "sourceId": "nsm-n3-i5-w3d3-018",
+    "base": "この",
+    "sentence": "この投手は本当に速いボールを投げますね。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d3",
+    "sourceId": "nsm-n3-i5-w3d3-018",
+    "base": "速い",
+    "sentence": "この投手は本当に速いボールを投げますね。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w3d3",
+    "sourceId": "nsm-n3-i5-w3d3-018",
+    "base": "ボール",
+    "sentence": "この投手は本当に速いボールを投げますね。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d1",
+    "sourceId": "nsm-n3-i5-w4d1-002",
+    "base": "なくなる",
+    "sentence": "世界から早く戦争がなくなってほしいです。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d1",
+    "sourceId": "nsm-n3-i5-w4d1-005",
+    "base": "する",
+    "sentence": "将来、自分で会社を経営したいです。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d1",
+    "sourceId": "nsm-n3-i5-w4d1-006",
+    "base": "する",
+    "sentence": "毎日、経済ニュースをチェックしています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d1",
+    "sourceId": "nsm-n3-i5-w4d1-006",
+    "base": "いる",
+    "sentence": "毎日、経済ニュースをチェックしています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d1",
+    "sourceId": "nsm-n3-i5-w4d1-008",
+    "base": "する",
+    "sentence": "日本経済は1960年代に大きく成長しました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d1",
+    "sourceId": "nsm-n3-i5-w4d1-009",
+    "base": "この",
+    "sentence": "このビルは来月完成する予定です。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d1",
+    "sourceId": "nsm-n3-i5-w4d1-009",
+    "base": "する",
+    "sentence": "このビルは来月完成する予定です。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d1",
+    "sourceId": "nsm-n3-i5-w4d1-010",
+    "base": "いる",
+    "sentence": "貿易会社に勤めています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d1",
+    "sourceId": "nsm-n3-i5-w4d1-011",
+    "base": "する",
+    "sentence": "もう少し易しい日本語でお願いします。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d1",
+    "sourceId": "nsm-n3-i5-w4d1-013",
+    "base": "この",
+    "sentence": "この店は輸入家具を扱っています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d1",
+    "sourceId": "nsm-n3-i5-w4d1-013",
+    "base": "いる",
+    "sentence": "この店は輸入家具を扱っています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d1",
+    "sourceId": "nsm-n3-i5-w4d1-014",
+    "base": "かかる",
+    "sentence": "輸送コストがかかるので、輸入品は高いです。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d1",
+    "sourceId": "nsm-n3-i5-w4d1-015",
+    "base": "こと",
+    "sentence": "仕事のことで上司に相談しました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d1",
+    "sourceId": "nsm-n3-i5-w4d1-015",
+    "base": "する",
+    "sentence": "仕事のことで上司に相談しました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d2",
+    "sourceId": "nsm-n3-i5-w4d2-001",
+    "base": "の",
+    "sentence": "外国の文化を学ぶのはおもしろいですね。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d2",
+    "sourceId": "nsm-n3-i5-w4d2-002",
+    "base": "いる",
+    "sentence": "日本では少子化が進んでいます。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d2",
+    "sourceId": "nsm-n3-i5-w4d2-003",
+    "base": "する",
+    "sentence": "大学では化学を専攻しました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d2",
+    "sourceId": "nsm-n3-i5-w4d2-004",
+    "base": "いる",
+    "sentence": "どんな化粧品を使っているんですか？"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d2",
+    "sourceId": "nsm-n3-i5-w4d2-004",
+    "base": "ん",
+    "sentence": "どんな化粧品を使っているんですか？"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d2",
+    "sourceId": "nsm-n3-i5-w4d2-006",
+    "base": "する",
+    "sentence": "石油などの原料を海外から輸入しています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d2",
+    "sourceId": "nsm-n3-i5-w4d2-006",
+    "base": "いる",
+    "sentence": "石油などの原料を海外から輸入しています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d2",
+    "sourceId": "nsm-n3-i5-w4d2-007",
+    "base": "いる",
+    "sentence": "事故の原因はまだわかっていません。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d2",
+    "sourceId": "nsm-n3-i5-w4d2-008",
+    "base": "する",
+    "sentence": "最近、国際結婚する人が増えました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d2",
+    "sourceId": "nsm-n3-i5-w4d2-010",
+    "base": "する",
+    "sentence": "明日の会議までにレポートを準備してください。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d2",
+    "sourceId": "nsm-n3-i5-w4d2-012",
+    "base": "どの",
+    "sentence": "生活費はどのぐらいかかりますか？"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d2",
+    "sourceId": "nsm-n3-i5-w4d2-012",
+    "base": "かかる",
+    "sentence": "生活費はどのぐらいかかりますか？"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d2",
+    "sourceId": "nsm-n3-i5-w4d2-013",
+    "base": "する",
+    "sentence": "週末はボランティア活動に参加しています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d2",
+    "sourceId": "nsm-n3-i5-w4d2-013",
+    "base": "いる",
+    "sentence": "週末はボランティア活動に参加しています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d2",
+    "sourceId": "nsm-n3-i5-w4d2-015",
+    "base": "する",
+    "sentence": "インターネットによって、生活は大きく変化しました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d2",
+    "sourceId": "nsm-n3-i5-w4d2-016",
+    "base": "やすい",
+    "sentence": "山の天気は変わりやすいので、注意してください。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d2",
+    "sourceId": "nsm-n3-i5-w4d2-016",
+    "base": "する",
+    "sentence": "山の天気は変わりやすいので、注意してください。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d2",
+    "sourceId": "nsm-n3-i5-w4d2-017",
+    "base": "ん",
+    "sentence": "髪型を変えたんですね。似合っていますよ。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d2",
+    "sourceId": "nsm-n3-i5-w4d2-017",
+    "base": "いる",
+    "sentence": "髪型を変えたんですね。似合っていますよ。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d3",
+    "sourceId": "nsm-n3-i5-w4d3-001",
+    "base": "ない",
+    "sentence": "最近の若者は政治に興味がないようです。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d3",
+    "sourceId": "nsm-n3-i5-w4d3-002",
+    "base": "する",
+    "sentence": "支持する政治家がいますか？"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d3",
+    "sourceId": "nsm-n3-i5-w4d3-002",
+    "base": "いる",
+    "sentence": "支持する政治家がいますか？"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d3",
+    "sourceId": "nsm-n3-i5-w4d3-003",
+    "base": "する",
+    "sentence": "政府は景気対策を発表しました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d3",
+    "sourceId": "nsm-n3-i5-w4d3-005",
+    "base": "する",
+    "sentence": "今年、会社法が大きく改正されました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d3",
+    "sourceId": "nsm-n3-i5-w4d3-006",
+    "base": "ある",
+    "sentence": "トイレは改札口の中にあります。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d3",
+    "sourceId": "nsm-n3-i5-w4d3-008",
+    "base": "その",
+    "sentence": "その政治家は記事の内容を否定しました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d3",
+    "sourceId": "nsm-n3-i5-w4d3-008",
+    "base": "する",
+    "sentence": "その政治家は記事の内容を否定しました。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d3",
+    "sourceId": "nsm-n3-i5-w4d3-010",
+    "base": "する",
+    "sentence": "今回の旅行の目的は、伝統文化を体験することです。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d3",
+    "sourceId": "nsm-n3-i5-w4d3-010",
+    "base": "こと",
+    "sentence": "今回の旅行の目的は、伝統文化を体験することです。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d3",
+    "sourceId": "nsm-n3-i5-w4d3-013",
+    "base": "みる",
+    "sentence": "実際にやってみたら、思ったより簡単でした。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d3",
+    "sourceId": "nsm-n3-i5-w4d3-014",
+    "base": "ん",
+    "sentence": "実は、来月会社を辞めるんです。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d3",
+    "sourceId": "nsm-n3-i5-w4d3-015",
+    "base": "いる",
+    "sentence": "自動運転の実験が行われています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d3",
+    "sourceId": "nsm-n3-i5-w4d3-017",
+    "base": "する",
+    "sentence": "すみません、明日の会議は欠席します。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d3",
+    "sourceId": "nsm-n3-i5-w4d3-018",
+    "base": "いる",
+    "sentence": "失敗の原因は、チームワークが欠けていたことです。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d3",
+    "sourceId": "nsm-n3-i5-w4d3-018",
+    "base": "こと",
+    "sentence": "失敗の原因は、チームワークが欠けていたことです。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d3",
+    "sourceId": "nsm-n3-i5-w4d3-019",
+    "base": "この",
+    "sentence": "この店は自然食品を専門に扱っています。"
+  },
+  {
+    "listKey": "nsm-n3-i5-w4d3",
+    "sourceId": "nsm-n3-i5-w4d3-019",
+    "base": "いる",
+    "sentence": "この店は自然食品を専門に扱っています。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-001",
+    "base": "ここ",
+    "sentence": "ここから先は関係者以外立ち入り禁止です。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-002",
+    "base": "この",
+    "sentence": "この建物は全館禁煙です。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-003",
+    "base": "する",
+    "sentence": "火事の時は煙を吸わないように注意して逃げましょう。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-005",
+    "base": "ここ",
+    "sentence": "ここは静かでいい環境ですね。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-007",
+    "base": "ようやく",
+    "sentence": "会社は経営の危機からようやく抜け出しました。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-008",
+    "base": "近付く",
+    "sentence": "危ないので、動物に近付きすぎないでください。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-009",
+    "base": "なる",
+    "sentence": "スキャンダルによって、彼の地位は危うくなりました。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-010",
+    "base": "やめる",
+    "sentence": "歩きスマホは危険ですから、おやめください。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-011",
+    "base": "する",
+    "sentence": "プロジェクトが成功するまでの道は険しそうです。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-012",
+    "base": "いる",
+    "sentence": "健康への関心が高まっています。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-014",
+    "base": "する",
+    "sentence": "命に関わる病気じゃなくて、安心しました。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-015",
+    "base": "ない",
+    "sentence": "関係のない質問は後にしてください。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-015",
+    "base": "する",
+    "sentence": "関係のない質問は後にしてください。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-016",
+    "base": "する",
+    "sentence": "係の者におつなぎします。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-018",
+    "base": "ある",
+    "sentence": "山道で車の転落事故がありました。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-019",
+    "base": "する",
+    "sentence": "大学生の時、1回だけ落第したことがあります。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-019",
+    "base": "こと",
+    "sentence": "大学生の時、1回だけ落第したことがあります。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-019",
+    "base": "ある",
+    "sentence": "大学生の時、1回だけ落第したことがあります。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-022",
+    "base": "ここ",
+    "sentence": "昨日、ここで落石事故がありました。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-022",
+    "base": "ある",
+    "sentence": "昨日、ここで落石事故がありました。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-023",
+    "base": "する",
+    "sentence": "小学校で磁石の実験をしました。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-024",
+    "base": "よく",
+    "sentence": "よく川に石を投げて遊びました。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-025",
+    "base": "この",
+    "sentence": "この近くに飛行場があります。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-025",
+    "base": "ある",
+    "sentence": "この近くに飛行場があります。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-026",
+    "base": "ド",
+    "sentence": "ドローンが飛んでいるのを見ました。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-026",
+    "base": "いる",
+    "sentence": "ドローンが飛んでいるのを見ました。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-026",
+    "base": "の",
+    "sentence": "ドローンが飛んでいるのを見ました。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-028",
+    "base": "ある",
+    "sentence": "近くに無料の駐車場はありませんか？"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-029",
+    "base": "する",
+    "sentence": "家の前に駐車しないでください。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-030",
+    "base": "この",
+    "sentence": "このデータは千の位で四捨五入しています。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-030",
+    "base": "する",
+    "sentence": "このデータは千の位で四捨五入しています。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-030",
+    "base": "いる",
+    "sentence": "このデータは千の位で四捨五入しています。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-032",
+    "base": "ここ",
+    "sentence": "ここは流れが速いから、遊泳禁止です。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-032",
+    "base": "速い",
+    "sentence": "ここは流れが速いから、遊泳禁止です。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-033",
+    "base": "よく",
+    "sentence": "子供の時、よくゲームで遊びました。"
+  },
+  {
+    "listKey": "n2-w1d1",
+    "sourceId": "n2-w1d1-035",
+    "base": "いる",
+    "sentence": "毎週、近所のプールで泳いでいます。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-002",
+    "base": "この",
+    "sentence": "このビルに喫煙所はありますか？"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-002",
+    "base": "ある",
+    "sentence": "このビルに喫煙所はありますか？"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-003",
+    "base": "その",
+    "sentence": "そのやり方は非効率ですよ。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-005",
+    "base": "いる",
+    "sentence": "非常に強い台風が近づいています。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-009",
+    "base": "する",
+    "sentence": "日常生活を忘れて南の島でゆっくりしたいです。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-011",
+    "base": "する",
+    "sentence": "いい結果を出すために、常に努力しています。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-011",
+    "base": "いる",
+    "sentence": "いい結果を出すために、常に努力しています。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-014",
+    "base": "新宿",
+    "sentence": "新宿付近は道が混んでいます。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-014",
+    "base": "いる",
+    "sentence": "新宿付近は道が混んでいます。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-015",
+    "base": "ある",
+    "sentence": "朝食付きのプランはありますか？"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-016",
+    "base": "する",
+    "sentence": "受付で手続きをしてください。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-017",
+    "base": "する",
+    "sentence": "日付も忘れずに記入してください。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-020",
+    "base": "する",
+    "sentence": "1週間以内にお返事します。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-021",
+    "base": "この",
+    "sentence": "この会社は、毎年社内旅行があります。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-021",
+    "base": "ある",
+    "sentence": "この会社は、毎年社内旅行があります。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-023",
+    "base": "くれる",
+    "sentence": "彼は心の内を話してくれました。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-024",
+    "base": "する",
+    "sentence": "第2会議室を予約しておきました。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-024",
+    "base": "おく",
+    "sentence": "第2会議室を予約しておきました。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-026",
+    "base": "する",
+    "sentence": "何時間も議論して、やっと決まりました。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-027",
+    "base": "いる",
+    "sentence": "今度の議員選挙に出ようと思っています。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-028",
+    "base": "ある",
+    "sentence": "日本の伝統文化に興味があります。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-029",
+    "base": "この",
+    "sentence": "この大学は化学の分野で有名です。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-030",
+    "base": "この",
+    "sentence": "このアニメは映画化されることが決まりました。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-030",
+    "base": "する",
+    "sentence": "このアニメは映画化されることが決まりました。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-030",
+    "base": "こと",
+    "sentence": "このアニメは映画化されることが決まりました。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-031",
+    "base": "この",
+    "sentence": "化粧室はこの奥にあります。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-031",
+    "base": "ある",
+    "sentence": "化粧室はこの奥にあります。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-033",
+    "base": "いる",
+    "sentence": "マンションの10階に住んでいます。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-035",
+    "base": "そこ",
+    "sentence": "そこ、段があるから気を付けてください。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-035",
+    "base": "ある",
+    "sentence": "そこ、段があるから気を付けてください。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-037",
+    "base": "なる",
+    "sentence": "2月になって一段と寒くなりました。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-037",
+    "base": "一段と",
+    "sentence": "2月になって一段と寒くなりました。"
+  },
+  {
+    "listKey": "n2-w1d2",
+    "sourceId": "n2-w1d2-038",
+    "base": "ある",
+    "sentence": "神社の前に長い石段があります。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-001",
+    "base": "する",
+    "sentence": "10年以上営業の仕事をしています。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-001",
+    "base": "いる",
+    "sentence": "10年以上営業の仕事をしています。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-002",
+    "base": "する",
+    "sentence": "オリンピックの試合がテレビで放送されます。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-003",
+    "base": "この",
+    "sentence": "この大学の図書館は、一般の人にも開放されています。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-003",
+    "base": "する",
+    "sentence": "この大学の図書館は、一般の人にも開放されています。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-003",
+    "base": "いる",
+    "sentence": "この大学の図書館は、一般の人にも開放されています。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-004",
+    "base": "この",
+    "sentence": "このドアは開放厳禁です。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-007",
+    "base": "押し入れ",
+    "sentence": "押し入れに布団をしまいます。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-010",
+    "base": "この",
+    "sentence": "この技術は世界最高水準です。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-011",
+    "base": "この",
+    "sentence": "この駅には準急は停まりません。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-011",
+    "base": "停る",
+    "sentence": "この駅には準急は停まりません。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-014",
+    "base": "する",
+    "sentence": "災害に備えて、逃げる場所を確認しておきます。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-014",
+    "base": "おく",
+    "sentence": "災害に備えて、逃げる場所を確認しておきます。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-020",
+    "base": "なる",
+    "sentence": "冬になると、インフルエンザが流行します。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-020",
+    "base": "する",
+    "sentence": "冬になると、インフルエンザが流行します。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-021",
+    "base": "する",
+    "sentence": "値上げしたら、他の店に客が流れてしまいました。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-023",
+    "base": "ある",
+    "sentence": "レポートに間違いがたくさんあったので、清書しました。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-023",
+    "base": "する",
+    "sentence": "レポートに間違いがたくさんあったので、清書しました。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-024",
+    "base": "そば",
+    "sentence": "ハイキングの時、清流のそばで休みました。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-025",
+    "base": "いる",
+    "sentence": "清い流れには、いろいろな魚が住んでいます。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-026",
+    "base": "ただ今",
+    "sentence": "トイレはただ今清掃中です。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-027",
+    "base": "そこ",
+    "sentence": "そこのゴミを掃いてください。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-028",
+    "base": "する",
+    "sentence": "オリンピックの閉会式に参加しました。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-030",
+    "base": "この",
+    "sentence": "この店は何時に閉まりますか？"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-032",
+    "base": "する",
+    "sentence": "テストをしますから、教科書を閉じてください。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-033",
+    "base": "この",
+    "sentence": "この会社のいい点は、休みが取りやすいことです。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-033",
+    "base": "やすい",
+    "sentence": "この会社のいい点は、休みが取りやすいことです。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-033",
+    "base": "こと",
+    "sentence": "この会社のいい点は、休みが取りやすいことです。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-035",
+    "base": "ある",
+    "sentence": "誰にでも欠点はあります。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-037",
+    "base": "ここ",
+    "sentence": "ここに来る時、飲酒運転の検問がありました。"
+  },
+  {
+    "listKey": "n2-w1d3",
+    "sourceId": "n2-w1d3-037",
+    "base": "ある",
+    "sentence": "ここに来る時、飲酒運転の検問がありました。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-001",
+    "base": "する",
+    "sentence": "JRと地下鉄で通勤しています。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-001",
+    "base": "いる",
+    "sentence": "JRと地下鉄で通勤しています。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-002",
+    "base": "この",
+    "sentence": "この春、私鉄各社は値上げをするそうです。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-002",
+    "base": "する",
+    "sentence": "この春、私鉄各社は値上げをするそうです。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-006",
+    "base": "ある",
+    "sentence": "最近はICカードがあるから、切符を買わなくなりました。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-006",
+    "base": "なる",
+    "sentence": "最近はICカードがあるから、切符を買わなくなりました。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-007",
+    "base": "する",
+    "sentence": "乗り越したから精算してきます。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-007",
+    "base": "くる",
+    "sentence": "乗り越したから精算してきます。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-008",
+    "base": "いる",
+    "sentence": "最近、精神的に疲れています。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-009",
+    "base": "する",
+    "sentence": "子供の計算の宿題をチェックしてあげました。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-012",
+    "base": "する",
+    "sentence": "法律が改正されて、たばこを吸える場所が減りました。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-012",
+    "base": "吸える",
+    "sentence": "法律が改正されて、たばこを吸える場所が減りました。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-013",
+    "base": "する",
+    "sentence": "彼は仕事で大きい失敗をした後、態度を改めました。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-014",
+    "base": "する",
+    "sentence": "改札口を出たところで待ち合わせしましょう。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-015",
+    "base": "する",
+    "sentence": "1万円札を千円札10枚に両替してください。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-016",
+    "base": "いる",
+    "sentence": "これ、値札が付いていませんが、いくらですか？"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-016",
+    "base": "いくら",
+    "sentence": "これ、値札が付いていませんが、いくらですか？"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-019",
+    "base": "する",
+    "sentence": "新幹線の切符を予約しました。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-024",
+    "base": "この",
+    "sentence": "この符号はどんな意味ですか？"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-025",
+    "base": "ある",
+    "sentence": "喫煙ルームは10号車にあります。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-026",
+    "base": "よく",
+    "sentence": "信号をよく見てから、道を渡りましょう。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-027",
+    "base": "ほう",
+    "sentence": "次の快速に乗ったほうが早く着きますよ。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-028",
+    "base": "その",
+    "sentence": "彼は快くその仕事を引き受けてくれました。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-028",
+    "base": "くれる",
+    "sentence": "彼は快くその仕事を引き受けてくれました。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-030",
+    "base": "みる",
+    "sentence": "習った文法を早速使ってみました。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-031",
+    "base": "この",
+    "sentence": "この川は流れが速いので、泳ぐのは危険です。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-031",
+    "base": "速い",
+    "sentence": "この川は流れが速いので、泳ぐのは危険です。"
+  },
+  {
+    "listKey": "n2-w2d1",
+    "sourceId": "n2-w2d1-031",
+    "base": "の",
+    "sentence": "この川は流れが速いので、泳ぐのは危険です。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-002",
+    "base": "停る",
+    "sentence": "港には多くの船が停まっていました。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-002",
+    "base": "まつ",
+    "sentence": "港には多くの船が停まっていました。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-002",
+    "base": "いる",
+    "sentence": "港には多くの船が停まっていました。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-005",
+    "base": "ほう",
+    "sentence": "直行便より経由便のほうが安いです。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-006",
+    "base": "する",
+    "sentence": "深夜まで仕事しました。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-007",
+    "base": "よい",
+    "sentence": "深刻な病気じゃなくてよかったです。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-008",
+    "base": "ほう",
+    "sentence": "深く考えすぎないほうがいいですよ。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-010",
+    "base": "する",
+    "sentence": "飛行機が下降する時、耳が痛くなりました。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-010",
+    "base": "なる",
+    "sentence": "飛行機が下降する時、耳が痛くなりました。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-011",
+    "base": "かさ",
+    "sentence": "電車を降りた時、かさを忘れたことに気付きました。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-011",
+    "base": "こと",
+    "sentence": "電車を降りた時、かさを忘れたことに気付きました。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-011",
+    "base": "気付く",
+    "sentence": "電車を降りた時、かさを忘れたことに気付きました。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-012",
+    "base": "いる",
+    "sentence": "一日中雨が降っていたので、出かけませんでした。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-017",
+    "base": "この",
+    "sentence": "この両替ショップはレートがいいですね。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-018",
+    "base": "なる",
+    "sentence": "子供が一人で着替えられるようになりました。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-022",
+    "base": "する",
+    "sentence": "高い買い物なので、分割払いにしました。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-023",
+    "base": "くる",
+    "sentence": "持って帰ってくる時に、卵が割れてしまいました。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-024",
+    "base": "この",
+    "sentence": "この服、セールで3割引だったんです。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-024",
+    "base": "ん",
+    "sentence": "この服、セールで3割引だったんです。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-026",
+    "base": "なる",
+    "sentence": "観光客の増加によって、ホテルが足りなくなっています。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-026",
+    "base": "いる",
+    "sentence": "観光客の増加によって、ホテルが足りなくなっています。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-027",
+    "base": "いる",
+    "sentence": "最近、一人で遊ぶ子供が増えています。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-028",
+    "base": "割増",
+    "sentence": "タクシーの料金は、22時以降割増になります。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-028",
+    "base": "なる",
+    "sentence": "タクシーの料金は、22時以降割増になります。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-029",
+    "base": "する",
+    "sentence": "優先順位を考えて仕事しましょう。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-030",
+    "base": "する",
+    "sentence": "子供には、人に優しくするように言っています。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-030",
+    "base": "いる",
+    "sentence": "子供には、人に優しくするように言っています。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-033",
+    "base": "する",
+    "sentence": "パーティーに出席する人は、明日までに連絡してください。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-040",
+    "base": "する",
+    "sentence": "ずっと座って仕事していたら、腰が痛くなりました。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-040",
+    "base": "いる",
+    "sentence": "ずっと座って仕事していたら、腰が痛くなりました。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-040",
+    "base": "なる",
+    "sentence": "ずっと座って仕事していたら、腰が痛くなりました。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-041",
+    "base": "する",
+    "sentence": "新しい図書館を建てるために、学校に寄付しました。"
+  },
+  {
+    "listKey": "n2-w2d2",
+    "sourceId": "n2-w2d2-044",
+    "base": "いる",
+    "sentence": "最近は元気なお年寄りが増えています。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-006",
+    "base": "この",
+    "sentence": "この商品は再生紙を使っています。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-006",
+    "base": "いる",
+    "sentence": "この商品は再生紙を使っています。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-007",
+    "base": "する",
+    "sentence": "子供は再来年、大学を卒業する予定です。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-008",
+    "base": "する",
+    "sentence": "来年再びチャレンジするつもりです。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-011",
+    "base": "する",
+    "sentence": "医療技術は大きく進歩しました。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-012",
+    "base": "いる",
+    "sentence": "世界中で科学の研究が進んでいます。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-015",
+    "base": "いる",
+    "sentence": "妊娠中なので、産婦人科に通っています。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-016",
+    "base": "くる",
+    "sentence": "最近は専業主婦の女性が減ってきました。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-017",
+    "base": "この",
+    "sentence": "この時計は婦人用です。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-018",
+    "base": "よく",
+    "sentence": "彼はよく皮肉を言います。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-019",
+    "base": "むく",
+    "sentence": "りんごの皮をむかないで食べる時は、よく洗いましょう。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-019",
+    "base": "よく",
+    "sentence": "りんごの皮をむかないで食べる時は、よく洗いましょう。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-020",
+    "base": "くる",
+    "sentence": "アレルギーが出たので、皮膚科に行ってきます。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-021",
+    "base": "いる",
+    "sentence": "救急箱に薬が入っていますよ。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-023",
+    "base": "この",
+    "sentence": "この近くに郵便ポストはありますか？"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-023",
+    "base": "ある",
+    "sentence": "この近くに郵便ポストはありますか？"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-024",
+    "base": "する",
+    "sentence": "商品パンフレットを郵送します。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-025",
+    "base": "この",
+    "sentence": "この郵便局は日曜日も開いています。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-025",
+    "base": "いる",
+    "sentence": "この郵便局は日曜日も開いています。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-027",
+    "base": "する",
+    "sentence": "放送局でアルバイトをしました。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-028",
+    "base": "する",
+    "sentence": "毎月少しずつ貯金しています。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-028",
+    "base": "いる",
+    "sentence": "毎月少しずつ貯金しています。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-029",
+    "base": "する",
+    "sentence": "腕にけがをしたので包帯を巻いています。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-029",
+    "base": "いる",
+    "sentence": "腕にけがをしたので包帯を巻いています。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-032",
+    "base": "する",
+    "sentence": "日本は交通が発達しています。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-032",
+    "base": "いる",
+    "sentence": "日本は交通が発達しています。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-035",
+    "base": "する",
+    "sentence": "学生の時、いろいろな国際交流イベントに参加しました。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-037",
+    "base": "この",
+    "sentence": "この映画は、実際にあった話をもとに作られました。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-037",
+    "base": "ある",
+    "sentence": "この映画は、実際にあった話をもとに作られました。"
+  },
+  {
+    "listKey": "n2-w2d3",
+    "sourceId": "n2-w2d3-037",
+    "base": "もと",
+    "sentence": "この映画は、実際にあった話をもとに作られました。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-001",
+    "base": "この",
+    "sentence": "この商品は、普通の主婦のアイデアから生まれました。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-002",
+    "base": "いる",
+    "sentence": "普段から体に気を付けています。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-004",
+    "base": "この",
+    "sentence": "この電車は乗車券の他に指定券も必要です。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-005",
+    "base": "新宿",
+    "sentence": "新宿に旅券事務所があります。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-005",
+    "base": "ある",
+    "sentence": "新宿に旅券事務所があります。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-007",
+    "base": "いる",
+    "sentence": "日本では「4」と「9」が悪い数字だと考えられています。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-011",
+    "base": "なる",
+    "sentence": "台風で飛行機が欠航になりました。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-013",
+    "base": "券売",
+    "sentence": "自動券売機でICカードのチャージができます。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-016",
+    "base": "ある",
+    "sentence": "往復割引はありますか？"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-017",
+    "base": "する",
+    "sentence": "なかなか景気が回復しません。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-018",
+    "base": "いる",
+    "sentence": "ガラスの破片が落ちているので、気を付けてください。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-021",
+    "base": "ない",
+    "sentence": "手袋を片方なくしてしまいました。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-021",
+    "base": "する",
+    "sentence": "手袋を片方なくしてしまいました。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-022",
+    "base": "申込",
+    "sentence": "申込書は2枚あります。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-022",
+    "base": "ある",
+    "sentence": "申込書は2枚あります。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-024",
+    "base": "する",
+    "sentence": "ゴールデンウィークの期間中は混雑が予想されます。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-025",
+    "base": "ある",
+    "sentence": "会社で定期健康診断があります。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-027",
+    "base": "この",
+    "sentence": "この商品はインターネット限定販売です。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-028",
+    "base": "ある",
+    "sentence": "ラウンジに自動販売機がありますよ。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-029",
+    "base": "する",
+    "sentence": "指定席は高いから自由席にしましょう。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-031",
+    "base": "する",
+    "sentence": "学生を一人ずつ指して質問しました。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-032",
+    "base": "する",
+    "sentence": "会議の日程を調整しましょう。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-034",
+    "base": "ある",
+    "sentence": "知らない単語があったら、すぐ調べるようにしています。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-034",
+    "base": "する",
+    "sentence": "知らない単語があったら、すぐ調べるようにしています。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-034",
+    "base": "いる",
+    "sentence": "知らない単語があったら、すぐ調べるようにしています。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-035",
+    "base": "お待ち",
+    "sentence": "整理券を取ってからお待ちください。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-036",
+    "base": "する",
+    "sentence": "自動車整備の仕事をしています。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-036",
+    "base": "いる",
+    "sentence": "自動車整備の仕事をしています。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-038",
+    "base": "する",
+    "sentence": "お配りした資料の表をご覧ください。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-040",
+    "base": "する",
+    "sentence": "明日、会議で発表しなければいけません。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-041",
+    "base": "ある",
+    "sentence": "絵が描いてあるほうがコインの表です。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-041",
+    "base": "ほう",
+    "sentence": "絵が描いてあるほうがコインの表です。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-042",
+    "base": "この",
+    "sentence": "この印は何を表しているんですか？"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-042",
+    "base": "いる",
+    "sentence": "この印は何を表しているんですか？"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-042",
+    "base": "ん",
+    "sentence": "この印は何を表しているんですか？"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-043",
+    "base": "税込",
+    "sentence": "当店では価格を税込で表示しています。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-043",
+    "base": "する",
+    "sentence": "当店では価格を税込で表示しています。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-043",
+    "base": "いる",
+    "sentence": "当店では価格を税込で表示しています。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-044",
+    "base": "やすい",
+    "sentence": "もっとわかりやすく指示してください。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-044",
+    "base": "する",
+    "sentence": "もっとわかりやすく指示してください。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-045",
+    "base": "貼る",
+    "sentence": "掲示板にイベントの案内が貼ってありました。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-045",
+    "base": "ある",
+    "sentence": "掲示板にイベントの案内が貼ってありました。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-046",
+    "base": "する",
+    "sentence": "数字を示して説明したほうがわかりやすいですよ。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-046",
+    "base": "ほう",
+    "sentence": "数字を示して説明したほうがわかりやすいですよ。"
+  },
+  {
+    "listKey": "n2-w3d1",
+    "sourceId": "n2-w3d1-046",
+    "base": "やすい",
+    "sentence": "数字を示して説明したほうがわかりやすいですよ。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-001",
+    "base": "ない",
+    "sentence": "現金がないので、クレジットカードで払えますか？"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-001",
+    "base": "払える",
+    "sentence": "現金がないので、クレジットカードで払えますか？"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-004",
+    "base": "なる",
+    "sentence": "大阪支店に転勤になりました。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-005",
+    "base": "どの",
+    "sentence": "どの政党を支持していますか？"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-005",
+    "base": "する",
+    "sentence": "どの政党を支持していますか？"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-005",
+    "base": "いる",
+    "sentence": "どの政党を支持していますか？"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-006",
+    "base": "くれる",
+    "sentence": "大変な時も、家族が支えてくれました。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-007",
+    "base": "ほこり",
+    "sentence": "服にほこりが付いていたので、手で払いました。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-007",
+    "base": "いる",
+    "sentence": "服にほこりが付いていたので、手で払いました。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-009",
+    "base": "この",
+    "sentence": "このスーパーには現金自動支払機が置いてありますよ。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-009",
+    "base": "支払",
+    "sentence": "このスーパーには現金自動支払機が置いてありますよ。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-009",
+    "base": "ある",
+    "sentence": "このスーパーには現金自動支払機が置いてありますよ。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-011",
+    "base": "いる",
+    "sentence": "平日は仕事なので、両親に子供を預けています。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-013",
+    "base": "かかる",
+    "sentence": "切符の払い戻しには手数料がかかります。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-014",
+    "base": "いつお",
+    "sentence": "部長はいつお戻りになりますか？"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-014",
+    "base": "なる",
+    "sentence": "部長はいつお戻りになりますか？"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-015",
+    "base": "する",
+    "sentence": "残高照会したいので、ATMに行ってきます。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-015",
+    "base": "くる",
+    "sentence": "残高照会したいので、ATMに行ってきます。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-016",
+    "base": "いる",
+    "sentence": "先週の雪がまだ残っています。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-017",
+    "base": "くる",
+    "sentence": "子供を家に残してきたので、早めに帰ります。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-022",
+    "base": "ほう",
+    "sentence": "硬いマットレスのほうが好きです。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-023",
+    "base": "いる",
+    "sentence": "年々、国際貨物が増えています。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-024",
+    "base": "その",
+    "sentence": "通貨危機の後、その国の経済は悪化しました。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-024",
+    "base": "する",
+    "sentence": "通貨危機の後、その国の経済は悪化しました。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-025",
+    "base": "する",
+    "sentence": "スケジュールが確定したらお知らせします。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-027",
+    "base": "どう",
+    "sentence": "うわさなので、確かかどうかわからないんですが…"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-027",
+    "base": "ん",
+    "sentence": "うわさなので、確かかどうかわからないんですが…"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-028",
+    "base": "その",
+    "sentence": "その話が本当かどうか確かめましょう。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-028",
+    "base": "どう",
+    "sentence": "その話が本当かどうか確かめましょう。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-029",
+    "base": "よく",
+    "sentence": "左右をよく確認してから道を渡りましょう。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-029",
+    "base": "する",
+    "sentence": "左右をよく確認してから道を渡りましょう。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-030",
+    "base": "もの",
+    "sentence": "自分の失敗は認めたくないものです。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-031",
+    "base": "こと",
+    "sentence": "日本では銃を持つことは違法です。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-032",
+    "base": "ある",
+    "sentence": "同じ国でも地域によって様々な違いがあります。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-038",
+    "base": "する",
+    "sentence": "これから書き取りの練習をします。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-039",
+    "base": "ん",
+    "sentence": "文法はわかるんですが、聞き取りは苦手です。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-040",
+    "base": "する",
+    "sentence": "大切なデータを消去してしまいました。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-041",
+    "base": "いる",
+    "sentence": "電気が消えているから、もう寝たみたいです。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-042",
+    "base": "この",
+    "sentence": "このペンは消せるから便利ですね。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-042",
+    "base": "消せる",
+    "sentence": "このペンは消せるから便利ですね。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-043",
+    "base": "この",
+    "sentence": "この消しゴムは消しにくいです。"
+  },
+  {
+    "listKey": "n2-w3d2",
+    "sourceId": "n2-w3d2-043",
+    "base": "にくい",
+    "sentence": "この消しゴムは消しにくいです。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-001",
+    "base": "する",
+    "sentence": "ボランティア団体に寄付しました。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-002",
+    "base": "する",
+    "sentence": "猿は集団で生活します。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-003",
+    "base": "子ども",
+    "sentence": "子どもの時、団地に住んでいました。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-003",
+    "base": "いる",
+    "sentence": "子どもの時、団地に住んでいました。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-004",
+    "base": "ほう",
+    "sentence": "ベッドより布団で寝るほうが好きです。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-005",
+    "base": "する",
+    "sentence": "大学では日本史全般を勉強しました。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-006",
+    "base": "この",
+    "sentence": "この英会話学校には幼児クラスがあります。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-006",
+    "base": "ある",
+    "sentence": "この英会話学校には幼児クラスがあります。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-007",
+    "base": "いう",
+    "sentence": "彼女は若いというより幼いですね。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-009",
+    "base": "この",
+    "sentence": "この建物の中は、一般には公開されていません。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-009",
+    "base": "する",
+    "sentence": "この建物の中は、一般には公開されていません。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-009",
+    "base": "いる",
+    "sentence": "この建物の中は、一般には公開されていません。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-010",
+    "base": "する",
+    "sentence": "家族が二十歳のお祝いをしてくれました。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-010",
+    "base": "くれる",
+    "sentence": "家族が二十歳のお祝いをしてくれました。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-011",
+    "base": "する",
+    "sentence": "地球の未来のために、環境を大切にしましょう。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-012",
+    "base": "よく",
+    "sentence": "よく児童公園で子供と遊びます。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-013",
+    "base": "する",
+    "sentence": "25歳で結婚しました。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-015",
+    "base": "する",
+    "sentence": "未知の分野に挑戦したいです。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-016",
+    "base": "する",
+    "sentence": "未経験の方も歓迎します。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-019",
+    "base": "する",
+    "sentence": "今の仕事に満足しています。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-019",
+    "base": "いる",
+    "sentence": "今の仕事に満足しています。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-020",
+    "base": "する",
+    "sentence": "彼は自信に満ちた表情をしていました。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-020",
+    "base": "いる",
+    "sentence": "彼は自信に満ちた表情をしていました。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-021",
+    "base": "ヘミングウェイ",
+    "sentence": "ヘミングウェイの『老人と海』は名作です。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-024",
+    "base": "測る",
+    "sentence": "熱を測りたいんですが、体温計はありますか？"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-024",
+    "base": "ん",
+    "sentence": "熱を測りたいんですが、体温計はありますか？"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-024",
+    "base": "ある",
+    "sentence": "熱を測りたいんですが、体温計はありますか？"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-026",
+    "base": "温かい",
+    "sentence": "彼は心の温かい人です。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-028",
+    "base": "こと",
+    "sentence": "そんな冷たいこと言わないで、手伝ってよ。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-030",
+    "base": "くる",
+    "sentence": "少し頭を冷やしてきなさい。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-031",
+    "base": "うち",
+    "sentence": "料理が冷めないうちに食べてください。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-033",
+    "base": "いう",
+    "sentence": "緑茶は体にいいそうですよ。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-034",
+    "base": "なる",
+    "sentence": "新緑のきれいな季節になりました。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-037",
+    "base": "みる",
+    "sentence": "口紅の色を変えてみました。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-038",
+    "base": "その",
+    "sentence": "その水玉のネクタイ、素敵ですね。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-039",
+    "base": "その",
+    "sentence": "その占い師は水晶の玉を使いました。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-040",
+    "base": "いる",
+    "sentence": "十円玉に描かれているのはお寺ですか？"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-040",
+    "base": "の",
+    "sentence": "十円玉に描かれているのはお寺ですか？"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-041",
+    "base": "お待ち",
+    "sentence": "お返事をお待ちしております。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-041",
+    "base": "する",
+    "sentence": "お返事をお待ちしております。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-041",
+    "base": "おる",
+    "sentence": "お返事をお待ちしております。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-042",
+    "base": "する",
+    "sentence": "食べ終わった食器はカウンターに返却してください。"
+  },
+  {
+    "listKey": "n2-w3d3",
+    "sourceId": "n2-w3d3-043",
+    "base": "する",
+    "sentence": "キャンセルの場合は、手数料を引いて残りを返金します。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-001",
+    "base": "する",
+    "sentence": "今、エアコンは何度に設定されていますか？"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-001",
+    "base": "いる",
+    "sentence": "今、エアコンは何度に設定されていますか？"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-003",
+    "base": "この",
+    "sentence": "この病院は最新の設備が整っています。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-003",
+    "base": "いる",
+    "sentence": "この病院は最新の設備が整っています。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-004",
+    "base": "する",
+    "sentence": "少し窓を開けて換気しましょう。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-005",
+    "base": "換",
+    "sentence": "運転切換で送風だけにできますよ。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-006",
+    "base": "かかる",
+    "sentence": "時間がかかっても乗り換えなしで行けるほうがいいです。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-006",
+    "base": "ほう",
+    "sentence": "時間がかかっても乗り換えなしで行けるほうがいいです。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-007",
+    "base": "この",
+    "sentence": "風向はこのボタンで調節できます。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-009",
+    "base": "向かい",
+    "sentence": "両親は向かいの家に住んでいます。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-009",
+    "base": "いる",
+    "sentence": "両親は向かいの家に住んでいます。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-010",
+    "base": "ある",
+    "sentence": "川の向こうに公園があります。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-011",
+    "base": "ない",
+    "sentence": "信号がない交差点では一時停止しましょう。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-011",
+    "base": "する",
+    "sentence": "信号がない交差点では一時停止しましょう。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-012",
+    "base": "なる",
+    "sentence": "地震の後、停電になりました。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-013",
+    "base": "この",
+    "sentence": "この電車は各駅に停車します。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-013",
+    "base": "する",
+    "sentence": "この電車は各駅に停車します。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-014",
+    "base": "つける",
+    "sentence": "寒いので暖房をつけてください。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-015",
+    "base": "なる",
+    "sentence": "地球の温暖化が問題になっています。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-015",
+    "base": "いる",
+    "sentence": "地球の温暖化が問題になっています。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-016",
+    "base": "ほう",
+    "sentence": "夜は冷えるので、暖かい服で行ったほうがいいですよ。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-018",
+    "base": "する",
+    "sentence": "年末に大掃除をします。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-019",
+    "base": "する",
+    "sentence": "部長を除いて全員が賛成しました。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-021",
+    "base": "いる",
+    "sentence": "クローゼットに湿気取りを置いています。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-022",
+    "base": "いる",
+    "sentence": "洗濯物はまだ湿っています。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-024",
+    "base": "する",
+    "sentence": "今の目標はN1に合格することです。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-024",
+    "base": "こと",
+    "sentence": "今の目標はN1に合格することです。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-025",
+    "base": "いる",
+    "sentence": "きれいな花の標本を集めています。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-026",
+    "base": "する",
+    "sentence": "オーガニック食品は普通の値段の倍くらいしますね。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-028",
+    "base": "ボール",
+    "sentence": "まんがの『ドラゴンボール』は全部で42巻あります。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-028",
+    "base": "ある",
+    "sentence": "まんがの『ドラゴンボール』は全部で42巻あります。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-031",
+    "base": "する",
+    "sentence": "忙しくて、録画したドラマがなかなか見られません。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-032",
+    "base": "する",
+    "sentence": "発音の練習のために、自分の声を録音して聞いています。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-032",
+    "base": "いる",
+    "sentence": "発音の練習のために、自分の声を録音して聞いています。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-034",
+    "base": "する",
+    "sentence": "ちょっと風量を弱くしましょう。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-035",
+    "base": "する",
+    "sentence": "砂糖の分量は好みに合わせて調節してください。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-036",
+    "base": "する",
+    "sentence": "在庫の数量を確認しておきます。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-036",
+    "base": "おく",
+    "sentence": "在庫の数量を確認しておきます。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-037",
+    "base": "量る",
+    "sentence": "ちゃんと分量を量らなかったから、失敗してしまいました。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-037",
+    "base": "する",
+    "sentence": "ちゃんと分量を量らなかったから、失敗してしまいました。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-039",
+    "base": "する",
+    "sentence": "彼女はまじめだから毎日予習してきます。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-039",
+    "base": "くる",
+    "sentence": "彼女はまじめだから毎日予習してきます。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-040",
+    "base": "する",
+    "sentence": "会議の資料は予備も入れて50部用意してください。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-041",
+    "base": "ある",
+    "sentence": "欲しい車があるんですが、ちょっと予算オーバーなんです。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-041",
+    "base": "ん",
+    "sentence": "欲しい車があるんですが、ちょっと予算オーバーなんです。"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-042",
+    "base": "する",
+    "sentence": "予約していないんですが、席は空いていますか？"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-042",
+    "base": "いる",
+    "sentence": "予約していないんですが、席は空いていますか？"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-042",
+    "base": "ん",
+    "sentence": "予約していないんですが、席は空いていますか？"
+  },
+  {
+    "listKey": "n2-w4d1",
+    "sourceId": "n2-w4d1-044",
+    "base": "いる",
+    "sentence": "約束を忘れていたので、友達に怒られてしまいました。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-001",
+    "base": "この",
+    "sentence": "この辺りは工業地帯です。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-002",
+    "base": "にくい",
+    "sentence": "携帯電話の料金プランはわかりにくいです。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-003",
+    "base": "する",
+    "sentence": "日本は温帯に位置しています。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-003",
+    "base": "いる",
+    "sentence": "日本は温帯に位置しています。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-004",
+    "base": "さ",
+    "sentence": "柔道は帯の色で強さを表します。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-005",
+    "base": "この",
+    "sentence": "この服は保温性に優れています。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-005",
+    "base": "いる",
+    "sentence": "この服は保温性に優れています。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-006",
+    "base": "保",
+    "sentence": "冬はいつも保湿クリームを使っています。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-006",
+    "base": "いる",
+    "sentence": "冬はいつも保湿クリームを使っています。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-007",
+    "base": "おく",
+    "sentence": "万一のために保険に入っておいたほうがいいですよ。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-007",
+    "base": "ほう",
+    "sentence": "万一のために保険に入っておいたほうがいいですよ。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-008",
+    "base": "する",
+    "sentence": "理想の体型を保つために、毎日運動しています。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-008",
+    "base": "いる",
+    "sentence": "理想の体型を保つために、毎日運動しています。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-009",
+    "base": "する",
+    "sentence": "今決められないので、返事は保留させてください。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-010",
+    "base": "する",
+    "sentence": "海外の大学院に留学したいです。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-011",
+    "base": "ここ",
+    "sentence": "ここはバスの停留所なので、一般の車は駐車禁止です。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-012",
+    "base": "する",
+    "sentence": "書留に受け取りのサインをお願いします。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-013",
+    "base": "なる",
+    "sentence": "昔より保守的になった気がします。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-013",
+    "base": "する",
+    "sentence": "昔より保守的になった気がします。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-019",
+    "base": "くれる",
+    "sentence": "同僚が手伝ってくれたので、仕事が早く終わりました。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-021",
+    "base": "する",
+    "sentence": "用事が早く済んだので、買い物して帰りました。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-022",
+    "base": "する",
+    "sentence": "使用済みのインクカートリッジは再利用します。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-025",
+    "base": "いる",
+    "sentence": "殺人事件の犯人はまだ捕まっていません。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-026",
+    "base": "する",
+    "sentence": "通信技術が発達して便利になりました。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-026",
+    "base": "なる",
+    "sentence": "通信技術が発達して便利になりました。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-027",
+    "base": "ここ",
+    "sentence": "ここで勉強して、日本語で話す自信がつきました。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-027",
+    "base": "する",
+    "sentence": "ここで勉強して、日本語で話す自信がつきました。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-027",
+    "base": "つく",
+    "sentence": "ここで勉強して、日本語で話す自信がつきました。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-028",
+    "base": "ある",
+    "sentence": "信じられないけど、本当にあった話です。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-032",
+    "base": "する",
+    "sentence": "受信箱を整理したほうがいいですよ。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-032",
+    "base": "ほう",
+    "sentence": "受信箱を整理したほうがいいですよ。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-033",
+    "base": "する",
+    "sentence": "送信箱を空にしました。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-034",
+    "base": "ごみ箱",
+    "sentence": "ごみはごみ箱にきちんと捨てましょう。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-036",
+    "base": "する",
+    "sentence": "社内規定で副業は禁止されています。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-036",
+    "base": "いる",
+    "sentence": "社内規定で副業は禁止されています。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-040",
+    "base": "くる",
+    "sentence": "気分を変えたいので、ちょっと出かけてきます。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-042",
+    "base": "いる",
+    "sentence": "好きなスポーツ選手はいますか？"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-043",
+    "base": "ある",
+    "sentence": "書類選考の後、面接があります。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-045",
+    "base": "かかる",
+    "sentence": "日本の会社は決定に時間がかかりますね。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-047",
+    "base": "する",
+    "sentence": "名古屋に転勤することが決まりました。"
+  },
+  {
+    "listKey": "n2-w4d2",
+    "sourceId": "n2-w4d2-047",
+    "base": "こと",
+    "sentence": "名古屋に転勤することが決まりました。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-001",
+    "base": "ある",
+    "sentence": "登録住所に変更がある場合はお知らせください。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-002",
+    "base": "この",
+    "sentence": "この本は登場人物が多すぎて複雑です。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-003",
+    "base": "する",
+    "sentence": "来年こそ富士登山に挑戦します。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-005",
+    "base": "する",
+    "sentence": "雑誌の編集の仕事をしています。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-005",
+    "base": "いる",
+    "sentence": "雑誌の編集の仕事をしています。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-006",
+    "base": "この",
+    "sentence": "この長編映画は全部で3部あります。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-006",
+    "base": "ある",
+    "sentence": "この長編映画は全部で3部あります。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-007",
+    "base": "いる",
+    "sentence": "日本語の短編小説を読んでいます。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-008",
+    "base": "くれる",
+    "sentence": "母は編み物が好きで、マフラーを編んでくれました。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-009",
+    "base": "ある",
+    "sentence": "スマホにはいろいろな機能があります。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-010",
+    "base": "する",
+    "sentence": "可能な限り、お客様のご要望にお応えします。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-011",
+    "base": "この",
+    "sentence": "この仕事は高いコミュニケーション能力が求められます。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-012",
+    "base": "する",
+    "sentence": "計画を一部修正しました。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-014",
+    "base": "いる",
+    "sentence": "経営学の修士号を持っています。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-016",
+    "base": "この",
+    "sentence": "この作品が完成したら、少し休暇を取ります。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-016",
+    "base": "する",
+    "sentence": "この作品が完成したら、少し休暇を取ります。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-017",
+    "base": "この",
+    "sentence": "このマンションはセキュリティ完備です。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-018",
+    "base": "する",
+    "sentence": "今月末で無料サポートサービスの期間が終了します。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-019",
+    "base": "この",
+    "sentence": "このコースを修了した人は、仕事の紹介が受けられます。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-019",
+    "base": "する",
+    "sentence": "このコースを修了した人は、仕事の紹介が受けられます。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-022",
+    "base": "する",
+    "sentence": "アナログカメラは現像する時がおもしろいんです。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-022",
+    "base": "ん",
+    "sentence": "アナログカメラは現像する時がおもしろいんです。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-023",
+    "base": "する",
+    "sentence": "書類を整理してください。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-024",
+    "base": "する",
+    "sentence": "プロジェクトごとに書類を分類しました。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-025",
+    "base": "する",
+    "sentence": "人類は約500万年前に誕生しました。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-026",
+    "base": "やすい",
+    "sentence": "書式を変えて読みやすくしました。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-026",
+    "base": "する",
+    "sentence": "書式を変えて読みやすくしました。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-027",
+    "base": "する",
+    "sentence": "夫婦で子供の入学式に出席します。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-029",
+    "base": "する",
+    "sentence": "社長の交代が正式に発表されました。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-030",
+    "base": "する",
+    "sentence": "中央アジアの国々を旅行しました。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-031",
+    "base": "する",
+    "sentence": "データを修正して上書き保存しました。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-033",
+    "base": "ご存じ",
+    "sentence": "ご存じの通り、来月社長が交代します。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-033",
+    "base": "する",
+    "sentence": "ご存じの通り、来月社長が交代します。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-035",
+    "base": "する",
+    "sentence": "お荷物です。こちらに認め印かサインをお願いします。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-038",
+    "base": "する",
+    "sentence": "プリンターが故障しているので、今印刷できません。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-038",
+    "base": "いる",
+    "sentence": "プリンターが故障しているので、今印刷できません。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-039",
+    "base": "する",
+    "sentence": "今後アジア地域でのビジネスを拡大する予定です。"
+  },
+  {
+    "listKey": "n2-w4d3",
+    "sourceId": "n2-w4d3-040",
+    "base": "する",
+    "sentence": "B5サイズに縮小してください。"
+  }
+]

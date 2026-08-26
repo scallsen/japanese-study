@@ -20,6 +20,7 @@ const TARGETS = [
   'src/data/words/nsm_n3_i4_vocab.json',
   'src/data/words/nsm_n3_i5_vocab.json',
   'src/data/words/nsm_n2_a1_vocab.json',
+  'src/data/words/sentence-vocab.json',
 ]
 
 function validateFile(path) {
