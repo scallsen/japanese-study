@@ -62,20 +62,20 @@ button, input, select, textarea {
   background: rgba(255,255,255,0.04);
 }
 
-.vocab-review-row {
+.selectable-row {
   background: transparent;
   transition: background 120ms;
 }
 
-.vocab-review-row:hover {
+.selectable-row:hover {
   background: rgba(0,0,0,0.10);
 }
 
-.vocab-review-row--selected {
+.selectable-row--selected {
   background: rgba(0,0,0,0.14);
 }
 
-.vocab-review-row--selected:hover {
+.selectable-row--selected:hover {
   background: rgba(0,0,0,0.20);
 }
 
@@ -207,4 +207,102 @@ button, input, select, textarea {
 
 .top-progress-sweep {
   animation: top-progress-sweep 1.1s ease-in-out infinite;
+}
+
+@keyframes deck-picker-slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes deck-picker-fade-scale-in {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.96); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes deck-picker-backdrop-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes deck-picker-fade-scale-in-top {
+  from { opacity: 0; transform: scale(0.96) translateY(-4px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes toast-slide-up-in {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes toast-slide-down-in {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes toast-slide-up-in-centered {
+  from { transform: translate(-50%, 100%); opacity: 0; }
+  to   { transform: translate(-50%, 0); opacity: 1; }
+}
+
+@keyframes toast-slide-down-in-centered {
+  from { transform: translate(-50%, -100%); opacity: 0; }
+  to   { transform: translate(-50%, 0); opacity: 1; }
+}
+
+@keyframes toast-slide-down-out {
+  from { transform: translateY(0); opacity: 1; }
+  to   { transform: translateY(100%); opacity: 0; }
+}
+
+@keyframes toast-slide-up-out {
+  from { transform: translateY(0); opacity: 1; }
+  to   { transform: translateY(-100%); opacity: 0; }
+}
+
+@keyframes toast-slide-down-out-centered {
+  from { transform: translate(-50%, 0); opacity: 1; }
+  to   { transform: translate(-50%, 100%); opacity: 0; }
+}
+
+@keyframes toast-slide-up-out-centered {
+  from { transform: translate(-50%, 0); opacity: 1; }
+  to   { transform: translate(-50%, -100%); opacity: 0; }
+}
+
+.deck-picker-row:hover {
+  background: rgba(255,255,255,0.06) !important;
+}
+
+.deck-picker-close-btn:hover {
+  color: #fff !important;
+}
+
+.deck-picker-primary-btn:hover:not(:disabled) {
+  background: rgba(58,189,164,0.28) !important;
+}
+
+.deck-picker-secondary-btn:hover {
+  background: rgba(255,255,255,0.09) !important;
+}
+
+.deck-picker-input:focus {
+  border-color: #3ABDA4 !important;
+  outline: none;
+}
+
+.confirm-dialog-cancel-btn:hover {
+  background: rgba(255,255,255,0.09) !important;
+}
+
+.confirm-dialog-confirm-btn:hover {
+  filter: brightness(1.15);
+}
+
+.deck-row-delete-btn:hover {
+  background: rgba(192,57,43,0.15) !important;
+  color: #f87171 !important;
+}
+
+.deck-chip-btn:hover {
+  background: rgba(58,189,164,0.18) !important;
 }

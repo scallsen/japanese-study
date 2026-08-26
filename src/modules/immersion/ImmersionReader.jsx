@@ -5,8 +5,10 @@ import { TokenizedBody, WordPopup } from '../../components/JapaneseReader.jsx'
 import { buildVocabMap } from '../../utils/vocabMap.js'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useProgress } from '../../hooks/useProgress.js'
+import { useToast } from '../../context/ToastContext.jsx'
 // Cross-module write: creates cards in vocab-srs progress namespace
 import { createCard } from '../vocab-srs/srs.js'
+import { ensureDeck, createDeck, deleteCards } from '../vocab-srs/deckUtils.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CONTENT_HEADING, FS_CAPTION, FS_ARTICLE_BODY } from '../../data/theme.js'
 
 const ACCENT = '#E05A4E'
@@ -15,7 +17,16 @@ function formatDate(iso) {
   return new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
 }
 
-const IMMERSION_DECK_ID = 'immersion-words'
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= breakpoint)
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`)
+    const handler = e => setIsMobile(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [breakpoint])
+  return isMobile
+}
 
 export default function ImmersionReader({ article, onBack, isRead, onMarkRead }) {
   const { user, signIn } = useAuth()
@@ -25,7 +36,11 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
   const [popup, setPopup] = useState(null) // { token, vocabEntry, anchorRect, idx }
   const [showFurigana, setShowFurigana] = useState(true)
   const { data: srsData, save: saveSrs } = useProgress('vocab-srs')
+  const { showToast } = useToast()
   const scrollRef = useRef(null)
+  const isMobile = useIsMobile()
+
+  const decks = srsData?.decks ?? {}
 
   useEffect(() => {
     const el = scrollRef.current
@@ -47,20 +62,37 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
     setPopup({ token, vocabEntry, anchorRect: rect, idx })
   }
 
-  function handlePopupAddToSrs(token, vocabEntry) {
+  function addWordToDeck(token, vocabEntry, deckId, decksForCreate) {
     const word = token.t
     const meaning = vocabEntry?.meaning ?? token.r ?? ''
     const current = srsData ?? { decks: {}, cards: {}, lastSession: null, totalReviews: 0, newCardDay: { date: '', count: 0 } }
-    const decks = { ...current.decks }
-    if (!decks[IMMERSION_DECK_ID]) {
-      decks[IMMERSION_DECK_ID] = { id: IMMERSION_DECK_ID, name: 'Immersion Words', active: true, source: 'imported', addedAt: Date.now() }
-    }
-    const cardId = `${IMMERSION_DECK_ID}-${Date.now()}`
+    const newDecks = decksForCreate ?? ensureDeck(current.decks, deckId, current.decks[deckId]?.name ?? 'Deck')
+    const cardId = `${deckId}-${Date.now()}`
     const extras = {}
     if (vocabEntry?.jmdictId) extras.jmdictId = vocabEntry.jmdictId
-    const card = createCard(word, meaning, cardId, IMMERSION_DECK_ID, extras)
-    saveSrs({ ...current, decks, cards: { ...current.cards, [cardId]: card } })
+    const card = createCard(word, meaning, cardId, deckId, extras)
+    saveSrs({ ...current, decks: newDecks, cards: { ...current.cards, [cardId]: card } })
     setPopup(null)
+    showToast({
+      message: `Added to "${newDecks[deckId]?.name ?? 'Deck'}".`,
+      actionLabel: 'Undo',
+      onAction: () => handleUndoAdd(cardId),
+    })
+  }
+
+  function handlePopupAdd(token, vocabEntry, deckId) {
+    addWordToDeck(token, vocabEntry, deckId)
+  }
+
+  function handlePopupCreateAndAdd(token, vocabEntry, name) {
+    const current = srsData ?? { decks: {}, cards: {}, lastSession: null, totalReviews: 0, newCardDay: { date: '', count: 0 } }
+    const { decks: newDecks, deckId } = createDeck(current.decks, name)
+    addWordToDeck(token, vocabEntry, deckId, newDecks)
+  }
+
+  function handleUndoAdd(cardId) {
+    const current = srsData ?? { decks: {}, cards: {}, lastSession: null, totalReviews: 0, newCardDay: { date: '', count: 0 } }
+    saveSrs({ ...current, cards: deleteCards(current.cards, [cardId]) })
   }
 
   const showingSimplified = showSimplified && !!article.body_simple
@@ -77,10 +109,14 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
           token={popup.token}
           vocabEntry={popup.vocabEntry}
           anchorRect={popup.anchorRect}
-          onAddToSrs={handlePopupAddToSrs}
+          decks={decks}
+          isMobile={isMobile}
+          onAdd={handlePopupAdd}
+          onCreateAndAdd={handlePopupCreateAndAdd}
           onClose={() => setPopup(null)}
         />
       )}
+
       <PageHeader
         crumbs={[
           { label: 'Japanese Study', href: '#/' },

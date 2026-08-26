@@ -3,10 +3,32 @@ import { useAuth } from '../../context/AuthContext.jsx'
 import { useProgress } from '../../hooks/useProgress.js'
 import { migrateProgress } from './migrate.js'
 import { resolveCard, cardStateLabel } from './srs.js'
+import { moveCardsToDeck, deleteCards, createDeck } from './deckUtils.js'
 import PageHeader from '../../components/PageHeader.jsx'
 import AuthSlot from '../../components/AuthSlot.jsx'
 import DrawerSelect from '../../components/DrawerSelect.jsx'
+import DeckPickerSheet from '../../components/DeckPickerSheet.jsx'
+import ConfirmDialog from '../../components/ConfirmDialog.jsx'
+import SelectAllCheckbox from '../../components/SelectAllCheckbox.jsx'
+import SelectableRow from '../../components/SelectableRow.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION } from '../../data/theme.js'
+
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= breakpoint)
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`)
+    const handler = e => setIsMobile(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [breakpoint])
+  return isMobile
+}
+
+function parseHashQuery() {
+  const hash = window.location.hash.slice(1)
+  const qIndex = hash.indexOf('?')
+  return new URLSearchParams(qIndex === -1 ? '' : hash.slice(qIndex + 1))
+}
 
 const ACCENT = '#3ABDA4'
 const BG = '#1E1E1E'
@@ -78,18 +100,12 @@ function formatDue(dueIso) {
   return `in ${diffDays}d`
 }
 
-function CardRow({ card, showDeck }) {
+function CardRow({ card, showDeck, manageMode, selected, onToggleSelect }) {
   const label = cardStateLabel(card)
   const showKana = card.kana && card.kana !== card.front
 
-  return (
-    <div className="srs-browse-row" style={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: 14,
-      padding: '12px 16px',
-      borderBottom: '1px solid rgba(255,255,255,0.05)',
-    }}>
+  const content = (
+    <>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 3 }}>
           <span style={{ fontSize: FS_BASE, color: TEXT }}>{card.front}</span>
@@ -135,19 +151,44 @@ function CardRow({ card, showDeck }) {
       <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, flexShrink: 0, minWidth: 80, textAlign: 'right' }}>
         {formatDue(card.due)}
       </span>
+    </>
+  )
+
+  if (manageMode) {
+    return (
+      <SelectableRow selected={selected} onToggle={onToggleSelect} gap={14} padding="12px 16px">
+        {content}
+      </SelectableRow>
+    )
+  }
+
+  return (
+    <div className="srs-browse-row" style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: 14,
+      padding: '12px 16px',
+      borderBottom: '1px solid rgba(255,255,255,0.05)',
+    }}>
+      {content}
     </div>
   )
 }
 
 export default function VocabSrsBrowsePage() {
   const { user, signIn } = useAuth()
-  const { data: rawProgress, loading } = useProgress('vocab-srs')
+  const { data: rawProgress, save, loading } = useProgress('vocab-srs')
+  const isMobile = useIsMobile()
 
   const [stateFilter, setStateFilter] = useState('all')
-  const [deckFilter, setDeckFilter] = useState('all')
+  const [deckFilter, setDeckFilter] = useState(() => parseHashQuery().get('deck') || 'all')
+  const [manageMode, setManageMode] = useState(() => parseHashQuery().get('manage') === '1')
   const [searchInput, setSearchInput] = useState('')
   const [search, setSearch] = useState('')
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
+  const [selected, setSelected] = useState(new Set())
+  const [showMovePicker, setShowMovePicker] = useState(false)
+  const [confirmingBulkDelete, setConfirmingBulkDelete] = useState(false)
 
   useEffect(() => {
     const t = setTimeout(() => setSearch(searchInput.trim().toLowerCase()), 250)
@@ -156,6 +197,7 @@ export default function VocabSrsBrowsePage() {
 
   useEffect(() => {
     setVisibleCount(PAGE_SIZE)
+    setSelected(new Set())
   }, [stateFilter, deckFilter, search])
 
   const progress = useMemo(() => (loading ? null : migrateProgress(rawProgress)), [loading, rawProgress])
@@ -205,6 +247,42 @@ export default function VocabSrsBrowsePage() {
     return [...list].sort((a, b) => new Date(a.due) - new Date(b.due))
   }, [deckScopedCards, stateFilter, search])
 
+  const allFilteredSelected = filtered.length > 0 && filtered.every(c => selected.has(c.id))
+  const someFilteredSelected = filtered.some(c => selected.has(c.id))
+
+  function toggleRow(id) {
+    setSelected(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  function toggleSelectAll() {
+    setSelected(allFilteredSelected ? new Set() : new Set(filtered.map(c => c.id)))
+  }
+
+  function handleBulkDelete() {
+    const newCardsObj = deleteCards(cardsObj, [...selected])
+    save({ ...progress, cards: newCardsObj })
+    setSelected(new Set())
+    setConfirmingBulkDelete(false)
+  }
+
+  function handleBulkMove(targetDeckId) {
+    const newCardsObj = moveCardsToDeck(cardsObj, [...selected], targetDeckId)
+    save({ ...progress, cards: newCardsObj })
+    setSelected(new Set())
+  }
+
+  function handleBulkMoveCreateDeck(name) {
+    const { decks: newDecks, deckId } = createDeck(decks, name)
+    const newCardsObj = moveCardsToDeck(cardsObj, [...selected], deckId)
+    save({ ...progress, decks: newDecks, cards: newCardsObj })
+    setSelected(new Set())
+  }
+
   if (loading && !progress) return null
 
   if (!user) {
@@ -239,15 +317,34 @@ export default function VocabSrsBrowsePage() {
         ]}
         rightSlot={<AuthSlot />}
       />
-      <main style={{ flex: 1, overflowY: 'auto', padding: '24px 24px 60px' }}>
+      <main style={{ flex: 1, overflowY: 'auto', padding: `24px 24px ${manageMode && someFilteredSelected ? 96 : 60}px` }}>
         <div style={{ maxWidth: 760, margin: '0 auto' }}>
-          <div style={{ minWidth: 200, maxWidth: 320, marginBottom: 20 }}>
-            <DrawerSelect
-              value={deckFilter}
-              onChange={setDeckFilter}
-              options={[{ value: 'all', label: 'All decks' }, ...deckList.map(d => ({ value: d.id, label: d.name }))]}
-              label="Deck"
-            />
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 20 }}>
+            <div style={{ minWidth: 200, maxWidth: 320 }}>
+              <DrawerSelect
+                value={deckFilter}
+                onChange={setDeckFilter}
+                options={[{ value: 'all', label: 'All decks' }, ...deckList.map(d => ({ value: d.id, label: d.name }))]}
+                label="Deck"
+              />
+            </div>
+            <button
+              onClick={() => { setManageMode(v => !v); setSelected(new Set()) }}
+              className="deck-picker-secondary-btn"
+              style={{
+                padding: '7px 14px',
+                fontSize: FS_BASE,
+                fontFamily: FONT,
+                letterSpacing: TRACKING,
+                background: manageMode ? 'rgba(58,189,164,0.15)' : 'rgba(255,255,255,0.05)',
+                color: manageMode ? ACCENT : TEXT,
+                border: `1px solid ${manageMode ? 'rgba(58,189,164,0.4)' : 'rgba(255,255,255,0.15)'}`,
+                borderRadius: 6,
+                cursor: 'pointer',
+              }}
+            >
+              {manageMode ? 'Done selecting' : 'Select'}
+            </button>
           </div>
 
           <StateTabs
@@ -287,8 +384,23 @@ export default function VocabSrsBrowsePage() {
           ) : (
             <>
               <div style={{ background: SURFACE, borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
+                {manageMode && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.08)', background: 'rgba(0,0,0,0.14)' }}>
+                    <SelectAllCheckbox checked={allFilteredSelected} indeterminate={someFilteredSelected && !allFilteredSelected} onChange={toggleSelectAll} />
+                    <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+                      {selected.size} of {filtered.length} selected
+                    </span>
+                  </div>
+                )}
                 {visible.map(card => (
-                  <CardRow key={card.id} card={card} showDeck={deckFilter === 'all'} />
+                  <CardRow
+                    key={card.id}
+                    card={card}
+                    showDeck={deckFilter === 'all'}
+                    manageMode={manageMode}
+                    selected={selected.has(card.id)}
+                    onToggleSelect={() => toggleRow(card.id)}
+                  />
                 ))}
               </div>
               {hasMore && (
@@ -315,6 +427,77 @@ export default function VocabSrsBrowsePage() {
           )}
         </div>
       </main>
+
+      {manageMode && someFilteredSelected && (
+        <div style={{
+          position: 'fixed',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 20,
+          display: 'flex',
+          justifyContent: 'center',
+          gap: 10,
+          padding: '14px 16px',
+          background: SURFACE,
+          borderTop: '1px solid rgba(255,255,255,0.1)',
+        }}>
+          <button
+            onClick={() => setConfirmingBulkDelete(true)}
+            className="deck-row-delete-btn"
+            style={{
+              padding: '9px 18px',
+              fontSize: FS_BASE,
+              fontFamily: FONT,
+              letterSpacing: TRACKING,
+              background: 'rgba(192,57,43,0.15)',
+              border: '1px solid rgba(192,57,43,0.4)',
+              borderRadius: 6,
+              color: '#f87171',
+              cursor: 'pointer',
+            }}
+          >
+            Delete ({selected.size})
+          </button>
+          <button
+            onClick={() => setShowMovePicker(true)}
+            className="deck-chip-btn"
+            style={{
+              padding: '9px 18px',
+              fontSize: FS_BASE,
+              fontFamily: FONT,
+              letterSpacing: TRACKING,
+              background: 'rgba(58,189,164,0.1)',
+              border: '1px solid rgba(58,189,164,0.3)',
+              borderRadius: 6,
+              color: ACCENT,
+              cursor: 'pointer',
+            }}
+          >
+            Move to deck ({selected.size})
+          </button>
+        </div>
+      )}
+
+      <DeckPickerSheet
+        open={showMovePicker}
+        decks={decks}
+        lastUsedDeckId={null}
+        onSelect={handleBulkMove}
+        onCreateDeck={handleBulkMoveCreateDeck}
+        onClose={() => setShowMovePicker(false)}
+        isMobile={isMobile}
+        title={`Move ${selected.size} card${selected.size === 1 ? '' : 's'} to`}
+      />
+
+      <ConfirmDialog
+        open={confirmingBulkDelete}
+        title="Delete cards"
+        message={`Delete ${selected.size} card${selected.size === 1 ? '' : 's'}? This can't be undone.`}
+        confirmLabel="Delete"
+        onConfirm={handleBulkDelete}
+        onCancel={() => setConfirmingBulkDelete(false)}
+      />
     </div>
   )
 }

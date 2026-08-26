@@ -1,15 +1,18 @@
 import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useProgress } from '../../hooks/useProgress.js'
-import { getDeckStats, getGlobalStats, getStateDistribution, tallyCardStates, getTodaysQueue, resolveCard, resetCardProgress, State } from './srs.js'
+import { getDeckStats, getGlobalStats, getStateDistribution, tallyCardStates, getTodaysQueue, resolveCard, resetCardProgress, createCard, State } from './srs.js'
 import { parseAnkiExport } from './import.js'
 import { initSession } from './session.js'
 import { migrateProgress, initializeDeckCards } from './migrate.js'
 import VocabSrsDrill from './VocabSrsDrill.jsx'
 import WordImportPanel from './WordImportPanel.jsx'
+import { ensureDeck, createDeck, renameDeck, deleteDeck, deleteCards } from './deckUtils.js'
 import PageHeader from '../../components/PageHeader.jsx'
 import SpeakerIcon from '../../components/SpeakerIcon.jsx'
 import HeaderMenu from '../../components/HeaderMenu.jsx'
+import ConfirmDialog from '../../components/ConfirmDialog.jsx'
+import { useToast } from '../../context/ToastContext.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_NAV, SUBHEADING_STYLE, FS_CAPTION, FS_CONTENT_HEADING } from '../../data/theme.js'
 import DrawerSectionHeader from '../../components/DrawerSectionHeader.jsx'
 import DrawerCheckbox from '../../components/DrawerCheckbox.jsx'
@@ -129,52 +132,127 @@ function FileInput({ onChange, accept = '.txt', label = 'Choose .txt file' }) {
   )
 }
 
-function DeckRow({ deck, stats, onToggle }) {
+function DeckRow({ deck, stats, onToggle, onRename, onDelete }) {
   const [hovered, setHovered] = useState(false)
+  const [editing, setEditing] = useState(false)
+  const [draftName, setDraftName] = useState(deck.name)
+  const canManage = deck.source === 'imported'
   const notStarted = stats.total === 0
   const infoText = notStarted
     ? 'not started'
     : `${stats.total} cards · ${stats.dueToday} due · ${stats.newAvailable} new`
 
+  function commitRename() {
+    setEditing(false)
+    const trimmed = draftName.trim()
+    if (trimmed && trimmed !== deck.name) onRename(trimmed)
+    else setDraftName(deck.name)
+  }
+
   return (
     <div style={{
       display: 'flex',
-      alignItems: 'center',
-      gap: 10,
+      flexDirection: 'column',
+      gap: 4,
       padding: '8px 0',
       borderBottom: '1px solid rgba(255,255,255,0.05)',
     }}>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ fontSize: 9, color: deck.active ? ACCENT : 'rgba(255,255,255,0.2)' }}>
-            {deck.active ? '●' : '○'}
-          </span>
-          <span style={{ fontSize: FS_BASE, color: TEXT }}>{deck.name}</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ fontSize: 9, color: deck.active ? ACCENT : 'rgba(255,255,255,0.2)', flexShrink: 0 }}>
+              {deck.active ? '●' : '○'}
+            </span>
+            {editing ? (
+              <input
+                autoFocus
+                value={draftName}
+                onChange={e => setDraftName(e.target.value)}
+                onBlur={commitRename}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') commitRename()
+                  if (e.key === 'Escape') { setDraftName(deck.name); setEditing(false) }
+                }}
+                style={{
+                  minWidth: 0,
+                  flex: 1,
+                  fontSize: FS_BASE,
+                  color: TEXT,
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.15)',
+                  borderRadius: 4,
+                  padding: '2px 6px',
+                  fontFamily: 'inherit',
+                  letterSpacing: TRACKING,
+                }}
+              />
+            ) : (
+              <span
+                onClick={canManage ? () => setEditing(true) : undefined}
+                title={canManage ? 'Click to rename' : undefined}
+                style={{ fontSize: FS_BASE, color: TEXT, cursor: canManage ? 'text' : 'default' }}
+              >
+                {deck.name}
+              </span>
+            )}
+          </div>
+          <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: 2 }}>{infoText}</div>
         </div>
-        <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: 2 }}>{infoText}</div>
+        {canManage && (
+          <button
+            onClick={onDelete}
+            title="Delete deck"
+            className="deck-row-delete-btn"
+            style={{
+              flexShrink: 0,
+              width: 24,
+              height: 24,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'transparent',
+              border: 'none',
+              borderRadius: 5,
+              color: TEXT_MUTED,
+              fontSize: FS_BASE,
+              cursor: 'pointer',
+            }}
+          >
+            ×
+          </button>
+        )}
+        <button
+          onClick={onToggle}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          style={{
+            flexShrink: 0,
+            padding: '4px 10px',
+            fontSize: FS_BASE,
+            fontFamily: 'inherit',
+            letterSpacing: TRACKING,
+            background: deck.active
+              ? hovered ? 'rgba(58,189,164,0.2)' : 'rgba(58,189,164,0.12)'
+              : hovered ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.06)',
+            color: deck.active ? ACCENT : TEXT_MUTED,
+            border: `1px solid ${deck.active ? 'rgba(58,189,164,0.35)' : 'rgba(255,255,255,0.15)'}`,
+            borderRadius: 5,
+            cursor: 'pointer',
+            transition: 'background 130ms',
+          }}
+        >
+          {deck.active ? 'On' : 'Off'}
+        </button>
       </div>
-      <button
-        onClick={onToggle}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        style={{
-          flexShrink: 0,
-          padding: '4px 10px',
-          fontSize: FS_BASE,
-          fontFamily: 'inherit',
-          letterSpacing: TRACKING,
-          background: deck.active
-            ? hovered ? 'rgba(58,189,164,0.2)' : 'rgba(58,189,164,0.12)'
-            : hovered ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.06)',
-          color: deck.active ? ACCENT : TEXT_MUTED,
-          border: `1px solid ${deck.active ? 'rgba(58,189,164,0.35)' : 'rgba(255,255,255,0.15)'}`,
-          borderRadius: 5,
-          cursor: 'pointer',
-          transition: 'background 130ms',
-        }}
-      >
-        {deck.active ? 'On' : 'Off'}
-      </button>
+      {canManage && stats.total > 0 && (
+        <a
+          href={`#/vocab-srs/browse?deck=${deck.id}&manage=1`}
+          className="srs-browse-link"
+          style={{ fontSize: FS_CAPTION, color: ACCENT }}
+        >
+          Manage cards →
+        </a>
+      )}
     </div>
   )
 }
@@ -199,6 +277,7 @@ function resolvedArrayToCardsObj(resolvedCards, decks) {
 export default function VocabSrsModule() {
   const { user, signIn, signOut, loading: authLoading } = useAuth()
   const { data: rawProgress, save, loading } = useProgress('vocab-srs')
+  const { showToast } = useToast()
   const [progress, setProgress] = useState(null)
   const [session, setSession] = useState(null)
   const [sessionCards, setSessionCards] = useState([])
@@ -210,6 +289,7 @@ export default function VocabSrsModule() {
   const [importMsg, setImportMsg] = useState(null)
   const [ankiSyncMsg, setAnkiSyncMsg] = useState(null)
   const [showWordImport, setShowWordImport] = useState(false)
+  const [deletingDeckId, setDeletingDeckId] = useState(null)
   const [advanceDays, setAdvanceDays] = useState(3)
   const [showOptions, setShowOptions] = useState(() => window.innerWidth > 768)
   const [chevronHovered, setChevronHovered] = useState(false)
@@ -464,18 +544,66 @@ export default function VocabSrsModule() {
     e.target.value = ''
   }
 
-  async function handleWordImportConfirm(newCards) {
-    const newCardsObj = { ...cardsObj }
-    for (const card of newCards) newCardsObj[card.id] = card
+  function buildWordImportCards(words, deckId) {
+    const ts = Date.now()
+    const newCards = {}
+    const newCardIds = []
+    words.forEach((w, i) => {
+      const extras = {}
+      if (w.reading) extras.kana = w.reading
+      if (w.jmdictId) extras.jmdictId = w.jmdictId
+      const cardId = `word-import-${ts}-${i}`
+      newCards[cardId] = createCard(w.surface, w.meaning, cardId, deckId, extras)
+      newCardIds.push(cardId)
+    })
+    return { newCards, newCardIds }
+  }
 
-    const newDecks = { ...decks }
-    if (!newDecks['word-import']) {
-      newDecks['word-import'] = { id: 'word-import', name: 'Imported Words', source: 'imported', active: true, addedAt: Date.now() }
-    }
+  function showWordImportAddedToast(cardIds, deckName) {
+    showToast({
+      message: `Added ${cardIds.length} word${cardIds.length === 1 ? '' : 's'} to "${deckName}".`,
+      actionLabel: 'Undo',
+      onAction: () => handleUndoWordImportAdd(cardIds),
+    })
+  }
 
-    const newProgress = { ...progress, decks: newDecks, cards: newCardsObj }
+  async function handleWordImportAdd(words, deckId) {
+    const newDecks = ensureDeck(decks, deckId, decks[deckId]?.name ?? 'Deck')
+    const { newCards, newCardIds } = buildWordImportCards(words, deckId)
+    const newProgress = { ...progress, decks: newDecks, cards: { ...cardsObj, ...newCards } }
     setProgress(newProgress)
     await save(newProgress)
+    showWordImportAddedToast(newCardIds, newDecks[deckId]?.name ?? 'Deck')
+  }
+
+  async function handleWordImportCreateAndAdd(words, name) {
+    const { decks: newDecks, deckId } = createDeck(decks, name)
+    const { newCards, newCardIds } = buildWordImportCards(words, deckId)
+    const newProgress = { ...progress, decks: newDecks, cards: { ...cardsObj, ...newCards } }
+    setProgress(newProgress)
+    await save(newProgress)
+    showWordImportAddedToast(newCardIds, name)
+  }
+
+  function handleUndoWordImportAdd(cardIds) {
+    const newProgress = { ...progress, cards: deleteCards(cardsObj, cardIds) }
+    setProgress(newProgress)
+    save(newProgress)
+  }
+
+  function handleRenameDeck(deckId, newName) {
+    const newDecks = renameDeck(decks, deckId, newName)
+    const newProgress = { ...progress, decks: newDecks }
+    setProgress(newProgress)
+    save(newProgress)
+  }
+
+  function handleConfirmDeleteDeck() {
+    const deckId = deletingDeckId
+    const newProgress = deleteDeck(progress, deckId)
+    setProgress(newProgress)
+    save(newProgress)
+    setDeletingDeckId(null)
   }
 
   async function handleAnkiSyncFileChange(e) {
@@ -559,6 +687,8 @@ export default function VocabSrsModule() {
               deck={deck}
               stats={getDeckStats(cardsObj, deck.id)}
               onToggle={() => handleToggleDeck(deck.id)}
+              onRename={newName => handleRenameDeck(deck.id, newName)}
+              onDelete={() => setDeletingDeckId(deck.id)}
             />
           ))}
         </div>
@@ -962,7 +1092,7 @@ export default function VocabSrsModule() {
                             <span style={{ fontSize: FS_BASE, color: '#4ade80' }}>{ankiSyncMsg}</span>
                           )}
                         </div>
-                        <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
                           <button
                             onClick={() => setShowWordImport(true)}
                             style={{
@@ -1074,7 +1204,21 @@ export default function VocabSrsModule() {
       <WordImportPanel
         open={showWordImport}
         onClose={() => setShowWordImport(false)}
-        onConfirm={handleWordImportConfirm}
+        decks={decks}
+        isMobile={isMobile}
+        onAdd={handleWordImportAdd}
+        onCreateAndAdd={handleWordImportCreateAndAdd}
+      />
+
+      <ConfirmDialog
+        open={!!deletingDeckId}
+        title="Delete deck"
+        message={deletingDeckId
+          ? `Delete "${decks[deletingDeckId]?.name}" and its ${getDeckStats(cardsObj, deletingDeckId).total} card${getDeckStats(cardsObj, deletingDeckId).total === 1 ? '' : 's'}? This can't be undone.`
+          : ''}
+        confirmLabel="Delete"
+        onConfirm={handleConfirmDeleteDeck}
+        onCancel={() => setDeletingDeckId(null)}
       />
 
     </div>

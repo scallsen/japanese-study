@@ -10,6 +10,8 @@ import PageHeader from '../components/PageHeader.jsx'
 import SpeakerIcon from '../components/SpeakerIcon.jsx'
 import HeaderMenu from '../components/HeaderMenu.jsx'
 import SettingsSidebar from '../components/SettingsSidebar.jsx'
+import SelectAllCheckbox from '../components/SelectAllCheckbox.jsx'
+import SelectableRow from '../components/SelectableRow.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_BADGE, FS_ENTRY_WORD, FS_STAT_VALUE, FS_DISPLAY_HEADING } from '../data/theme.js'
 import { WORD_SOURCES } from '../data/wordLists.js'
 import { SENTENCE_SOURCE_OPTIONS, DEFAULT_SENTENCE_SOURCE } from '../data/sentenceSource.js'
@@ -29,6 +31,9 @@ import { supabase } from '../lib/supabase.js'
 import * as SimpleQueue from '../engines/simpleQueue.js'
 import { WORD_DATA } from '../data/wordData.js'
 import { createCard } from '../modules/vocab-srs/srs.js'
+import { ensureDeck, createDeck, deleteCards } from '../modules/vocab-srs/deckUtils.js'
+import DeckComboBox from '../components/DeckComboBox.jsx'
+import { useToast } from '../context/ToastContext.jsx'
 import { AUDIO_SOURCE_OPTIONS, DEFAULT_AUDIO_SOURCE, getVoicevoxAudioUrl, getVoicevoxCredit, speakerIdFromAudioSource } from '../utils/voicevoxAudio.js'
 import AttributionFooter from '../components/AttributionFooter.jsx'
 import { renderAttributionSegments } from '../utils/attributionSegments.jsx'
@@ -36,7 +41,6 @@ import { renderAttributionSegments } from '../utils/attributionSegments.jsx'
 const ACCENT = '#3ABDA4'
 const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
 
-const VOCAB_DRILL_DECK_ID = 'vocab-drill-words'
 const MISTAKE_TIER_COLOR = { none: '#4ade80', one: '#fbbf24', many: '#f87171' }
 
 function mistakeTier(count) {
@@ -351,50 +355,6 @@ function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, rev
   )
 }
 
-// Chrome always draws the native indeterminate dash in white regardless of
-// accent-color, so a custom-drawn box is the only way to make it match the
-// black checkmark on checked boxes. The native input stays underneath
-// (visually hidden) for click/keyboard/screen-reader behavior, including
-// the "indeterminate" DOM property, which can only be set imperatively.
-function SelectAllCheckbox({ checked, indeterminate, onChange }) {
-  const ref = useRef(null)
-  useEffect(() => {
-    if (ref.current) ref.current.indeterminate = indeterminate
-  }, [indeterminate])
-  return (
-    <label style={{ position: 'relative', width: 16, height: 16, flexShrink: 0, display: 'inline-flex', cursor: 'pointer' }}>
-      <input
-        ref={ref}
-        type="checkbox"
-        checked={checked}
-        onChange={onChange}
-        style={{ position: 'absolute', inset: 0, margin: 0, opacity: 0, cursor: 'pointer' }}
-      />
-      <span style={{
-        width: 16,
-        height: 16,
-        borderRadius: 3,
-        background: checked || indeterminate ? ACCENT : 'transparent',
-        border: checked || indeterminate ? 'none' : '1px solid rgba(255,255,255,0.3)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        pointerEvents: 'none',
-      }}>
-        {(checked || indeterminate) && (
-          <svg width={16} height={16} viewBox="0 0 16 16" style={{ display: 'block' }}>
-            {indeterminate && !checked ? (
-              <line x1={4} y1={8} x2={12} y2={8} stroke="#3B3B3B" strokeWidth={2.4} strokeLinecap="round" />
-            ) : (
-              <polyline points="3.5,8.3 6.5,11.3 12.5,4.7" fill="none" stroke="#3B3B3B" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" />
-            )}
-          </svg>
-        )}
-      </span>
-    </label>
-  )
-}
-
 function CaretButton({ open, onClick }) {
   return (
     <button
@@ -413,7 +373,10 @@ function CaretButton({ open, onClick }) {
   )
 }
 
-function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoTroubled, onRedoSelected, onBack, onAddToSrs }) {
+function DoneScreen({
+  pool, mistakeCounts, correct, troubled, onRestart, onRedoTroubled, onRedoSelected, onBack,
+  decks, isMobile, onAddToSrs, onCreateDeckAndAddToSrs, onUndoAdd,
+}) {
   const rows = useMemo(() =>
     pool
       .map(({ id, word }) => ({ id, word, mistakes: mistakeCounts[id] ?? 0 }))
@@ -424,7 +387,7 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
   const { entries: dictEntries } = useDictionaryEntries(jmdictIds, true)
   const defaultSelectedIds = useMemo(() => new Set(rows.filter(r => r.mistakes > 0).map(r => r.id)), [rows])
   const [selected, setSelected] = useState(() => new Set(defaultSelectedIds))
-  const [addedCount, setAddedCount] = useState(null)
+  const { showToast } = useToast()
   const [bulkOpen, setBulkOpen] = useState(false)
   const [bulkCountInput, setBulkCountInput] = useState(() => String(Math.max(1, rows.length)))
   const selectionChanged = selected.size !== defaultSelectedIds.size || [...selected].some(id => !defaultSelectedIds.has(id))
@@ -469,10 +432,29 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
     setBulkOpen(false)
   }
 
-  function handleAdd() {
+  function showAddedToast(result) {
+    if (!result) return
+    if (result.count === 0) {
+      showToast({ message: `Already in "${result.deckName}".` })
+      return
+    }
+    showToast({
+      message: `Added ${result.count} word${result.count === 1 ? '' : 's'} to "${result.deckName}".`,
+      actionLabel: 'Undo',
+      onAction: () => onUndoAdd(result.cardIds),
+    })
+  }
+
+  function handleAdd(deckId) {
     const words = rows.filter(r => selected.has(r.id)).map(r => r.word)
     if (words.length === 0) return
-    setAddedCount(onAddToSrs(words))
+    showAddedToast(onAddToSrs(words, deckId))
+  }
+
+  function handleCreateAndAdd(name) {
+    const words = rows.filter(r => selected.has(r.id)).map(r => r.word)
+    if (words.length === 0) return
+    showAddedToast(onCreateDeckAndAddToSrs(words, name))
   }
 
   return (
@@ -528,30 +510,17 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
 
       {rows.length > 0 && (
         <div style={{ marginTop: 36, textAlign: 'left' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 8, flexWrap: 'wrap' }}>
             <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, letterSpacing: '0.08em' }}>REVIEW WORDS</span>
-            <button
-              onClick={handleAdd}
+            <DeckComboBox
+              decks={decks}
+              isMobile={isMobile}
               disabled={selected.size === 0}
-              className="done-btn"
-              style={{
-                ...btnBase,
-                padding: '6px 16px',
-                fontSize: FS_CAPTION,
-                background: selected.size > 0 ? 'rgba(58,189,164,0.15)' : 'rgba(255,255,255,0.04)',
-                color: selected.size > 0 ? ACCENT : 'rgba(255,255,255,0.2)',
-                border: `1px solid ${selected.size > 0 ? 'rgba(58,189,164,0.4)' : 'rgba(255,255,255,0.1)'}`,
-                cursor: selected.size > 0 ? 'pointer' : 'not-allowed',
-              }}
-            >
-              Add {selected.size} to SRS
-            </button>
+              buttonLabel={`Add ${selected.size} to SRS`}
+              onAdd={handleAdd}
+              onCreateAndAdd={handleCreateAndAdd}
+            />
           </div>
-          {addedCount !== null && (
-            <div style={{ fontSize: FS_CAPTION, color: ACCENT, marginBottom: 8 }}>
-              {addedCount > 0 ? `Added ${addedCount} word${addedCount === 1 ? '' : 's'} to Vocab Drill Words.` : 'Selected words are already in Vocab Drill Words.'}
-            </div>
-          )}
           <div style={{ background: '#2A2A2A', borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.08)', background: 'rgba(0,0,0,0.14)' }}>
               <SelectAllCheckbox checked={allSelected} indeterminate={!allSelected && someSelected} onChange={toggleSelectAll} />
@@ -597,26 +566,7 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
               const { displayForm, reading } = resolveWordDisplay(row.word, dictEntry)
               const resolvedEnglish = row.word.english ?? briefGloss(dictEntry)
               return (
-                <label
-                  key={row.id}
-                  className={selected.has(row.id) ? 'vocab-review-row vocab-review-row--selected' : 'vocab-review-row'}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 12,
-                    padding: '10px 14px',
-                    borderBottom: '1px solid rgba(255,255,255,0.05)',
-                    cursor: 'pointer',
-                    fontFamily: 'inherit',
-                    letterSpacing: TRACKING,
-                  }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={selected.has(row.id)}
-                    onChange={() => toggleRow(row.id)}
-                    style={{ flexShrink: 0, width: 16, height: 16, margin: 0, accentColor: ACCENT }}
-                  />
+                <SelectableRow key={row.id} selected={selected.has(row.id)} onToggle={() => toggleRow(row.id)}>
                   <span style={{ display: 'flex', flexDirection: 'column', gap: 2, width: 100, flexShrink: 0, overflow: 'hidden' }}>
                     <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {displayForm}
@@ -638,7 +588,7 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onRedoT
                       {row.mistakes}×
                     </span>
                   )}
-                </label>
+                </SelectableRow>
               )
             })}
           </div>
@@ -1231,25 +1181,22 @@ export default function VocabPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [drill.done, isDrilling, user, reviewMode])
 
-  function handleAddToSrs(words) {
-    const current = srsData ?? { decks: {}, cards: {}, lastSession: null, totalReviews: 0, newCardDay: { date: '', count: 0 } }
-    const decks = { ...current.decks }
-    if (!decks[VOCAB_DRILL_DECK_ID]) {
-      decks[VOCAB_DRILL_DECK_ID] = { id: VOCAB_DRILL_DECK_ID, name: 'Vocab Drill Words', active: true, source: 'imported', addedAt: Date.now() }
-    }
+  // Shared by handleAddToSrs/handleCreateDeckAndAddToSrs — builds new card
+  // entries for words not already in the target deck (deduped by front form).
+  function buildCardsForWords(words, targetDeckId, existingCardsObj) {
     const existingFronts = new Set(
-      Object.values(current.cards)
-        .filter(c => c.deckId === VOCAB_DRILL_DECK_ID)
+      Object.values(existingCardsObj)
+        .filter(c => c.deckId === targetDeckId)
         .map(c => c.front)
     )
     const newCards = {}
-    let addedCount = 0
+    const newCardIds = []
     words.forEach((word, i) => {
       const dictEntry = word.jmdictId ? poolDictEntries[word.jmdictId] : null
       const front = word.kanji ?? dictEntry?.primary_form ?? word.kana
       if (existingFronts.has(front)) return
       existingFronts.add(front)
-      const cardId = `${VOCAB_DRILL_DECK_ID}-${Date.now()}-${i}`
+      const cardId = `${targetDeckId}-${Date.now()}-${i}`
       const kana = word.kana ?? dictEntry?.kana_forms?.[0]
       const english = word.english ?? briefGloss(dictEntry)
       const extras = {}
@@ -1260,13 +1207,34 @@ export default function VocabPage() {
         extras.voicevoxVoices = word.voicevoxVoices
         extras.voicevoxId = word.id
       }
-      newCards[cardId] = createCard(front, english, cardId, VOCAB_DRILL_DECK_ID, extras)
-      addedCount++
+      newCards[cardId] = createCard(front, english, cardId, targetDeckId, extras)
+      newCardIds.push(cardId)
     })
-    if (addedCount > 0) {
+    return { newCards, newCardIds }
+  }
+
+  function handleAddToSrs(words, deckId) {
+    const current = srsData ?? { decks: {}, cards: {}, lastSession: null, totalReviews: 0, newCardDay: { date: '', count: 0 } }
+    const decks = ensureDeck(current.decks, deckId, current.decks[deckId]?.name ?? 'Deck')
+    const { newCards, newCardIds } = buildCardsForWords(words, deckId, current.cards)
+    const deckName = decks[deckId]?.name ?? 'Deck'
+    if (newCardIds.length > 0) {
       saveSrs({ ...current, decks, cards: { ...current.cards, ...newCards } })
     }
-    return addedCount
+    return { count: newCardIds.length, cardIds: newCardIds, deckName }
+  }
+
+  function handleCreateDeckAndAddToSrs(words, name) {
+    const current = srsData ?? { decks: {}, cards: {}, lastSession: null, totalReviews: 0, newCardDay: { date: '', count: 0 } }
+    const { decks, deckId } = createDeck(current.decks, name)
+    const { newCards, newCardIds } = buildCardsForWords(words, deckId, current.cards)
+    saveSrs({ ...current, decks, cards: { ...current.cards, ...newCards } })
+    return { count: newCardIds.length, cardIds: newCardIds, deckName: name }
+  }
+
+  function handleUndoAdd(cardIds) {
+    const current = srsData ?? { decks: {}, cards: {}, lastSession: null, totalReviews: 0, newCardDay: { date: '', count: 0 } }
+    saveSrs({ ...current, cards: deleteCards(current.cards, cardIds) })
   }
 
   function handleSelectSource(sourceId) {
@@ -1447,6 +1415,10 @@ export default function VocabPage() {
                   onRedoSelected={drill.redoSelection}
                   onBack={() => setIsDrilling(false)}
                   onAddToSrs={handleAddToSrs}
+                  onCreateDeckAndAddToSrs={handleCreateDeckAndAddToSrs}
+                  onUndoAdd={handleUndoAdd}
+                  decks={srsData?.decks ?? {}}
+                  isMobile={isMobile}
                 />
               ) : (
                 <ActiveDrill

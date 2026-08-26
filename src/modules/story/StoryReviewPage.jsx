@@ -9,12 +9,12 @@ import { buildVocabMap } from '../../utils/vocabMap.js'
 import { FONT, TRACKING, BORDER, TEXT, TEXT_MUTED, FS_ARTICLE_BODY, FS_BASE, FS_CAPTION, FS_HEADING, FS_CONTENT_HEADING } from '../../data/theme.js'
 // Cross-module write: creates cards in vocab-srs progress namespace (same pattern as ImmersionReader)
 import { createCard } from '../vocab-srs/srs.js'
+import { ensureDeck, createDeck, deleteCards } from '../vocab-srs/deckUtils.js'
 import { useProgress } from '../../hooks/useProgress.js'
+import { useToast } from '../../context/ToastContext.jsx'
 import { supabase } from '../../lib/supabase.js'
 import { gradeAnswer } from './api.js'
 import { lookupVocabulary } from './lookupVocabulary.js'
-
-const STORY_DECK_ID = 'story-words'
 
 const FORMAT_LAYOUTS = {
   news: NewspaperLayout,
@@ -94,6 +94,7 @@ function Question({ q, index }) {
 export default function StoryReviewPage({ storyId }) {
   const isMobile = useIsMobile()
   const { data: srsData, save: saveSrs } = useProgress('vocab-srs')
+  const { showToast } = useToast()
 
   const [story, setStory] = useState(null)
   const [storyLoading, setStoryLoading] = useState(true)
@@ -127,6 +128,8 @@ export default function StoryReviewPage({ storyId }) {
   const [popup, setPopup] = useState(null) // { token, vocabEntry, anchorRect, idx }
   const [showFurigana, setShowFurigana] = useState(true)
 
+  const decks = srsData?.decks ?? {}
+
   useEffect(() => {
     setVocabulary([])
     setPopup(null)
@@ -142,20 +145,37 @@ export default function StoryReviewPage({ storyId }) {
     setPopup({ token, vocabEntry: vocabMap[token.t] ?? null, anchorRect: rect, idx })
   }
 
-  function handleAddToSrs(token, vocabEntry) {
+  function addWordToDeck(token, vocabEntry, deckId, decksForCreate) {
     const meaning = vocabEntry?.meaning ?? token.r ?? ''
     const current = srsData ?? { decks: {}, cards: {}, lastSession: null, totalReviews: 0, newCardDay: { date: '', count: 0 } }
-    const decks = { ...current.decks }
-    if (!decks[STORY_DECK_ID]) {
-      decks[STORY_DECK_ID] = { id: STORY_DECK_ID, name: 'Story Words', active: true, source: 'imported', addedAt: Date.now() }
-    }
-    const cardId = `${STORY_DECK_ID}-${Date.now()}`
+    const newDecks = decksForCreate ?? ensureDeck(current.decks, deckId, current.decks[deckId]?.name ?? 'Deck')
+    const cardId = `${deckId}-${Date.now()}`
     const extras = {}
     if (token.r) extras.kana = token.r
     if (vocabEntry?.jmdictId) extras.jmdictId = vocabEntry.jmdictId
-    const card = createCard(token.b || token.t, meaning, cardId, STORY_DECK_ID, extras)
-    saveSrs({ ...current, decks, cards: { ...current.cards, [cardId]: card } })
+    const card = createCard(token.b || token.t, meaning, cardId, deckId, extras)
+    saveSrs({ ...current, decks: newDecks, cards: { ...current.cards, [cardId]: card } })
     setPopup(null)
+    showToast({
+      message: `Added to "${newDecks[deckId]?.name ?? 'Deck'}".`,
+      actionLabel: 'Undo',
+      onAction: () => handleUndoAdd(cardId),
+    })
+  }
+
+  function handlePopupAdd(token, vocabEntry, deckId) {
+    addWordToDeck(token, vocabEntry, deckId)
+  }
+
+  function handlePopupCreateAndAdd(token, vocabEntry, name) {
+    const current = srsData ?? { decks: {}, cards: {}, lastSession: null, totalReviews: 0, newCardDay: { date: '', count: 0 } }
+    const { decks: newDecks, deckId } = createDeck(current.decks, name)
+    addWordToDeck(token, vocabEntry, deckId, newDecks)
+  }
+
+  function handleUndoAdd(cardId) {
+    const current = srsData ?? { decks: {}, cards: {}, lastSession: null, totalReviews: 0, newCardDay: { date: '', count: 0 } }
+    saveSrs({ ...current, cards: deleteCards(current.cards, [cardId]) })
   }
 
   const crumbs = [
@@ -185,10 +205,14 @@ export default function StoryReviewPage({ storyId }) {
           token={popup.token}
           vocabEntry={popup.vocabEntry}
           anchorRect={popup.anchorRect}
-          onAddToSrs={handleAddToSrs}
+          decks={decks}
+          isMobile={isMobile}
+          onAdd={handlePopupAdd}
+          onCreateAndAdd={handlePopupCreateAndAdd}
           onClose={() => setPopup(null)}
         />
       )}
+
       <PageHeader crumbs={crumbs} rightSlot={<AuthSlot />} />
       <div style={{ flex: 1, overflowY: 'auto' }} onScroll={() => setPopup(null)}>
         <div style={{ maxWidth: 760, margin: '0 auto', padding: isMobile ? '18px 14px 70px' : '24px 20px 80px' }}>
