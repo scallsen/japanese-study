@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE } from '../data/theme.js'
 
 const ACCENT = '#3ABDA4'
@@ -71,7 +71,13 @@ export default function Toast({ open, message, actionLabel, onAction, onDismiss,
   const dismissTimerRef = useRef(null)
   const exitTimerRef = useRef(null)
 
-  useEffect(() => {
+  // The same Toast instance is reused across successive toasts (ToastContext
+  // only toggles `open`, it never remounts), so `closing` can still be true
+  // from a just-finished exit when a new one opens. useLayoutEffect (not
+  // useEffect) resets it before the browser paints, so that stale frame is
+  // never shown — otherwise the new toast briefly plays its exit animation
+  // (looks like a snap-down) before switching to its entrance animation.
+  useLayoutEffect(() => {
     if (!open) return
     setClosing(false)
     dismissTimerRef.current = setTimeout(startClose, duration)
