@@ -1,4 +1,4 @@
-name: Fetch NHK Easy Articles
+name: Fetch News Articles
 
 on:
   schedule:
