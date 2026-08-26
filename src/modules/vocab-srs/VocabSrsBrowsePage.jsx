@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext.jsx'
 import { useProgress } from '../../hooks/useProgress.js'
 import { migrateProgress } from './migrate.js'
 import { resolveCard, cardStateLabel } from './srs.js'
-import { moveCardsToDeck, deleteCards, createDeck } from './deckUtils.js'
+import { moveCardsToDeck, deleteCards, createDeck, deleteDeck, isBundledDeck } from './deckUtils.js'
 import PageHeader from '../../components/PageHeader.jsx'
 import AuthSlot from '../../components/AuthSlot.jsx'
 import DrawerSelect from '../../components/DrawerSelect.jsx'
@@ -11,6 +11,7 @@ import DeckPickerSheet from '../../components/DeckPickerSheet.jsx'
 import ConfirmDialog from '../../components/ConfirmDialog.jsx'
 import SelectAllCheckbox from '../../components/SelectAllCheckbox.jsx'
 import SelectableRow from '../../components/SelectableRow.jsx'
+import { useToast } from '../../context/ToastContext.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION } from '../../data/theme.js'
 
 function useIsMobile(breakpoint = 768) {
@@ -178,6 +179,7 @@ function CardRow({ card, showDeck, manageMode, selected, onToggleSelect }) {
 export default function VocabSrsBrowsePage() {
   const { user, signIn } = useAuth()
   const { data: rawProgress, save, loading } = useProgress('vocab-srs')
+  const { showToast } = useToast()
   const isMobile = useIsMobile()
 
   const [stateFilter, setStateFilter] = useState('all')
@@ -189,6 +191,7 @@ export default function VocabSrsBrowsePage() {
   const [selected, setSelected] = useState(new Set())
   const [showMovePicker, setShowMovePicker] = useState(false)
   const [confirmingBulkDelete, setConfirmingBulkDelete] = useState(false)
+  const [confirmingDeckDelete, setConfirmingDeckDelete] = useState(false)
 
   useEffect(() => {
     const t = setTimeout(() => setSearch(searchInput.trim().toLowerCase()), 250)
@@ -264,23 +267,81 @@ export default function VocabSrsBrowsePage() {
   }
 
   function handleBulkDelete() {
-    const newCardsObj = deleteCards(cardsObj, [...selected])
+    const ids = [...selected]
+    const deletedCards = ids.map(id => cardsObj[id]).filter(Boolean)
+    const newCardsObj = deleteCards(cardsObj, ids)
     save({ ...progress, cards: newCardsObj })
     setSelected(new Set())
     setConfirmingBulkDelete(false)
+    showToast({
+      message: `Deleted ${deletedCards.length} card${deletedCards.length === 1 ? '' : 's'}.`,
+      actionLabel: 'Undo',
+      onAction: () => handleUndoBulkDelete(deletedCards),
+    })
+  }
+
+  function handleUndoBulkDelete(deletedCards) {
+    const restoredCardsObj = { ...cardsObj }
+    for (const card of deletedCards) restoredCardsObj[card.id] = card
+    save({ ...progress, cards: restoredCardsObj })
   }
 
   function handleBulkMove(targetDeckId) {
-    const newCardsObj = moveCardsToDeck(cardsObj, [...selected], targetDeckId)
+    const ids = [...selected]
+    const originalDeckIds = ids.map(id => [id, cardsObj[id]?.deckId])
+    const newCardsObj = moveCardsToDeck(cardsObj, ids, targetDeckId)
     save({ ...progress, cards: newCardsObj })
     setSelected(new Set())
+    showToast({
+      message: `Moved ${ids.length} card${ids.length === 1 ? '' : 's'} to "${decks[targetDeckId]?.name ?? 'deck'}".`,
+      actionLabel: 'Undo',
+      onAction: () => handleUndoBulkMove(originalDeckIds),
+    })
   }
 
   function handleBulkMoveCreateDeck(name) {
+    const ids = [...selected]
+    const originalDeckIds = ids.map(id => [id, cardsObj[id]?.deckId])
     const { decks: newDecks, deckId } = createDeck(decks, name)
-    const newCardsObj = moveCardsToDeck(cardsObj, [...selected], deckId)
+    const newCardsObj = moveCardsToDeck(cardsObj, ids, deckId)
     save({ ...progress, decks: newDecks, cards: newCardsObj })
     setSelected(new Set())
+    showToast({
+      message: `Moved ${ids.length} card${ids.length === 1 ? '' : 's'} to "${name}".`,
+      actionLabel: 'Undo',
+      onAction: () => handleUndoBulkMove(originalDeckIds),
+    })
+  }
+
+  function handleUndoBulkMove(originalDeckIds) {
+    const restoredCardsObj = { ...cardsObj }
+    for (const [id, deckId] of originalDeckIds) {
+      if (restoredCardsObj[id] && deckId) restoredCardsObj[id] = { ...restoredCardsObj[id], deckId }
+    }
+    save({ ...progress, cards: restoredCardsObj })
+  }
+
+  function handleDeleteDeck() {
+    const deckId = deckFilter
+    const deletedDeck = decks[deckId]
+    const deletedCards = Object.values(cardsObj).filter(c => c.deckId === deckId)
+    const newProgress = deleteDeck(progress, deckId)
+    save(newProgress)
+    setConfirmingDeckDelete(false)
+    showToast({
+      message: `Deleted "${deletedDeck?.name}" and its ${deletedCards.length} card${deletedCards.length === 1 ? '' : 's'}.`,
+      actionLabel: 'Undo',
+      onAction: () => handleUndoDeleteDeck(deletedDeck, deletedCards),
+    })
+    window.location.hash = '#/vocab-srs'
+  }
+
+  function handleUndoDeleteDeck(deletedDeck, deletedCards) {
+    if (!deletedDeck) return
+    const restoredDecks = { ...decks, [deletedDeck.id]: deletedDeck }
+    const restoredCardsObj = { ...cardsObj }
+    for (const card of deletedCards) restoredCardsObj[card.id] = card
+    save({ ...progress, decks: restoredDecks, cards: restoredCardsObj })
   }
 
   if (loading && !progress) return null
@@ -306,6 +367,7 @@ export default function VocabSrsBrowsePage() {
 
   const visible = filtered.slice(0, visibleCount)
   const hasMore = filtered.length > visibleCount
+  const canDeleteThisDeck = deckFilter !== 'all' && decks[deckFilter] && !isBundledDeck(decks[deckFilter])
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', background: BG, fontFamily: FONT, letterSpacing: TRACKING, color: TEXT }}>
@@ -328,23 +390,44 @@ export default function VocabSrsBrowsePage() {
                 label="Deck"
               />
             </div>
-            <button
-              onClick={() => { setManageMode(v => !v); setSelected(new Set()) }}
-              className="deck-picker-secondary-btn"
-              style={{
-                padding: '7px 14px',
-                fontSize: FS_BASE,
-                fontFamily: FONT,
-                letterSpacing: TRACKING,
-                background: manageMode ? 'rgba(58,189,164,0.15)' : 'rgba(255,255,255,0.05)',
-                color: manageMode ? ACCENT : TEXT,
-                border: `1px solid ${manageMode ? 'rgba(58,189,164,0.4)' : 'rgba(255,255,255,0.15)'}`,
-                borderRadius: 6,
-                cursor: 'pointer',
-              }}
-            >
-              {manageMode ? 'Done selecting' : 'Select'}
-            </button>
+            <div style={{ display: 'flex', gap: 10 }}>
+              {canDeleteThisDeck && (
+                <button
+                  onClick={() => setConfirmingDeckDelete(true)}
+                  className="deck-row-delete-btn"
+                  style={{
+                    padding: '7px 14px',
+                    fontSize: FS_BASE,
+                    fontFamily: FONT,
+                    letterSpacing: TRACKING,
+                    background: 'rgba(192,57,43,0.15)',
+                    border: '1px solid rgba(192,57,43,0.4)',
+                    borderRadius: 6,
+                    color: '#f87171',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Delete deck
+                </button>
+              )}
+              <button
+                onClick={() => { setManageMode(v => !v); setSelected(new Set()) }}
+                className="deck-picker-secondary-btn"
+                style={{
+                  padding: '7px 14px',
+                  fontSize: FS_BASE,
+                  fontFamily: FONT,
+                  letterSpacing: TRACKING,
+                  background: manageMode ? 'rgba(58,189,164,0.15)' : 'rgba(255,255,255,0.05)',
+                  color: manageMode ? ACCENT : TEXT,
+                  border: `1px solid ${manageMode ? 'rgba(58,189,164,0.4)' : 'rgba(255,255,255,0.15)'}`,
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                }}
+              >
+                {manageMode ? 'Done selecting' : 'Select'}
+              </button>
+            </div>
           </div>
 
           <StateTabs
@@ -497,6 +580,17 @@ export default function VocabSrsBrowsePage() {
         confirmLabel="Delete"
         onConfirm={handleBulkDelete}
         onCancel={() => setConfirmingBulkDelete(false)}
+      />
+
+      <ConfirmDialog
+        open={confirmingDeckDelete}
+        title="Delete deck"
+        message={canDeleteThisDeck
+          ? `Delete "${decks[deckFilter]?.name}" and its ${deckScopedCards.length} card${deckScopedCards.length === 1 ? '' : 's'}? This can't be undone.`
+          : ''}
+        confirmLabel="Delete"
+        onConfirm={handleDeleteDeck}
+        onCancel={() => setConfirmingDeckDelete(false)}
       />
     </div>
   )

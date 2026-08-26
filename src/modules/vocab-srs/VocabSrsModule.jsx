@@ -7,11 +7,10 @@ import { initSession } from './session.js'
 import { migrateProgress, initializeDeckCards } from './migrate.js'
 import VocabSrsDrill from './VocabSrsDrill.jsx'
 import WordImportPanel from './WordImportPanel.jsx'
-import { ensureDeck, createDeck, renameDeck, deleteDeck, deleteCards } from './deckUtils.js'
+import { ensureDeck, createDeck, renameDeck, deleteCards } from './deckUtils.js'
 import PageHeader from '../../components/PageHeader.jsx'
 import SpeakerIcon from '../../components/SpeakerIcon.jsx'
 import HeaderMenu from '../../components/HeaderMenu.jsx'
-import ConfirmDialog from '../../components/ConfirmDialog.jsx'
 import { useToast } from '../../context/ToastContext.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_NAV, SUBHEADING_STYLE, FS_CAPTION, FS_CONTENT_HEADING } from '../../data/theme.js'
 import DrawerSectionHeader from '../../components/DrawerSectionHeader.jsx'
@@ -132,7 +131,7 @@ function FileInput({ onChange, accept = '.txt', label = 'Choose .txt file' }) {
   )
 }
 
-function DeckRow({ deck, stats, onToggle, onRename, onDelete }) {
+function DeckRow({ deck, stats, onToggle, onRename }) {
   const [hovered, setHovered] = useState(false)
   const [editing, setEditing] = useState(false)
   const [draftName, setDraftName] = useState(deck.name)
@@ -198,29 +197,6 @@ function DeckRow({ deck, stats, onToggle, onRename, onDelete }) {
           </div>
           <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: 2 }}>{infoText}</div>
         </div>
-        {canManage && (
-          <button
-            onClick={onDelete}
-            title="Delete deck"
-            className="deck-row-delete-btn"
-            style={{
-              flexShrink: 0,
-              width: 24,
-              height: 24,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              background: 'transparent',
-              border: 'none',
-              borderRadius: 5,
-              color: TEXT_MUTED,
-              fontSize: FS_BASE,
-              cursor: 'pointer',
-            }}
-          >
-            ×
-          </button>
-        )}
         <button
           onClick={onToggle}
           onMouseEnter={() => setHovered(true)}
@@ -244,7 +220,7 @@ function DeckRow({ deck, stats, onToggle, onRename, onDelete }) {
           {deck.active ? 'On' : 'Off'}
         </button>
       </div>
-      {canManage && stats.total > 0 && (
+      {canManage && (
         <a
           href={`#/vocab-srs/browse?deck=${deck.id}&manage=1`}
           className="srs-browse-link"
@@ -289,7 +265,6 @@ export default function VocabSrsModule() {
   const [importMsg, setImportMsg] = useState(null)
   const [ankiSyncMsg, setAnkiSyncMsg] = useState(null)
   const [showWordImport, setShowWordImport] = useState(false)
-  const [deletingDeckId, setDeletingDeckId] = useState(null)
   const [advanceDays, setAdvanceDays] = useState(3)
   const [showOptions, setShowOptions] = useState(() => window.innerWidth > 768)
   const [chevronHovered, setChevronHovered] = useState(false)
@@ -598,13 +573,6 @@ export default function VocabSrsModule() {
     save(newProgress)
   }
 
-  function handleConfirmDeleteDeck() {
-    const deckId = deletingDeckId
-    const newProgress = deleteDeck(progress, deckId)
-    setProgress(newProgress)
-    save(newProgress)
-    setDeletingDeckId(null)
-  }
 
   async function handleAnkiSyncFileChange(e) {
     const file = e.target.files[0]
@@ -688,7 +656,6 @@ export default function VocabSrsModule() {
               stats={getDeckStats(cardsObj, deck.id)}
               onToggle={() => handleToggleDeck(deck.id)}
               onRename={newName => handleRenameDeck(deck.id, newName)}
-              onDelete={() => setDeletingDeckId(deck.id)}
             />
           ))}
         </div>
@@ -1208,17 +1175,6 @@ export default function VocabSrsModule() {
         isMobile={isMobile}
         onAdd={handleWordImportAdd}
         onCreateAndAdd={handleWordImportCreateAndAdd}
-      />
-
-      <ConfirmDialog
-        open={!!deletingDeckId}
-        title="Delete deck"
-        message={deletingDeckId
-          ? `Delete "${decks[deletingDeckId]?.name}" and its ${getDeckStats(cardsObj, deletingDeckId).total} card${getDeckStats(cardsObj, deletingDeckId).total === 1 ? '' : 's'}? This can't be undone.`
-          : ''}
-        confirmLabel="Delete"
-        onConfirm={handleConfirmDeleteDeck}
-        onCancel={() => setDeletingDeckId(null)}
       />
 
     </div>
