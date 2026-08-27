@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
-import { createCard } from './srs.js'
 import { extractWordsFromText, extractWordsFromImage, readImageAsBase64 } from './wordImportApi.js'
+import DeckComboBox from '../../components/DeckComboBox.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_HEADING } from '../../data/theme.js'
 
 const ACCENT = '#3ABDA4'
@@ -123,7 +123,7 @@ function WordRow({ word, onToggle, onEdit }) {
   )
 }
 
-export default function WordImportPanel({ open, onClose, onConfirm }) {
+export default function WordImportPanel({ open, onClose, decks, isMobile, onAdd, onCreateAndAdd }) {
   const [tab, setTab] = useState('text')
   const [text, setText] = useState('')
   const [imageFile, setImageFile] = useState(null)
@@ -210,23 +210,31 @@ export default function WordImportPanel({ open, onClose, onConfirm }) {
     setWords(ws => ws.map(w => ({ ...w, selected })))
   }
 
-  async function handleConfirm() {
-    const selected = words.filter(w => w.selected && w.surface.trim() && w.meaning.trim())
-    if (!selected.length) {
+  function selectedPayload() {
+    return words
+      .filter(w => w.selected && w.surface.trim() && w.meaning.trim())
+      .map(w => ({ surface: w.surface.trim(), reading: w.reading.trim(), meaning: w.meaning.trim(), jmdictId: w.jmdictId }))
+  }
+
+  async function handleAdd(deckId) {
+    const payload = selectedPayload()
+    if (!payload.length) {
       setError('Select at least one word with a meaning filled in')
       return
     }
+    await onAdd(payload, deckId)
+    setDoneCount(payload.length)
+    setStage('done')
+  }
 
-    const ts = Date.now()
-    const cards = selected.map((w, i) => {
-      const extras = {}
-      if (w.reading.trim()) extras.kana = w.reading.trim()
-      if (w.jmdictId) extras.jmdictId = w.jmdictId
-      return createCard(w.surface.trim(), w.meaning.trim(), `word-import-${ts}-${i}`, 'word-import', extras)
-    })
-
-    await onConfirm(cards)
-    setDoneCount(cards.length)
+  async function handleCreateAndAdd(name) {
+    const payload = selectedPayload()
+    if (!payload.length) {
+      setError('Select at least one word with a meaning filled in')
+      return
+    }
+    await onCreateAndAdd(payload, name)
+    setDoneCount(payload.length)
     setStage('done')
   }
 
@@ -266,11 +274,8 @@ export default function WordImportPanel({ open, onClose, onConfirm }) {
         <div style={{ padding: '18px 20px', overflowY: 'auto' }}>
           {stage === 'done' ? (
             <div style={{ textAlign: 'center', padding: '30px 0' }}>
-              <div style={{ fontSize: FS_HEADING, color: TEXT, marginBottom: 8 }}>
+              <div style={{ fontSize: FS_HEADING, color: TEXT, marginBottom: 20 }}>
                 {doneCount} word{doneCount === 1 ? '' : 's'} added
-              </div>
-              <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: 20 }}>
-                Added to the &ldquo;Imported Words&rdquo; deck
               </div>
               <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
                 <PrimaryButton onClick={reset}>Import more</PrimaryButton>
@@ -304,9 +309,14 @@ export default function WordImportPanel({ open, onClose, onConfirm }) {
               {error && <div style={{ color: '#f87171', fontSize: FS_CAPTION, marginTop: 12 }}>{error}</div>}
 
               <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
-                <PrimaryButton onClick={handleConfirm} disabled={selectedCount === 0}>
-                  Add {selectedCount} word{selectedCount === 1 ? '' : 's'} to SRS
-                </PrimaryButton>
+                <DeckComboBox
+                  decks={decks}
+                  isMobile={isMobile}
+                  disabled={selectedCount === 0}
+                  buttonLabel={`Add ${selectedCount} word${selectedCount === 1 ? '' : 's'} to SRS`}
+                  onAdd={handleAdd}
+                  onCreateAndAdd={handleCreateAndAdd}
+                />
                 <TabButton active={false} onClick={() => setStage('input')}>Back</TabButton>
               </div>
             </>

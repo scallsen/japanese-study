@@ -1,4 +1,5 @@
 import { useState, useEffect, useLayoutEffect, useRef } from 'react'
+import DeckComboBox from './DeckComboBox.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_ENTRY_WORD } from '../data/theme.js'
 
 export function TokenizedBody({
@@ -55,7 +56,7 @@ export function TokenizedBody({
   )
 }
 
-export function WordPopup({ token, vocabEntry, onAddToSrs, onClose, anchorRect }) {
+export function WordPopup({ token, vocabEntry, onAdd, onCreateAndAdd, decks, isMobile, onClose, anchorRect }) {
   const popupRef = useRef(null)
 
   useEffect(() => {
@@ -115,23 +116,14 @@ export function WordPopup({ token, vocabEntry, onAddToSrs, onClose, anchorRect }
       {vocabEntry?.meaning && (
         <div style={{ fontSize: FS_BASE, color: TEXT, marginBottom: 10 }}>{vocabEntry.meaning}</div>
       )}
-      <button
-        onClick={() => onAddToSrs(token, vocabEntry)}
-        style={{
-          fontSize: FS_BASE,
-          fontFamily: FONT,
-          letterSpacing: TRACKING,
-          color: TEXT,
-          background: 'rgba(255,255,255,0.08)',
-          border: '1px solid rgba(255,255,255,0.15)',
-          borderRadius: 5,
-          padding: '4px 12px',
-          cursor: 'pointer',
-          width: '100%',
-        }}
-      >
-        Add to SRS
-      </button>
+      <DeckComboBox
+        decks={decks}
+        isMobile={isMobile}
+        fullWidth
+        buttonLabel="Add to SRS"
+        onAdd={deckId => onAdd(token, vocabEntry, deckId)}
+        onCreateAndAdd={name => onCreateAndAdd(token, vocabEntry, name)}
+      />
     </div>
   )
 }

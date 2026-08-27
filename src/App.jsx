@@ -10,9 +10,14 @@ import StoryReviewPage from './modules/story/StoryReviewPage.jsx'
 import DictionaryPage from './pages/DictionaryPage.jsx'
 import DictionaryEntryPage from './pages/DictionaryEntryPage.jsx'
 import AnimeVocabModule from './modules/anime-vocab/AnimeVocabModule.jsx'
+import DeckPickerLabPage from './pages/DeckPickerLabPage.jsx'
+import ToastLabPage from './pages/ToastLabPage.jsx'
 
 function getRoute() {
-  return window.location.hash.slice(1) || '/'
+  // Strip any query string (e.g. '/vocab-srs/browse?deck=x&manage=1') before
+  // matching — routes below compare on path only; pages that need the query
+  // read window.location.hash directly.
+  return window.location.hash.slice(1).split('?')[0] || '/'
 }
 
 export default function App() {
@@ -44,5 +49,9 @@ export default function App() {
   if (route.startsWith('/dictionary/entry/')) return <DictionaryEntryPage entryId={route.slice('/dictionary/entry/'.length)} />
   if (route === '/anime-vocab') return <AnimeVocabModule />
   if (route.startsWith('/anime-vocab/')) return <AnimeVocabModule initialMediaId={route.slice('/anime-vocab/'.length)} />
+  // Temporary dev-only comparison harness for the SRS deck-picker UX, not linked from the dashboard
+  if (route === '/dev/deck-picker-lab') return <DeckPickerLabPage />
+  // Temporary dev-only comparison harness for the add-confirmation toast UX, not linked from the dashboard
+  if (route === '/dev/toast-lab') return <ToastLabPage />
   return <DashboardPage />
 }
