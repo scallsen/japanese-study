@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import PageHeader from '../components/PageHeader.jsx'
 import DataList from '../components/DataList.jsx'
 import Badge from '../components/Badge.jsx'
@@ -18,6 +18,7 @@ import DrillHUD from '../components/DrillHUD.jsx'
 import Select from '../components/Select.jsx'
 import Checkbox from '../components/Checkbox.jsx'
 import DeckComboBox from '../components/DeckComboBox.jsx'
+import { WordPopup } from '../components/JapaneseReader.jsx'
 import { ModuleThemeProvider } from '../context/ModuleThemeContext.jsx'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, BORDER as BORDER_TOKEN, FS_BASE, FS_CAPTION, FS_CONTENT_HEADING,
@@ -77,7 +78,7 @@ const NAV = [
       { key: 'toggle-button', label: 'Toggle Button', built: true },
       { key: 'distribution-bar', label: 'Distribution Bar', built: true },
       { key: 'deck-picker', label: 'Deck Picker', built: true },
-      { key: 'definition-popover', label: 'Definition Popover', built: false },
+      { key: 'definition-popover', label: 'Definition Popover', built: true },
     ],
   },
   {
@@ -106,7 +107,7 @@ const DESCRIPTIONS = {
   'toggle-button': 'A standalone on/off control whose label changes with its state — Follow/Unfollow, deck On/Off. Not a Button variant (its hover can mean the opposite action, which no resting-state variant expresses) and not a Chip (a chip picks one of a set and keeps a fixed label). Composes Chip so both share one visual language.',
   'distribution-bar': 'How a collection divides across states. Distinct from the progress bar, which shows one value’s completion.',
   'deck-picker': 'Pick an existing deck, or create one and pick it, in a single control — type to filter, and a "+ Create «typed»" row appears inline as soon as the query doesn’t match. Popover on desktop, bottom sheet on mobile. Chosen over DeckPickerSheet and SegmentedDeckAdd, which are retired.',
-  'definition-popover': 'A word’s reading and gloss, anchored to the word you clicked. Already correctly shared as WordPopup inside JapaneseReader — it needs extracting to its own file before it can be demoed here, which is rebuild work rather than design work.',
+  'definition-popover': 'A word’s reading, part of speech, and gloss, anchored to the word you clicked — with adding it to a deck as a second view of the same surface rather than a second floating layer. Built on Popover + OptionPicker.',
   'drill-button': 'A judgment button in a drill. Consolidates SpeedModeControls’ Correct/Incorrect pair and VocabSrsDrill’s four-way RatingButton — the same control, differing only in padding, fill opacity, and whether a second line rendered.',
   hud: 'Live session stats during a drill — streak, correct, remaining, undo. Already shared across two modules; shown here as-is rather than rebuilt.',
 }
@@ -847,6 +848,52 @@ function DeckPickerDemo() {
   return <ComponentPage title="Deck Picker" description={DESCRIPTIONS['deck-picker']} built preview={preview} controls={controls} />
 }
 
+function DefinitionPopoverDemo() {
+  const [open, setOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+  const [log, setLog] = useState(null)
+  const wordRef = useRef(null)
+
+  const preview = (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE_12, alignItems: 'flex-start' }}>
+      <div style={{ fontSize: FS_ARTICLE_BODY, fontFamily: KANJI_FONT, color: TEXT, lineHeight: 2 }}>
+        今日は
+        <span
+          ref={wordRef}
+          onClick={() => { setOpen(true); setLog(null) }}
+          style={{ background: 'rgba(224,90,78,0.22)', cursor: 'pointer', padding: '0 2px', borderRadius: 3 }}
+        >
+          世界
+        </span>
+        で一番いい天気です。
+      </div>
+      {log && <div style={{ fontSize: FS_CAPTION, color: ACCENT }}>{log}</div>}
+      <div style={{ fontSize: FS_SM, color: TEXT_MUTED, lineHeight: 1.5, maxWidth: 420 }}>
+        Click the highlighted word, then &ldquo;Add to SRS&rdquo; — the panel swaps to the deck list in
+        place instead of opening a second popover on top of itself.
+      </div>
+
+      {open && (
+        <WordPopup
+          token={{ t: '世界', r: 'せかい' }}
+          vocabEntry={{ pos: 'Noun', meaning: 'world; society; the universe' }}
+          decks={SEED_DECKS}
+          lastUsedDeckId="immersion-words"
+          isMobile={isMobile}
+          anchorRect={wordRef.current?.getBoundingClientRect()}
+          onClose={() => setOpen(false)}
+          onAdd={(token, entry, deckId) => setLog(`Added 世界 to "${SEED_DECKS[deckId]?.name ?? deckId}"`)}
+          onCreateAndAdd={(token, entry, name) => setLog(`Created "${name}" and added 世界`)}
+        />
+      )}
+    </div>
+  )
+
+  const controls = <Checkbox checked={isMobile} onChange={() => setIsMobile(v => !v)} label="Mobile (bottom sheet)" />
+
+  return <ComponentPage title="Definition Popover" description={DESCRIPTIONS['definition-popover']} built preview={preview} controls={controls} />
+}
+
 /* ── Drill ─────────────────────────────────────────────────────────────── */
 
 const DRILL_LAYOUT_OPTIONS = [
@@ -935,6 +982,7 @@ const PAGES = {
   'toggle-button': ToggleButtonDemo,
   'distribution-bar': DistributionBarDemo,
   'deck-picker': DeckPickerDemo,
+  'definition-popover': DefinitionPopoverDemo,
   'drill-button': DrillButtonDemo,
   hud: HudDemo,
 }

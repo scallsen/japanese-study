@@ -34,6 +34,9 @@ export default function Modal({
   // button) shouldn't also carry a header Close — two dismiss affordances
   // for one action reads as a mistake. Confirm-style dialogs pass false.
   showClose = true,
+  // Full-bleed content (a list whose rows should touch the panel edges)
+  // passes 0; prose content keeps the default inset.
+  bodyPadding = SPACE_16,
   children,
 }) {
   // Closing has to be a rendered state, not just an unmount: React removes
@@ -127,7 +130,7 @@ export default function Modal({
           </div>
         )}
 
-        <div style={{ overflowY: 'auto', flex: 1, padding: SPACE_16 }}>
+        <div style={{ overflowY: 'auto', flex: 1, padding: bodyPadding }}>
           {children}
         </div>
 

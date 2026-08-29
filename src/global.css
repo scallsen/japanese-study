@@ -177,6 +177,15 @@ button, input, select, textarea {
   color: rgba(255,255,255,0.3);
 }
 
+/* OptionPicker rows */
+.option-picker-row {
+  transition: background 120ms;
+}
+
+.option-picker-row:hover {
+  background: rgba(255,255,255,0.06);
+}
+
 /* Modal */
 .modal-close-btn {
   transition: color 120ms;
