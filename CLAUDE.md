@@ -100,6 +100,57 @@ Each entry in `src/data/modules.js`:
 | `TEXT` | `#E8E8E8` | Primary text |
 | `TEXT_MUTED` | `#888888` | Secondary / label text |
 
+## Style Guide (`#/dev/style-guide`)
+
+Living component library + progress tracker for an in-progress app-wide design-system consolidation. Dev-only lab page, same pattern as `ToastLabPage`/`DeckPickerLabPage` below — not linked from the dashboard. Left nav lists every planned component (built + placeholder); clicking a placeholder shows its description and "Not built yet" rather than being hidden, so the roster below doubles as the page's own content.
+
+**Key files:** `src/pages/StyleGuideLabPage.jsx` (the whole page — nav, `ComponentPage`/`FoundationPage` wrappers, per-component demo + controls). Design-system components live in `src/components/`: `Button.jsx`, `Badge.jsx`, `Card.jsx`, `TextInput.jsx`, `NumberField.jsx`, `Select.jsx`, `Checkbox.jsx`, `SectionHeader.jsx`, `Chip.jsx`, `DataList.jsx`, `Modal.jsx`, `ConfirmDialog.jsx`, `Toast.jsx`, `FeedCard.jsx`, `ToggleButton.jsx`, `DistributionBar.jsx`, `DeckComboBox.jsx`, `DrillButton.jsx`, `DrillHUD.jsx`. Module accent context: `src/context/ModuleThemeContext.jsx`.
+
+**Conventions established while building this — follow for every remaining component:**
+- **Ground every value in real code, never invent.** Before designing a component, read the actual call sites it's meant to unify and extract real pixel values/colors/behavior rather than guessing something "reasonable." Where real call sites disagree, reconcile deliberately and say so in a comment (e.g. `Button`'s `danger-outline` fixed `ConfirmDialog`'s mismatched background/text hue instead of copying the bug forward).
+- **Token discipline:** `FS_BASE` (15px) and `SPACE_12` are the defaults — use them unless a specific, stated reason calls for something else. `theme.js`'s `SPACE_4/8/12/16/24/32` and the `FS_*` constants are the sanctioned scale; a literal is fine when it's a faithful port of a real historical value (comment why) or must stay byte-identical to another component's own default (e.g. `DataList`'s row padding matching `SelectableRow`'s). Simplify token scales rather than cataloguing every pixel value already in use — colors should be grounded in exact real values since they carry identity, but a spacing/type scale exists to *constrain* choice.
+- **Component API shape:** prop names describe what they configure, not a generic `mode` enum — see `DataList`'s independently-combinable `selection`/`navigate`/`expand` instead of one flat mode string. Variant-style components (`Button`, `Badge`) use a `variant`/`tone` string prop against a lookup object.
+- **Hover states are CSS classes in `global.css`, never `useState`** — the StrictMode double-invoke rule above applies to every new component too. Reuse the existing `filter: brightness()` idiom for colored/tinted elements (`.btn-tint`); explicit background-shift for near-transparent ones (`.btn-neutral`, `.btn-ghost`, `.data-list-row`).
+- **Page pattern:** `ComponentPage` (heading + description + preview-left/controls-right split, controls built from the real `Select`/`Checkbox` — dogfooding on purpose) for interactive components; `FoundationPage` (full-width reference list, no controls) for token references like Type/Spacing/Color.
+
+**Deliberate non-components** — these were on the roster and were *removed* after examination, not skipped. Don't re-add them:
+- **Info Row** — a read-only list row is `DataList` with no `selection`/`navigate`/`expand`. A separate component would be the same thing with fewer options.
+- **Verdict Buttons / Rating Button** — one component (`DrillButton`), not two. They already shared the `.verdict-btn` class, row width, radius, and fill treatment; they differed only in padding, fill opacity, and whether a second line rendered (`sublabel`).
+- **Icon Button** — an icon-only button is `Button` with an `icon` and no children, not a separate component. `Button`'s `icon` prop also covers icon **+** label, which a dedicated IconButton couldn't express. Use `variant="ghost-muted"` for dismiss/remove affordances (muted until hovered, then reddens).
+
+**Gotcha — inline styles outrank hover classes.** A component that sets `background` inline (`transparent`, a tint) needs `!important` on the matching `:hover` rule in `global.css` or the hover silently does nothing. This has now bitten `.btn-neutral`, `.chip--off`, and `.track-toggle`. Check hover actually fires when adding a component that styles `background` inline.
+
+**Component roster** (`NAV` in `StyleGuideLabPage.jsx` — flip `built: false` → `true` and register in `PAGES` once built):
+
+| Component | Status | Real call sites it replaces |
+|---|---|---|
+| Type, Spacing, Color | Built (Foundations) | `theme.js` |
+| Button, Badge, Card, Text Input, Number Field | Built (Atoms) | `ConfirmDialog`, `WordImportPanel`, `VocabSrsModule`, `DeckComboBox`, `TrackedAnimeSection`, `Toast`, `MediaSearch`, `DeckPickerSheet` |
+| Chip Selector | Built — `multi`/`single`/`threshold` modes | `MediaSearch`'s `Chip` + `ViewModeButton`, `VocabModeToggle`, `WordImportPanel`'s `TabButton`, `EpisodeVocabBrowser`'s JLPT `DrawerSelect`, Story's Grammar level/Length selects |
+| Data List | Built | `EpisodeVocabBrowser`, `VocabPage`'s `DoneScreen` (×2), `WordImportPanel`, `DictionaryPage`'s `EntryRow`, `DictionaryEntryPage`'s `DeckRow`, `GrammarMapModule`'s prereq rows |
+| Modal | Built — `ConfirmDialog` now composes it | `WordImportPanel`, `DeckComboBox` (mobile), `DeckPickerSheet`, `SegmentedDeckAdd`'s `CreateDeckModal` |
+| Toast | Built (pre-existing component, now in the guide) | — |
+| Feed Card | Built | `ImmersionModule`'s `ArticleCard`, `StoryModule`'s `RecentCard` |
+| Toggle Button | Built — composes Chip | `EpisodeList`'s `TrackToggle`, `VocabSrsModule`'s deck On/Off toggle |
+| Distribution Bar | Built | `VocabSrsModule`'s `DeckProgressBar` |
+| Drill Button | Built | `SpeedModeControls`, `VocabSrsDrill`'s `RatingButton` |
+| Drill HUD | Built (pre-existing component, now in the guide) | — |
+| Deck Picker | Built — `DeckComboBox` chosen as canonical | `DeckPickerSheet.jsx`, `SegmentedDeckAdd.jsx` (both retired) |
+| Definition Popover | **Not built** | `JapaneseReader.jsx`'s `WordPopup` — already correctly shared, but defined inline; needs extracting to its own file first |
+
+**Settled design decisions — don't relitigate:**
+1. **Drill palette stays separate from the semantic tokens.** `DRILL_COLORS` in `theme.js` is a Flat-UI lineage (`#C0392B`/`#27AE60`/`#2980B9`/`#B47828`) distinct from the Tailwind-derived semantic tokens (`#f87171`/`#4ade80`/`#fbbf24`). Not interchangeable: drill colours are solid fills behind white text, semantic tokens are light tints for dark text, and "easy" blue has no semantic equivalent. Both stay.
+2. **Module accents come from context, not props.** `ModuleThemeProvider` / `useAccent(override)` in `src/context/ModuleThemeContext.jsx`. A module root wraps its screens with its own accent and `Chip`/`ToggleButton` (and any future accent-aware component) read it ambiently — passing it per-call-site failed silently when forgotten. The `accent` prop survives as an explicit per-instance override. Outside any provider the core teal applies, which is correct for the dashboard.
+3. **Components are named for their role, not their location.** `DrawerSelect`/`DrawerCheckbox`/`DrawerSectionHeader` → `Select`/`Checkbox`/`SectionHeader`. Don't reintroduce location-prefixed names.
+4. **`DeckComboBox` is the one deck picker.** Type-to-filter with an inline "+ Create «typed»" row; popover on desktop, bottom sheet on mobile. `DeckPickerSheet.jsx` and `SegmentedDeckAdd.jsx` are **retired** — port their call sites to `DeckComboBox` during the rebuild, then delete them along with `DeckPickerLabPage.jsx`.
+5. **Atoms forward refs.** `Button` and `TextInput` use `forwardRef` so callers can measure and focus them (`DeckComboBox` positions its popover against the button and focuses the search field). Any new atom wrapping a DOM element should do the same.
+6. **A stateful toggle is `ToggleButton`, not a `Button` variant.** The deciding test is what *hover* means: `Button`'s hover is derived from its variant and always reinforces the resting state, whereas a toggle's label, colour, and (with `destructiveHover`) the meaning of hovering all change with state. Folding that into `Button` would put four toggle-only props on a component ~50 non-toggle call sites use. `ToggleButton` composes `Chip` rather than restyling a button, so both share one visual language — a chip picks one option out of a set and keeps a fixed label; a toggle is a standalone binary that renames itself.
+
+**Still open:**
+- **Six greens.** `#4ade80` (success), `#6BCB6B` (read/tracked), `#7fe0c8` (mature), `#27AE60` (drill correct), `#5eb6a2` (young), `#4c8a7d` (learning). The last three are the validated CVD ramp and are legitimate; `#6BCB6B` vs `#4ade80` looks like plain drift and probably wants merging.
+- **Feed card title font.** `ArticleCard` used `FONT` (DotGothic16), `RecentCard` used `KANJI_FONT` (Hiragino), both for Japanese titles. `FeedCard` currently standardises on `FONT`.
+- **Definition Popover.** `WordPopup` is defined inline inside `JapaneseReader.jsx`; extracting it to its own file is a prerequisite for a style-guide entry.
+
 ## Shared components (`src/components/`)
 
 Used by multiple modules/pages:

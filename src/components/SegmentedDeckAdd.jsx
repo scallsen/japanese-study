@@ -20,12 +20,12 @@ function CreateDeckModal({ open, onCreate, onCancel }) {
 
   return (
     <>
-      <div onClick={onCancel} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 50, animation: 'deck-picker-backdrop-fade-in 160ms ease-out' }} />
+      <div onClick={onCancel} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 50, animation: 'modal-backdrop-fade-in 160ms ease-out' }} />
       <div style={{
         position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
         width: 'min(360px, 90vw)', background: SURFACE, border: '1px solid rgba(255,255,255,0.12)',
         borderRadius: 10, zIndex: 51, fontFamily: FONT, letterSpacing: TRACKING, color: TEXT,
-        padding: '20px 20px 16px', animation: 'deck-picker-fade-scale-in 160ms ease-out',
+        padding: '20px 20px 16px', animation: 'modal-fade-scale-in 160ms ease-out',
       }}>
         <div style={{ fontSize: FS_HEADING, marginBottom: 12 }}>New deck</div>
         <input

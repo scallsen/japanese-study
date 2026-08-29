@@ -5,7 +5,7 @@ const PANEL_W = 420
 const CHEVRON_W = 28
 const PANEL_CONTENT_W = PANEL_W - CHEVRON_W
 
-// Keeps focused rows (e.g. a DrawerSelect opened via keyboard) inside the
+// Keeps focused rows (e.g. a Select opened via keyboard) inside the
 // scrollable panel instead of letting the browser's default focus-scroll
 // yank the whole page.
 function handleSidebarFocus(e) {

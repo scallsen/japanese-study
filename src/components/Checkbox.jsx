@@ -1,6 +1,6 @@
 import { FS_BASE, FS_CAPTION } from '../data/theme.js'
 
-export default function DrawerCheckbox({ checked, onChange, label, subtext, indent = 0, disabled = false, children }) {
+export default function Checkbox({ checked, onChange, label, subtext, indent = 0, disabled = false, children }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6, paddingLeft: indent * 16 }}>
       <label

@@ -6,7 +6,7 @@ import { resolveCard, cardStateLabel } from './srs.js'
 import { moveCardsToDeck, deleteCards, createDeck, deleteDeck, isBundledDeck } from './deckUtils.js'
 import PageHeader from '../../components/PageHeader.jsx'
 import AuthSlot from '../../components/AuthSlot.jsx'
-import DrawerSelect from '../../components/DrawerSelect.jsx'
+import Select from '../../components/Select.jsx'
 import DeckPickerSheet from '../../components/DeckPickerSheet.jsx'
 import ConfirmDialog from '../../components/ConfirmDialog.jsx'
 import SelectAllCheckbox from '../../components/SelectAllCheckbox.jsx'
@@ -383,7 +383,7 @@ export default function VocabSrsBrowsePage() {
         <div style={{ maxWidth: 760, margin: '0 auto' }}>
           <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 20 }}>
             <div style={{ minWidth: 200, maxWidth: 320 }}>
-              <DrawerSelect
+              <Select
                 value={deckFilter}
                 onChange={setDeckFilter}
                 options={[{ value: 'all', label: 'All decks' }, ...deckList.map(d => ({ value: d.id, label: d.name }))]}

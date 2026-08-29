@@ -94,7 +94,7 @@ export default function DeckPickerSheet({
         letterSpacing: TRACKING,
         color: TEXT,
         paddingBottom: 'env(safe-area-inset-bottom)',
-        animation: 'deck-picker-slide-up 220ms ease-out',
+        animation: 'modal-slide-up 220ms ease-out',
       }
     : {
         position: 'fixed',
@@ -112,12 +112,12 @@ export default function DeckPickerSheet({
         fontFamily: FONT,
         letterSpacing: TRACKING,
         color: TEXT,
-        animation: 'deck-picker-fade-scale-in 160ms ease-out',
+        animation: 'modal-fade-scale-in 160ms ease-out',
       }
 
   return (
     <>
-      <div onClick={handleClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 40, animation: 'deck-picker-backdrop-fade-in 160ms ease-out' }} />
+      <div onClick={handleClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 40, animation: 'modal-backdrop-fade-in 160ms ease-out' }} />
       <div style={panelStyle}>
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',

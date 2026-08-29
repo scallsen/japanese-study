@@ -13,9 +13,9 @@ import SpeakerIcon from '../../components/SpeakerIcon.jsx'
 import HeaderMenu from '../../components/HeaderMenu.jsx'
 import { useToast } from '../../context/ToastContext.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_NAV, SUBHEADING_STYLE, FS_CAPTION, FS_CONTENT_HEADING } from '../../data/theme.js'
-import DrawerSectionHeader from '../../components/DrawerSectionHeader.jsx'
-import DrawerCheckbox from '../../components/DrawerCheckbox.jsx'
-import DrawerSelect from '../../components/DrawerSelect.jsx'
+import SectionHeader from '../../components/SectionHeader.jsx'
+import Checkbox from '../../components/Checkbox.jsx'
+import Select from '../../components/Select.jsx'
 import { useJaVoices } from '../../hooks/useTTS.js'
 import { useAudioGenerationStatus } from '../../hooks/useAudioGenerationStatus.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
@@ -630,7 +630,7 @@ export default function VocabSrsModule() {
       <div style={{ padding: `16px ${paddingH}px 16px` }}>
 
         {/* ── Deck Stats (global) ── */}
-        <DrawerSectionHeader title="Deck Stats" />
+        <SectionHeader title="Deck Stats" />
         {stateDistribution.total === 0 ? (
           <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, padding: '4px 0 8px' }}>
             No cards yet
@@ -647,7 +647,7 @@ export default function VocabSrsModule() {
         <div style={hairline} />
 
         {/* ── Decks ── */}
-        <DrawerSectionHeader title="Decks" />
+        <SectionHeader title="Decks" />
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           {deckList.map(deck => (
             <DeckRow
@@ -663,7 +663,7 @@ export default function VocabSrsModule() {
         <div style={hairline} />
 
         {/* ── SRS Settings ── */}
-        <DrawerSectionHeader title="SRS Settings" />
+        <SectionHeader title="SRS Settings" />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Daily new cards</span>
@@ -710,7 +710,7 @@ export default function VocabSrsModule() {
               }}
             />
           </div>
-          <DrawerCheckbox
+          <Checkbox
             checked={showHardEasy}
             onChange={() => setShowHardEasy(v => !v)}
             label="Show Hard / Easy buttons"
@@ -720,17 +720,17 @@ export default function VocabSrsModule() {
         <div style={hairline} />
 
         {/* ── Additional Settings ── */}
-        <DrawerSectionHeader title="Additional Settings" />
+        <SectionHeader title="Additional Settings" />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <DrawerCheckbox checked={showVisualEffects} onChange={() => setShowVisualEffects(v => !v)} label="Show visual effects" />
-          <DrawerCheckbox checked={pixelFont} onChange={() => setPixelFont(v => !v)} label="Use pixel font" />
-          <DrawerCheckbox checked={showTranslation} onChange={() => setShowTranslation(v => !v)} label="Show translation" />
-          <DrawerCheckbox checked={showFurigana} onChange={() => setShowFurigana(v => !v)} label="Show furigana on front" />
-          <DrawerCheckbox checked={showSentence} onChange={() => setShowSentence(v => !v)} label="Show sentence" />
+          <Checkbox checked={showVisualEffects} onChange={() => setShowVisualEffects(v => !v)} label="Show visual effects" />
+          <Checkbox checked={pixelFont} onChange={() => setPixelFont(v => !v)} label="Use pixel font" />
+          <Checkbox checked={showTranslation} onChange={() => setShowTranslation(v => !v)} label="Show translation" />
+          <Checkbox checked={showFurigana} onChange={() => setShowFurigana(v => !v)} label="Show furigana on front" />
+          <Checkbox checked={showSentence} onChange={() => setShowSentence(v => !v)} label="Show sentence" />
           {showSentence && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
               <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Sentence source</span>
-              <DrawerSelect
+              <Select
                 value={sentenceSource}
                 onChange={setSentenceSource}
                 options={SENTENCE_SOURCE_OPTIONS}
@@ -738,15 +738,15 @@ export default function VocabSrsModule() {
               />
             </div>
           )}
-          <DrawerCheckbox checked={showKanjiMeaning} onChange={() => setShowKanjiMeaning(v => !v)} label="Show kanji meaning" />
-          <DrawerCheckbox
+          <Checkbox checked={showKanjiMeaning} onChange={() => setShowKanjiMeaning(v => !v)} label="Show kanji meaning" />
+          <Checkbox
             checked={audioEnabled}
             onChange={() => setAudioEnabled(v => !v)}
             label="Enable audio"
           />
           {audioEnabled && (
             <>
-              <DrawerCheckbox
+              <Checkbox
                 checked={autoplayAudio}
                 onChange={() => setAutoplayAudio(v => !v)}
                 label="Auto-play"
@@ -754,13 +754,13 @@ export default function VocabSrsModule() {
               />
               {autoplayAudio && (
                 <>
-                  <DrawerCheckbox
+                  <Checkbox
                     checked={autoplayFront}
                     onChange={() => setAutoplayFront(v => !v)}
                     label="On front"
                     indent={2}
                   />
-                  <DrawerCheckbox
+                  <Checkbox
                     checked={autoplayBack}
                     onChange={() => setAutoplayBack(v => !v)}
                     label="On back (word then sentence)"
@@ -770,7 +770,7 @@ export default function VocabSrsModule() {
               )}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
                 <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Text to speech</span>
-                <DrawerSelect
+                <Select
                   value={audioSource}
                   onChange={setAudioSource}
                   options={AUDIO_SOURCE_OPTIONS}
@@ -783,7 +783,7 @@ export default function VocabSrsModule() {
                   <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>Audio is being generated</span>
                 )}
                 {audioSource === 'browser' && jaVoices.length > 0 && (
-                  <DrawerSelect
+                  <Select
                     value={ttsVoice}
                     onChange={setTtsVoice}
                     options={[{ value: '', label: 'Default' }, ...jaVoices.map(v => ({ value: v.name, label: v.name }))]}
@@ -792,7 +792,7 @@ export default function VocabSrsModule() {
                   />
                 )}
               </div>
-              <DrawerCheckbox
+              <Checkbox
                 checked={sfxEnabled}
                 onChange={() => setSfxEnabled(v => !v)}
                 label="Sound effects"
@@ -807,7 +807,7 @@ export default function VocabSrsModule() {
         {import.meta.env.DEV && globalStats.totalCards > 0 && (
           <>
             <div style={hairline} />
-            <DrawerSectionHeader title="Dev" />
+            <SectionHeader title="Dev" />
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
               <span style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>Advance</span>
               <input

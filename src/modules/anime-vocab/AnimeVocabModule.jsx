@@ -5,9 +5,9 @@ import AuthSlot from '../../components/AuthSlot.jsx'
 import AttributionFooter from '../../components/AttributionFooter.jsx'
 import TopProgressBar from '../../components/TopProgressBar.jsx'
 import CenteredLoadingMessage from '../../components/CenteredLoadingMessage.jsx'
-import DrawerSectionHeader from '../../components/DrawerSectionHeader.jsx'
-import DrawerCheckbox from '../../components/DrawerCheckbox.jsx'
-import DrawerSelect from '../../components/DrawerSelect.jsx'
+import SectionHeader from '../../components/SectionHeader.jsx'
+import Checkbox from '../../components/Checkbox.jsx'
+import Select from '../../components/Select.jsx'
 import SettingsSidebar from '../../components/SettingsSidebar.jsx'
 import MediaSearch from './MediaSearch.jsx'
 import EpisodeList from './EpisodeList.jsx'
@@ -196,18 +196,18 @@ export default function AnimeVocabModule({ initialMediaId }) {
   function renderSettingsPanel(paddingH) {
     return (
       <div style={{ padding: `16px ${paddingH}px 16px` }}>
-        <DrawerSectionHeader title="Settings" />
+        <SectionHeader title="Settings" />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <DrawerCheckbox checked={showStreak}        onChange={() => setShowStreak(v => !v)}        label="Show streak" />
-          <DrawerCheckbox checked={showFurigana}      onChange={() => setShowFurigana(v => !v)}      label="Show furigana" />
-          <DrawerCheckbox checked={showVisualEffects} onChange={() => setShowVisualEffects(v => !v)} label="Show visual effects" />
-          <DrawerCheckbox checked={pixelFont}         onChange={() => setPixelFont(v => !v)}         label="Use pixel font" />
-          <DrawerCheckbox checked={showTranslation}   onChange={() => setShowTranslation(v => !v)}   label="Show translation" />
-          <DrawerCheckbox checked={showSentence}      onChange={() => setShowSentence(v => !v)}       label="Show sentence" />
+          <Checkbox checked={showStreak}        onChange={() => setShowStreak(v => !v)}        label="Show streak" />
+          <Checkbox checked={showFurigana}      onChange={() => setShowFurigana(v => !v)}      label="Show furigana" />
+          <Checkbox checked={showVisualEffects} onChange={() => setShowVisualEffects(v => !v)} label="Show visual effects" />
+          <Checkbox checked={pixelFont}         onChange={() => setPixelFont(v => !v)}         label="Use pixel font" />
+          <Checkbox checked={showTranslation}   onChange={() => setShowTranslation(v => !v)}   label="Show translation" />
+          <Checkbox checked={showSentence}      onChange={() => setShowSentence(v => !v)}       label="Show sentence" />
           {showSentence && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
               <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Sentence source</span>
-              <DrawerSelect
+              <Select
                 value={sentenceSource}
                 onChange={setSentenceSource}
                 options={SENTENCE_SOURCE_OPTIONS}
@@ -215,8 +215,8 @@ export default function AnimeVocabModule({ initialMediaId }) {
               />
             </div>
           )}
-          <DrawerCheckbox checked={showKanjiMeaning}  onChange={() => setShowKanjiMeaning(v => !v)}   label="Show kanji meaning" />
-          <DrawerCheckbox
+          <Checkbox checked={showKanjiMeaning}  onChange={() => setShowKanjiMeaning(v => !v)}   label="Show kanji meaning" />
+          <Checkbox
             checked={audioEnabled}
             onChange={() => setAudioEnabled(v => !v)}
             label="Enable audio"
@@ -225,7 +225,7 @@ export default function AnimeVocabModule({ initialMediaId }) {
             <>
               {jaVoices.length > 0 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
-                  <DrawerSelect
+                  <Select
                     value={ttsVoice}
                     onChange={setTtsVoice}
                     options={[{ value: '', label: 'Default' }, ...jaVoices.map(v => ({ value: v.name, label: v.name }))]}
@@ -234,7 +234,7 @@ export default function AnimeVocabModule({ initialMediaId }) {
                   />
                 </div>
               )}
-              <DrawerCheckbox
+              <Checkbox
                 checked={sfxEnabled}
                 onChange={() => setSfxEnabled(v => !v)}
                 label="Sound effects"

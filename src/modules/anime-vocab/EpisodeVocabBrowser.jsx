@@ -6,7 +6,7 @@ import { briefGloss } from '../../utils/dictionaryEntryLookup.js'
 import { useProgress } from '../../hooks/useProgress.js'
 import { migrateProgress } from '../vocab-srs/migrate.js'
 import { buildJmdictIdCardIndex, resolveStatus } from './srsStatusResolver.js'
-import DrawerSelect from '../../components/DrawerSelect.jsx'
+import Select from '../../components/Select.jsx'
 import CenteredLoadingMessage from '../../components/CenteredLoadingMessage.jsx'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_LIST_TITLE } from '../../data/theme.js'
@@ -270,7 +270,7 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14, background: '#2A2A2A', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: '14px 16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
           <span style={{ fontSize: FS_LIST_TITLE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>Minimum JLPT level</span>
-          <DrawerSelect label="Minimum JLPT level" value={minJlptLevel} onChange={setMinJlptLevel} options={JLPT_LEVEL_OPTIONS} />
+          <Select label="Minimum JLPT level" value={minJlptLevel} onChange={setMinJlptLevel} options={JLPT_LEVEL_OPTIONS} />
         </div>
         <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 12 }}>
           <div style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 10 }}>

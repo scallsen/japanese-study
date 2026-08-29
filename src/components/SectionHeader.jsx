@@ -1,6 +1,6 @@
 import { SUBHEADING_STYLE, FS_BASE } from '../data/theme.js'
 
-export default function DrawerSectionHeader({ title, hasSelections, onClearAll }) {
+export default function SectionHeader({ title, hasSelections, onClearAll }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
       <span style={{ ...SUBHEADING_STYLE, color: 'rgba(255,255,255,0.35)', fontFamily: 'inherit' }}>

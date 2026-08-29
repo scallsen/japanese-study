@@ -12,6 +12,7 @@ import DictionaryEntryPage from './pages/DictionaryEntryPage.jsx'
 import AnimeVocabModule from './modules/anime-vocab/AnimeVocabModule.jsx'
 import DeckPickerLabPage from './pages/DeckPickerLabPage.jsx'
 import ToastLabPage from './pages/ToastLabPage.jsx'
+import StyleGuideLabPage from './pages/StyleGuideLabPage.jsx'
 
 function getRoute() {
   // Strip any query string (e.g. '/vocab-srs/browse?deck=x&manage=1') before
@@ -53,5 +54,7 @@ export default function App() {
   if (route === '/dev/deck-picker-lab') return <DeckPickerLabPage />
   // Temporary dev-only comparison harness for the add-confirmation toast UX, not linked from the dashboard
   if (route === '/dev/toast-lab') return <ToastLabPage />
+  // Living style guide for shared components (DataList, and whatever joins it next), not linked from the dashboard
+  if (route === '/dev/style-guide') return <StyleGuideLabPage />
   return <DashboardPage />
 }

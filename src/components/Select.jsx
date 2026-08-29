@@ -1,6 +1,6 @@
 import { FS_BASE, FS_CAPTION } from '../data/theme.js'
 
-export default function DrawerSelect({ value, onChange, options, label, subtext }) {
+export default function Select({ value, onChange, options, label, subtext }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       {label && <span style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}>{label}</span>}

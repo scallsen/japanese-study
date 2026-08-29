@@ -1,14 +1,22 @@
 import { useState, useRef, useEffect, useLayoutEffect } from 'react'
 import { isBundledDeck } from '../modules/vocab-srs/deckUtils.js'
+import Button from './Button.jsx'
+import TextInput from './TextInput.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_HEADING } from '../data/theme.js'
 
 const ACCENT = '#3ABDA4'
 const SURFACE = '#2A2A2A'
 
-// A single control that merges "pick a deck" and "create a deck" into one
-// type-to-filter-or-create popover (the GitHub-label / Notion-page-picker
-// pattern). Picking an existing deck or creating a new one both add
+// THE deck picker for the app — a single control that merges "pick a deck"
+// and "create a deck" into one type-to-filter-or-create surface (the
+// GitHub-label / Notion-page-picker pattern): popover on desktop, bottom
+// sheet on mobile, with a "+ Create «typed»" row appearing inline as soon
+// as the query doesn't match an existing deck. Picking or creating both add
 // immediately — there is no separate "default deck" concept to manage.
+//
+// `DeckPickerSheet` and `SegmentedDeckAdd` solve this same job two other
+// ways and are retired; port their call sites here rather than extending
+// them.
 export default function DeckComboBox({ decks, onAdd, onCreateAndAdd, isMobile, disabled = false, fullWidth = false, buttonLabel = 'Add to SRS', title = 'Add to which deck?' }) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -101,25 +109,13 @@ export default function DeckComboBox({ decks, onAdd, onCreateAndAdd, isMobile, d
   }
 
   const searchInput = (
-    <input
+    <TextInput
       ref={inputRef}
       value={query}
-      onChange={e => setQuery(e.target.value)}
+      onChange={setQuery}
       onKeyDown={handleKeyDown}
       placeholder="Search or create a deck"
-      className="deck-picker-input"
-      style={{
-        width: '100%',
-        boxSizing: 'border-box',
-        padding: '8px 10px',
-        background: 'rgba(255,255,255,0.05)',
-        border: '1px solid rgba(255,255,255,0.15)',
-        borderRadius: 6,
-        color: TEXT,
-        fontFamily: FONT,
-        fontSize: FS_BASE,
-        letterSpacing: TRACKING,
-      }}
+      style={{ boxSizing: 'border-box' }}
     />
   )
 
@@ -178,26 +174,15 @@ export default function DeckComboBox({ decks, onAdd, onCreateAndAdd, isMobile, d
 
   return (
     <div ref={rootRef} style={{ position: 'relative', display: fullWidth ? 'block' : 'inline-block', fontFamily: FONT, letterSpacing: TRACKING }}>
-      <button
+      <Button
         ref={buttonRef}
+        variant="accent-outline"
         onClick={() => setOpen(o => !o)}
         disabled={disabled}
-        className="done-btn"
-        style={{
-          width: fullWidth ? '100%' : undefined,
-          padding: '8px 16px',
-          fontSize: FS_BASE,
-          fontFamily: FONT,
-          letterSpacing: TRACKING,
-          background: disabled ? 'rgba(255,255,255,0.04)' : 'rgba(58,189,164,0.15)',
-          border: `1px solid ${disabled ? 'rgba(255,255,255,0.1)' : 'rgba(58,189,164,0.4)'}`,
-          borderRadius: 6,
-          color: disabled ? 'rgba(255,255,255,0.2)' : ACCENT,
-          cursor: disabled ? 'not-allowed' : 'pointer',
-        }}
+        fullWidth={fullWidth}
       >
         {buttonLabel}
-      </button>
+      </Button>
 
       {open && !isMobile && (
         <div
@@ -213,7 +198,7 @@ export default function DeckComboBox({ decks, onAdd, onCreateAndAdd, isMobile, d
             boxShadow: '0 8px 24px rgba(0,0,0,0.45)',
             zIndex: 50,
             overflow: 'hidden',
-            animation: 'deck-picker-fade-scale-in-top 120ms ease-out',
+            animation: 'modal-fade-scale-in-top 120ms ease-out',
           }}
         >
           <div style={{ padding: 8, borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
@@ -227,7 +212,7 @@ export default function DeckComboBox({ decks, onAdd, onCreateAndAdd, isMobile, d
 
       {open && isMobile && (
         <>
-          <div onClick={() => setOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 40, animation: 'deck-picker-backdrop-fade-in 160ms ease-out' }} />
+          <div onClick={() => setOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 40, animation: 'modal-backdrop-fade-in 160ms ease-out' }} />
           <div style={{
             position: 'fixed',
             left: 0,
@@ -246,7 +231,7 @@ export default function DeckComboBox({ decks, onAdd, onCreateAndAdd, isMobile, d
             letterSpacing: TRACKING,
             color: TEXT,
             paddingBottom: 'env(safe-area-inset-bottom)',
-            animation: 'deck-picker-slide-up 220ms ease-out',
+            animation: 'modal-slide-up 220ms ease-out',
           }}>
             <div style={{
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
