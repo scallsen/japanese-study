@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react'
-import { createPortal } from 'react-dom'
 import { selectMedia, browseMedia } from './api.js'
 import { fetchRecommendedMedia } from './recommendedMediaCache.js'
 import { difficultyLabel } from './difficultyLabels.js'
@@ -14,6 +13,7 @@ import Badge from '../../components/Badge.jsx'
 import Card from '../../components/Card.jsx'
 import FeedCard from '../../components/FeedCard.jsx'
 import { Chip, default as ChipSelector } from '../../components/Chip.jsx'
+import Popover from '../../components/Popover.jsx'
 
 const DEBOUNCE_MS = 400
 
@@ -82,48 +82,33 @@ const RESULTS_PAGE_SIZE = 24
 
 // Small "i" info icon. Hovering shows the popover; clicking pins it open
 // (stays open after the mouse leaves) until a click outside closes it.
-// Portaled to document.body and positioned via the icon's own screen
-// coordinates (position: fixed) rather than a plain position:absolute
-// child, since the filter card it lives in has overflow:hidden (for its
-// rounded corners) and would otherwise clip the popover.
+// The hover/pin state machine stays local here — it's a narrow,
+// single-call-site need, not promoted into Popover's own API (every other
+// Popover consumer is click-triggered). Popover itself owns the
+// positioning (flip/clamp, escapes the filter card's overflow:hidden via
+// position:fixed — no portal needed) and the outside-click-to-close
+// behavior, so this is real simplification over the old hand-rolled
+// getBoundingClientRect/portal version, not just a reskin.
 function InfoIcon({ text }) {
   const [open, setOpen] = useState(false)
   const [pinned, setPinned] = useState(false)
-  const [coords, setCoords] = useState(null)
   const wrapRef = useRef(null)
-  const popoverRef = useRef(null)
-
-  function updateCoords() {
-    const rect = wrapRef.current?.getBoundingClientRect()
-    if (rect) setCoords({ top: rect.bottom + 6, left: rect.left })
-  }
 
   function handleMouseEnter() {
-    if (pinned) return
-    updateCoords()
-    setOpen(true)
+    if (!pinned) setOpen(true)
   }
   function handleMouseLeave() {
-    if (pinned) return
-    setOpen(false)
+    if (!pinned) setOpen(false)
   }
   function handleClick(e) {
     e.stopPropagation()
-    updateCoords()
     setOpen(true)
     setPinned(true)
   }
-
-  useEffect(() => {
-    if (!pinned) return
-    function handleOutsideClick(e) {
-      if (wrapRef.current?.contains(e.target) || popoverRef.current?.contains(e.target)) return
-      setOpen(false)
-      setPinned(false)
-    }
-    document.addEventListener('mousedown', handleOutsideClick)
-    return () => document.removeEventListener('mousedown', handleOutsideClick)
-  }, [pinned])
+  function handleClose() {
+    setOpen(false)
+    setPinned(false)
+  }
 
   return (
     <span
@@ -146,17 +131,11 @@ function InfoIcon({ text }) {
       >
         i
       </button>
-      {open && coords && createPortal(
-        <span ref={popoverRef} style={{
-          position: 'fixed', top: coords.top, left: coords.left, zIndex: 1000,
-          width: 220, padding: '8px 10px', borderRadius: 6,
-          background: '#1E1E1E', border: '1px solid rgba(255,255,255,0.15)',
-          color: TEXT_MUTED, fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, lineHeight: 1.4,
-        }}>
+      <Popover open={open} onClose={handleClose} anchorRef={wrapRef} width={220} bodyPadding="8px 10px">
+        <span style={{ display: 'block', color: TEXT_MUTED, fontSize: FS_BADGE, lineHeight: 1.4 }}>
           {text}
-        </span>,
-        document.body
-      )}
+        </span>
+      </Popover>
     </span>
   )
 }
