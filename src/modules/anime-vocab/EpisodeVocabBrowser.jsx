@@ -6,12 +6,14 @@ import { briefGloss } from '../../utils/dictionaryEntryLookup.js'
 import { useProgress } from '../../hooks/useProgress.js'
 import { migrateProgress } from '../vocab-srs/migrate.js'
 import { buildJmdictIdCardIndex, resolveStatus } from './srsStatusResolver.js'
-import Select from '../../components/Select.jsx'
 import NumberField from '../../components/NumberField.jsx'
 import Button from '../../components/Button.jsx'
 import TextInput from '../../components/TextInput.jsx'
 import DataList from '../../components/DataList.jsx'
 import Badge from '../../components/Badge.jsx'
+import { Chip, default as ChipSelector } from '../../components/Chip.jsx'
+import Checkbox from '../../components/Checkbox.jsx'
+import Card from '../../components/Card.jsx'
 import CenteredLoadingMessage from '../../components/CenteredLoadingMessage.jsx'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_LIST_TITLE } from '../../data/theme.js'
@@ -32,12 +34,16 @@ const GENERIC_RANK_THRESHOLD = 200
 // in rather than assumed easy — the level filter only ever removes words we
 // have positive (if approximate) data for.
 const JLPT_LEVEL_ORDER = { N5: 1, N4: 2, N3: 3, N2: 4, N1: 5 }
-const JLPT_LEVEL_OPTIONS = [
-  { value: 'any', label: 'Any level' },
-  { value: 'N4', label: 'N4 and above' },
-  { value: 'N3', label: 'N3 and above' },
-  { value: 'N2', label: 'N2 and above' },
-  { value: 'N1', label: 'N1 only' },
+// "any" isn't a threshold point (it means "disable the filter"), so it's a
+// standalone Chip beside the 4-option ChipSelector rather than a 5th option
+// — passing it as an option would either misrender (thresholdIndex -1 shows
+// nothing active, not "everything") or, worse, light every chip if it ever
+// matched index 0.
+const JLPT_CHIP_OPTIONS = [
+  { value: 'N4', label: 'N4' },
+  { value: 'N3', label: 'N3' },
+  { value: 'N2', label: 'N2' },
+  { value: 'N1', label: 'N1' },
 ]
 
 const STATUS_LABEL = { new: 'New', learning: 'Learning', young: 'Young', mature: 'Mature', relearning: 'Relearning', 'not-in-deck': null }
@@ -71,14 +77,6 @@ const WORD_COLUMNS = [
   { key: 'occurrence_count', width: 30, align: 'right', tone: 'muted', render: row => row.occurrence_count ?? '' },
 ]
 
-function checkboxRow(label, checked, onChange, accent) {
-  return (
-    <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, cursor: 'pointer' }}>
-      <input type="checkbox" checked={checked} onChange={onChange} style={{ width: 15, height: 15, accentColor: accent }} />
-      {label}
-    </label>
-  )
-}
 
 // Native checkboxes don't expose an "indeterminate" prop — it can only be set
 // as a DOM property, hence the ref + effect instead of a plain <input>.
@@ -302,23 +300,32 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
         </div>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 14, background: '#2A2A2A', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: '14px 16px' }}>
+      <Card padding="14px 16px" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
           <span style={{ fontSize: FS_LIST_TITLE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>Minimum JLPT level</span>
-          <Select label="Minimum JLPT level" value={minJlptLevel} onChange={setMinJlptLevel} options={JLPT_LEVEL_OPTIONS} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Chip label="Any level" active={minJlptLevel === 'any'} onClick={() => setMinJlptLevel('any')} />
+            <ChipSelector
+              options={JLPT_CHIP_OPTIONS}
+              value={minJlptLevel}
+              onChange={setMinJlptLevel}
+              mode="threshold"
+              thresholdDirection="forward"
+            />
+          </div>
         </div>
         <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 12 }}>
           <div style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 10 }}>
             Filter words
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
-            {checkboxRow(`Grammar words (${grammarCount})`, includeGrammar, () => setIncludeGrammar(v => !v), ACCENT)}
-            {checkboxRow(`Names (${namesCount})`, includeNames, () => setIncludeNames(v => !v), ACCENT)}
-            {checkboxRow(`Very common words (${genericCount})`, includeGeneric, () => setIncludeGeneric(v => !v), ACCENT)}
-            {checkboxRow(`Known (${knownCount})`, includeKnown, () => setIncludeKnown(v => !v), ACCENT)}
+            <Checkbox label={`Grammar words (${grammarCount})`} checked={includeGrammar} onChange={() => setIncludeGrammar(v => !v)} />
+            <Checkbox label={`Names (${namesCount})`} checked={includeNames} onChange={() => setIncludeNames(v => !v)} />
+            <Checkbox label={`Very common words (${genericCount})`} checked={includeGeneric} onChange={() => setIncludeGeneric(v => !v)} />
+            <Checkbox label={`Known (${knownCount})`} checked={includeKnown} onChange={() => setIncludeKnown(v => !v)} />
           </div>
         </div>
-      </div>
+      </Card>
 
       <div style={{ background: '#2A2A2A', borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
         <div style={{ padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
