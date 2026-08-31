@@ -10,9 +10,12 @@ import { resolveCard, cardStateLabel } from '../modules/vocab-srs/srs.js'
 import { WORD_DATA } from '../data/wordData.js'
 import { WORD_SOURCES } from '../data/wordLists.js'
 import AttributionFooter from '../components/AttributionFooter.jsx'
+import { MODULES } from '../data/modules.js'
+import { ModuleThemeProvider } from '../context/ModuleThemeContext.jsx'
 
 const BG = '#1E1E1E'
 const SURFACE = '#2A2A2A'
+const DICTIONARY_ACCENT = MODULES.find(m => m.id === 'dictionary').accent
 const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
 
 function isSingleKanji(ch) {
@@ -345,6 +348,7 @@ export default function DictionaryEntryPage({ entryId }) {
   const altForms = allForms.filter(f => f !== entry?.primary_form)
 
   return (
+    <ModuleThemeProvider accent={DICTIONARY_ACCENT}>
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', background: BG }}>
       <PageHeader
         crumbs={[
@@ -459,5 +463,6 @@ export default function DictionaryEntryPage({ entryId }) {
         </div>
       </div>
     </div>
+    </ModuleThemeProvider>
   )
 }

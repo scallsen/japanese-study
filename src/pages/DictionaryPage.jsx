@@ -8,10 +8,12 @@ import { useDelayedLoading } from '../hooks/useDelayedLoading.js'
 import { supabase } from '../lib/supabase.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_NAV, FS_BADGE, FS_CAPTION, FS_ENTRY_KANJI, FS_ENTRY_WORD, FS_CONTENT_HEADING } from '../data/theme.js'
 import AttributionFooter from '../components/AttributionFooter.jsx'
+import { MODULES } from '../data/modules.js'
+import { ModuleThemeProvider, useAccent } from '../context/ModuleThemeContext.jsx'
 
 const BG = '#1E1E1E'
 const SURFACE = '#2A2A2A'
-const ACCENT = '#3ABDA4'
+const DICTIONARY_ACCENT = MODULES.find(m => m.id === 'dictionary').accent
 const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
 
 const PAGE_SIZE = 20
@@ -407,6 +409,10 @@ function loadSaved() {
 }
 
 export default function DictionaryPage() {
+  // Explicit override, not ambient useAccent() — this component is the one
+  // establishing ModuleThemeProvider below, so it can't read back the value
+  // it's about to provide to its own children.
+  const ACCENT = useAccent(DICTIONARY_ACCENT)
   const saved = useMemo(loadSaved, [])
   const [query, setQuery] = useState(saved?.query ?? '')
   const [results, setResults] = useState(saved?.results ?? [])
@@ -509,6 +515,7 @@ export default function DictionaryPage() {
   const showResults = results.length > 0
 
   return (
+    <ModuleThemeProvider accent={DICTIONARY_ACCENT}>
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', background: BG }}>
       <PageHeader
         crumbs={[
@@ -655,5 +662,6 @@ export default function DictionaryPage() {
         </div>
       </div>
     </div>
+    </ModuleThemeProvider>
   )
 }
