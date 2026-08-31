@@ -14,6 +14,7 @@ import {
   FS_DISPLAY_HEADING, FS_STAT_VALUE, FS_LIST_TITLE,
 } from '../../data/theme.js'
 import { useAccent } from '../../context/ModuleThemeContext.jsx'
+import Button from '../../components/Button.jsx'
 
 const ANIME_WORDS_DECK_ID = 'anime-words'
 
@@ -130,8 +131,6 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onBack,
   const [selected, setSelected] = useState(() => new Set(rows.filter(r => r.mistakes > 0).map(r => r.id)))
   const [addedCount, setAddedCount] = useState(null)
 
-  const btnBase = { padding: '10px 28px', fontSize: FS_BASE, fontFamily: 'inherit', borderRadius: 8, cursor: 'pointer', letterSpacing: '0.05em' }
-
   function toggleRow(id) {
     setSelected(prev => {
       const next = new Set(prev)
@@ -161,12 +160,8 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onBack,
         </div>
       </div>
       <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
-        <button onClick={onRestart} style={{ ...btnBase, background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.15)' }}>
-          Restart
-        </button>
-        <button onClick={onBack} style={{ ...btnBase, background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.1)' }}>
-          Back to episode
-        </button>
+        <Button variant="neutral" size="lg" onClick={onRestart}>Restart</Button>
+        <Button variant="neutral" size="lg" onClick={onBack}>Back to episode</Button>
       </div>
 
       {rows.length > 0 && (
@@ -174,23 +169,11 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onBack,
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 8 }}>
             <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, letterSpacing: '0.08em' }}>WORDS FROM THIS DRILL</span>
             {requiresSignIn ? (
-              <button onClick={onSignIn} style={{ ...btnBase, padding: '6px 16px', fontSize: FS_CAPTION, background: 'rgba(255,255,255,0.06)', color: TEXT_MUTED, border: '1px solid rgba(255,255,255,0.15)' }}>
-                Sign in to add to SRS
-              </button>
+              <Button variant="neutral" size="sm" onClick={onSignIn}>Sign in to add to SRS</Button>
             ) : (
-              <button
-                onClick={handleAdd}
-                disabled={selected.size === 0}
-                style={{
-                  ...btnBase, padding: '6px 16px', fontSize: FS_CAPTION,
-                  background: selected.size > 0 ? 'rgba(212,110,163,0.15)' : 'rgba(255,255,255,0.04)',
-                  color: selected.size > 0 ? ACCENT : 'rgba(255,255,255,0.2)',
-                  border: `1px solid ${selected.size > 0 ? 'rgba(212,110,163,0.4)' : 'rgba(255,255,255,0.1)'}`,
-                  cursor: selected.size > 0 ? 'pointer' : 'not-allowed',
-                }}
-              >
+              <Button variant="accent-outline" size="sm" onClick={handleAdd} disabled={selected.size === 0}>
                 Add {selected.size} to SRS
-              </button>
+              </Button>
             )}
           </div>
           {addedCount !== null && (

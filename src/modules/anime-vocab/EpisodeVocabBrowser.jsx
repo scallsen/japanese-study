@@ -7,6 +7,8 @@ import { useProgress } from '../../hooks/useProgress.js'
 import { migrateProgress } from '../vocab-srs/migrate.js'
 import { buildJmdictIdCardIndex, resolveStatus } from './srsStatusResolver.js'
 import Select from '../../components/Select.jsx'
+import NumberField from '../../components/NumberField.jsx'
+import Button from '../../components/Button.jsx'
 import CenteredLoadingMessage from '../../components/CenteredLoadingMessage.jsx'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_LIST_TITLE } from '../../data/theme.js'
@@ -315,29 +317,17 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
             ) : (
               <>
                 <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>Select first</span>
-                <input
-                  type="number"
+                <NumberField
+                  value={Number(bulkCountInput) || ''}
+                  onChange={v => setBulkCountInput(String(v))}
                   min={1}
                   max={Math.max(eligible.length, 1)}
-                  value={bulkCountInput}
-                  onChange={e => setBulkCountInput(e.target.value)}
-                  autoFocus
-                  style={{ width: 56, padding: '4px 8px', fontFamily: FONT, background: '#1E1E1E', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 4, color: TEXT }}
+                  width={56}
                 />
                 <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>words</span>
                 <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, flexShrink: 0 }}>
-                  <button
-                    onClick={handleCancelBulk}
-                    style={{ padding: '5px 14px', fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING, borderRadius: 6, cursor: 'pointer', background: 'rgba(255,255,255,0.06)', color: TEXT, border: 'none' }}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleConfirmBulk}
-                    style={{ padding: '5px 14px', fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING, borderRadius: 6, cursor: 'pointer', background: ACCENT, color: '#fff', border: 'none' }}
-                  >
-                    Confirm
-                  </button>
+                  <Button variant="neutral" onClick={handleCancelBulk}>Cancel</Button>
+                  <Button variant="primary" onClick={handleConfirmBulk}>Confirm</Button>
                 </div>
               </>
             )}
@@ -386,19 +376,9 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
         background: '#1E1E1E', borderTop: '1px solid rgba(255,255,255,0.08)', padding: '12px 24px',
       }}>
         <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex', justifyContent: 'flex-end' }}>
-          <button
-            onClick={handleStartDrill}
-            disabled={selected.size === 0}
-            style={{
-              padding: '10px 24px', fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING, borderRadius: 8,
-              cursor: selected.size > 0 ? 'pointer' : 'not-allowed',
-              background: selected.size > 0 ? ACCENT : 'rgba(255,255,255,0.05)',
-              color: selected.size > 0 ? '#fff' : 'rgba(255,255,255,0.3)',
-              border: 'none',
-            }}
-          >
+          <Button variant="primary" size="lg" onClick={handleStartDrill} disabled={selected.size === 0}>
             Start Drill ({selected.size})
-          </button>
+          </Button>
         </div>
       </div>
     </div>

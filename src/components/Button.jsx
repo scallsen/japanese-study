@@ -1,7 +1,7 @@
 import { forwardRef } from 'react'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, SPACE_8, SPACE_16, SPACE_24 } from '../data/theme.js'
+import { useAccent } from '../context/ModuleThemeContext.jsx'
 
-const ACCENT = '#3ABDA4'
 const DANGER = '#f87171'
 
 // Reconciled from the real variants already in use across the app —
@@ -10,17 +10,23 @@ const DANGER = '#f87171'
 // `danger-outline`'s background tint is fixed to actually match its own
 // text color (ConfirmDialog's had a mismatched hue — rgba(192,57,43,..)
 // background under an #f87171 label).
-const VARIANTS = {
-  primary: { background: ACCENT, border: 'none', color: '#fff' },
-  'accent-outline': { background: 'rgba(58,189,164,0.16)', border: '1px solid rgba(58,189,164,0.42)', color: ACCENT },
-  neutral: { background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', color: TEXT },
-  'danger-outline': { background: 'rgba(248,113,113,0.15)', border: '1px solid rgba(248,113,113,0.4)', color: DANGER },
-  ghost: { background: 'transparent', border: 'none', color: ACCENT },
-  // Borderless neutral that reddens on hover — the dismiss/remove affordance
-  // (a toast's ×, a row's remove). Replaces the former IconButton atom: an
-  // icon-only button is a Button with an icon and no label, not a separate
-  // component, so `icon` here also covers icon+text cases the old atom couldn't.
-  'ghost-muted': { background: 'transparent', border: 'none', color: TEXT_MUTED },
+//
+// `accent` param, not a module constant: primary/accent-outline/ghost need
+// the ambient module accent (Anime Vocab's Start Drill CTA must render
+// pink, not core teal) — same gap Badge and SelectAllCheckbox had.
+function buildVariants(accent) {
+  return {
+    primary: { background: accent, border: 'none', color: '#fff' },
+    'accent-outline': { background: `${accent}29`, border: `1px solid ${accent}6b`, color: accent },
+    neutral: { background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', color: TEXT },
+    'danger-outline': { background: 'rgba(248,113,113,0.15)', border: '1px solid rgba(248,113,113,0.4)', color: DANGER },
+    ghost: { background: 'transparent', border: 'none', color: accent },
+    // Borderless neutral that reddens on hover — the dismiss/remove affordance
+    // (a toast's ×, a row's remove). Replaces the former IconButton atom: an
+    // icon-only button is a Button with an icon and no label, not a separate
+    // component, so `icon` here also covers icon+text cases the old atom couldn't.
+    'ghost-muted': { background: 'transparent', border: 'none', color: TEXT_MUTED },
+  }
 }
 
 // Sizes match the three distinct paddings actually used app-wide, not an
@@ -55,9 +61,11 @@ const VARIANT_CLASS = {
 // elements can't be measured or focused forces call sites back to raw
 // <button>, which is exactly what this replaces.
 const Button = forwardRef(function Button(
-  { variant = 'primary', size = 'md', disabled = false, type = 'button', onClick, fullWidth = false, icon, label, children },
+  { variant = 'primary', size = 'md', disabled = false, type = 'button', onClick, fullWidth = false, icon, label, children, accent },
   ref
 ) {
+  const resolvedAccent = useAccent(accent)
+  const VARIANTS = buildVariants(resolvedAccent)
   const style = VARIANTS[variant] ?? VARIANTS.primary
   const iconOnly = icon != null && !children
 

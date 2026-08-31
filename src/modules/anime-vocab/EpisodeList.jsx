@@ -4,9 +4,7 @@ import { useTrackedAnime } from './useTrackedAnime.js'
 import { difficultyLabel } from './difficultyLabels.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE } from '../../data/theme.js'
 import { useAccent } from '../../context/ModuleThemeContext.jsx'
-
-const TRACKED_COLOR = '#6BCB6B'
-const REMOVE_COLOR = '#f87171'
+import ToggleButton from '../../components/ToggleButton.jsx'
 
 // Duplicated per-file (matches this module's own established convention —
 // see e.g. AnimeVocabModule.jsx — each self-contained module keeps its own
@@ -65,44 +63,6 @@ function EpisodeRow({ episode, onClick, isMobile }) {
       </div>
       {isMobile && wordCount}
     </div>
-  )
-}
-
-function TrackToggle({ tracked, signedIn, onClick }) {
-  const ACCENT = useAccent()
-  const [hovered, setHovered] = useState(false)
-
-  if (!signedIn) {
-    return (
-      <button
-        disabled
-        style={{
-          padding: '8px 14px', borderRadius: 6, cursor: 'not-allowed', background: 'transparent',
-          fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0,
-          color: TEXT_MUTED, border: `1px solid ${TEXT_MUTED}55`, opacity: 0.6,
-        }}
-      >
-        Follow
-      </button>
-    )
-  }
-
-  const label = tracked ? 'Unfollow' : 'Follow'
-  const color = tracked ? (hovered ? REMOVE_COLOR : TRACKED_COLOR) : ACCENT
-
-  return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        padding: '8px 14px', borderRadius: 6, cursor: 'pointer', background: 'transparent',
-        fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0,
-        color, border: `1px solid ${color}`,
-      }}
-    >
-      {label}
-    </button>
   )
 }
 
@@ -210,7 +170,14 @@ export default function EpisodeList({ media, episodes, onSelectEpisode }) {
               </div>
             )}
           </div>
-          <TrackToggle tracked={tracked} signedIn={!!user} onClick={handleToggleTrack} />
+          <ToggleButton
+            active={tracked}
+            labels={{ on: 'Unfollow', off: 'Follow' }}
+            activeTone="success"
+            destructiveHover
+            disabled={!user}
+            onClick={handleToggleTrack}
+          />
         </div>
       </div>
 

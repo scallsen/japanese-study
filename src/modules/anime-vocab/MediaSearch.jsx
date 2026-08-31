@@ -7,6 +7,9 @@ import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE } from '../../data/theme.js'
 import { useAccent } from '../../context/ModuleThemeContext.jsx'
+import Select from '../../components/Select.jsx'
+import TextInput from '../../components/TextInput.jsx'
+import Button from '../../components/Button.jsx'
 
 const DEBOUNCE_MS = 400
 
@@ -68,35 +71,6 @@ function ViewModeButton({ label, active, onClick }) {
     >
       {label}
     </button>
-  )
-}
-
-function SortSelect({ value, onChange }) {
-  return (
-    <select
-      value={value}
-      onChange={e => onChange(e.target.value)}
-      style={{
-        padding: '5px 26px 5px 10px',
-        fontSize: FS_BASE,
-        fontFamily: FONT,
-        letterSpacing: TRACKING,
-        borderRadius: 4,
-        cursor: 'pointer',
-        background: 'rgba(255,255,255,0.06)',
-        color: TEXT_MUTED,
-        border: '1px solid rgba(255,255,255,0.12)',
-        outline: 'none',
-        appearance: 'none',
-        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'right 8px center',
-      }}
-    >
-      {SORT_OPTIONS.map(o => (
-        <option key={o.value} value={o.value}>{o.label}</option>
-      ))}
-    </select>
   )
 }
 
@@ -522,24 +496,12 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
 
   return (
     <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <input
-        type="text"
+      <TextInput
         value={query}
-        onChange={e => setQuery(e.target.value)}
+        onChange={setQuery}
         placeholder="Search Jiten.moe"
+        size="lg"
         autoFocus
-        style={{
-          width: '100%',
-          padding: '12px 16px',
-          fontSize: FS_LIST_TITLE,
-          fontFamily: FONT,
-          letterSpacing: 'normal',
-          background: '#2A2A2A',
-          border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: 8,
-          color: TEXT,
-          outline: 'none',
-        }}
       />
 
       <div style={{ display: 'flex', flexDirection: 'column', background: '#2A2A2A', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, overflow: 'hidden' }}>
@@ -593,7 +555,7 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
             Recommended — beginner friendly
           </span>
         ) : (
-          <SortSelect value={sortValue} onChange={setSortValue} />
+          <Select value={sortValue} onChange={setSortValue} options={SORT_OPTIONS} label="Sort by" />
         )}
         <div style={{ display: 'flex', gap: 6, marginLeft: 'auto' }}>
           <ViewModeButton label="List" active={viewMode === 'list'} onClick={() => setViewMode('list')} />
@@ -618,25 +580,11 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
         <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>No results.</div>
       )}
       {!isIdle && !loading && cursor && (
-        <button
-          type="button"
-          onClick={handleLoadMore}
-          disabled={loadingMore}
-          style={{
-            alignSelf: 'center',
-            padding: '8px 20px',
-            fontSize: FS_BASE,
-            fontFamily: FONT,
-            letterSpacing: TRACKING,
-            borderRadius: 6,
-            cursor: loadingMore ? 'default' : 'pointer',
-            background: 'rgba(255,255,255,0.06)',
-            color: loadingMore ? 'rgba(255,255,255,0.3)' : TEXT_MUTED,
-            border: '1px solid rgba(255,255,255,0.15)',
-          }}
-        >
-          {loadingMore ? 'Loading more...' : 'Load more'}
-        </button>
+        <div style={{ alignSelf: 'center' }}>
+          <Button variant="neutral" onClick={handleLoadMore} disabled={loadingMore}>
+            {loadingMore ? 'Loading more...' : 'Load more'}
+          </Button>
+        </div>
       )}
     </div>
   )
