@@ -6,7 +6,7 @@ import TopProgressBar from '../components/TopProgressBar.jsx'
 import CenteredLoadingMessage from '../components/CenteredLoadingMessage.jsx'
 import { useDelayedLoading } from '../hooks/useDelayedLoading.js'
 import { supabase } from '../lib/supabase.js'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_ENTRY_KANJI, FS_ENTRY_WORD, FS_CONTENT_HEADING } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_ENTRY_WORD, FS_CONTENT_HEADING } from '../data/theme.js'
 import AttributionFooter from '../components/AttributionFooter.jsx'
 import Badge from '../components/Badge.jsx'
 import Card from '../components/Card.jsx'
@@ -15,10 +15,10 @@ import Checkbox from '../components/Checkbox.jsx'
 import Button from '../components/Button.jsx'
 import { MODULES } from '../data/modules.js'
 import { ModuleThemeProvider, useAccent } from '../context/ModuleThemeContext.jsx'
+import { SectionLabel, KanjiBreakdownEntry, KANJI_FONT } from './dictionaryShared.jsx'
 
 const BG = '#1E1E1E'
 const DICTIONARY_ACCENT = MODULES.find(m => m.id === 'dictionary').accent
-const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
 
 const PAGE_SIZE = 20
 
@@ -217,44 +217,10 @@ async function doSearch(term, offset, commonOnly) {
   return { rows: data ?? [], hasMore: (data ?? []).length === PAGE_SIZE }
 }
 
-function kanjiGradeLabel(grade) {
-  if (!grade) return null
-  if (grade <= 6) return `G${grade}`
-  if (grade <= 8) return 'Secondary'
-  return 'Jinmeiyō'
-}
-
 function KanjiRow({ entry }) {
-  const jlptLabel = entry.jlpt ? `N${entry.jlpt}` : null
-  const gradeLabel = kanjiGradeLabel(entry.grade)
-
   return (
     <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-      <span style={{ fontSize: FS_ENTRY_KANJI, color: TEXT, fontFamily: KANJI_FONT, lineHeight: 1, flexShrink: 0, letterSpacing: 0, minWidth: 40, textAlign: 'center' }}>
-        {entry.literal}
-      </span>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 5 }}>
-          {entry.on_readings.length > 0 && (
-            <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
-              {entry.on_readings.join('、')}
-            </span>
-          )}
-          {entry.kun_readings.length > 0 && (
-            <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
-              {entry.kun_readings.join('、')}
-            </span>
-          )}
-          {jlptLabel && <Badge variant="text" tone="accent">{jlptLabel}</Badge>}
-          {gradeLabel && <Badge variant="text" tone="neutral">{gradeLabel}</Badge>}
-          {entry.stroke_count && <Badge variant="text" tone="neutral" dimmed>{entry.stroke_count} strokes</Badge>}
-        </div>
-        {entry.meanings && (
-          <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-            {entry.meanings.split('; ').slice(0, 4).join('; ')}
-          </span>
-        )}
-      </div>
+      <KanjiBreakdownEntry entry={entry} truncateMeanings />
     </div>
   )
 }
@@ -324,23 +290,6 @@ function KanjiSection({ entries, hasWords }) {
         )}
       </Card>
     </>
-  )
-}
-
-function SectionLabel({ label }) {
-  return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: 8,
-      marginBottom: 8,
-      marginTop: 4,
-    }}>
-      <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: '0.1em', opacity: 0.5, textTransform: 'uppercase' }}>
-        {label}
-      </span>
-      <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.06)' }} />
-    </div>
   )
 }
 

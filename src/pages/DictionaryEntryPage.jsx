@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import PageHeader from '../components/PageHeader.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
 import { supabase } from '../lib/supabase.js'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_ENTRY_KANJI, FS_ENTRY_HEADING, FS_ENTRY_ALT, SUBHEADING_STYLE } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_ENTRY_HEADING, FS_ENTRY_ALT } from '../data/theme.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useProgress } from '../hooks/useProgress.js'
 import { migrateProgress } from '../modules/vocab-srs/migrate.js'
@@ -15,11 +15,11 @@ import Card from '../components/Card.jsx'
 import CenteredLoadingMessage from '../components/CenteredLoadingMessage.jsx'
 import { MODULES } from '../data/modules.js'
 import { ModuleThemeProvider } from '../context/ModuleThemeContext.jsx'
+import { SectionLabel, KanjiBreakdownEntry, KANJI_FONT } from './dictionaryShared.jsx'
 
 const BG = '#1E1E1E'
 const SURFACE = '#2A2A2A'
 const DICTIONARY_ACCENT = MODULES.find(m => m.id === 'dictionary').accent
-const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
 
 function isSingleKanji(ch) {
   return /^[一-鿿]$/.test(ch)
@@ -154,57 +154,11 @@ function SensesSection({ senses }) {
   )
 }
 
-function gradeLabel(grade) {
-  if (!grade) return null
-  if (grade <= 6) return `G${grade}`
-  if (grade <= 8) return 'Secondary'
-  return 'Jinmeiyō'
-}
-
 function KanjiCard({ entry }) {
-  const jlpt = entry.jlpt ? `N${entry.jlpt}` : null
-  const grade = gradeLabel(entry.grade)
-
   return (
     <Card style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-      <span style={{ fontSize: FS_ENTRY_KANJI, color: TEXT, fontFamily: KANJI_FONT, lineHeight: 1, letterSpacing: 0, flexShrink: 0, minWidth: 44, textAlign: 'center' }}>
-        {entry.literal}
-      </span>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 5 }}>
-          {entry.on_readings?.length > 0 && (
-            <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
-              {entry.on_readings.join('、')}
-            </span>
-          )}
-          {entry.kun_readings?.length > 0 && (
-            <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
-              {entry.kun_readings.join('、')}
-            </span>
-          )}
-          {jlpt && <Badge variant="text" tone="accent">{jlpt}</Badge>}
-          {grade && <Badge variant="text" tone="neutral">{grade}</Badge>}
-          {entry.stroke_count && <Badge variant="text" tone="neutral" dimmed>{entry.stroke_count} strokes</Badge>}
-          {entry.frequency && <Badge variant="text" tone="neutral" dimmed>freq #{entry.frequency}</Badge>}
-        </div>
-        {entry.meanings && (
-          <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-            {entry.meanings}
-          </span>
-        )}
-      </div>
+      <KanjiBreakdownEntry entry={entry} />
     </Card>
-  )
-}
-
-function SectionLabel({ label }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12, marginTop: 28 }}>
-      <span style={{ ...SUBHEADING_STYLE, color: TEXT_MUTED, fontFamily: FONT, opacity: 0.5 }}>
-        {label}
-      </span>
-      <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.06)' }} />
-    </div>
   )
 }
 
@@ -374,7 +328,7 @@ export default function DictionaryEntryPage({ entryId }) {
               {/* Your decks */}
               {showDecksSection && (
                 <>
-                  <SectionLabel label="Your Decks" />
+                  <SectionLabel label="Your Decks" marginTop={28} />
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {vocabDrillMatches.map(label => (
                       <DeckRow key={`vocab-${label}`} label={label} href="#/vocab" meta="Vocab Drill" />
@@ -399,7 +353,7 @@ export default function DictionaryEntryPage({ entryId }) {
               {/* Kanji breakdown */}
               {kanjiDetails.length > 0 && (
                 <>
-                  <SectionLabel label="Kanji" />
+                  <SectionLabel label="Kanji" marginTop={28} />
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {kanjiDetails.map(k => <KanjiCard key={k.literal} entry={k} />)}
                   </div>
@@ -409,7 +363,7 @@ export default function DictionaryEntryPage({ entryId }) {
               {/* Example sentences */}
               {sentences.length > 0 && (
                 <>
-                  <SectionLabel label="Example Sentences" />
+                  <SectionLabel label="Example Sentences" marginTop={28} />
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {sentences.map(s => <SentenceCard key={s.id} sentence={s} />)}
                   </div>
