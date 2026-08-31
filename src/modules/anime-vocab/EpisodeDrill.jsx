@@ -10,11 +10,12 @@ import { useAuth } from '../../context/AuthContext.jsx'
 import { useProgress } from '../../hooks/useProgress.js'
 import { createCard } from '../vocab-srs/srs.js'
 import {
-  FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION,
+  FONT, TEXT_MUTED, FS_BADGE, FS_CAPTION,
   FS_DISPLAY_HEADING, FS_STAT_VALUE, FS_LIST_TITLE,
 } from '../../data/theme.js'
 import { useAccent } from '../../context/ModuleThemeContext.jsx'
 import Button from '../../components/Button.jsx'
+import DataList from '../../components/DataList.jsx'
 
 const ANIME_WORDS_DECK_ID = 'anime-words'
 
@@ -122,6 +123,15 @@ function ActiveEpisodeDrill({
   )
 }
 
+const WORD_REVIEW_COLUMNS = [
+  { key: 'word', width: 100, fontSize: FS_LIST_TITLE, render: row => row.word.kanji || row.word.kana },
+  { key: 'english', flex: 1, tone: 'muted', render: row => row.word.english },
+  {
+    key: 'mistakes', width: 40, align: 'right',
+    render: row => row.mistakes > 0 && <span style={{ fontSize: FS_BADGE, color: '#fbbf24' }}>{row.mistakes}×</span>,
+  },
+]
+
 function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onBack, onAddToSrs, requiresSignIn, onSignIn }) {
   const ACCENT = useAccent()
   const rows = useMemo(() =>
@@ -181,16 +191,12 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onBack,
               {addedCount > 0 ? `Added ${addedCount} word${addedCount === 1 ? '' : 's'} to Anime Words.` : 'Selected words are already in Anime Words.'}
             </div>
           )}
-          <div style={{ background: '#2A2A2A', borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
-            {rows.map(row => (
-              <label key={row.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.05)', cursor: requiresSignIn ? 'default' : 'pointer', fontFamily: 'inherit', letterSpacing: TRACKING }}>
-                <input type="checkbox" checked={selected.has(row.id)} disabled={requiresSignIn} onChange={() => toggleRow(row.id)} style={{ flexShrink: 0, width: 16, height: 16, accentColor: ACCENT }} />
-                <span style={{ fontSize: FS_LIST_TITLE, color: TEXT, fontFamily: FONT, letterSpacing: 0, flexShrink: 0 }}>{row.word.kanji || row.word.kana}</span>
-                <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.word.english}</span>
-                {row.mistakes > 0 && <span style={{ fontSize: FS_BADGE, color: '#fbbf24', flexShrink: 0 }}>{row.mistakes}×</span>}
-              </label>
-            ))}
-          </div>
+          <DataList
+            columns={WORD_REVIEW_COLUMNS}
+            rows={rows}
+            maxWidth="100%"
+            selection={requiresSignIn ? undefined : { selected, onToggle: toggleRow }}
+          />
         </div>
       )}
     </div>

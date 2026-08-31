@@ -3,8 +3,9 @@ import { useAuth } from '../../context/AuthContext.jsx'
 import { useTrackedAnime } from './useTrackedAnime.js'
 import { difficultyLabel } from './difficultyLabels.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE } from '../../data/theme.js'
-import { useAccent } from '../../context/ModuleThemeContext.jsx'
 import ToggleButton from '../../components/ToggleButton.jsx'
+import DataList from '../../components/DataList.jsx'
+import Badge from '../../components/Badge.jsx'
 
 // Duplicated per-file (matches this module's own established convention —
 // see e.g. AnimeVocabModule.jsx — each self-contained module keeps its own
@@ -20,50 +21,31 @@ function useIsMobile(breakpoint = 768) {
   return isMobile
 }
 
-function EpisodeRow({ episode, onClick, isMobile }) {
-  const ACCENT = useAccent()
-  const [hovered, setHovered] = useState(false)
-  const difficulty = episode.difficulty?.difficulty
-  const wordCount = episode.unique_word_count != null && (
-    <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>
-      {episode.unique_word_count} unique words
-    </span>
-  )
-  return (
-    <div
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        background: hovered ? '#313131' : '#2A2A2A',
-        border: '1px solid rgba(255,255,255,0.07)',
-        borderRadius: 8,
-        padding: '12px 18px',
-        cursor: 'pointer',
-        transition: 'background 130ms',
-        display: 'flex',
-        flexDirection: isMobile ? 'column' : 'row',
-        alignItems: isMobile ? 'stretch' : 'center',
-        gap: isMobile ? 4 : 12,
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
-        <span style={{ fontSize: FS_LIST_TITLE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {episode.title || `Episode ${episode.episode_number}`}
-        </span>
-        {!isMobile && wordCount}
-        {difficulty != null && (
-          <span style={{
-            fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, color: ACCENT,
-            background: `${ACCENT}22`, border: `1px solid ${ACCENT}55`, borderRadius: 4, padding: '1px 7px', flexShrink: 0,
-          }}>
-            {difficultyLabel(difficulty)} ({Number(difficulty).toFixed(1)})
+function episodeColumns(isMobile) {
+  return [
+    {
+      key: 'title',
+      flex: 1,
+      render: ep => (
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', gap: isMobile ? 2 : 12, minWidth: 0, width: '100%' }}>
+          <span style={{ fontSize: FS_LIST_TITLE, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>
+            {ep.title || `Episode ${ep.episode_number}`}
           </span>
-        )}
-      </div>
-      {isMobile && wordCount}
-    </div>
-  )
+          {ep.unique_word_count != null && (
+            <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, flexShrink: 0 }}>{ep.unique_word_count} unique words</span>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: 'difficulty',
+      width: 110,
+      align: 'right',
+      render: ep => ep.difficulty?.difficulty != null && (
+        <Badge tone="accent">{difficultyLabel(ep.difficulty.difficulty)} ({Number(ep.difficulty.difficulty).toFixed(1)})</Badge>
+      ),
+    },
+  ]
 }
 
 const LINK_TYPE_LABELS = { 4: 'AniList', 5: 'MyAnimeList' }
@@ -122,7 +104,6 @@ const MAX_RELATED_SHOWN = 6
 const SHOW_RELATED = false
 
 export default function EpisodeList({ media, episodes, onSelectEpisode }) {
-  const ACCENT = useAccent()
   const { user } = useAuth()
   const { isTracked, track, untrack } = useTrackedAnime()
   const tracked = isTracked(media.id)
@@ -161,12 +142,7 @@ export default function EpisodeList({ media, episodes, onSelectEpisode }) {
             </div>
             {showDifficulty != null && (
               <div>
-                <span style={{
-                  fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, color: ACCENT,
-                  background: `${ACCENT}22`, border: `1px solid ${ACCENT}55`, borderRadius: 4, padding: '1px 7px',
-                }}>
-                  {difficultyLabel(showDifficulty)} ({Number(showDifficulty).toFixed(1)})
-                </span>
+                <Badge tone="accent">{difficultyLabel(showDifficulty)} ({Number(showDifficulty).toFixed(1)})</Badge>
               </div>
             )}
           </div>
@@ -212,11 +188,12 @@ export default function EpisodeList({ media, episodes, onSelectEpisode }) {
         </div>
       )}
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {episodes.map(ep => (
-          <EpisodeRow key={ep.id} episode={ep} onClick={() => onSelectEpisode(ep)} isMobile={isMobile} />
-        ))}
-      </div>
+      <DataList
+        columns={episodeColumns(isMobile)}
+        rows={episodes}
+        maxWidth="100%"
+        navigate={{ onClick: onSelectEpisode }}
+      />
     </div>
   )
 }
