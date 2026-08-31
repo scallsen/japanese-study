@@ -20,8 +20,10 @@ import { useJaVoices } from '../../hooks/useTTS.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
 import { SENTENCE_SOURCE_OPTIONS, DEFAULT_SENTENCE_SOURCE } from '../../data/sentenceSource.js'
 import { FONT, TRACKING, FS_BASE } from '../../data/theme.js'
+import { MODULES } from '../../data/modules.js'
+import { ModuleThemeProvider, useAccent } from '../../context/ModuleThemeContext.jsx'
 
-const ACCENT = '#D46EA3'
+const ANIME_ACCENT = MODULES.find(m => m.id === 'anime-vocab').accent
 
 // Duplicated per-file (matches this module's own established convention —
 // see e.g. GrammarMapModule.jsx, VocabSrsModule.jsx, StoryModule.jsx — each
@@ -44,6 +46,10 @@ function useIsMobile(breakpoint = 768) {
 // #/anime-vocab/:mediaId route (initialMediaId) that resumes straight into
 // a tracked series' episode list.
 export default function AnimeVocabModule({ initialMediaId }) {
+  // Explicit override, not ambient useAccent() — this component is the one
+  // establishing ModuleThemeProvider below, so it can't read back the value
+  // it's about to provide to its own children.
+  const ACCENT = useAccent(ANIME_ACCENT)
   const [media, setMedia] = useState(null)
   const [episodes, setEpisodes] = useState([])
   const [episode, setEpisode] = useState(null)
@@ -249,6 +255,7 @@ export default function AnimeVocabModule({ initialMediaId }) {
   }
 
   return (
+    <ModuleThemeProvider accent={ANIME_ACCENT}>
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', background: '#1E1E1E', fontFamily: FONT, letterSpacing: TRACKING }}>
       <PageHeader crumbs={crumbs} rightSlot={<AuthSlot />}>
         <TopProgressBar loading={showProgressBar} color={ACCENT} />
@@ -310,5 +317,6 @@ export default function AnimeVocabModule({ initialMediaId }) {
         )}
       </div>
     </div>
+    </ModuleThemeProvider>
   )
 }

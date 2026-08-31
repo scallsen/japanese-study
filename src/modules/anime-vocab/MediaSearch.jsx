@@ -6,8 +6,8 @@ import { difficultyLabel } from './difficultyLabels.js'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE } from '../../data/theme.js'
+import { useAccent } from '../../context/ModuleThemeContext.jsx'
 
-const ACCENT = '#D46EA3'
 const DEBOUNCE_MS = 400
 
 // Duplicated from providers/jitenClient.js — that file is server-only (see
@@ -50,6 +50,7 @@ const DEFAULT_SORT = 'difficulty-asc'
 const RESULTS_PAGE_SIZE = 24
 
 function ViewModeButton({ label, active, onClick }) {
+  const ACCENT = useAccent()
   const [hovered, setHovered] = useState(false)
   return (
     <button
@@ -183,6 +184,7 @@ function InfoIcon({ text }) {
 // Shared toggle chip — used for both the media-type and difficulty filter
 // rows (same click-to-select/click-to-deselect interaction either way).
 function Chip({ label, active, onClick }) {
+  const ACCENT = useAccent()
   const [hovered, setHovered] = useState(false)
   return (
     <button
@@ -217,6 +219,7 @@ function FilterSectionLabel({ children }) {
 }
 
 function DifficultyBadge({ difficulty }) {
+  const ACCENT = useAccent()
   if (difficulty == null) return null
   return (
     <span style={{
@@ -263,6 +266,7 @@ function ResultTile({ result, onClick, busy }) {
 }
 
 function ResultListRow({ result, onClick, busy }) {
+  const ACCENT = useAccent()
   const [hovered, setHovered] = useState(false)
   return (
     <div

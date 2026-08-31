@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase.js'
 import { difficultyLabel } from './difficultyLabels.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, SUBHEADING_STYLE, FS_BADGE, FS_LIST_TITLE } from '../../data/theme.js'
-
-const ACCENT = '#D46EA3'
+import { useAccent } from '../../context/ModuleThemeContext.jsx'
 
 function RemoveButton({ onClick }) {
   const [hovered, setHovered] = useState(false)
@@ -29,6 +28,7 @@ function RemoveButton({ onClick }) {
 }
 
 function TrackedAnimeRow({ title, mediaType, coverUrl, difficulty, onOpen, onRemove }) {
+  const ACCENT = useAccent()
   const [hovered, setHovered] = useState(false)
   return (
     <div

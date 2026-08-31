@@ -3,8 +3,8 @@ import { useAuth } from '../../context/AuthContext.jsx'
 import { useTrackedAnime } from './useTrackedAnime.js'
 import { difficultyLabel } from './difficultyLabels.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE } from '../../data/theme.js'
+import { useAccent } from '../../context/ModuleThemeContext.jsx'
 
-const ACCENT = '#D46EA3'
 const TRACKED_COLOR = '#6BCB6B'
 const REMOVE_COLOR = '#f87171'
 
@@ -23,6 +23,7 @@ function useIsMobile(breakpoint = 768) {
 }
 
 function EpisodeRow({ episode, onClick, isMobile }) {
+  const ACCENT = useAccent()
   const [hovered, setHovered] = useState(false)
   const difficulty = episode.difficulty?.difficulty
   const wordCount = episode.unique_word_count != null && (
@@ -68,6 +69,7 @@ function EpisodeRow({ episode, onClick, isMobile }) {
 }
 
 function TrackToggle({ tracked, signedIn, onClick }) {
+  const ACCENT = useAccent()
   const [hovered, setHovered] = useState(false)
 
   if (!signedIn) {
@@ -160,6 +162,7 @@ const MAX_RELATED_SHOWN = 6
 const SHOW_RELATED = false
 
 export default function EpisodeList({ media, episodes, onSelectEpisode }) {
+  const ACCENT = useAccent()
   const { user } = useAuth()
   const { isTracked, track, untrack } = useTrackedAnime()
   const tracked = isTracked(media.id)

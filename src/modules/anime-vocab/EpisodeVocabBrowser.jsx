@@ -10,8 +10,8 @@ import Select from '../../components/Select.jsx'
 import CenteredLoadingMessage from '../../components/CenteredLoadingMessage.jsx'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_LIST_TITLE } from '../../data/theme.js'
+import { useAccent } from '../../context/ModuleThemeContext.jsx'
 
-const ACCENT = '#D46EA3'
 const DEFAULT_WORD_LIMIT = 20
 const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
 // global_frequency_rank = this word's rank across ALL of Jiten's indexed
@@ -38,10 +38,10 @@ const JLPT_LEVEL_OPTIONS = [
 const STATUS_LABEL = { new: 'New', learning: 'Learning', young: 'Young', mature: 'Mature', relearning: 'Relearning', 'not-in-deck': null }
 const STATUS_COLOR = { new: TEXT_MUTED, learning: '#fbbf24', young: '#60a5fa', mature: '#4ade80', relearning: '#f87171' }
 
-function checkboxRow(label, checked, onChange) {
+function checkboxRow(label, checked, onChange, accent) {
   return (
     <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, cursor: 'pointer' }}>
-      <input type="checkbox" checked={checked} onChange={onChange} style={{ width: 15, height: 15, accentColor: ACCENT }} />
+      <input type="checkbox" checked={checked} onChange={onChange} style={{ width: 15, height: 15, accentColor: accent }} />
       {label}
     </label>
   )
@@ -50,6 +50,7 @@ function checkboxRow(label, checked, onChange) {
 // Native checkboxes don't expose an "indeterminate" prop — it can only be set
 // as a DOM property, hence the ref + effect instead of a plain <input>.
 function SelectAllCheckbox({ checked, indeterminate, onChange }) {
+  const ACCENT = useAccent()
   const ref = useRef(null)
   useEffect(() => {
     if (ref.current) ref.current.indeterminate = indeterminate
@@ -84,6 +85,7 @@ function CaretButton({ open, onClick }) {
 }
 
 export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLoadingChange }) {
+  const ACCENT = useAccent()
   const [occurrences, setOccurrences] = useState([])
   const [loading, setLoading] = useState(true)
   const [syncing, setSyncing] = useState(false)
@@ -277,10 +279,10 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
             Filter words
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
-            {checkboxRow(`Grammar words (${grammarCount})`, includeGrammar, () => setIncludeGrammar(v => !v))}
-            {checkboxRow(`Names (${namesCount})`, includeNames, () => setIncludeNames(v => !v))}
-            {checkboxRow(`Very common words (${genericCount})`, includeGeneric, () => setIncludeGeneric(v => !v))}
-            {checkboxRow(`Known (${knownCount})`, includeKnown, () => setIncludeKnown(v => !v))}
+            {checkboxRow(`Grammar words (${grammarCount})`, includeGrammar, () => setIncludeGrammar(v => !v), ACCENT)}
+            {checkboxRow(`Names (${namesCount})`, includeNames, () => setIncludeNames(v => !v), ACCENT)}
+            {checkboxRow(`Very common words (${genericCount})`, includeGeneric, () => setIncludeGeneric(v => !v), ACCENT)}
+            {checkboxRow(`Known (${knownCount})`, includeKnown, () => setIncludeKnown(v => !v), ACCENT)}
           </div>
         </div>
       </div>

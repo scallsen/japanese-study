@@ -13,8 +13,8 @@ import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION,
   FS_DISPLAY_HEADING, FS_STAT_VALUE, FS_LIST_TITLE,
 } from '../../data/theme.js'
+import { useAccent } from '../../context/ModuleThemeContext.jsx'
 
-const ACCENT = '#D46EA3'
 const ANIME_WORDS_DECK_ID = 'anime-words'
 
 // One-off drill session — same tech/flow as Vocab Drill's speed mode
@@ -122,6 +122,7 @@ function ActiveEpisodeDrill({
 }
 
 function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onBack, onAddToSrs, requiresSignIn, onSignIn }) {
+  const ACCENT = useAccent()
   const rows = useMemo(() =>
     pool.map(({ id, word }) => ({ id, word, mistakes: mistakeCounts[id] ?? 0 })).sort((a, b) => b.mistakes - a.mistakes),
     [pool, mistakeCounts]
