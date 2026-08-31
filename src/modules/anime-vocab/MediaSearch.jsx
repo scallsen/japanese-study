@@ -10,8 +10,34 @@ import { useAccent } from '../../context/ModuleThemeContext.jsx'
 import Select from '../../components/Select.jsx'
 import TextInput from '../../components/TextInput.jsx'
 import Button from '../../components/Button.jsx'
+import DataList from '../../components/DataList.jsx'
+import Badge from '../../components/Badge.jsx'
 
 const DEBOUNCE_MS = 400
+
+const RESULT_COLUMNS = [
+  {
+    key: 'cover', width: 40,
+    render: r => r.coverUrl && <img src={r.coverUrl} alt="" style={{ width: 40, height: 56, objectFit: 'cover', borderRadius: 4 }} />,
+  },
+  {
+    key: 'content', flex: 1,
+    render: r => (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4, width: '100%', minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Badge tone="accent">{r.mediaType}</Badge>
+          {r.difficulty?.difficulty != null && (
+            <Badge tone="accent">{difficultyLabel(r.difficulty.difficulty)} ({Number(r.difficulty.difficulty).toFixed(1)})</Badge>
+          )}
+        </div>
+        <div style={{ fontSize: FS_LIST_TITLE, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.title}</div>
+        {r.originalTitle && r.originalTitle !== r.title && (
+          <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.originalTitle}</div>
+        )}
+      </div>
+    ),
+  },
+]
 
 // Duplicated from providers/jitenClient.js — that file is server-only (see
 // its own header comment), never imported into browser code.
@@ -239,52 +265,6 @@ function ResultTile({ result, onClick, busy }) {
   )
 }
 
-function ResultListRow({ result, onClick, busy }) {
-  const ACCENT = useAccent()
-  const [hovered, setHovered] = useState(false)
-  return (
-    <div
-      onClick={busy ? undefined : onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        background: hovered ? '#313131' : '#2A2A2A',
-        border: '1px solid rgba(255,255,255,0.07)',
-        borderRadius: 8,
-        padding: '14px 18px',
-        cursor: busy ? 'default' : 'pointer',
-        opacity: busy ? 0.5 : 1,
-        transition: 'background 130ms',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 12,
-      }}
-    >
-      {result.coverUrl && (
-        <img src={result.coverUrl} alt="" style={{ width: 40, height: 56, objectFit: 'cover', borderRadius: 4, flexShrink: 0 }} />
-      )}
-      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 4 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{
-            fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, color: ACCENT,
-            background: `${ACCENT}22`, border: `1px solid ${ACCENT}55`, borderRadius: 4, padding: '1px 7px',
-          }}>
-            {result.mediaType}
-          </span>
-          <DifficultyBadge difficulty={result.difficulty?.difficulty} />
-        </div>
-        <div style={{ fontSize: FS_LIST_TITLE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {result.title}
-        </div>
-        {result.originalTitle && result.originalTitle !== result.title && (
-          <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {result.originalTitle}
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
 
 // Search + select screen. On selecting a result, links it into media/media_provider_ref/
 // media_episode (via the anime-media-select edge function) and calls onSelected(media, episodes).
@@ -492,8 +472,6 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
     }
   }
 
-  const ResultItem = viewMode === 'tiles' ? ResultTile : ResultListRow
-
   return (
     <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
       <TextInput
@@ -568,14 +546,22 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
           {isIdle ? 'Loading recommended series...' : 'Searching...'}
         </div>
       )}
-      <div style={viewMode === 'tiles'
-        ? { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 12 }
-        : { display: 'flex', flexDirection: 'column', gap: 10 }
-      }>
-        {results.map(r => (
-          <ResultItem key={r.externalId} result={r} busy={selectingId === r.externalId} onClick={() => handleSelect(r)} />
-        ))}
-      </div>
+      {viewMode === 'tiles' ? (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 12 }}>
+          {results.map(r => (
+            <ResultTile key={r.externalId} result={r} busy={selectingId === r.externalId} onClick={() => handleSelect(r)} />
+          ))}
+        </div>
+      ) : results.length > 0 && (
+        <DataList
+          columns={RESULT_COLUMNS}
+          rows={results}
+          rowKey={r => r.externalId}
+          maxWidth="100%"
+          navigate={{ onClick: handleSelect }}
+          rowState={r => ({ disabled: selectingId === r.externalId })}
+        />
+      )}
       {!loading && !isIdle && results.length === 0 && !error && (
         <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>No results.</div>
       )}

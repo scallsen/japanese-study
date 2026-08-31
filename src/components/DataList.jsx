@@ -74,7 +74,7 @@ function RowCheckbox({ checked, onToggle }) {
   )
 }
 
-function Row({ row, rowKey, columns, selection, navigate, expand, editableFields, onFieldChange, gap, padding, isLast }) {
+function Row({ row, rowKey, columns, selection, navigate, expand, editableFields, onFieldChange, gap, padding, isLast, rowState }) {
   const id = rowKey(row)
   const cells = columns.map(col => (
     <Cell key={col.key} column={col} row={row} editable={editableFields?.includes(col.key)} onFieldChange={onFieldChange} />
@@ -82,6 +82,7 @@ function Row({ row, rowKey, columns, selection, navigate, expand, editableFields
 
   const isSelected = !!selection?.selected?.has(id)
   const isExpanded = !!expand?.expanded?.has(id)
+  const disabled = !!rowState?.(row)?.disabled
   // The container already draws the outer border; a divider under the final
   // row doubles up against it and reads as a 2px seam.
   const divider = isLast ? 'none' : `1px solid ${ROW_HAIRLINE}`
@@ -97,7 +98,11 @@ function Row({ row, rowKey, columns, selection, navigate, expand, editableFields
     )
   }
 
-  const clickable = !!navigate || !!expand
+  // rowState: per-row disabled/busy — e.g. MediaSearch dims only the one
+  // result tile/row being selected while a click is pending, not the whole
+  // list. Mirrors rowKey's own "function called per row" convention rather
+  // than asking the caller to keep a parallel Set in sync.
+  const clickable = (!!navigate || !!expand) && !disabled
   function handleRowClick() {
     if (navigate) navigate.onClick(row)
     else if (expand) expand.onToggle(id)
@@ -114,6 +119,7 @@ function Row({ row, rowKey, columns, selection, navigate, expand, editableFields
         borderBottom: isExpanded ? 'none' : divider,
         fontFamily: 'inherit', letterSpacing: TRACKING,
         cursor: clickable ? 'pointer' : 'default',
+        opacity: disabled ? 0.5 : 1,
       }}
     >
       {selection && <RowCheckbox checked={isSelected} onToggle={() => selection.onToggle(id)} />}
@@ -171,6 +177,10 @@ function Row({ row, rowKey, columns, selection, navigate, expand, editableFields
  * onFieldChange: (row, key, value) => void — required if editableFields is set
  * search: { value, onChange, placeholder } — renders a search row when present
  * footer: ReactNode rendered below the rows (e.g. a primary action button)
+ * rowState?: (row) => { disabled?: boolean } — per-row disabled/busy (only
+ *   the row being acted on dims and ignores clicks, not the whole list —
+ *   MediaSearch while a result is being selected). Only affects navigate/
+ *   expand rows.
  */
 export default function DataList({
   columns,
@@ -187,6 +197,7 @@ export default function DataList({
   gap = SPACE_12,
   padding = '10px 14px', // matches SelectableRow's own default — the two must stay visually consistent
   maxWidth = 640,
+  rowState,
 }) {
   const selected = selection?.selected ?? new Set()
   const allSelected = rows.length > 0 && rows.every(r => selected.has(rowKey(r)))
@@ -245,6 +256,7 @@ export default function DataList({
               gap={gap}
               padding={padding}
               isLast={i === rows.length - 1}
+              rowState={rowState}
             />
           ))
         )}
