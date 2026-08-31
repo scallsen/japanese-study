@@ -9,6 +9,9 @@ import { buildJmdictIdCardIndex, resolveStatus } from './srsStatusResolver.js'
 import Select from '../../components/Select.jsx'
 import NumberField from '../../components/NumberField.jsx'
 import Button from '../../components/Button.jsx'
+import TextInput from '../../components/TextInput.jsx'
+import DataList from '../../components/DataList.jsx'
+import Badge from '../../components/Badge.jsx'
 import CenteredLoadingMessage from '../../components/CenteredLoadingMessage.jsx'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_LIST_TITLE } from '../../data/theme.js'
@@ -39,6 +42,34 @@ const JLPT_LEVEL_OPTIONS = [
 
 const STATUS_LABEL = { new: 'New', learning: 'Learning', young: 'Young', mature: 'Mature', relearning: 'Relearning', 'not-in-deck': null }
 const STATUS_COLOR = { new: TEXT_MUTED, learning: '#fbbf24', young: '#60a5fa', mature: '#4ade80', relearning: '#f87171' }
+
+// SRS status pill stays a bespoke color rather than routing through Badge's
+// tone system — "young"'s blue (#60a5fa) has no matching semantic tone
+// (accent/success/warning/danger/neutral), and this 4-color status palette
+// isn't reused elsewhere, so it doesn't earn a place in Badge's fixed set.
+const WORD_COLUMNS = [
+  { key: 'displayForm', width: 90, fontFamily: KANJI_FONT, fontSize: FS_LIST_TITLE, render: row => row.displayForm },
+  { key: 'reading', width: 70, fontFamily: KANJI_FONT, tone: 'muted', render: row => (row.reading && row.reading !== row.displayForm ? row.reading : '') },
+  { key: 'gloss', flex: 1, tone: 'muted', render: row => row.gloss ?? (row.jmdict_id ? '' : '(no dictionary match)') },
+  {
+    key: 'badges', width: 160,
+    render: row => (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        {row.jlptLevel && (
+          <span title={row.jlptLevelInferred ? 'Approximate — inferred from a related word, not directly sourced' : undefined}>
+            <Badge tone="accent" dimmed={row.jlptLevelInferred}>{row.jlptLevelInferred ? `~${row.jlptLevel}` : row.jlptLevel}</Badge>
+          </span>
+        )}
+        {row.is_grammar && <Badge variant="text" tone="neutral">grammar</Badge>}
+        {row.is_name && <Badge variant="text" tone="neutral">name</Badge>}
+        {STATUS_LABEL[row.status] && (
+          <span style={{ fontSize: FS_BADGE, color: STATUS_COLOR[row.status], fontFamily: FONT, letterSpacing: TRACKING }}>{STATUS_LABEL[row.status]}</span>
+        )}
+      </div>
+    ),
+  },
+  { key: 'occurrence_count', width: 30, align: 'right', tone: 'muted', render: row => row.occurrence_count ?? '' },
+]
 
 function checkboxRow(label, checked, onChange, accent) {
   return (
@@ -291,16 +322,7 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
 
       <div style={{ background: '#2A2A2A', borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
         <div style={{ padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-          <input
-            type="text"
-            value={lookupQuery}
-            onChange={e => setLookupQuery(e.target.value)}
-            placeholder="Look up a word from this episode..."
-            style={{
-              width: '100%', fontSize: FS_BASE, fontFamily: FONT, letterSpacing: 'normal',
-              background: 'transparent', border: 'none', color: TEXT, outline: 'none',
-            }}
-          />
+          <TextInput value={lookupQuery} onChange={setLookupQuery} placeholder="Look up a word from this episode..." variant="bare" />
         </div>
         {lookupQuery.trim() && displayedRows.length === 0 ? (
           <div style={{ padding: '10px 14px', fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
@@ -333,43 +355,16 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
             )}
           </div>
         )}
-        {displayedRows.map(row => (
-          <label
-            key={row.id}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px',
-              borderBottom: '1px solid rgba(255,255,255,0.05)', cursor: 'pointer', fontFamily: FONT, letterSpacing: TRACKING,
-            }}
-          >
-            <input type="checkbox" checked={selected.has(row.id)} onChange={() => toggleRow(row.id)} style={{ flexShrink: 0, width: 16, height: 16, accentColor: ACCENT }} />
-            <span style={{ fontSize: FS_LIST_TITLE, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, flexShrink: 0, minWidth: 90, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {row.displayForm}
-            </span>
-            <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0, flexShrink: 0, minWidth: 70, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {row.reading && row.reading !== row.displayForm ? row.reading : ''}
-            </span>
-            <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {row.gloss ?? (row.jmdict_id ? '' : '(no dictionary match)')}
-            </span>
-            {row.jlptLevel && (
-              <span
-                style={{ fontSize: FS_BADGE, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0, opacity: row.jlptLevelInferred ? 0.55 : 1 }}
-                title={row.jlptLevelInferred ? 'Approximate — inferred from a related word, not directly sourced' : undefined}
-              >
-                {row.jlptLevelInferred ? `~${row.jlptLevel}` : row.jlptLevel}
-              </span>
-            )}
-            {row.is_grammar && <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>grammar</span>}
-            {row.is_name && <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>name</span>}
-            {STATUS_LABEL[row.status] && (
-              <span style={{ fontSize: FS_BADGE, color: STATUS_COLOR[row.status], fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>{STATUS_LABEL[row.status]}</span>
-            )}
-            <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0, minWidth: 28, textAlign: 'right' }}>
-              {row.occurrence_count ?? ''}
-            </span>
-          </label>
-        ))}
       </div>
+
+      {displayedRows.length > 0 && (
+        <DataList
+          columns={WORD_COLUMNS}
+          rows={displayedRows}
+          selection={{ selected, onToggle: toggleRow }}
+          maxWidth="100%"
+        />
+      )}
 
       <div style={{
         position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 20,
