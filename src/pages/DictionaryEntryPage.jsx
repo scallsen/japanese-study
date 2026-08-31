@@ -13,12 +13,12 @@ import AttributionFooter from '../components/AttributionFooter.jsx'
 import Badge from '../components/Badge.jsx'
 import Card from '../components/Card.jsx'
 import CenteredLoadingMessage from '../components/CenteredLoadingMessage.jsx'
+import DataList from '../components/DataList.jsx'
 import { MODULES } from '../data/modules.js'
 import { ModuleThemeProvider } from '../context/ModuleThemeContext.jsx'
 import { SectionLabel, KanjiBreakdownEntry, KANJI_FONT } from './dictionaryShared.jsx'
 
 const BG = '#1E1E1E'
-const SURFACE = '#2A2A2A'
 const DICTIONARY_ACCENT = MODULES.find(m => m.id === 'dictionary').accent
 
 function isSingleKanji(ch) {
@@ -164,26 +164,22 @@ function KanjiCard({ entry }) {
 
 const SRS_STATE_LABELS = { new: 'New', learning: 'Learning', young: 'Young', mature: 'Mature', relearning: 'Relearning' }
 
-function DeckRow({ label, href, meta }) {
+// Content-only — DataList's Cell wraps this; the row's own <a>, background,
+// border and hover treatment come from DataList itself (navigate.href
+// below), converging onto the same list surface EntryRow uses rather than
+// each deck staying its own floating card.
+function deckRowContent({ label, meta }) {
   return (
-    <a href={href} className="dict-deck-row" style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: 12,
-      background: SURFACE,
-      borderRadius: 8,
-      border: '1px solid rgba(255,255,255,0.06)',
-      padding: '10px 14px',
-      textDecoration: 'none',
-    }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, width: '100%' }}>
       <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>{label}</span>
       {meta && (
         <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>{meta}</span>
       )}
-    </a>
+    </div>
   )
 }
+
+const DECK_ROW_COLUMNS = [{ key: 'content', render: deckRowContent }]
 
 function SentenceCard({ sentence }) {
   return (
@@ -260,6 +256,16 @@ export default function DictionaryEntryPage({ entryId }) {
 
   const showDecksSection = vocabDrillMatches.length > 0 || !!user
 
+  const deckRows = useMemo(() => {
+    const rows = vocabDrillMatches.map(label => ({ id: `vocab-${label}`, label, href: '#/vocab', meta: 'Vocab Drill' }))
+    if (user) {
+      for (const m of srsMatches) {
+        rows.push({ id: m.cardId, label: m.deckName, href: '#/vocab-srs', meta: SRS_STATE_LABELS[m.state] ?? m.state })
+      }
+    }
+    return rows
+  }, [vocabDrillMatches, user, srsMatches])
+
   const allForms = entry
     ? [...new Set([
         ...(entry.kanji_forms ?? []),
@@ -329,24 +335,21 @@ export default function DictionaryEntryPage({ entryId }) {
               {showDecksSection && (
                 <>
                   <SectionLabel label="Your Decks" marginTop={28} />
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {vocabDrillMatches.map(label => (
-                      <DeckRow key={`vocab-${label}`} label={label} href="#/vocab" meta="Vocab Drill" />
-                    ))}
-                    {user && srsMatches.length > 0 && srsMatches.map(m => (
-                      <DeckRow
-                        key={m.cardId}
-                        label={m.deckName}
-                        href="#/vocab-srs"
-                        meta={SRS_STATE_LABELS[m.state] ?? m.state}
-                      />
-                    ))}
-                    {user && srsMatches.length === 0 && (
-                      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.6, padding: '2px 2px' }}>
-                        Not in any of your SRS decks yet.
-                      </div>
-                    )}
-                  </div>
+                  {deckRows.length > 0 && (
+                    <DataList
+                      columns={DECK_ROW_COLUMNS}
+                      rows={deckRows}
+                      rowKey={row => row.id}
+                      navigate={{ href: row => row.href }}
+                      padding="10px 14px"
+                      maxWidth={600}
+                    />
+                  )}
+                  {user && srsMatches.length === 0 && (
+                    <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.6, padding: '2px 2px', marginTop: deckRows.length > 0 ? 8 : 0 }}>
+                      Not in any of your SRS decks yet.
+                    </div>
+                  )}
                 </>
               )}
 

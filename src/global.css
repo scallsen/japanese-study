@@ -40,10 +40,6 @@ button, input, select, textarea {
   scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
 }
 
-.dict-entry-row:hover {
-  background: #313131;
-}
-
 .kanji-section-toggle:hover {
   background: #313131;
 }
@@ -356,14 +352,6 @@ button, input, select, textarea {
 
 .attribution-link:hover {
   color: #fff;
-}
-
-.dict-deck-row {
-  transition: background 120ms;
-}
-
-.dict-deck-row:hover {
-  background: #313131;
 }
 
 @keyframes top-progress-sweep {

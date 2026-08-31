@@ -13,6 +13,7 @@ import Card from '../components/Card.jsx'
 import TextInput from '../components/TextInput.jsx'
 import Checkbox from '../components/Checkbox.jsx'
 import Button from '../components/Button.jsx'
+import DataList from '../components/DataList.jsx'
 import { MODULES } from '../data/modules.js'
 import { ModuleThemeProvider, useAccent } from '../context/ModuleThemeContext.jsx'
 import { SectionLabel, KanjiBreakdownEntry, KANJI_FONT } from './dictionaryShared.jsx'
@@ -293,24 +294,16 @@ function KanjiSection({ entries, hasWords }) {
   )
 }
 
-function EntryRow({ entry }) {
+// Content-only — DataList's Cell wraps this; the row's own <a> and
+// hover/divider treatment come from DataList itself (navigate.href below).
+function entryRowContent(entry) {
   const kana = entry.kana_forms?.[0]
   const showKana = kana && kana !== entry.primary_form
   const posLabel = shortPos(Array.isArray(entry.pos) ? entry.pos[0] : null)
   const meaning = entry.gloss_en?.split('; ').slice(0, 3).join('; ') ?? ''
 
   return (
-    <a
-      href={`#/dictionary/entry/${entry.id}`}
-      className="dict-entry-row"
-      style={{
-        display: 'block',
-        padding: '12px 16px',
-        borderBottom: '1px solid rgba(255,255,255,0.05)',
-        textDecoration: 'none',
-        cursor: 'pointer',
-      }}
-    >
+    <div style={{ width: '100%' }}>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 5 }}>
         <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{entry.primary_form}</span>
         {showKana && (
@@ -324,9 +317,11 @@ function EntryRow({ entry }) {
           <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{meaning}</span>
         )}
       </div>
-    </a>
+    </div>
   )
 }
+
+const ENTRY_ROW_COLUMNS = [{ key: 'content', render: entryRowContent, wrap: true }]
 
 const SESSION_KEY = 'dict-search-state'
 
@@ -522,9 +517,14 @@ export default function DictionaryPage() {
           {showResults && !loading && (
             <>
               {kanjiResults.length > 0 && <SectionLabel label="Words" />}
-              <Card padding={0} style={{ overflow: 'hidden' }}>
-                {results.map(entry => <EntryRow key={entry.id} entry={entry} />)}
-              </Card>
+              <DataList
+                columns={ENTRY_ROW_COLUMNS}
+                rows={results}
+                rowKey={entry => entry.id}
+                navigate={{ href: entry => `#/dictionary/entry/${entry.id}` }}
+                padding="12px 16px"
+                maxWidth={600}
+              />
 
               {hasMore && (
                 <div style={{ textAlign: 'center', marginTop: 16 }}>

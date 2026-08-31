@@ -61,6 +61,15 @@ function Cell({ column, row, editable, onFieldChange }) {
 // Bare checkbox (not SelectableRow's label-wraps-everything version) — used
 // only when the row body has its OWN click behavior (navigate/expand), so the
 // checkbox needs to opt itself out of that click instead of triggering it.
+//
+// Once a navigate row can render as a real <a> (navigate.href below),
+// stopPropagation alone isn't enough: an ancestor <a>'s native navigation is
+// governed by the click event's canceled flag, which stopPropagation doesn't
+// set — only preventDefault does. But preventDefault on a checkbox's own
+// click also cancels ITS default action (the checked-state toggle), so the
+// native 'change' event this relies on would never fire — onToggle is
+// called directly from onClick instead. onChange is kept as a no-op target
+// only to satisfy React's "checked without onChange" controlled-input check.
 function RowCheckbox({ checked, onToggle }) {
   const ACCENT = useAccent()
   return (
@@ -68,7 +77,7 @@ function RowCheckbox({ checked, onToggle }) {
       type="checkbox"
       checked={checked}
       onChange={onToggle}
-      onClick={e => e.stopPropagation()}
+      onClick={e => { e.stopPropagation(); e.preventDefault(); onToggle() }}
       style={{ flexShrink: 0, width: 16, height: 16, margin: 0, accentColor: ACCENT }}
     />
   )
@@ -103,13 +112,19 @@ function Row({ row, rowKey, columns, selection, navigate, expand, editableFields
   // list. Mirrors rowKey's own "function called per row" convention rather
   // than asking the caller to keep a parallel Set in sync.
   const clickable = (!!navigate || !!expand) && !disabled
+  const href = navigate?.href ? navigate.href(row) : undefined
   function handleRowClick() {
-    if (navigate) navigate.onClick(row)
+    if (navigate?.onClick) navigate.onClick(row)
     else if (expand) expand.onToggle(id)
   }
 
+  // href renders the row as a real <a> — cmd/ctrl/middle-click, right-click
+  // "open in new tab", and hover-preview all work natively, which a div +
+  // onClick can't offer. onClick (if also given) still fires on top of it.
+  const RowTag = href ? 'a' : 'div'
   const rowBody = (
-    <div
+    <RowTag
+      href={href}
       onClick={clickable ? handleRowClick : undefined}
       className={clickable ? 'data-list-row' : undefined}
       style={{
@@ -120,6 +135,8 @@ function Row({ row, rowKey, columns, selection, navigate, expand, editableFields
         fontFamily: 'inherit', letterSpacing: TRACKING,
         cursor: clickable ? 'pointer' : 'default',
         opacity: disabled ? 0.5 : 1,
+        textDecoration: href ? 'none' : undefined,
+        color: href ? 'inherit' : undefined,
       }}
     >
       {selection && <RowCheckbox checked={isSelected} onToggle={() => selection.onToggle(id)} />}
@@ -133,7 +150,7 @@ function Row({ row, rowKey, columns, selection, navigate, expand, editableFields
           &#8250;
         </span>
       )}
-    </div>
+    </RowTag>
   )
 
   if (expand && isExpanded) {
@@ -160,7 +177,14 @@ function Row({ row, rowKey, columns, selection, navigate, expand, editableFields
  *  - `selection`  — a checkbox column + bulk multi-select.
  *                    { selected: Set, onToggle(id), bulkHeader?: boolean }
  *  - `navigate`   — clicking a row's body (not its checkbox) opens something.
- *                    { onClick(row) }
+ *                    { onClick(row) } and/or { href(row) }. href renders the
+ *                    row as a real <a> — needed for actual cross-route links
+ *                    (DictionaryPage's EntryRow, DictionaryEntryPage's
+ *                    DeckRow) so cmd/ctrl/middle-click and hover-preview keep
+ *                    working; onClick alone (a div, no real link) suits
+ *                    same-app navigation via a hash assignment side effect
+ *                    (EpisodeList, TrackedAnimeSection). Both may be given
+ *                    together if a real link also needs an onClick side effect.
  *  - `expand`     — clicking a row's body reveals inline detail. Mutually
  *                    exclusive with `navigate` (a click can't do both).
  *                    { expanded: Set, onToggle(id), render(row) }
