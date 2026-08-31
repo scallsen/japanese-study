@@ -22,21 +22,19 @@ const READ_MARK = '#6BCB6B'
  * `badges` is an array of { label, tone } passed straight to the Badge atom,
  * which covers both the accent-toned source badge and the neutral difficulty/
  * format badge without either card hand-rolling pill styles.
+ *
+ * `image?: { src?, aspectRatio? }` — optional cover slot, sourced from
+ * Anime Vocab's MediaSearch `ResultTile` (a title tile grid with a cover
+ * above the text, `5/7` aspect ratio, empty dark box when no `src`). When
+ * present, the card switches from uniform SPACE_16 padding to a full-bleed
+ * image with its own tighter '8px 10px' padding around the text below —
+ * ResultTile's own historical value, kept exact rather than rounded onto
+ * the spacing scale. `disabled` (dims + suppresses onClick, mirroring
+ * Button) covers ResultTile's per-tile busy state during an async select.
  */
-export default function FeedCard({ badges = [], title, subtitle, meta, read = false, onClick }) {
-  return (
-    <div
-      onClick={onClick}
-      className="feed-card"
-      style={{
-        display: 'flex', flexDirection: 'column', gap: SPACE_4,
-        background: SURFACE,
-        border: `1px solid rgba(255,255,255,${read ? '0.12' : '0.07'})`,
-        borderRadius: 8,
-        padding: SPACE_16,
-        cursor: onClick ? 'pointer' : 'default',
-      }}
-    >
+export default function FeedCard({ badges = [], title, subtitle, meta, read = false, onClick, image, disabled = false }) {
+  const content = (
+    <>
       {(badges.length > 0 || meta) && (
         <div style={{ display: 'flex', alignItems: 'center', gap: SPACE_8 }}>
           {badges.map(b => (
@@ -63,6 +61,34 @@ export default function FeedCard({ badges = [], title, subtitle, meta, read = fa
           {subtitle}
         </div>
       )}
+    </>
+  )
+
+  return (
+    <div
+      onClick={disabled ? undefined : onClick}
+      className="feed-card"
+      style={{
+        display: 'flex', flexDirection: 'column', gap: image ? 0 : SPACE_4,
+        background: SURFACE,
+        border: `1px solid rgba(255,255,255,${read ? '0.12' : '0.07'})`,
+        borderRadius: 8,
+        overflow: image ? 'hidden' : undefined,
+        padding: image ? 0 : SPACE_16,
+        cursor: disabled ? 'default' : (onClick ? 'pointer' : 'default'),
+        opacity: disabled ? 0.5 : 1,
+      }}
+    >
+      {image && (
+        image.src
+          ? <img src={image.src} alt="" style={{ width: '100%', aspectRatio: image.aspectRatio ?? '1', objectFit: 'cover', display: 'block' }} />
+          : <div style={{ width: '100%', aspectRatio: image.aspectRatio ?? '1', background: '#1E1E1E' }} />
+      )}
+      {image ? (
+        <div style={{ padding: '8px 10px', display: 'flex', flexDirection: 'column', gap: SPACE_4 }}>
+          {content}
+        </div>
+      ) : content}
     </div>
   )
 }

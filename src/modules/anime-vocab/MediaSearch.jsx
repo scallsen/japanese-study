@@ -6,13 +6,13 @@ import { difficultyLabel } from './difficultyLabels.js'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE } from '../../data/theme.js'
-import { useAccent } from '../../context/ModuleThemeContext.jsx'
 import Select from '../../components/Select.jsx'
 import TextInput from '../../components/TextInput.jsx'
 import Button from '../../components/Button.jsx'
 import DataList from '../../components/DataList.jsx'
 import Badge from '../../components/Badge.jsx'
 import Card from '../../components/Card.jsx'
+import FeedCard from '../../components/FeedCard.jsx'
 import { Chip, default as ChipSelector } from '../../components/Chip.jsx'
 
 const DEBOUNCE_MS = 400
@@ -175,50 +175,18 @@ function FilterSectionLabel({ children }) {
   )
 }
 
-function DifficultyBadge({ difficulty }) {
-  const ACCENT = useAccent()
-  if (difficulty == null) return null
-  return (
-    <span style={{
-      fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, color: ACCENT,
-      background: `${ACCENT}22`, border: `1px solid ${ACCENT}55`, borderRadius: 4, padding: '1px 7px', flexShrink: 0,
-    }}>
-      {difficultyLabel(difficulty)} ({Number(difficulty).toFixed(1)})
-    </span>
-  )
-}
-
 function ResultTile({ result, onClick, busy }) {
-  const [hovered, setHovered] = useState(false)
+  const badges = result.difficulty?.difficulty != null
+    ? [{ label: `${difficultyLabel(result.difficulty.difficulty)} (${Number(result.difficulty.difficulty).toFixed(1)})`, tone: 'accent' }]
+    : []
   return (
-    <div
-      onClick={busy ? undefined : onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        background: hovered ? '#313131' : '#2A2A2A',
-        border: '1px solid rgba(255,255,255,0.07)',
-        borderRadius: 8,
-        overflow: 'hidden',
-        cursor: busy ? 'default' : 'pointer',
-        opacity: busy ? 0.5 : 1,
-        transition: 'background 130ms',
-      }}
-    >
-      {result.coverUrl ? (
-        <img src={result.coverUrl} alt="" style={{ width: '100%', aspectRatio: '5 / 7', objectFit: 'cover', display: 'block' }} />
-      ) : (
-        <div style={{ width: '100%', aspectRatio: '5 / 7', background: '#1E1E1E' }} />
-      )}
-      <div style={{ padding: '8px 10px', display: 'flex', flexDirection: 'column', gap: 6 }}>
-        <div style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {result.title}
-        </div>
-        <div style={{ alignSelf: 'flex-start' }}>
-          <DifficultyBadge difficulty={result.difficulty?.difficulty} />
-        </div>
-      </div>
-    </div>
+    <FeedCard
+      image={{ src: result.coverUrl, aspectRatio: '5 / 7' }}
+      title={result.title}
+      badges={badges}
+      onClick={onClick}
+      disabled={busy}
+    />
   )
 }
 
