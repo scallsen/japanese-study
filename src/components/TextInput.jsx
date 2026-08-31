@@ -8,6 +8,12 @@ import { FONT, TEXT, FS_BASE, SPACE_4, SPACE_8, SPACE_12, SPACE_16 } from '../da
 // `bare` exists because an input sitting *inside* an already-bordered
 // container (a list's search row) must not draw a second border — that's a
 // structural difference, not a style preference.
+//
+// Unlisted native attributes (autoComplete, spellCheck, autoCorrect,
+// autoCapitalize, etc.) pass through via ...rest onto the underlying
+// <input> — added for DictionaryPage's search box, which turns off
+// spellcheck/autocomplete/autocorrect (spellcheck's red squiggles under
+// Japanese input in particular look broken, not stylistic).
 const VARIANTS = {
   default: {
     background: 'rgba(255,255,255,0.05)',
@@ -42,9 +48,11 @@ const TextInput = forwardRef(function TextInput({
   onKeyDown,
   fullWidth = true,
   style,
+  ...rest
 }, ref) {
   return (
     <input
+      {...rest}
       ref={ref}
       type={type}
       value={value}

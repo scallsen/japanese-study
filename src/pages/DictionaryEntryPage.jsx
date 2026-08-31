@@ -10,6 +10,9 @@ import { resolveCard, cardStateLabel } from '../modules/vocab-srs/srs.js'
 import { WORD_DATA } from '../data/wordData.js'
 import { WORD_SOURCES } from '../data/wordLists.js'
 import AttributionFooter from '../components/AttributionFooter.jsx'
+import Badge from '../components/Badge.jsx'
+import Card from '../components/Card.jsx'
+import CenteredLoadingMessage from '../components/CenteredLoadingMessage.jsx'
 import { MODULES } from '../data/modules.js'
 import { ModuleThemeProvider } from '../context/ModuleThemeContext.jsx'
 
@@ -78,21 +81,6 @@ function labelForListKey(listKey) {
 const LANG_NAMES = { eng: 'English', fre: 'French', ger: 'German', deu: 'German', por: 'Portuguese', ita: 'Italian', spa: 'Spanish', chi: 'Chinese', zho: 'Chinese', kor: 'Korean', nld: 'Dutch', rus: 'Russian', ara: 'Arabic', per: 'Persian', hin: 'Hindi' }
 function langName(code) { return LANG_NAMES[code] ?? code }
 
-function PosTag({ label }) {
-  return (
-    <span style={{
-      fontSize: FS_BADGE,
-      color: TEXT_MUTED,
-      background: 'rgba(255,255,255,0.07)',
-      borderRadius: 3,
-      padding: '2px 7px',
-      fontFamily: FONT,
-      letterSpacing: TRACKING,
-      flexShrink: 0,
-    }}>{label}</span>
-  )
-}
-
 function MetaTag({ label, color }) {
   return (
     <span style={{
@@ -126,7 +114,7 @@ function SensesSection({ senses }) {
         <div key={gi}>
           {group.pos.length > 0 && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 8 }}>
-              {group.pos.map((p, i) => <PosTag key={i} label={p} />)}
+              {group.pos.map((p, i) => <Badge key={i} variant="fill" tone="neutral">{p}</Badge>)}
             </div>
           )}
           <ol style={{ margin: 0, padding: '0 0 0 20px', display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -178,15 +166,7 @@ function KanjiCard({ entry }) {
   const grade = gradeLabel(entry.grade)
 
   return (
-    <div style={{
-      background: SURFACE,
-      borderRadius: 8,
-      border: '1px solid rgba(255,255,255,0.06)',
-      padding: '14px 16px',
-      display: 'flex',
-      gap: 16,
-      alignItems: 'flex-start',
-    }}>
+    <Card style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
       <span style={{ fontSize: FS_ENTRY_KANJI, color: TEXT, fontFamily: KANJI_FONT, lineHeight: 1, letterSpacing: 0, flexShrink: 0, minWidth: 44, textAlign: 'center' }}>
         {entry.literal}
       </span>
@@ -202,22 +182,10 @@ function KanjiCard({ entry }) {
               {entry.kun_readings.join('、')}
             </span>
           )}
-          {jlpt && (
-            <span style={{ fontSize: FS_BADGE, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>{jlpt}</span>
-          )}
-          {grade && (
-            <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{grade}</span>
-          )}
-          {entry.stroke_count && (
-            <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.6 }}>
-              {entry.stroke_count} strokes
-            </span>
-          )}
-          {entry.frequency && (
-            <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.6 }}>
-              freq #{entry.frequency}
-            </span>
-          )}
+          {jlpt && <Badge variant="text" tone="accent">{jlpt}</Badge>}
+          {grade && <Badge variant="text" tone="neutral">{grade}</Badge>}
+          {entry.stroke_count && <Badge variant="text" tone="neutral" dimmed>{entry.stroke_count} strokes</Badge>}
+          {entry.frequency && <Badge variant="text" tone="neutral" dimmed>freq #{entry.frequency}</Badge>}
         </div>
         {entry.meanings && (
           <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
@@ -225,7 +193,7 @@ function KanjiCard({ entry }) {
           </span>
         )}
       </div>
-    </div>
+    </Card>
   )
 }
 
@@ -265,14 +233,14 @@ function DeckRow({ label, href, meta }) {
 
 function SentenceCard({ sentence }) {
   return (
-    <div style={{ background: SURFACE, borderRadius: 8, border: '1px solid rgba(255,255,255,0.06)', padding: '12px 16px' }}>
+    <Card padding="12px 16px">
       <div style={{ fontSize: FS_BASE, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, lineHeight: 1.6 }}>
         {sentence.japanese}
       </div>
       <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, marginTop: 4 }}>
         {sentence.english}
       </div>
-    </div>
+    </Card>
   )
 }
 
@@ -361,11 +329,7 @@ export default function DictionaryEntryPage({ entryId }) {
       <div style={{ flex: 1, overflowY: 'auto', padding: '32px 16px 64px', display: 'flex', flexDirection: 'column' }}>
         <div style={{ maxWidth: 600, margin: '0 auto', width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
         <div style={{ flex: 1 }}>
-          {loading && (
-            <div style={{ textAlign: 'center', padding: '64px 0', color: TEXT_MUTED, fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING }}>
-              Loading...
-            </div>
-          )}
+          {loading && <CenteredLoadingMessage text="Loading..." />}
 
           {!loading && error && (
             <div style={{ textAlign: 'center', padding: '64px 0', color: '#E05A4E', fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING }}>
@@ -381,9 +345,7 @@ export default function DictionaryEntryPage({ entryId }) {
                   <span style={{ fontSize: FS_ENTRY_HEADING, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, lineHeight: 1.1 }}>
                     {entry.primary_form}
                   </span>
-                  {entry.common && (
-                    <span style={{ fontSize: FS_BADGE, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>common</span>
-                  )}
+                  {entry.common && <Badge variant="text" tone="accent">common</Badge>}
                 </div>
 
                 {altForms.length > 0 && (
@@ -398,7 +360,7 @@ export default function DictionaryEntryPage({ entryId }) {
               </div>
 
               {/* Definitions */}
-              <div style={{ background: SURFACE, borderRadius: 8, border: '1px solid rgba(255,255,255,0.06)', padding: '18px 20px' }}>
+              <Card padding="18px 20px">
                 {entry.senses ? (
                   <SensesSection senses={entry.senses} />
                 ) : (
@@ -407,7 +369,7 @@ export default function DictionaryEntryPage({ entryId }) {
                     {entry.gloss_en}
                   </div>
                 )}
-              </div>
+              </Card>
 
               {/* Your decks */}
               {showDecksSection && (
