@@ -1,9 +1,9 @@
 import SelectableRow from './SelectableRow.jsx'
 import SelectAllCheckbox from './SelectAllCheckbox.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, SPACE_4, SPACE_8, SPACE_12, SPACE_16 } from '../data/theme.js'
+import { useAccent } from '../context/ModuleThemeContext.jsx'
 
 const SURFACE = '#2A2A2A'
-const ACCENT = '#3ABDA4'
 const HAIRLINE = 'rgba(255,255,255,0.08)'
 const ROW_HAIRLINE = 'rgba(255,255,255,0.05)'
 
@@ -62,6 +62,7 @@ function Cell({ column, row, editable, onFieldChange }) {
 // only when the row body has its OWN click behavior (navigate/expand), so the
 // checkbox needs to opt itself out of that click instead of triggering it.
 function RowCheckbox({ checked, onToggle }) {
+  const ACCENT = useAccent()
   return (
     <input
       type="checkbox"
