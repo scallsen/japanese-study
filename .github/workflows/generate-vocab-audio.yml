@@ -14,6 +14,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      checks: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -47,6 +48,14 @@ jobs:
       # main is a protected branch requiring a passing "lint" status check, so the
       # bot can't push straight to it — route through a branch + PR instead, then
       # wait for checks and merge once they're green.
+      #
+      # A push made with the default GITHUB_TOKEN does NOT trigger other workflows
+      # (GitHub's anti-recursion rule for the Actions bot identity), so lint.yml
+      # never runs against this branch/PR and the required "lint" check would stay
+      # missing forever — permanently blocking the merge. Work around it by running
+      # lint ourselves right here and posting a matching "lint" check run via the
+      # API (this only needs `checks: write`, which is a normal grantable
+      # GITHUB_TOKEN permission — no extra secrets/PAT required).
       - name: Commit generated audio filenames
         env:
           GH_TOKEN: ${{ github.token }}
@@ -63,9 +72,22 @@ jobs:
           git checkout -b "$BRANCH"
           git commit -m "Generate Voicevox audio for vocab words"
           git push origin "$BRANCH"
+          SHA=$(git rev-parse HEAD)
+
           gh pr create --base main --head "$BRANCH" \
             --title "Generate Voicevox audio for vocab words" \
             --body "Automated audio generation — run ${{ github.run_id }}."
+
+          if npm run lint; then CONCLUSION=success; else CONCLUSION=failure; fi
+          gh api "repos/${{ github.repository }}/check-runs" \
+            -f name="lint" -f head_sha="$SHA" -f status="completed" -f conclusion="$CONCLUSION" \
+            --silent
+
+          if [ "$CONCLUSION" != "success" ]; then
+            echo "Lint failed on generated content — leaving PR open for manual review."
+            exit 1
+          fi
+
           gh pr checks "$BRANCH" --watch --interval 10
           gh pr merge "$BRANCH" --squash --delete-branch
 

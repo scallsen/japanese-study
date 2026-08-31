@@ -19,7 +19,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js'
-import { readFileSync, writeFileSync } from 'fs'
+import { readFileSync, writeFileSync, readdirSync } from 'fs'
 import { execFile } from 'child_process'
 import { promisify } from 'util'
 import { tmpdir } from 'os'
@@ -46,12 +46,15 @@ const VOICES = [
   { id: 11, name: 'kurono-takehiro' },
 ]
 
+// Discovered from disk (not hardcoded) so a new word-list JSON dropped into
+// src/data/words/ is picked up automatically — a hardcoded list here previously
+// let new files (e.g. a newly added word list) silently get no audio at all.
+const WORD_LIST_DIR = 'src/data/words'
 const TARGETS = [
-  { path: 'src/data/words/nsm_n3_vocab.json', textField: 'kana' },
-  { path: 'src/data/words/nsm_n3_i4_vocab.json', textField: 'kana' },
-  { path: 'src/data/words/nsm_n3_i5_vocab.json', textField: 'kana' },
-  { path: 'src/data/words/nsm_n2_a1_vocab.json', textField: 'kana' },
-  { path: 'src/data/words/sentence-vocab.json', textField: 'kana' },
+  ...readdirSync(WORD_LIST_DIR)
+    .filter(f => f.endsWith('.json'))
+    .sort()
+    .map(f => ({ path: `${WORD_LIST_DIR}/${f}`, textField: 'kana' })),
   { path: 'src/modules/vocab-srs/decks/keigo.json', textField: 'front' },
 ]
 
