@@ -12,6 +12,8 @@ import TextInput from '../../components/TextInput.jsx'
 import Button from '../../components/Button.jsx'
 import DataList from '../../components/DataList.jsx'
 import Badge from '../../components/Badge.jsx'
+import Card from '../../components/Card.jsx'
+import { Chip, default as ChipSelector } from '../../components/Chip.jsx'
 
 const DEBOUNCE_MS = 400
 
@@ -77,28 +79,6 @@ const SORT_OPTIONS = [
 ]
 const DEFAULT_SORT = 'difficulty-asc'
 const RESULTS_PAGE_SIZE = 24
-
-function ViewModeButton({ label, active, onClick }) {
-  const ACCENT = useAccent()
-  const [hovered, setHovered] = useState(false)
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        padding: '5px 12px', borderRadius: 4, cursor: 'pointer',
-        fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING,
-        background: active ? `${ACCENT}22` : hovered ? 'rgba(255,255,255,0.06)' : 'transparent',
-        color: active ? ACCENT : TEXT_MUTED,
-        border: `1px solid ${active ? `${ACCENT}55` : 'rgba(255,255,255,0.12)'}`,
-      }}
-    >
-      {label}
-    </button>
-  )
-}
 
 // Small "i" info icon. Hovering shows the popover; clicking pins it open
 // (stays open after the mouse leaves) until a click outside closes it.
@@ -181,29 +161,6 @@ function InfoIcon({ text }) {
   )
 }
 
-// Shared toggle chip — used for both the media-type and difficulty filter
-// rows (same click-to-select/click-to-deselect interaction either way).
-function Chip({ label, active, onClick }) {
-  const ACCENT = useAccent()
-  const [hovered, setHovered] = useState(false)
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        padding: '4px 11px', borderRadius: 4, cursor: 'pointer',
-        fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING,
-        background: active ? `${ACCENT}22` : hovered ? 'rgba(255,255,255,0.06)' : 'transparent',
-        color: active ? ACCENT : TEXT_MUTED,
-        border: `1px solid ${active ? `${ACCENT}55` : 'rgba(255,255,255,0.12)'}`,
-      }}
-    >
-      {label}
-    </button>
-  )
-}
 
 // Fixed width (not just flexShrink: 0) so every section's chips start at the
 // same x position regardless of label length, and a top margin to match a
@@ -309,14 +266,6 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
   }, [busy, onLoadingChange])
   const showSearching = useDelayedLoading(loading)
 
-  function toggleType(t) {
-    setMediaTypes(prev => {
-      const next = new Set(prev)
-      if (next.has(t)) next.delete(t); else next.add(t)
-      return next
-    })
-  }
-
   // Clicking a level while "All" is active starts a fresh single-level
   // selection (rather than toggling it out of the full set, which would
   // leave a confusing 5-of-6 state). From there, clicks add/remove
@@ -336,16 +285,6 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
     setDifficulties(new Set(ALL_DIFFICULTY_LEVELS))
   }
 
-  // Plain multi-select toggle, same shape as toggleType — but snaps back to
-  // the default ("safe" only) rather than allowing zero levels selected,
-  // since an empty maturity set would silently show nothing.
-  function toggleMaturity(level) {
-    setMaturity(prev => {
-      const next = new Set(prev)
-      if (next.has(level)) next.delete(level); else next.add(level)
-      return next.size === 0 ? new Set(DEFAULT_MATURITY) : next
-    })
-  }
 
   const isDefaultMediaTypes = mediaTypes.size === DEFAULT_MEDIA_TYPES.length && DEFAULT_MEDIA_TYPES.every(t => mediaTypes.has(t))
   const isAllDifficulties = difficulties.size === ALL_DIFFICULTY_LEVELS.length
@@ -482,17 +421,20 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
         autoFocus
       />
 
-      <div style={{ display: 'flex', flexDirection: 'column', background: '#2A2A2A', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, overflow: 'hidden' }}>
+      <Card padding={0} style={{ display: 'flex', flexDirection: 'column' }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '12px 16px' }}>
           <FilterSectionLabel>Content</FilterSectionLabel>
           {/* flex: 1 + minWidth: 0 lets this wrap its OWN chips onto multiple
               lines within the remaining width, instead of the outer row (which
               sees its unwrapped max-content width) dropping the whole thing —
               label included — onto a line of its own. */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, flex: 1, minWidth: 0 }}>
-            {ALL_MEDIA_TYPES.map(t => (
-              <Chip key={t} label={MEDIA_TYPE_LABELS[t]} active={mediaTypes.has(t)} onClick={() => toggleType(t)} />
-            ))}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <ChipSelector
+              options={ALL_MEDIA_TYPES.map(t => ({ value: t, label: MEDIA_TYPE_LABELS[t] }))}
+              value={mediaTypes}
+              onChange={setMediaTypes}
+              mode="multi"
+            />
           </div>
         </div>
         <div style={{ height: 1, background: 'rgba(255,255,255,0.08)' }} />
@@ -501,9 +443,21 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
             <FilterSectionLabel>Difficulty</FilterSectionLabel>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, flex: 1, minWidth: 0 }}>
               <Chip label="All" active={isAllDifficulties} onClick={selectAllDifficulties} />
-              {ALL_DIFFICULTY_LEVELS.map(level => (
-                <Chip key={level} label={difficultyLabel(level)} active={difficulties.has(level)} onClick={() => toggleDifficulty(level)} />
-              ))}
+              <ChipSelector
+                options={ALL_DIFFICULTY_LEVELS.map(level => ({ value: level, label: difficultyLabel(level) }))}
+                value={difficulties}
+                onChange={next => {
+                  // ChipSelector's multi mode always toggles the one clicked
+                  // option against the CURRENT set — recover which option
+                  // that was via set diff, then replay it through
+                  // toggleDifficulty's own "start fresh from All" / "snap
+                  // back when empty" logic, which a plain toggle-against-
+                  // full-set can't express.
+                  const clicked = [...next].find(v => !difficulties.has(v)) ?? [...difficulties].find(v => !next.has(v))
+                  toggleDifficulty(clicked)
+                }}
+                mode="multi"
+              />
             </div>
           </div>
         </div>
@@ -514,14 +468,17 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
               Maturity
               <InfoIcon text="Content maturity rating is estimated based on tags, and is not always accurate." />
             </FilterSectionLabel>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, flex: 1, minWidth: 0 }}>
-              {MATURITY_LEVELS.map(level => (
-                <Chip key={level} label={MATURITY_LABELS[level]} active={maturity.has(level)} onClick={() => toggleMaturity(level)} />
-              ))}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <ChipSelector
+                options={MATURITY_LEVELS.map(level => ({ value: level, label: MATURITY_LABELS[level] }))}
+                value={maturity}
+                onChange={next => setMaturity(next.size === 0 ? new Set(DEFAULT_MATURITY) : next)}
+                mode="multi"
+              />
             </div>
           </div>
         </div>
-      </div>
+      </Card>
 
       {error && (
         <div style={{ fontSize: FS_BASE, color: '#f87171', fontFamily: FONT, letterSpacing: TRACKING }}>{error}</div>
@@ -535,9 +492,13 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
         ) : (
           <Select value={sortValue} onChange={setSortValue} options={SORT_OPTIONS} label="Sort by" />
         )}
-        <div style={{ display: 'flex', gap: 6, marginLeft: 'auto' }}>
-          <ViewModeButton label="List" active={viewMode === 'list'} onClick={() => setViewMode('list')} />
-          <ViewModeButton label="Tiles" active={viewMode === 'tiles'} onClick={() => setViewMode('tiles')} />
+        <div style={{ marginLeft: 'auto' }}>
+          <ChipSelector
+            options={[{ value: 'list', label: 'List' }, { value: 'tiles', label: 'Tiles' }]}
+            value={viewMode}
+            onChange={setViewMode}
+            mode="single"
+          />
         </div>
       </div>
 
