@@ -73,4 +73,22 @@ export const WORD_SOURCES = [
       { id: 'n2-w4d3', label: 'Week 4, Day 3' },
     ],
   },
+  {
+    id: 'nsm-n2-a2',
+    label: 'Nihongo So-Matome N2 (A-2)',
+    lists: [
+      { id: 'n2-a2-w1d1', label: 'Week 1, Day 1' },
+      { id: 'n2-a2-w1d2', label: 'Week 1, Day 2' },
+      { id: 'n2-a2-w1d3', label: 'Week 1, Day 3' },
+      { id: 'n2-a2-w2d1', label: 'Week 2, Day 1' },
+      { id: 'n2-a2-w2d2', label: 'Week 2, Day 2' },
+      { id: 'n2-a2-w2d3', label: 'Week 2, Day 3' },
+      { id: 'n2-a2-w3d1', label: 'Week 3, Day 1' },
+      { id: 'n2-a2-w3d2', label: 'Week 3, Day 2' },
+      { id: 'n2-a2-w3d3', label: 'Week 3, Day 3' },
+      { id: 'n2-a2-w4d1', label: 'Week 4, Day 1' },
+      { id: 'n2-a2-w4d2', label: 'Week 4, Day 2' },
+      { id: 'n2-a2-w4d3', label: 'Week 4, Day 3' },
+    ],
+  },
 ]
