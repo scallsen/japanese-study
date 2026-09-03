@@ -1,6 +1,6 @@
-import { FONT, TRACKING, BORDER, TEXT, FS_BASE } from '../../data/theme.js'
+import { FONT, KANJI_FONT, TRACKING, BORDER, TEXT, FS_BASE } from '../../data/theme.js'
 
-export const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
+export { KANJI_FONT }
 export const ACCENT = '#CC8A3D'
 export const BG = '#1E1E1E'
 export const SURFACE = '#2A2A2A'

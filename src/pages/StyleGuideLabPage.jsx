@@ -25,15 +25,13 @@ import {
   FS_SM, FS_NAV, FS_BADGE, FS_DISPLAY_HEADING, FS_STAT_VALUE,
   FS_LIST_TITLE, FS_ENTRY_WORD, FS_ENTRY_KANJI, FS_ENTRY_HEADING, FS_ENTRY_ALT, FS_ARTICLE_BODY,
   SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32,
-  SEGMENT_COLORS, DRILL_COLORS,
-} from '../data/theme.js'
+  SEGMENT_COLORS, DRILL_COLORS, KANJI_FONT } from '../data/theme.js'
 
 const BG = '#1E1E1E'
 const SURFACE = '#2A2A2A'
 const ACCENT = '#3ABDA4'
 const ANIME_ACCENT = '#D46EA3'
 const BORDER = 'rgba(255,255,255,0.08)'
-const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
 const WARNING = '#fbbf24'
 
 // Every component in the system, built or not. Placeholders stay listed on

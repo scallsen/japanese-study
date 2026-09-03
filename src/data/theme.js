@@ -1,4 +1,8 @@
 export const FONT = "'DotGothic16', system-ui, sans-serif"
+// Native CJK sans for Japanese word/reading content (dictionary forms,
+// card faces, story questions) where the pixel FONT would hurt legibility.
+// Was declared identically in five files before living here.
+export const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
 export const TRACKING = '0.05em'
 export const BORDER = '#2E2E2E'
 export const TEXT = '#E8E8E8'

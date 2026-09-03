@@ -1,7 +1,6 @@
 import Badge from '../components/Badge.jsx'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_ENTRY_KANJI } from '../data/theme.js'
+import { FONT, KANJI_FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_ENTRY_KANJI } from '../data/theme.js'
 
-export const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
 
 // Uppercase small-caps label + trailing hairline divider, used to separate
 // sections on both Dictionary pages. Was duplicated near-identically in

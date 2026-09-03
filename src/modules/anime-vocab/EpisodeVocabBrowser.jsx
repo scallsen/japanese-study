@@ -16,11 +16,10 @@ import Checkbox from '../../components/Checkbox.jsx'
 import Card from '../../components/Card.jsx'
 import CenteredLoadingMessage from '../../components/CenteredLoadingMessage.jsx'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_LIST_TITLE } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_LIST_TITLE, KANJI_FONT } from '../../data/theme.js'
 import { useAccent } from '../../context/ModuleThemeContext.jsx'
 
 const DEFAULT_WORD_LIMIT = 20
-const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
 // global_frequency_rank = this word's rank across ALL of Jiten's indexed
 // media (rank 1 = most common word in Japanese overall), not just this
 // episode. 200 was picked empirically against a synced episode: it catches

@@ -12,7 +12,7 @@ import HeaderMenu from '../components/HeaderMenu.jsx'
 import SettingsSidebar from '../components/SettingsSidebar.jsx'
 import SelectAllCheckbox from '../components/SelectAllCheckbox.jsx'
 import SelectableRow from '../components/SelectableRow.jsx'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_BADGE, FS_ENTRY_WORD, FS_STAT_VALUE, FS_DISPLAY_HEADING } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_BADGE, FS_ENTRY_WORD, FS_STAT_VALUE, FS_DISPLAY_HEADING, KANJI_FONT } from '../data/theme.js'
 import { WORD_SOURCES } from '../data/wordLists.js'
 import { SENTENCE_SOURCE_OPTIONS, DEFAULT_SENTENCE_SOURCE } from '../data/sentenceSource.js'
 import { useDrill } from '../hooks/useDrill.js'
@@ -40,7 +40,6 @@ import { renderAttributionSegments } from '../utils/attributionSegments.jsx'
 import { useIsMobile } from '../hooks/useIsMobile.js'
 
 const ACCENT = '#3ABDA4'
-const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
 
 const MISTAKE_TIER_COLOR = { none: '#4ade80', one: '#fbbf24', many: '#f87171' }
 
