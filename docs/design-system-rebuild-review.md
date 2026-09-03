@@ -375,3 +375,101 @@ Your first-pass feedback, applied on top of the stack.
   already `md` (the default); I read this as "not lg", so Vocab Drill's
   home actions dropped from `lg` to `md` when they moved into the bar. If
   you meant something else, say which.
+
+## Review round 2 (`design-system/review-round-2`)
+
+Resolves round 1's open "medium buttons" question: **`xl`**, a new size one
+step up from `lg`, used on every `ActionBar`. Branch stacked on
+`design-system/review-round-1`.
+
+### A. Shared library
+
+- **[NEW] `Button` `size="xl"`** (`SPACE_12`/`SPACE_32`) — every `ActionBar`
+  consumer moved up to it: Story's Generate, Vocab Drill's Send to SRS /
+  Preview / Start review, Anime Vocab's Start Drill. Recorded as settled
+  decision #17.
+- **[NEW] `Select` `variant="inline"`** — no background/border, same height
+  as a `sm` Chip, for a Select living inside a `FilterRow` next to chip
+  rows (Story's Vocabulary/Format). The bordered `default` variant is
+  unchanged. Settled decision #18.
+- **[NEW] `NewspaperLayout` promoted** from `src/modules/story/StoryLayouts.jsx`
+  to `src/components/`, so the News reader (a different module) can render
+  real articles in it. Gained `subtitle`, a `body` plain-text fallback, and
+  `masthead`/`edition`/`date` overrides — all defaulted to Story's original
+  fixed values, so Story's own call site is unchanged (it re-exports the
+  component so `StoryReviewPage`'s import path didn't need to change).
+  `MINCHO` moved to `theme.js` as `MINCHO_FONT` (Story's other formats
+  still use it).
+- **[CHANGED] `DataList`'s search row** uses `TextInput variant="bare"`
+  instead of a raw `<input>` — picks up the accent focus ring, needed once
+  a real module (Anime Vocab) started feeding it a live lookup.
+
+### B. Story generator
+
+Vocabulary/Format → `Select variant="inline"`. Preview context button,
+`showPreview` state, and the context `<pre>` card removed entirely (not
+hidden). Generate → `size="xl"`.
+
+### C. News reader
+
+The article renders inside `NewspaperLayout` — `masthead` is the source
+label (`SOURCE_LABEL`, extracted to a new tiny `sourceLabels.js` shared
+with the list's badge), `edition` is "Simple edition"/"Intermediate
+edition", `subtitle` is `title_en`. Chips/furigana toggle sit above the
+paper; the summary `Disclosure` sits below it.
+
+**Mark-as-read is now automatic** — opening an article marks it read via a
+`useEffect` in `ImmersionModule`, gated on `user` (same gating the old
+button had; `markRead` already de-dupes). The reader lost `isRead`/
+`onMarkRead`, its "Mark as read" button, and the "✓ Marked as read" line;
+the footer now renders *only* the signed-out sign-in prompt (nothing, and
+no empty bordered section, when signed in).
+
+### D. Vocab Drill
+
+Scope reduced per your call mid-plan: only the `ActionBar`'s three buttons
+move to `xl`. The FilterCard/chips/inline-select refactor of the *current*
+home was skipped — `design-system/home-redesign` (separate branch/worktree,
+already rebuilds this screen around textbook chapters) would have had the
+work thrown away. That branch now has `FilterCard`, `ChipSelector`, and
+`Select variant="inline"` available for its own chapter picker.
+
+### E. Anime Vocab — episode view
+
+`EpisodeVocabBrowser`'s filter `Card` → `FilterCard`: JLPT row left-aligned
+under a plain label (dropped the old title + `space-between`); the four
+filter checkboxes → one `ChipSelector mode="multi"` row, decomposed
+straight from the returned Set into the four existing booleans (no diffing
+needed — unlike MediaSearch's Difficulty row, these are independent
+toggles with no "snap back to All" behavior).
+
+The lookup input and the hand-rolled select-all/caret/"select first N"
+header — which were literal duplicates of what `DataList`'s own
+`BulkHeader` already does (added last round, never adopted here) —
+collapsed into `DataList` itself via `search` and
+`selection.bulkHeader: { selectFirst: true }`. Deleted: local
+`SelectAllCheckbox`, `CaretButton`, `bulkOpen`/`bulkCountInput` state, and
+their four handlers. The "No match" message is now `emptyMessage`
+(including its dictionary-search link); `DataList` renders unconditionally
+instead of being hidden when empty.
+
+**[INPUT, verified live]** Select-all/select-first now scope to whatever
+`DataList` is showing (`rows={displayedRows}`), not the `eligible`-only set
+the old bespoke header used. With no search these are identical
+(`displayed === eligible`); during an active lookup — which already
+bypasses the JLPT/grammar/names/known filters — "select all" now also
+covers those filter-bypassed rows. Confirmed intentional per the plan and
+tested live (searched "あ", saw grammar-tagged rows in the results,
+select-all counted them).
+
+Start Drill → `size="xl"`.
+
+### Verification
+
+Story's inline selects and xl Generate, News reader's newspaper layout
+with correct masthead/edition/subtitle and edition-label updates on
+toggle, Vocab Drill's xl bar, and the full Anime Vocab episode view
+(FilterCard layout, chip filter toggling the eligible count, search with
+both a match and a no-match case, the select-first bulk header, xl Start
+Drill) were all driven live in Chrome. Lint/build/tests (53/53) clean
+after every section.
