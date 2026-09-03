@@ -11,9 +11,9 @@ import Badge from '../components/Badge.jsx'
 import DataList from '../components/DataList.jsx'
 import SpeedModeControls from '../components/SpeedModeControls.jsx'
 import PageHeader from '../components/PageHeader.jsx'
-import SpeakerIcon from '../components/SpeakerIcon.jsx'
-import HeaderMenu, { HeaderMenuButton } from '../components/HeaderMenu.jsx'
-import SettingsSidebar from '../components/SettingsSidebar.jsx'
+import AuthSlot from '../components/AuthSlot.jsx'
+import SettingsSidebar, { SidebarHeaderToggle } from '../components/SettingsSidebar.jsx'
+import ActionBar, { ACTION_BAR_HEIGHT } from '../components/ActionBar.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_BADGE, FS_ENTRY_WORD, FS_STAT_VALUE, FS_DISPLAY_HEADING, KANJI_FONT, WARNING } from '../data/theme.js'
 import { MODULES } from '../data/modules.js'
 import { ModuleThemeProvider, useAccent } from '../context/ModuleThemeContext.jsx'
@@ -663,7 +663,7 @@ function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selec
       width: '100%',
       maxWidth: 680,
       margin: '0 auto',
-      padding: '32px 24px 48px',
+      padding: `32px 24px ${ACTION_BAR_HEIGHT + 24}px`,
       display: 'flex',
       flexDirection: 'column',
       gap: 24,
@@ -714,19 +714,18 @@ function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selec
         })}
       </div>
 
-      {/* Actions */}
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-        <Button variant="accent-outline" size="lg" onClick={onStart} disabled={!canStart}>
+      <ActionBar maxWidth={680}>
+        <Button variant="neutral" disabled>Send to SRS</Button>
+        <Button variant="neutral" onClick={onGlance} disabled={!canStart}>Preview</Button>
+        <Button onClick={onStart} disabled={!canStart}>
           Start review
           {selectedSubLists.length > 0 && (
-            <span style={{ marginLeft: 8, fontSize: FS_CAPTION, opacity: 0.7 }}>
+            <span style={{ marginLeft: 8, fontSize: FS_CAPTION, opacity: 0.8 }}>
               ({selectedSubLists.reduce((sum, id) => sum + (wordCountByList[id] ?? 0), 0)} words)
             </span>
           )}
         </Button>
-        <Button variant="neutral" size="lg" onClick={onGlance} disabled={!canStart}>Preview</Button>
-        <Button variant="neutral" size="lg" disabled>Send to SRS</Button>
-      </div>
+      </ActionBar>
     </div>
   )
 }
@@ -785,7 +784,7 @@ export default function VocabPage() {
 
 function VocabPageScreens() {
   const ACCENT = useAccent()
-  const { user, signIn, signOut, loading: authLoading } = useAuth()
+  const { user } = useAuth()
   const { data: vocabProgress, save: saveVocabProgress } = useProgress('vocab-flashcard')
   const { data: srsData, save: saveSrs } = useProgress('vocab-srs')
 
@@ -1093,23 +1092,12 @@ function VocabPageScreens() {
                 ? [{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary Training', onClick: () => setIsGlancing(false) }, { label: 'Preview' }]
                 : [{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary Training' }]
             }
-            rightSlot={<HeaderMenu
-              primary={
-                <HeaderMenuButton onClick={() => setShowOptions(v => !v)}>Options</HeaderMenuButton>
-              }
-              items={[
-                {
-                  label: audioEnabled ? 'Mute' : 'Unmute',
-                  icon: <SpeakerIcon muted={!audioEnabled} size={20} />,
-                  onClick: () => setAudioEnabled(v => !v),
-                  dim: !audioEnabled,
-                },
-                ...(!authLoading ? [{
-                  label: user ? 'Sign out' : 'Sign in',
-                  onClick: user ? signOut : signIn,
-                }] : []),
-              ]}
-            />}
+            rightSlot={(
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <AuthSlot />
+                {isMobile && <SidebarHeaderToggle onClick={() => setShowOptions(true)} />}
+              </div>
+            )}
           />
           {isDrilling && !drill.done && (
             <div style={{ height: 3, background: 'rgba(255,255,255,0.08)' }}>

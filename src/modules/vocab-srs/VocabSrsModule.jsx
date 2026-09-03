@@ -9,9 +9,8 @@ import VocabSrsDrill from './VocabSrsDrill.jsx'
 import WordImportPanel from './WordImportPanel.jsx'
 import { ensureDeck, createDeck, renameDeck, deleteCards } from './deckUtils.js'
 import PageHeader from '../../components/PageHeader.jsx'
-import SpeakerIcon from '../../components/SpeakerIcon.jsx'
-import HeaderMenu, { HeaderMenuButton } from '../../components/HeaderMenu.jsx'
-import SettingsSidebar from '../../components/SettingsSidebar.jsx'
+import AuthSlot from '../../components/AuthSlot.jsx'
+import SettingsSidebar, { SidebarHeaderToggle } from '../../components/SettingsSidebar.jsx'
 import SignInGate from '../../components/SignInGate.jsx'
 import Button from '../../components/Button.jsx'
 import FileButton from '../../components/FileButton.jsx'
@@ -164,7 +163,7 @@ export default function VocabSrsModule() {
 
 function VocabSrsHome() {
   const ACCENT = useAccent()
-  const { user, signIn, signOut, loading: authLoading } = useAuth()
+  const { user, signIn } = useAuth()
   const { data: rawProgress, save, loading } = useProgress('vocab-srs')
   const { showToast } = useToast()
   const [progress, setProgress] = useState(null)
@@ -748,21 +747,12 @@ function VocabSrsHome() {
           <div style={{ height: '100%', display: 'flex', flexDirection: 'column', color: TEXT }}>
             <PageHeader
               crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'SRS' }]}
-              rightSlot={<HeaderMenu
-                primary={<HeaderMenuButton onClick={() => setShowOptions(v => !v)}>Options</HeaderMenuButton>}
-                items={[
-                  {
-                    label: audioEnabled ? 'Mute' : 'Unmute',
-                    icon: <SpeakerIcon muted={!audioEnabled} size={20} />,
-                    onClick: () => setAudioEnabled(v => !v),
-                    dim: !audioEnabled,
-                  },
-                  ...(!authLoading ? [{
-                    label: user ? 'Sign out' : 'Sign in',
-                    onClick: user ? signOut : signIn,
-                  }] : []),
-                ]}
-              />}
+              rightSlot={(
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <AuthSlot />
+                  {isMobile && <SidebarHeaderToggle onClick={() => setShowOptions(true)} />}
+                </div>
+              )}
             />
 
             <main style={{ flex: 1, overflowY: 'auto', padding: '28px 24px', display: 'flex', flexDirection: 'column' }}>

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import FlipCard from '../../FlipCard.jsx'
 import PageHeader from '../../components/PageHeader.jsx'
-import { HeaderMenuButton } from '../../components/HeaderMenu.jsx'
+import { SidebarHeaderToggle } from '../../components/SettingsSidebar.jsx'
 import Button from '../../components/Button.jsx'
 import DrillButtonRow, { DrillButton } from '../../components/DrillButton.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_DISPLAY_HEADING, FS_STAT_VALUE, FS_CAPTION, WARNING, DRILL_COLORS } from '../../data/theme.js'
@@ -523,9 +523,7 @@ export default function VocabSrsDrill({
       }}>
         <PageHeader
           crumbs={drillCrumbs}
-          rightSlot={isMobile && onShowOptions && (
-            <HeaderMenuButton onClick={onShowOptions}>Options</HeaderMenuButton>
-          )}
+          rightSlot={isMobile && onShowOptions && <SidebarHeaderToggle onClick={onShowOptions} />}
         />
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <DoneScreen stats={stats} onDone={() => onDone(localCards, stats.goodCount)} />
@@ -550,9 +548,7 @@ export default function VocabSrsDrill({
         {stats.goodCount} / {stats.total}
         {stats.waitingCount > 0 && <span style={{ marginLeft: 6, color: WARNING }}>{stats.waitingCount} waiting</span>}
       </span>
-      {isMobile && onShowOptions && (
-        <HeaderMenuButton onClick={onShowOptions}>Options</HeaderMenuButton>
-      )}
+      {isMobile && onShowOptions && <SidebarHeaderToggle onClick={onShowOptions} />}
     </div>
   )
 

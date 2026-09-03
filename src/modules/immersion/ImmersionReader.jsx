@@ -12,13 +12,17 @@ import { ensureDeck, createDeck, deleteCards } from '../vocab-srs/deckUtils.js'
 import ChipSelector from '../../components/Chip.jsx'
 import ToggleButton from '../../components/ToggleButton.jsx'
 import Button from '../../components/Button.jsx'
+import Disclosure from '../../components/Disclosure.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CONTENT_HEADING, FS_CAPTION, FS_ARTICLE_BODY } from '../../data/theme.js'
 import { useIsMobile } from '../../hooks/useIsMobile.js'
 
 const READ_MARK = '#6BCB6B'
+// Both bodies are generated; 'simplified' is the beginner rewrite and the
+// original body is the intermediate one, so the toggle reads as levels.
+// A third, easier level would need the fetch-nhk pipeline to generate it.
 const BODY_VERSION_OPTIONS = [
-  { value: 'original', label: 'Original' },
-  { value: 'simplified', label: 'Simplified' },
+  { value: 'simplified', label: 'Simple' },
+  { value: 'original', label: 'Intermediate' },
 ]
 
 function formatDate(iso) {
@@ -28,8 +32,6 @@ function formatDate(iso) {
 export default function ImmersionReader({ article, onBack, isRead, onMarkRead }) {
   const { user, signIn } = useAuth()
   const [showSimplified, setShowSimplified] = useState(!!article.body_simple)
-  const [summaryOpen, setSummaryOpen] = useState(false)
-  const [revealedAnswers, setRevealedAnswers] = useState({})
   const [popup, setPopup] = useState(null) // { token, vocabEntry, anchorRect, idx }
   const [showFurigana, setShowFurigana] = useState(true)
   const { data: srsData, save: saveSrs } = useProgress('vocab-srs')
@@ -97,7 +99,6 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
   const tokens = showingSimplified ? article.tokens_simple : article.tokens_ja
   const hasSimplified = !!article.body_simple
   const hasSummary = !!article.summary_en
-  const questions = Array.isArray(article.questions) && article.questions.length > 0 ? article.questions : null
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', background: '#1E1E1E' }}>
@@ -186,63 +187,11 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
 
           {hasSummary && (
             <div style={{ marginBottom: 32, borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 24 }}>
-              <button
-                onClick={() => setSummaryOpen(o => !o)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: 0,
-                  fontSize: FS_BASE,
-                  fontFamily: FONT,
-                  letterSpacing: TRACKING,
-                  color: TEXT_MUTED,
-                }}
-              >
-                <span style={{ transform: summaryOpen ? 'rotate(90deg)' : 'none', display: 'inline-block', transition: 'transform 150ms' }}>▶</span>
-                English summary
-              </button>
-              {summaryOpen && (
-                <div style={{
-                  marginTop: 12,
-                  fontSize: FS_BASE,
-                  color: TEXT_MUTED,
-                  fontFamily: FONT,
-                  letterSpacing: TRACKING,
-                  lineHeight: 1.7,
-                }}>
+              <Disclosure label="English summary">
+                <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, lineHeight: 1.7 }}>
                   {article.summary_en}
                 </div>
-              )}
-            </div>
-          )}
-
-          {questions && (
-            <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 24, marginBottom: 40 }}>
-              <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, marginBottom: 16 }}>
-                Comprehension check
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                {questions.map((item, i) => (
-                  <div key={i}>
-                    <div style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, lineHeight: 1.5, marginBottom: 6 }}>
-                      {item.q}
-                    </div>
-                    {revealedAnswers[i] ? (
-                      <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, lineHeight: 1.6 }}>
-                        {item.a}
-                      </div>
-                    ) : (
-                      <Button variant="neutral" size="sm" onClick={() => setRevealedAnswers(prev => ({ ...prev, [i]: true }))}>
-                        Show answer
-                      </Button>
-                    )}
-                  </div>
-                ))}
-              </div>
+              </Disclosure>
             </div>
           )}
 

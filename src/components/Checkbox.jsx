@@ -1,4 +1,4 @@
-import { FS_BASE, FS_CAPTION } from '../data/theme.js'
+import { FONT, FS_BASE, FS_CAPTION } from '../data/theme.js'
 
 export default function Checkbox({ checked, onChange, label, subtext, indent = 0, disabled = false, children }) {
   return (
@@ -36,8 +36,8 @@ export default function Checkbox({ checked, onChange, label, subtext, indent = 0
           )}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: FS_BASE, fontFamily: 'inherit' }}>{label}</span>
-          {subtext && <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: FS_CAPTION, fontFamily: 'inherit' }}>{subtext}</span>}
+          <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: FS_BASE, fontFamily: FONT }}>{label}</span>
+          {subtext && <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: FS_CAPTION, fontFamily: FONT }}>{subtext}</span>}
         </div>
       </label>
       {children && <div style={{ paddingLeft: 26 }}>{children}</div>}

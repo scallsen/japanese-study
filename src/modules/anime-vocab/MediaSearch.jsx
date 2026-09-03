@@ -4,13 +4,13 @@ import { fetchRecommendedMedia } from './recommendedMediaCache.js'
 import { difficultyLabel } from './difficultyLabels.js'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE } from '../../data/theme.js'
 import Select from '../../components/Select.jsx'
 import TextInput from '../../components/TextInput.jsx'
 import Button from '../../components/Button.jsx'
 import DataList from '../../components/DataList.jsx'
 import Badge from '../../components/Badge.jsx'
-import Card from '../../components/Card.jsx'
+import FilterCard, { FilterRow } from '../../components/FilterCard.jsx'
 import FeedCard from '../../components/FeedCard.jsx'
 import { Chip, default as ChipSelector } from '../../components/Chip.jsx'
 import Popover from '../../components/Popover.jsx'
@@ -146,14 +146,6 @@ function InfoIcon({ text }) {
 // chip's own vertical padding — needed once alignItems switches to
 // flex-start so the label sits level with the first line of chips instead
 // of vertically centering against however many lines they wrap onto.
-function FilterSectionLabel({ children }) {
-  return (
-    <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0, width: 92, marginTop: 4 }}>
-      {children}
-    </span>
-  )
-}
-
 function ResultTile({ result, onClick, busy }) {
   const badges = result.difficulty?.difficulty != null
     ? [{ label: `${difficultyLabel(result.difficulty.difficulty)} (${Number(result.difficulty.difficulty).toFixed(1)})`, tone: 'accent' }]
@@ -368,64 +360,44 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
         autoFocus
       />
 
-      <Card padding={0} style={{ display: 'flex', flexDirection: 'column' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '12px 16px' }}>
-          <FilterSectionLabel>Content</FilterSectionLabel>
-          {/* flex: 1 + minWidth: 0 lets this wrap its OWN chips onto multiple
-              lines within the remaining width, instead of the outer row (which
-              sees its unwrapped max-content width) dropping the whole thing —
-              label included — onto a line of its own. */}
-          <div style={{ flex: 1, minWidth: 0 }}>
+      <FilterCard>
+        <FilterRow key="content" label="Content">
+          <ChipSelector
+            options={ALL_MEDIA_TYPES.map(t => ({ value: t, label: MEDIA_TYPE_LABELS[t] }))}
+            value={mediaTypes}
+            onChange={setMediaTypes}
+            mode="multi"
+          />
+        </FilterRow>
+        <FilterRow key="difficulty" label="Difficulty">
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            <Chip label="All" active={isAllDifficulties} onClick={selectAllDifficulties} />
             <ChipSelector
-              options={ALL_MEDIA_TYPES.map(t => ({ value: t, label: MEDIA_TYPE_LABELS[t] }))}
-              value={mediaTypes}
-              onChange={setMediaTypes}
+              options={ALL_DIFFICULTY_LEVELS.map(level => ({ value: level, label: difficultyLabel(level) }))}
+              value={difficulties}
+              onChange={next => {
+                // ChipSelector's multi mode always toggles the one clicked
+                // option against the CURRENT set — recover which option
+                // that was via set diff, then replay it through
+                // toggleDifficulty's own "start fresh from All" / "snap
+                // back when empty" logic, which a plain toggle-against-
+                // full-set can't express.
+                const clicked = [...next].find(v => !difficulties.has(v)) ?? [...difficulties].find(v => !next.has(v))
+                toggleDifficulty(clicked)
+              }}
               mode="multi"
             />
           </div>
-        </div>
-        <div style={{ height: 1, background: 'rgba(255,255,255,0.08)' }} />
-        <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-            <FilterSectionLabel>Difficulty</FilterSectionLabel>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, flex: 1, minWidth: 0 }}>
-              <Chip label="All" active={isAllDifficulties} onClick={selectAllDifficulties} />
-              <ChipSelector
-                options={ALL_DIFFICULTY_LEVELS.map(level => ({ value: level, label: difficultyLabel(level) }))}
-                value={difficulties}
-                onChange={next => {
-                  // ChipSelector's multi mode always toggles the one clicked
-                  // option against the CURRENT set — recover which option
-                  // that was via set diff, then replay it through
-                  // toggleDifficulty's own "start fresh from All" / "snap
-                  // back when empty" logic, which a plain toggle-against-
-                  // full-set can't express.
-                  const clicked = [...next].find(v => !difficulties.has(v)) ?? [...difficulties].find(v => !next.has(v))
-                  toggleDifficulty(clicked)
-                }}
-                mode="multi"
-              />
-            </div>
-          </div>
-        </div>
-        <div style={{ height: 1, background: 'rgba(255,255,255,0.08)' }} />
-        <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-            <FilterSectionLabel>
-              Maturity
-              <InfoIcon text="Content maturity rating is estimated based on tags, and is not always accurate." />
-            </FilterSectionLabel>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <ChipSelector
-                options={MATURITY_LEVELS.map(level => ({ value: level, label: MATURITY_LABELS[level] }))}
-                value={maturity}
-                onChange={next => setMaturity(next.size === 0 ? new Set(DEFAULT_MATURITY) : next)}
-                mode="multi"
-              />
-            </div>
-          </div>
-        </div>
-      </Card>
+        </FilterRow>
+        <FilterRow key="maturity" label={<>Maturity<InfoIcon text="Content maturity rating is estimated based on tags, and is not always accurate." /></>}>
+          <ChipSelector
+            options={MATURITY_LEVELS.map(level => ({ value: level, label: MATURITY_LABELS[level] }))}
+            value={maturity}
+            onChange={next => setMaturity(next.size === 0 ? new Set(DEFAULT_MATURITY) : next)}
+            mode="multi"
+          />
+        </FilterRow>
+      </FilterCard>
 
       {error && (
         <div style={{ fontSize: FS_BASE, color: '#f87171', fontFamily: FONT, letterSpacing: TRACKING }}>{error}</div>

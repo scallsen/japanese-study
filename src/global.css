@@ -196,28 +196,6 @@ button, input, select, textarea {
   }
 }
 
-/* HeaderMenu — icon/text buttons and the narrow-width dropdown's rows.
-   Resting background lives here (not inline) so the hover rules apply
-   without !important. */
-.header-menu-btn {
-  background: rgba(255,255,255,0.1);
-  transition: background 130ms;
-}
-
-.header-menu-btn:hover,
-.header-menu-btn--open {
-  background: rgba(255,255,255,0.18);
-}
-
-.header-menu-item {
-  background: none;
-  transition: background 100ms;
-}
-
-.header-menu-item:hover {
-  background: rgba(255,255,255,0.07);
-}
-
 /* VocabPage sublist tiles */
 .sublist-tile {
   background: rgba(255,255,255,0.03);
@@ -231,6 +209,15 @@ button, input, select, textarea {
 .sublist-tile--selected,
 .sublist-tile--selected:hover {
   background: rgba(255,255,255,0.1);
+}
+
+/* Disclosure toggle */
+.disclosure-btn {
+  transition: color 120ms;
+}
+
+.disclosure-btn:hover {
+  color: #E8E8E8;
 }
 
 /* SettingsSidebar's collapse/expand strip */
@@ -248,8 +235,11 @@ button, input, select, textarea {
   transition: background 120ms, border-color 120ms;
 }
 
-.feed-card:hover {
-  background: #313131;
+/* !important: FeedCard sets its SURFACE background inline, so the plain
+   :hover rule had never applied. Only cards with an onClick get the
+   --interactive class, so static cards don't pretend to be clickable. */
+.feed-card--interactive:hover {
+  background: #313131 !important;
 }
 
 /* TokenizedBody words. Colours come from CSS variables set inline on the

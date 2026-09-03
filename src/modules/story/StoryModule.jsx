@@ -5,11 +5,12 @@ import TopProgressBar from '../../components/TopProgressBar.jsx'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import Button from '../../components/Button.jsx'
 import Select from '../../components/Select.jsx'
-import TextInput from '../../components/TextInput.jsx'
+import ChipSelector from '../../components/Chip.jsx'
 import Card from '../../components/Card.jsx'
 import FeedCard from '../../components/FeedCard.jsx'
+import FilterCard, { FilterRow } from '../../components/FilterCard.jsx'
+import ActionBar, { ACTION_BAR_HEIGHT } from '../../components/ActionBar.jsx'
 import { BG } from './storyUI.jsx'
-import { labelStyle } from './storyFieldStyles.js'
 import { FONT, KANJI_FONT, TRACKING, TEXT, TEXT_MUTED, FS_CAPTION, FS_HEADING, DANGER } from '../../data/theme.js'
 import { MODULES } from '../../data/modules.js'
 import { ModuleThemeProvider } from '../../context/ModuleThemeContext.jsx'
@@ -49,19 +50,6 @@ const FORMAT_OPTIONS = FORMATS.map(f => ({ value: f.id, label: f.label }))
 const LENGTH_OPTIONS = LENGTHS.map(l => ({ value: l.id, label: l.label }))
 const GRAMMAR_OPTIONS = GRAMMAR_LEVELS.map(g => ({ value: g, label: g }))
 const MATURITY_OPTIONS = MATURITY_LEVELS.map(m => ({ value: m.id, label: m.label }))
-const MODE_OPTIONS = [
-  { value: 'new', label: 'New — any theme' },
-  { value: 'based-on', label: 'Based on a theme, setting, or style' },
-]
-
-function Field({ label, children }) {
-  return (
-    <div style={{ marginBottom: 16 }}>
-      <label style={labelStyle}>{label}</label>
-      {children}
-    </div>
-  )
-}
 
 function formatDate(ts) {
   return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
@@ -122,8 +110,6 @@ function StoryGenerator() {
   const [grammarLevel, setGrammarRaw] = useState(() => safeLocalStorageGet('story-grammar') ?? 'N3')
   const [format, setFormatRaw] = useState(() => safeLocalStorageGet('story-format') ?? 'story')
   const [length, setLength] = useState('short')
-  const [mode, setMode] = useState('new')
-  const [basedOn, setBasedOn] = useState('')
   const [showPreview, setShowPreview] = useState(false)
   const [generating, setGenerating] = useState(false)
   const [error, setError] = useState(null)
@@ -170,8 +156,7 @@ function StoryGenerator() {
     }
   }, [source, maturity, grammarLevel, srsProgress])
 
-  const canGenerate =
-    user && context && context.wordCount > 0 && !generating && (mode === 'new' || basedOn.trim())
+  const canGenerate = user && context && context.wordCount > 0 && !generating
 
   const generate = async () => {
     if (!canGenerate) return
@@ -180,8 +165,10 @@ function StoryGenerator() {
     try {
       const data = await generateStory({
         learnerContext: context.text,
-        mode,
-        basedOn,
+        // The "based on a theme" mode was dropped from the UI (to be
+        // reassessed); the edge function still accepts it.
+        mode: 'new',
+        basedOn: '',
         format,
         length,
         questionCount: 3,
@@ -216,66 +203,52 @@ function StoryGenerator() {
         <TopProgressBar loading={showGenerating} color={STORY_ACCENT} />
       </PageHeader>
       <div style={{ flex: 1, overflowY: 'auto' }}>
-        <div style={{ maxWidth: 760, margin: '0 auto', padding: isMobile ? '18px 14px 70px' : '24px 20px 80px' }}>
-          <Field label="Vocabulary source">
-            <Select value={source} onChange={setSource} size="md" options={sourceOptions} />
-          </Field>
-          {isSrsSource && !user && (
-            <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: 16 }}>Sign in to use SRS decks as a source.</div>
-          )}
-          {isSrsSource && user && (
-            <Field label="Card maturity">
-              <Select value={maturity} onChange={setMaturity} size="md" options={MATURITY_OPTIONS} />
-            </Field>
-          )}
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            <div style={{ flex: 1, minWidth: 140 }}>
-              <Field label="Format">
-                <Select value={format} onChange={setFormat} size="md" options={FORMAT_OPTIONS} />
-              </Field>
-            </div>
-            <div style={{ flex: 1, minWidth: 140 }}>
-              <Field label="Length">
-                <Select value={length} onChange={setLength} size="md" options={LENGTH_OPTIONS} />
-              </Field>
-            </div>
-            <div style={{ flex: 1, minWidth: 140 }}>
-              <Field label="Grammar level">
-                <Select value={grammarLevel} onChange={setGrammar} size="md" options={GRAMMAR_OPTIONS} />
-              </Field>
-            </div>
-          </div>
-          <Field label="Mode">
-            <Select value={mode} onChange={setMode} size="md" options={MODE_OPTIONS} />
-          </Field>
-          {mode === 'based-on' && (
-            <Field label="Theme / setting / style (an original piece inspired by it, not a retelling)">
-              <TextInput
-                value={basedOn}
-                onChange={setBasedOn}
-                placeholder="e.g. a slow-burn mystery in a small fishing town"
-              />
-            </Field>
-          )}
+        <div style={{ maxWidth: 760, margin: '0 auto', padding: isMobile ? `18px 14px ${ACTION_BAR_HEIGHT + 18}px` : `24px 20px ${ACTION_BAR_HEIGHT + 24}px` }}>
+          <FilterCard>
+            <FilterRow key="source" label="Vocabulary">
+              <Select value={source} onChange={setSource} size="md" options={sourceOptions} />
+              {isSrsSource && !user && (
+                <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: 8 }}>Sign in to use SRS decks as a source.</div>
+              )}
+            </FilterRow>
+            {isSrsSource && user && (
+              <FilterRow key="maturity" label="Maturity">
+                <ChipSelector mode="single" options={MATURITY_OPTIONS} value={maturity} onChange={setMaturity} />
+              </FilterRow>
+            )}
+            <FilterRow key="format" label="Format">
+              <Select value={format} onChange={setFormat} size="md" options={FORMAT_OPTIONS} />
+            </FilterRow>
+            <FilterRow key="length" label="Length">
+              <ChipSelector mode="single" options={LENGTH_OPTIONS} value={length} onChange={setLength} />
+            </FilterRow>
+            <FilterRow key="grammar" label="Grammar">
+              <ChipSelector mode="single" options={GRAMMAR_OPTIONS} value={grammarLevel} onChange={setGrammar} />
+            </FilterRow>
+          </FilterCard>
 
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 8 }}>
-            <Button onClick={generate} disabled={!canGenerate}>
-              {generating ? 'Generating…' : 'Generate'}
-            </Button>
+          {error && <div style={{ marginTop: 14, fontSize: FS_CAPTION, color: DANGER }}>{error}</div>}
+          <ActionBar
+            maxWidth={760}
+            leading={(
+              <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>
+                {!user
+                  ? 'Sign in to generate stories'
+                  : context
+                    ? `${context.wordCount} words in context`
+                    : isSrsSource && srsLoading
+                      ? 'Loading SRS data…'
+                      : 'No words available'}
+              </span>
+            )}
+          >
             <Button variant="neutral" onClick={() => setShowPreview(p => !p)}>
               {showPreview ? 'Hide context' : 'Preview context'}
             </Button>
-            <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>
-              {!user
-                ? 'Sign in to generate stories'
-                : context
-                  ? `${context.wordCount} words in context`
-                  : isSrsSource && srsLoading
-                    ? 'Loading SRS data…'
-                    : 'No words available'}
-            </span>
-          </div>
-          {error && <div style={{ marginTop: 14, fontSize: FS_CAPTION, color: DANGER }}>{error}</div>}
+            <Button onClick={generate} disabled={!canGenerate}>
+              {generating ? 'Generating…' : 'Generate'}
+            </Button>
+          </ActionBar>
           {showPreview && context && (
             <Card style={{ marginTop: 16, maxHeight: 360, overflowY: 'auto' }}>
               <pre style={{ margin: 0, fontSize: FS_CAPTION, lineHeight: 1.6, whiteSpace: 'pre-wrap', fontFamily: KANJI_FONT }}>{context.text}</pre>

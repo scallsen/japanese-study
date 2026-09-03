@@ -330,3 +330,48 @@ runtime surprise is possible.
   button moved to `Button` since it was the last `.done-btn` user.
 - **[CANDIDATE]** The relearn countdown, the per-deck due/new breakdown
   rows and the "N total cards" caption on the home screen stay bespoke.
+
+## Review round 1 (`design-system/review-round-1`)
+
+Your first-pass feedback, applied on top of the stack.
+
+- **[NEW] `ActionBar`** (+ `ACTION_BAR_HEIGHT`) — extracted from Anime
+  Vocab's fixed footer; now also Vocab Drill's home (Start review / Preview
+  / Send to SRS) and Story's generator (Preview context / Generate, with the
+  status line in the `leading` slot). **[INPUT]** It's `position: fixed`, so
+  on Vocab Drill with the sidebar open the bar spans under the sidebar and
+  its buttons centre on the viewport, not the content column — the same
+  thing Anime Vocab already did. Making it column-scoped needs each host to
+  wrap its scroll area in a positioned column; left for the redesign pass.
+- **[NEW] `FilterCard` / `FilterRow`** — MediaSearch's inline filter block
+  (label + control rows with hairlines), now shared with Story's generator.
+  Story: Vocabulary and Format are `Select` rows; Length, Grammar and Card
+  maturity are single-select chip rows. Mode + "based on" dropped from the
+  UI (`mode: 'new'` still sent).
+- **[NEW] `Disclosure`** — "▶ Label" reveal, used for the reader's English
+  summary. Single consumer today; created because it's the atom the earlier
+  CANDIDATE note described and a bespoke button was the alternative.
+- **[NEW] `SidebarHeaderToggle`** (export from `SettingsSidebar`) — the
+  mobile chevron in a rule-divided header section. Vocab Drill, Vocab SRS
+  (home + drill), Anime Vocab all use it; Anime Vocab previously had *no*
+  way to open its sidebar on mobile.
+- **[CHANGED] `FeedCard` hover actually works now.** The `.feed-card:hover`
+  rule had been outranked by the inline background (the same gotcha as
+  TextInput). Only cards with an `onClick` get the `--interactive` class.
+- **[CHANGED] `Checkbox`, `Select`, `SectionHeader`** set `FONT` explicitly
+  instead of `inherit` — Dictionary's "Common words only" was the visible
+  symptom.
+- **Deleted:** `HeaderMenu` (+ `HeaderMenuButton`), `SpeakerIcon`,
+  `storyFieldStyles.js`. Mute is gone from headers; audio stays in the
+  settings sidebar's "Enable audio".
+- **Dropped:** comprehension checks in the News reader and Story review
+  (UI only — `questions` data and `story-grade` untouched).
+- **Relabelled:** Original / Simplified → **Simple / Intermediate**
+  (beginner-first). A third, easier tier means a pipeline change in
+  `fetch-nhk.mjs` to generate it — not a UI change.
+- **Rule recorded** as settled decision #13: cards represent content, lists
+  represent data.
+- **[INPUT] "Change the buttons to be medium"** — Story's buttons were
+  already `md` (the default); I read this as "not lg", so Vocab Drill's
+  home actions dropped from `lg` to `md` when they moved into the bar. If
+  you meant something else, say which.

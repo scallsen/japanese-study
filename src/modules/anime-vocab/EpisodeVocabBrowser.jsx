@@ -10,6 +10,7 @@ import NumberField from '../../components/NumberField.jsx'
 import Button from '../../components/Button.jsx'
 import TextInput from '../../components/TextInput.jsx'
 import DataList from '../../components/DataList.jsx'
+import ActionBar from '../../components/ActionBar.jsx'
 import Badge from '../../components/Badge.jsx'
 import { Chip, default as ChipSelector } from '../../components/Chip.jsx'
 import Checkbox from '../../components/Checkbox.jsx'
@@ -372,16 +373,11 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
         />
       )}
 
-      <div style={{
-        position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 20,
-        background: '#1E1E1E', borderTop: '1px solid rgba(255,255,255,0.08)', padding: '12px 24px',
-      }}>
-        <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex', justifyContent: 'flex-end' }}>
-          <Button variant="primary" size="lg" onClick={handleStartDrill} disabled={selected.size === 0}>
-            Start Drill ({selected.size})
-          </Button>
-        </div>
-      </div>
+      <ActionBar>
+        <Button variant="primary" size="lg" onClick={handleStartDrill} disabled={selected.size === 0}>
+          Start Drill ({selected.size})
+        </Button>
+      </ActionBar>
     </div>
   )
 }

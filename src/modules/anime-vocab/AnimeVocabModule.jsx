@@ -8,7 +8,7 @@ import CenteredLoadingMessage from '../../components/CenteredLoadingMessage.jsx'
 import SectionHeader from '../../components/SectionHeader.jsx'
 import Checkbox from '../../components/Checkbox.jsx'
 import Select from '../../components/Select.jsx'
-import SettingsSidebar from '../../components/SettingsSidebar.jsx'
+import SettingsSidebar, { SidebarHeaderToggle } from '../../components/SettingsSidebar.jsx'
 import MediaSearch from './MediaSearch.jsx'
 import EpisodeList from './EpisodeList.jsx'
 import EpisodeVocabBrowser from './EpisodeVocabBrowser.jsx'
@@ -248,7 +248,15 @@ export default function AnimeVocabModule({ initialMediaId }) {
   return (
     <ModuleThemeProvider accent={ANIME_ACCENT}>
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', background: '#1E1E1E', fontFamily: FONT, letterSpacing: TRACKING }}>
-      <PageHeader crumbs={crumbs} rightSlot={<AuthSlot />}>
+      <PageHeader
+        crumbs={crumbs}
+        rightSlot={(
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <AuthSlot />
+            {isMobile && <SidebarHeaderToggle onClick={() => setShowOptions(true)} />}
+          </div>
+        )}
+      >
         <TopProgressBar loading={showProgressBar} color={ACCENT} />
       </PageHeader>
       <div style={{ flex: 1, display: 'flex', minHeight: 0, position: 'relative' }}>

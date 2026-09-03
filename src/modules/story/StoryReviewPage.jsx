@@ -4,12 +4,10 @@ import AuthSlot from '../../components/AuthSlot.jsx'
 import { TokenizedBody, WordPopup } from '../../components/JapaneseReader.jsx'
 import { NewspaperLayout, ChatLayout, DiaryLayout, InterviewLayout, LetterLayout, PostcardLayout } from './StoryLayouts.jsx'
 import Button from '../../components/Button.jsx'
-import TextInput from '../../components/TextInput.jsx'
-import Card from '../../components/Card.jsx'
 import ToggleButton from '../../components/ToggleButton.jsx'
 import { BG } from './storyUI.jsx'
 import { buildVocabMap } from '../../utils/vocabMap.js'
-import { FONT, KANJI_FONT, TRACKING, TEXT, TEXT_MUTED, FS_ARTICLE_BODY, FS_BASE, FS_CAPTION, FS_HEADING, FS_CONTENT_HEADING, SUCCESS, DANGER } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_ARTICLE_BODY, FS_HEADING, FS_CONTENT_HEADING } from '../../data/theme.js'
 import { MODULES } from '../../data/modules.js'
 import { ModuleThemeProvider } from '../../context/ModuleThemeContext.jsx'
 // Cross-module write: creates cards in vocab-srs progress namespace (same pattern as ImmersionReader)
@@ -18,7 +16,6 @@ import { ensureDeck, createDeck, deleteCards } from '../vocab-srs/deckUtils.js'
 import { useProgress } from '../../hooks/useProgress.js'
 import { useToast } from '../../context/ToastContext.jsx'
 import { supabase } from '../../lib/supabase.js'
-import { gradeAnswer } from './api.js'
 import { lookupVocabulary } from './lookupVocabulary.js'
 import { useIsMobile } from '../../hooks/useIsMobile.js'
 
@@ -31,61 +28,6 @@ const FORMAT_LAYOUTS = {
   interview: InterviewLayout,
   letter: LetterLayout,
   postcard: PostcardLayout,
-}
-
-function Question({ q, index }) {
-  const [answer, setAnswer] = useState('')
-  const [state, setState] = useState({ status: 'idle', pass: null, feedback: null, error: null })
-
-  const check = async () => {
-    if (!answer.trim() || state.status === 'grading') return
-    setState({ status: 'grading', pass: null, feedback: null, error: null })
-    try {
-      const result = await gradeAnswer({
-        question: q.question,
-        correctAnswer: q.correct_answer,
-        acceptableVariations: q.acceptable_variations,
-        userAnswer: answer.trim(),
-      })
-      setState({ status: 'done', pass: result.pass, feedback: result.feedback, error: null })
-    } catch (err) {
-      setState({ status: 'idle', pass: null, feedback: null, error: err.message })
-    }
-  }
-
-  return (
-    <Card style={{ marginBottom: 12 }}>
-      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: 6 }}>Question {index + 1}</div>
-      <div style={{ fontFamily: KANJI_FONT, fontSize: 17, lineHeight: 1.7, marginBottom: 12 }}>{q.question}</div>
-      <div style={{ display: 'flex', gap: 8 }}>
-        <TextInput
-          value={answer}
-          onChange={setAnswer}
-          onKeyDown={e => { if (e.key === 'Enter') check() }}
-          placeholder="Type your answer in Japanese"
-          disabled={state.status === 'done'}
-          style={{ fontFamily: KANJI_FONT, flex: 1 }}
-        />
-        <Button onClick={check} disabled={!answer.trim() || state.status !== 'idle'}>
-          {state.status === 'grading' ? 'Grading…' : 'Check'}
-        </Button>
-      </div>
-      {state.error && <div style={{ marginTop: 10, fontSize: FS_CAPTION, color: DANGER }}>{state.error}</div>}
-      {state.status === 'done' && (
-        <div style={{ marginTop: 12, fontSize: FS_BASE, lineHeight: 1.5 }}>
-          <span style={{ color: state.pass ? SUCCESS : DANGER }}>
-            {state.pass ? 'Correct' : 'Not quite'}
-          </span>
-          <span style={{ color: TEXT_MUTED }}> — {state.feedback}</span>
-          {!state.pass && (
-            <div style={{ marginTop: 6, color: TEXT_MUTED }}>
-              Expected: <span style={{ fontFamily: KANJI_FONT, color: TEXT }}>{q.correct_answer}</span>
-            </div>
-          )}
-        </div>
-      )}
-    </Card>
-  )
 }
 
 export default function StoryReviewPage({ storyId }) {
@@ -270,10 +212,6 @@ function StoryReview({ storyId }) {
                   : story.story}
               </div>
             )}
-          </div>
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 24 }}>
-            <div style={{ fontSize: FS_HEADING, color: TEXT_MUTED, marginBottom: 10 }}>Comprehension check</div>
-            {story.questions.map((q, i) => <Question key={q.id || i} q={q} index={i} />)}
           </div>
         </div>
       </div>

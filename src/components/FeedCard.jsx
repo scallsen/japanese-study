@@ -67,7 +67,7 @@ export default function FeedCard({ badges = [], title, subtitle, meta, read = fa
   return (
     <div
       onClick={disabled ? undefined : onClick}
-      className="feed-card"
+      className={onClick && !disabled ? 'feed-card feed-card--interactive' : 'feed-card'}
       style={{
         display: 'flex', flexDirection: 'column', gap: image ? 0 : SPACE_4,
         background: SURFACE,

@@ -1,4 +1,4 @@
-import { FS_BASE, FS_CAPTION, SPACE_8, SPACE_12 } from '../data/theme.js'
+import { FONT, FS_BASE, FS_CAPTION, SPACE_8, SPACE_12 } from '../data/theme.js'
 
 // sm is the settings-drawer control this was extracted from (VocabPage /
 // VocabSrsModule sidebars); md matches TextInput's md padding so a select
@@ -32,7 +32,7 @@ export default function Select({ value, onChange, options, label, subtext, size 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       {label && <span style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}>{label}</span>}
-      {subtext && <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: FS_CAPTION, fontFamily: 'inherit' }}>{subtext}</span>}
+      {subtext && <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: FS_CAPTION, fontFamily: FONT }}>{subtext}</span>}
       <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
         <select
           value={value}
@@ -46,7 +46,7 @@ export default function Select({ value, onChange, options, label, subtext, size 
             borderRadius: 6,
             color: 'rgba(255,255,255,0.65)',
             fontSize: FS_BASE,
-            fontFamily: 'inherit',
+            fontFamily: FONT,
             padding: SIZES[size] ?? SIZES.sm,
             cursor: disabled ? 'not-allowed' : 'pointer',
             opacity: disabled ? 0.4 : 1,
