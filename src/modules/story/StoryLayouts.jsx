@@ -1,83 +1,14 @@
 import { TokenizedBody } from '../../components/JapaneseReader.jsx'
 import { parseDialogue } from './parseDialogue.js'
-import { FONT, KANJI_FONT, TRACKING, BORDER, TEXT, TEXT_MUTED, FS_BASE } from '../../data/theme.js'
+import { FONT, KANJI_FONT, MINCHO_FONT, TRACKING, BORDER, TEXT, TEXT_MUTED, FS_BASE } from '../../data/theme.js'
 import { SURFACE } from './storyUI.jsx'
 
-const MINCHO = "'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif CJK JP', serif"
 const LINE_FONT = "-apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', 'Segoe UI', sans-serif"
 
-export function NewspaperLayout({ title, tokens, vocabMap, onWordClick, showFurigana, activeIdx, isMobile }) {
-  const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
-  return (
-    <div style={{
-      background: '#EDE7DA',
-      color: '#1C1A17',
-      borderRadius: 4,
-      padding: isMobile ? '18px 16px 26px' : '28px 34px 38px',
-      boxShadow: '0 6px 24px rgba(0,0,0,0.45)',
-    }}>
-      <div style={{
-        textAlign: 'center',
-        fontFamily: FONT,
-        letterSpacing: '0.3em',
-        fontSize: 12,
-        textTransform: 'uppercase',
-        borderBottom: '1px solid #1C1A17',
-        paddingBottom: 8,
-      }}>
-        The Story Times
-      </div>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        fontFamily: FONT,
-        fontSize: 10,
-        letterSpacing: '0.12em',
-        textTransform: 'uppercase',
-        borderBottom: '3px double #1C1A17',
-        padding: '4px 2px 6px',
-        marginBottom: 20,
-        color: '#4A453C',
-      }}>
-        <span>Practice edition</span>
-        <span>{today}</span>
-      </div>
-      <h1 style={{
-        fontFamily: MINCHO,
-        fontWeight: 700,
-        fontSize: isMobile ? 26 : 34,
-        lineHeight: 1.4,
-        margin: '0 0 18px',
-        textAlign: 'center',
-      }}>
-        {title}
-      </h1>
-      <div style={{
-        fontFamily: MINCHO,
-        fontSize: isMobile ? 16 : 17,
-        lineHeight: showFurigana ? 2.3 : 1.95,
-        whiteSpace: 'pre-wrap',
-        textAlign: 'justify',
-        columnCount: isMobile ? 1 : 2,
-        columnGap: 36,
-        columnRule: '1px solid rgba(28,26,23,0.25)',
-        borderTop: '1px solid rgba(28,26,23,0.25)',
-        paddingTop: 18,
-      }}>
-        <TokenizedBody
-          tokens={tokens}
-          vocabMap={vocabMap}
-          onWordClick={onWordClick}
-          showFurigana={showFurigana}
-          activeIdx={activeIdx}
-          vocabHighlight="rgba(178,88,32,0.28)"
-          hoverBg="rgba(28,26,23,0.1)"
-          rtColor="#6B6558"
-        />
-      </div>
-    </div>
-  )
-}
+// Promoted to src/components/ (round 2) so the News reader can reuse it —
+// re-exported here so StoryReviewPage's FORMAT_LAYOUTS lookup and its
+// import site are unchanged.
+export { default as NewspaperLayout } from '../../components/NewspaperLayout.jsx'
 
 const AVATAR_COLORS = ['#5A8FD4', '#B56AC9', '#4FAF9B', '#CC8A3D']
 
@@ -360,7 +291,7 @@ export function LetterLayout({ title, tokens, vocabMap, onWordClick, showFurigan
       position: 'relative',
     }}>
       <div style={{
-        fontFamily: MINCHO,
+        fontFamily: MINCHO_FONT,
         fontSize: isMobile ? 15 : 16,
         color: '#8A5A2B',
         marginBottom: 22,
@@ -369,7 +300,7 @@ export function LetterLayout({ title, tokens, vocabMap, onWordClick, showFurigan
         {title}
       </div>
       <div style={{
-        fontFamily: MINCHO,
+        fontFamily: MINCHO_FONT,
         fontSize: isMobile ? 16 : 17,
         lineHeight: showFurigana ? 2.3 : 1.95,
         whiteSpace: 'pre-wrap',

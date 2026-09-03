@@ -367,7 +367,7 @@ function ColorPage() {
 
 const BUTTON_VARIANTS = ['primary', 'accent-outline', 'neutral', 'danger-outline', 'warning-outline', 'ghost', 'ghost-muted']
 const BUTTON_VARIANT_OPTIONS = BUTTON_VARIANTS.map(v => ({ value: v, label: v }))
-const BUTTON_SIZE_OPTIONS = ['sm', 'md', 'lg'].map(v => ({ value: v, label: v }))
+const BUTTON_SIZE_OPTIONS = ['sm', 'md', 'lg', 'xl'].map(v => ({ value: v, label: v }))
 
 function ButtonDemo() {
   const [variant, setVariant] = useState('primary')
@@ -984,6 +984,7 @@ function HudDemo() {
 /* ── Shell ─────────────────────────────────────────────────────────────── */
 
 const SELECT_SIZE_OPTIONS = ['sm', 'md'].map(v => ({ value: v, label: v }))
+const SELECT_VARIANT_OPTIONS = ['default', 'inline'].map(v => ({ value: v, label: v }))
 const SELECT_DEMO_OPTIONS = [
   { label: 'Nihongo So-Matome N3', options: [{ value: 'all', label: 'All lists' }, { value: 'w1d1', label: 'Week 1, Day 1' }] },
   { label: 'SRS decks', options: [{ value: 'core', label: 'Core 2000' }] },
@@ -991,14 +992,24 @@ const SELECT_DEMO_OPTIONS = [
 
 function SelectDemo() {
   const [size, setSize] = useState('sm')
+  const [variant, setVariant] = useState('default')
   const [value, setValue] = useState('w1d1')
-  const preview = (
+  const preview = variant === 'inline' ? (
+    <div style={{ width: 320 }}>
+      <Select value={value} onChange={setValue} variant="inline" options={SELECT_DEMO_OPTIONS} />
+    </div>
+  ) : (
     <div style={{ width: 320, display: 'flex', flexDirection: 'column', gap: SPACE_12 }}>
       <Select value={value} onChange={setValue} size={size} options={SELECT_DEMO_OPTIONS} />
       <TextInput value="" onChange={() => {}} placeholder={`a ${size} TextInput next to it`} size={size} />
     </div>
   )
-  const controls = <div><ControlLabel>Size</ControlLabel><Select value={size} onChange={setSize} options={SELECT_SIZE_OPTIONS} /></div>
+  const controls = (
+    <>
+      <div><ControlLabel>Variant</ControlLabel><Select value={variant} onChange={setVariant} options={SELECT_VARIANT_OPTIONS} /></div>
+      {variant === 'default' && <div><ControlLabel>Size</ControlLabel><Select value={size} onChange={setSize} options={SELECT_SIZE_OPTIONS} /></div>}
+    </>
+  )
   return <ComponentPage title="Select" description={DESCRIPTIONS.select} built preview={preview} controls={controls} />
 }
 

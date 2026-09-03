@@ -1,5 +1,5 @@
 import { forwardRef } from 'react'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, SPACE_8, SPACE_16, SPACE_24, DANGER, WARNING } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32, DANGER, WARNING } from '../data/theme.js'
 import { useAccent } from '../context/ModuleThemeContext.jsx'
 
 // Reconciled from the real variants already in use across the app —
@@ -30,20 +30,24 @@ function buildVariants(accent) {
   }
 }
 
-// Sizes match the three distinct paddings actually used app-wide, not an
+// Sizes match the four distinct paddings actually used app-wide, not an
 // arbitrary scale — sm: bulk-select confirm/cancel, md: dialog buttons, lg:
-// primary drill CTAs like "Start Drill". Vertical padding on sm/lg (5px,
-// 10px) doesn't land on the spacing scale — real historical values, kept
-// exact rather than rounded onto a token and changing the rendered size.
+// primary drill CTAs like "Start Drill", xl: every ActionBar's buttons
+// (Story's Generate, Vocab Drill's Start review, Anime Vocab's Start Drill —
+// round 2 moved these up from lg so the sticky bar reads as the screen's
+// one clearly primary action). Vertical padding on sm/lg (5px, 10px)
+// doesn't land on the spacing scale — real historical values, kept exact
+// rather than rounded onto a token and changing the rendered size.
 const SIZES = {
   sm: '5px 14px',
   md: `${SPACE_8}px ${SPACE_16}px`,
   lg: `10px ${SPACE_24}px`,
+  xl: `${SPACE_12}px ${SPACE_32}px`,
 }
 
 // An icon with no label needs square padding — reusing the text paddings
 // above would render a stretched rectangle around a single glyph.
-const ICON_ONLY_SIZES = { sm: 4, md: 6, lg: 8 }
+const ICON_ONLY_SIZES = { sm: 4, md: 6, lg: 8, xl: 10 }
 
 // className drives hover/active — colored variants brighten via `filter`
 // (works for solid/translucent tints alike), neutral/ghost shift background

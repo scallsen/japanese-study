@@ -3,6 +3,7 @@ import SelectableRow from './SelectableRow.jsx'
 import SelectAllCheckbox from './SelectAllCheckbox.jsx'
 import NumberField from './NumberField.jsx'
 import Button from './Button.jsx'
+import TextInput from './TextInput.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, SPACE_4, SPACE_8, SPACE_12, SPACE_16 } from '../data/theme.js'
 import { useAccent } from '../context/ModuleThemeContext.jsx'
 
@@ -320,12 +321,11 @@ export default function DataList({
       <div style={{ display: 'flex', flexDirection: 'column', background: SURFACE, border: `1px solid ${HAIRLINE}`, borderRadius: 8, overflow: 'hidden' }}>
         {search && (
           <div style={{ padding, borderBottom: `1px solid ${HAIRLINE}` }}>
-            <input
-              type="text"
+            <TextInput
               value={search.value}
-              onChange={e => search.onChange(e.target.value)}
+              onChange={search.onChange}
               placeholder={search.placeholder ?? 'Search...'}
-              style={{ width: '100%', fontSize: FS_BASE, fontFamily: FONT, letterSpacing: 'normal', background: 'transparent', border: 'none', color: TEXT, outline: 'none' }}
+              variant="bare"
             />
           </div>
         )}

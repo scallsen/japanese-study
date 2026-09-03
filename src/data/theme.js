@@ -3,6 +3,10 @@ export const FONT = "'DotGothic16', system-ui, sans-serif"
 // card faces, story questions) where the pixel FONT would hurt legibility.
 // Was declared identically in five files before living here.
 export const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
+// Serif counterpart of KANJI_FONT — the paper-and-print formats (Story's
+// Newspaper/Letter/Postcard layouts, the promoted NewspaperLayout the News
+// reader now shares). Declared once here instead of duplicated per format.
+export const MINCHO_FONT = "'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif CJK JP', serif"
 export const TRACKING = '0.05em'
 export const BORDER = '#2E2E2E'
 export const TEXT = '#E8E8E8'
