@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import TextInput from './TextInput.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, SPACE_8 } from '../data/theme.js'
+import { useAccent } from '../context/ModuleThemeContext.jsx'
 
-const ACCENT = '#3ABDA4'
 const HAIRLINE = 'rgba(255,255,255,0.08)'
 const ROW_HAIRLINE = 'rgba(255,255,255,0.06)'
 
@@ -31,6 +31,11 @@ export default function OptionPicker({
   autoFocus = true,
   maxHeight = 240,
 }) {
+  // Ambient, not a module constant — the same hardcoded-teal gap settled
+  // decision #8 found in Button/Badge/SelectAllCheckbox. Surfaced by the
+  // Immersion rebuild: WordPopup's deck list rendered its "+ Create" row teal
+  // inside a red-accented module.
+  const ACCENT = useAccent()
   const [query, setQuery] = useState('')
   const inputRef = useRef(null)
 
@@ -88,6 +93,7 @@ export default function OptionPicker({
 }
 
 function Row({ onClick, color = TEXT, meta, children }) {
+  const ACCENT = useAccent()
   return (
     <button
       onClick={onClick}

@@ -1,45 +1,49 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { isBundledDeck } from '../modules/vocab-srs/deckUtils.js'
 import Button from './Button.jsx'
 import Popover from './Popover.jsx'
 import OptionPicker from './OptionPicker.jsx'
 import { deckPickerItems } from './deckPickerItems.js'
 import { TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_ENTRY_WORD, SPACE_8, SPACE_12 } from '../data/theme.js'
+import { useAccent } from '../context/ModuleThemeContext.jsx'
 
+// Hover is a CSS class (.reader-token) per the StrictMode rule, not a
+// hovered-index useState as it was originally. The two highlight colours are
+// themeable per call site (Story's light newspaper/letter layouts pass their
+// own), so they travel as CSS custom properties on the wrapper for the
+// :hover rules to read — a class can't otherwise take per-instance colours.
+// `vocabHighlight` defaults to the module accent; it was Immersion's red
+// hardcoded, which only looked right because Immersion was the first reader.
 export function TokenizedBody({
   tokens,
   vocabMap,
   onWordClick,
   showFurigana,
   activeIdx,
-  vocabHighlight = 'rgba(224,90,78,0.22)',
+  vocabHighlight,
   hoverBg = 'rgba(255,255,255,0.1)',
   rtColor = TEXT_MUTED,
 }) {
-  const [hoveredIdx, setHoveredIdx] = useState(null)
-
-  useEffect(() => {
-    if (activeIdx === null) setHoveredIdx(null)
-  }, [activeIdx])
+  const accent = useAccent()
+  const vocabBg = vocabHighlight ?? `${accent}38`
 
   if (!Array.isArray(tokens) || tokens.length === 0) return null
   return (
-    <span>
+    <span style={{ '--reader-hover': hoverBg, '--reader-vocab': vocabBg }}>
       {tokens.map((tok, i) => {
         if (!tok.w) return <span key={i}>{tok.t}</span>
-        const isActive = hoveredIdx === i || activeIdx === i
+        const isActive = activeIdx === i
         const inVocab = !!vocabMap[tok.t]
         return (
           <span
             key={i}
-            onMouseEnter={() => setHoveredIdx(i)}
-            onMouseLeave={() => setHoveredIdx(null)}
+            className={inVocab ? 'reader-token reader-token--vocab' : 'reader-token'}
             onClick={e => { e.stopPropagation(); onWordClick(tok, e, i) }}
             style={{
               cursor: 'pointer',
               borderRadius: 3,
               background: isActive
-                ? inVocab ? vocabHighlight : hoverBg
+                ? inVocab ? vocabBg : hoverBg
                 : 'transparent',
               padding: '0 1px',
               transition: 'background 80ms',

@@ -203,6 +203,17 @@ button, input, select, textarea {
 }
 
 /* FeedCard */
+/* TokenizedBody words. Colours come from CSS variables set inline on the
+   wrapper so each reader/layout can theme them; !important because the
+   token sets its own inline background for the active (popup-open) state. */
+.reader-token:hover {
+  background: var(--reader-hover) !important;
+}
+
+.reader-token--vocab:hover {
+  background: var(--reader-vocab) !important;
+}
+
 .feed-card {
   transition: background 120ms, border-color 120ms;
 }

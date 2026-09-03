@@ -742,6 +742,7 @@ function FeedCardDemo() {
 const TOGGLE_TONE_OPTIONS = [
   { value: 'accent', label: 'accent — module colour' },
   { value: 'success', label: 'success — followed/saved' },
+  { value: 'neutral', label: 'neutral — view-mode switch (furigana)' },
 ]
 
 function ToggleButtonDemo() {

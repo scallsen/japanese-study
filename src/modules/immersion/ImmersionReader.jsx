@@ -9,10 +9,17 @@ import { useToast } from '../../context/ToastContext.jsx'
 // Cross-module write: creates cards in vocab-srs progress namespace
 import { createCard } from '../vocab-srs/srs.js'
 import { ensureDeck, createDeck, deleteCards } from '../vocab-srs/deckUtils.js'
+import ChipSelector from '../../components/Chip.jsx'
+import ToggleButton from '../../components/ToggleButton.jsx'
+import Button from '../../components/Button.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CONTENT_HEADING, FS_CAPTION, FS_ARTICLE_BODY } from '../../data/theme.js'
 import { useIsMobile } from '../../hooks/useIsMobile.js'
 
-const ACCENT = '#E05A4E'
+const READ_MARK = '#6BCB6B'
+const BODY_VERSION_OPTIONS = [
+  { value: 'original', label: 'Original' },
+  { value: 'simplified', label: 'Simplified' },
+]
 
 function formatDate(iso) {
   return new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
@@ -142,47 +149,23 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
 
           {(hasSimplified || tokens) && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24 }}>
-              {hasSimplified && ['Original', 'Simplified'].map(label => {
-                const active = label === 'Simplified' ? showSimplified : !showSimplified
-                return (
-                  <button
-                    key={label}
-                    onClick={() => setShowSimplified(label === 'Simplified')}
-                    style={{
-                      fontSize: FS_BASE,
-                      fontFamily: FONT,
-                      letterSpacing: TRACKING,
-                      color: active ? ACCENT : TEXT_MUTED,
-                      background: active ? `${ACCENT}18` : 'transparent',
-                      border: `1px solid ${active ? ACCENT + '55' : 'rgba(255,255,255,0.1)'}`,
-                      borderRadius: 4,
-                      padding: '3px 12px',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {label}
-                  </button>
-                )
-              })}
+              {hasSimplified && (
+                <ChipSelector
+                  mode="single"
+                  options={BODY_VERSION_OPTIONS}
+                  value={showSimplified ? 'simplified' : 'original'}
+                  onChange={v => setShowSimplified(v === 'simplified')}
+                />
+              )}
               {tokens && (
-                <button
-                  onClick={() => setShowFurigana(f => !f)}
-                  style={{
-                    marginLeft: 'auto',
-                    fontSize: FS_BASE,
-                    fontFamily: FONT,
-                    letterSpacing: TRACKING,
-                    color: showFurigana ? TEXT : TEXT_MUTED,
-                    background: showFurigana ? 'rgba(255,255,255,0.08)' : 'transparent',
-                    border: `1px solid ${showFurigana ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)'}`,
-                    borderRadius: 4,
-                    padding: '3px 12px',
-                    cursor: 'pointer',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {showFurigana ? 'Hide furigana' : 'Show furigana'}
-                </button>
+                <div style={{ marginLeft: 'auto' }}>
+                  <ToggleButton
+                    active={showFurigana}
+                    labels={{ on: 'Hide furigana', off: 'Show furigana' }}
+                    activeTone="neutral"
+                    onClick={() => setShowFurigana(f => !f)}
+                  />
+                </div>
               )}
             </div>
           )}
@@ -253,22 +236,9 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
                         {item.a}
                       </div>
                     ) : (
-                      <button
-                        onClick={() => setRevealedAnswers(prev => ({ ...prev, [i]: true }))}
-                        style={{
-                          fontSize: FS_BASE,
-                          fontFamily: FONT,
-                          letterSpacing: TRACKING,
-                          color: TEXT_MUTED,
-                          background: 'rgba(255,255,255,0.04)',
-                          border: '1px solid rgba(255,255,255,0.1)',
-                          borderRadius: 4,
-                          padding: '3px 12px',
-                          cursor: 'pointer',
-                        }}
-                      >
+                      <Button variant="neutral" size="sm" onClick={() => setRevealedAnswers(prev => ({ ...prev, [i]: true }))}>
                         Show answer
-                      </button>
+                      </Button>
                     )}
                   </div>
                 ))}
@@ -279,45 +249,14 @@ export default function ImmersionReader({ article, onBack, isRead, onMarkRead })
           <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 24, paddingBottom: 48, display: 'flex', alignItems: 'center', gap: 12 }}>
             {user ? (
               isRead ? (
-                <span style={{ fontSize: FS_BASE, color: '#6BCB6B', fontFamily: FONT, letterSpacing: TRACKING, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ fontSize: FS_BASE, color: READ_MARK, fontFamily: FONT, letterSpacing: TRACKING, display: 'flex', alignItems: 'center', gap: 6 }}>
                   <span>✓</span> Marked as read
                 </span>
               ) : (
-                <button
-                  onClick={onMarkRead}
-                  style={{
-                    fontSize: FS_BASE,
-                    fontFamily: FONT,
-                    letterSpacing: TRACKING,
-                    color: TEXT,
-                    background: 'rgba(255,255,255,0.06)',
-                    border: '1px solid rgba(255,255,255,0.15)',
-                    borderRadius: 6,
-                    padding: '6px 16px',
-                    cursor: 'pointer',
-                  }}
-                >
-                  Mark as read
-                </button>
+                <Button variant="neutral" onClick={onMarkRead}>Mark as read</Button>
               )
             ) : (
-              <button
-                onClick={signIn}
-                style={{
-                  fontSize: FS_BASE,
-                  fontFamily: FONT,
-                  letterSpacing: TRACKING,
-                  color: TEXT_MUTED,
-                  background: 'none',
-                  border: 'none',
-                  padding: 0,
-                  cursor: 'pointer',
-                  textDecoration: 'underline',
-                  textUnderlineOffset: 3,
-                }}
-              >
-                Sign in to save reading history
-              </button>
+              <Button variant="neutral" size="sm" onClick={signIn}>Sign in to save reading history</Button>
             )}
           </div>
         </div>

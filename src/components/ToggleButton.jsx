@@ -1,11 +1,17 @@
 import { Chip } from './Chip.jsx'
+import { TEXT } from '../data/theme.js'
 import { useAccent } from '../context/ModuleThemeContext.jsx'
 
 const SUCCESS = '#6BCB6B'
 
+// 'neutral' is a view-mode toggle (Show/Hide furigana in the Immersion and
+// Story readers — both had the identical hand-rolled white-tinted button).
+// Furigana isn't "the module's thing" the way an active deck is, so tinting
+// it in the module accent would make a reading aid look like a filter.
 const TONES = {
   accent: null, // null → fall through to the module accent
   success: SUCCESS,
+  neutral: TEXT,
 }
 
 /**
@@ -24,7 +30,8 @@ const TONES = {
  *    than restyling a button from scratch.
  *
  * `activeTone` picks the "on" colour: 'accent' (the module's own — deck
- * On/Off) or 'success' green (something you've followed/saved).
+ * On/Off), 'success' green (something you've followed/saved), or 'neutral'
+ * (a view-mode switch like Show/Hide furigana).
  * `destructiveHover` reddens the active state on hover to preview that
  * clicking will undo it — right for Follow/Unfollow, wrong for On/Off,
  * where turning a deck off isn't destructive.
