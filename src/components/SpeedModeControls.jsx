@@ -1,62 +1,17 @@
-import { FS_BASE } from '../data/theme.js'
+import DrillButtonRow, { DrillButton } from './DrillButton.jsx'
+import { DRILL_COLORS } from '../data/theme.js'
 
+// The speed-mode Incorrect/Correct pair, shared by VocabPage and Anime
+// Vocab's EpisodeDrill. A named composition over DrillButton rather than
+// each drill inlining the same two buttons — the keyboard hints and the
+// pre-flip "Click to flip" placeholder are the whole point of it existing.
 export default function SpeedModeControls({ isFlipped, transitioning, onVerdict }) {
-  if (!isFlipped) {
-    return (
-      <div style={{
-        width: 'min(380px, calc(100vw - 32px))',
-        textAlign: 'center',
-        color: 'rgba(255,255,255,0.25)',
-        fontSize: FS_BASE,
-        fontFamily: 'inherit',
-        letterSpacing: '0.05em',
-        padding: '10px 0',
-      }}>
-        Click to flip
-      </div>
-    )
-  }
+  if (!isFlipped) return <DrillButtonRow placeholder="Click to flip" />
 
   return (
-    <div style={{ width: 'min(380px, calc(100vw - 32px))', display: 'flex', gap: 8 }}>
-      <button
-        onClick={() => onVerdict(false)}
-        disabled={transitioning}
-        className="verdict-btn"
-        style={{
-          flex: 1,
-          padding: '10px 0',
-          fontSize: FS_BASE,
-          fontFamily: 'inherit',
-          background: 'rgba(192,57,43,0.85)',
-          color: '#fff',
-          border: 'none',
-          borderRadius: 8,
-          cursor: transitioning ? 'default' : 'pointer',
-          letterSpacing: '0.05em',
-        }}
-      >
-        Incorrect [Z]
-      </button>
-      <button
-        onClick={() => onVerdict(true)}
-        disabled={transitioning}
-        className="verdict-btn"
-        style={{
-          flex: 1,
-          padding: '10px 0',
-          fontSize: FS_BASE,
-          fontFamily: 'inherit',
-          background: 'rgba(39,174,96,0.85)',
-          color: '#fff',
-          border: 'none',
-          borderRadius: 8,
-          cursor: transitioning ? 'default' : 'pointer',
-          letterSpacing: '0.05em',
-        }}
-      >
-        Correct [X]
-      </button>
-    </div>
+    <DrillButtonRow>
+      <DrillButton label="Incorrect" hint="Z" color={DRILL_COLORS.again} onClick={() => onVerdict(false)} disabled={transitioning} />
+      <DrillButton label="Correct" hint="X" color={DRILL_COLORS.good} onClick={() => onVerdict(true)} disabled={transitioning} />
+    </DrillButtonRow>
   )
 }

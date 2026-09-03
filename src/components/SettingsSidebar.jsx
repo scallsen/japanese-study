@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { FS_BASE } from '../data/theme.js'
 
 const PANEL_W = 420
@@ -31,8 +30,6 @@ function handleSidebarFocus(e) {
 // `children` is a render-prop `(paddingH) => node` so callers can match
 // VocabPage's own panel-content padding convention (16 desktop / 20 mobile).
 export default function SettingsSidebar({ open, onToggle, onClose, isMobile, children }) {
-  const [chevronHovered, setChevronHovered] = useState(false)
-
   return (
     <>
       {/* ── Desktop sidebar ── */}
@@ -40,8 +37,7 @@ export default function SettingsSidebar({ open, onToggle, onClose, isMobile, chi
         <>
           <div
             onClick={onToggle}
-            onMouseEnter={() => setChevronHovered(true)}
-            onMouseLeave={() => setChevronHovered(false)}
+            className="sidebar-chevron"
             style={{
               flexShrink: 0,
               width: CHEVRON_W,
@@ -49,8 +45,6 @@ export default function SettingsSidebar({ open, onToggle, onClose, isMobile, chi
               borderRight: open ? '1px solid rgba(255,255,255,0.1)' : 'none',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               cursor: 'pointer',
-              background: chevronHovered ? 'rgba(255,255,255,0.05)' : 'transparent',
-              transition: 'background 130ms',
             }}>
             <button style={{
               width: CHEVRON_W, height: 44,

@@ -3,13 +3,14 @@ import { FONT, TRACKING, FS_BASE, FS_NAV } from '../data/theme.js'
 
 const NARROW_BP = 540
 
+// Hover/open backgrounds are CSS classes (.header-menu-btn, .header-menu-item
+// in global.css) per the no-useState-hover rule; the resting background is
+// set there too so the hover rule doesn't need !important.
 const ghostBtn = {
   display: 'flex', alignItems: 'center', justifyContent: 'center',
-  background: 'rgba(255,255,255,0.1)',
   border: '1px solid rgba(255,255,255,0.2)',
   borderRadius: 8, cursor: 'pointer',
   fontFamily: FONT, letterSpacing: TRACKING,
-  transition: 'background 130ms',
   color: 'rgba(255,255,255,0.7)',
 }
 
@@ -19,8 +20,6 @@ const ghostBtn = {
 export default function HeaderMenu({ primary, items = [] }) {
   const [narrow, setNarrow] = useState(() => window.innerWidth < NARROW_BP)
   const [open, setOpen] = useState(false)
-  const [hoveredIdx, setHoveredIdx] = useState(null)
-  const [dropHoveredIdx, setDropHoveredIdx] = useState(null)
   const menuRef = useRef(null)
 
   useEffect(() => {
@@ -50,11 +49,9 @@ export default function HeaderMenu({ primary, items = [] }) {
           <button
             key={i}
             onClick={item.onClick}
-            onMouseEnter={() => setHoveredIdx(i)}
-            onMouseLeave={() => setHoveredIdx(null)}
+            className="header-menu-btn"
             style={{
               ...ghostBtn,
-              background: hoveredIdx === i ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)',
               ...(item.icon ? { width: 34, height: 34, padding: 0 } : { height: 34, padding: '0 12px', fontSize: FS_BASE }),
               ...(item.dim ? { opacity: 0.35 } : {}),
             }}
@@ -72,11 +69,9 @@ export default function HeaderMenu({ primary, items = [] }) {
       {items.length > 0 && (
         <button
           onClick={() => setOpen(v => !v)}
-          onMouseEnter={() => setHoveredIdx('dots')}
-          onMouseLeave={() => setHoveredIdx(null)}
+          className={open ? 'header-menu-btn header-menu-btn--open' : 'header-menu-btn'}
           style={{
             ...ghostBtn,
-            background: open || hoveredIdx === 'dots' ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)',
             width: 34, height: 34, padding: 0, fontSize: FS_NAV,
           }}
         >
@@ -98,12 +93,10 @@ export default function HeaderMenu({ primary, items = [] }) {
             <button
               key={i}
               onClick={() => { item.onClick(); setOpen(false) }}
-              onMouseEnter={() => setDropHoveredIdx(i)}
-              onMouseLeave={() => setDropHoveredIdx(null)}
+              className="header-menu-item"
               style={{
                 display: 'flex', alignItems: 'center', gap: 10,
                 width: '100%',
-                background: dropHoveredIdx === i ? 'rgba(255,255,255,0.07)' : 'none',
                 border: 'none',
                 borderTop: i > 0 ? '1px solid rgba(255,255,255,0.08)' : 'none',
                 padding: '12px 16px',
@@ -112,7 +105,6 @@ export default function HeaderMenu({ primary, items = [] }) {
                 color: 'rgba(255,255,255,0.75)',
                 cursor: 'pointer',
                 textAlign: 'left',
-                transition: 'background 100ms',
                 ...(item.dim ? { opacity: 0.5 } : {}),
               }}
             >

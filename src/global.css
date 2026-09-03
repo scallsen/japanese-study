@@ -206,6 +206,38 @@ button, input, select, textarea {
   }
 }
 
+/* HeaderMenu — icon/text buttons and the narrow-width dropdown's rows.
+   Resting background lives here (not inline) so the hover rules apply
+   without !important. */
+.header-menu-btn {
+  background: rgba(255,255,255,0.1);
+  transition: background 130ms;
+}
+
+.header-menu-btn:hover,
+.header-menu-btn--open {
+  background: rgba(255,255,255,0.18);
+}
+
+.header-menu-item {
+  background: none;
+  transition: background 100ms;
+}
+
+.header-menu-item:hover {
+  background: rgba(255,255,255,0.07);
+}
+
+/* SettingsSidebar's collapse/expand strip */
+.sidebar-chevron {
+  background: transparent;
+  transition: background 130ms;
+}
+
+.sidebar-chevron:hover {
+  background: rgba(255,255,255,0.05);
+}
+
 /* FeedCard */
 .feed-card {
   transition: background 120ms, border-color 120ms;
