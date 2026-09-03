@@ -102,9 +102,9 @@ Each entry in `src/data/modules.js`:
 
 ## Style Guide (`#/dev/style-guide`)
 
-Living component library + progress tracker for an in-progress app-wide design-system consolidation. Dev-only lab page, same pattern as `ToastLabPage`/`DeckPickerLabPage` below — not linked from the dashboard. Left nav lists every planned component (built + placeholder); clicking a placeholder shows its description and "Not built yet" rather than being hidden, so the roster below doubles as the page's own content.
+Living component library + progress tracker for the app-wide design-system consolidation. Dev-only lab page, same pattern as `ToastLabPage` — not linked from the dashboard. **Status (Sep 2026): every module is ported** — Anime Vocab, Dictionary, Immersion, Story, Vocab Drill, Vocab SRS, each on its own `design-system/<module>` branch stacked on `feat/design-system` (Grammar Map skipped: being removed). The branch-by-branch decision log, every shared-component change and every judgement call that wants a second opinion, is in `docs/design-system-rebuild-review.md` — read it before relitigating anything below. Left nav lists every planned component (built + placeholder); clicking a placeholder shows its description and "Not built yet" rather than being hidden, so the roster below doubles as the page's own content.
 
-**Key files:** `src/pages/StyleGuideLabPage.jsx` (the whole page — nav, `ComponentPage`/`FoundationPage` wrappers, per-component demo + controls). Design-system components live in `src/components/`: `Button.jsx`, `Badge.jsx`, `Card.jsx`, `TextInput.jsx`, `NumberField.jsx`, `Select.jsx`, `Checkbox.jsx`, `SectionHeader.jsx`, `Chip.jsx`, `DataList.jsx`, `Modal.jsx`, `ConfirmDialog.jsx`, `Toast.jsx`, `FeedCard.jsx`, `ToggleButton.jsx`, `DistributionBar.jsx`, `Popover.jsx`, `OptionPicker.jsx`, `DeckComboBox.jsx`, `DrillButton.jsx`, `DrillHUD.jsx`. Module accent context: `src/context/ModuleThemeContext.jsx`.
+**Key files:** `src/pages/StyleGuideLabPage.jsx` (the whole page — nav, `ComponentPage`/`FoundationPage` wrappers, per-component demo + controls). Design-system components live in `src/components/`: `Button.jsx`, `Badge.jsx`, `Card.jsx`, `TextInput.jsx`, `NumberField.jsx`, `Select.jsx`, `Checkbox.jsx`, `FileButton.jsx`, `SectionHeader.jsx`, `SectionLabel.jsx`, `SignInGate.jsx`, `Chip.jsx`, `DataList.jsx`, `Modal.jsx`, `ConfirmDialog.jsx`, `Toast.jsx`, `FeedCard.jsx`, `ToggleButton.jsx`, `DistributionBar.jsx`, `Popover.jsx`, `OptionPicker.jsx`, `DeckComboBox.jsx`, `DrillButton.jsx`, `SpeedModeControls.jsx` (a named composition of DrillButton), `DrillHUD.jsx`, `HeaderMenu.jsx` (+ its `HeaderMenuButton` export), `SettingsSidebar.jsx`. Module accent context: `src/context/ModuleThemeContext.jsx`. Shared hook: `src/hooks/useIsMobile.js`. Semantic colour tokens `SUCCESS`/`WARNING`/`DANGER` and `KANJI_FONT` live in `theme.js`.
 
 **Conventions established while building this — follow for every remaining component:**
 - **Ground every value in real code, never invent.** Before designing a component, read the actual call sites it's meant to unify and extract real pixel values/colors/behavior rather than guessing something "reasonable." Where real call sites disagree, reconcile deliberately and say so in a comment (e.g. `Button`'s `danger-outline` fixed `ConfirmDialog`'s mismatched background/text hue instead of copying the bug forward).
@@ -126,29 +126,37 @@ Living component library + progress tracker for an in-progress app-wide design-s
 |---|---|---|
 | Type, Spacing, Color | Built (Foundations) | `theme.js` |
 | Button, Badge, Card, Text Input, Number Field | Built (Atoms) | `ConfirmDialog`, `WordImportPanel`, `VocabSrsModule`, `DeckComboBox`, `TrackedAnimeSection`, `Toast`, `MediaSearch`, `DeckPickerSheet` |
-| Chip Selector | Built, migrated in Anime Vocab | `MediaSearch`'s `Chip` + `ViewModeButton` (migrated), `EpisodeVocabBrowser`'s JLPT filter (migrated from `Select` — no `DrawerSelect` ever existed here, that was a misremembering; see settled decision #8), `VocabModeToggle`, `WordImportPanel`'s `TabButton`, Story's Grammar level/Length selects (not yet migrated) |
-| Data List | Built, migrated in Anime Vocab + Dictionary | `EpisodeVocabBrowser`, `EpisodeList`, `TrackedAnimeSection`, `EpisodeDrill`'s `DoneScreen`, `MediaSearch`'s list results, `DictionaryPage`'s `EntryRow`, `DictionaryEntryPage`'s `DeckRow` (all migrated) · `VocabPage`'s `DoneScreen` (×2), `WordImportPanel`, `GrammarMapModule`'s prereq rows (not yet migrated) |
+| Chip Selector | Built, migrated everywhere | `MediaSearch`'s `Chip` + `ViewModeButton`, `EpisodeVocabBrowser`'s JLPT filter, Immersion's Original/Simplified, `VocabModeToggle` (deleted), `WordImportPanel`'s `TabButton`, `VocabSrsBrowsePage`'s `StateTabs` (all migrated). Story's Format/Length/Grammar stayed `Select`s — they're form fields, not filters |
+| Data List | Built, migrated everywhere | `EpisodeVocabBrowser`, `EpisodeList`, `TrackedAnimeSection`, `EpisodeDrill`'s `DoneScreen`, `MediaSearch`'s list results, `DictionaryPage`'s `EntryRow`, `DictionaryEntryPage`'s `DeckRow`, `VocabPage`'s `DoneScreen` + Preview groups, `VocabSrsBrowsePage`'s card list, `WordImportPanel`'s review table (all migrated). Gained `navigate.href`, `rowState`, `selection.bulkHeader: { selectFirst }`, and per-column `placeholder` for editable cells along the way |
 | Modal | Built — `ConfirmDialog` now composes it | `WordImportPanel`, `DeckComboBox` (mobile), `DeckPickerSheet`, `SegmentedDeckAdd`'s `CreateDeckModal` |
 | Toast | Built (pre-existing component, now in the guide) | — |
-| Feed Card | Built, migrated in Anime Vocab — gained an `image?: {src?, aspectRatio?}` cover slot + `disabled` boolean | `MediaSearch`'s `ResultTile` (migrated) · `ImmersionModule`'s `ArticleCard`, `StoryModule`'s `RecentCard` (not yet migrated) |
-| Toggle Button | Built, migrated in Anime Vocab — composes Chip | `EpisodeList`'s `TrackToggle` (migrated) · `VocabSrsModule`'s deck On/Off toggle (not yet migrated) |
-| Distribution Bar | Built | `VocabSrsModule`'s `DeckProgressBar` |
-| Drill Button | Built | `SpeedModeControls`, `VocabSrsDrill`'s `RatingButton` |
+| Feed Card | Built, migrated everywhere — gained an `image?: {src?, aspectRatio?}` cover slot + `disabled` boolean | `MediaSearch`'s `ResultTile`, `ImmersionModule`'s `ArticleCard`, `StoryModule`'s `RecentCard` (all migrated) |
+| Toggle Button | Built, migrated everywhere — composes Chip; tones `accent` / `success` / `neutral` | `EpisodeList`'s `TrackToggle`, `VocabSrsModule`'s deck On/Off, Immersion's and Story's Show/Hide furigana (`neutral`), `VocabSrsBrowsePage`'s Select/Done selecting (all migrated) |
+| Distribution Bar | Built, migrated | `VocabSrsModule`'s `DeckProgressBar` (now a thin wrapper adding the suspended Badge) |
+| Drill Button | Built, migrated | `SpeedModeControls` (now composes it), `VocabSrsDrill`'s `RatingButton` (deleted) |
 | Drill HUD | Built (pre-existing component, now in the guide) | — |
 | Popover, Option Picker | Built | The duplicated anchored-popover math in `DeckComboBox` + `WordPopup`; the search/list/create surface in `DeckComboBox` |
-| Deck Picker | Built — `DeckComboBox`, now a thin wrapper over Popover + OptionPicker | `DeckPickerSheet.jsx`, `SegmentedDeckAdd.jsx` (both retired) |
+| Deck Picker | Built — `DeckComboBox`, now a thin wrapper over Popover + OptionPicker | `DeckPickerSheet.jsx`, `SegmentedDeckAdd.jsx`, `DeckPickerLabPage.jsx` (all deleted; `VocabSrsBrowsePage`'s "Move to deck" was the last caller) |
+| Select | Built — `size` sm/md, grouped options → `<optgroup>` | Story's generator form, `VocabPage`'s word-list picker, every settings drawer |
+| File Button | Built | `VocabSrsModule`'s `FileInput`, `WordImportPanel`'s `FileTrigger` |
+| Section Header / Section Label | Built — Header has an `action` slot (done screens); Label is the label+hairline group divider (Dictionary, Vocab Drill preview) | see the review log's open question on whether they should merge |
+| Sign-in Gate | Built | `VocabSrsModule`, `VocabSrsBrowsePage` |
 | Definition Popover | Built — `WordPopup`, now Popover + an in-place view switch | — |
 
 **Settled design decisions — don't relitigate:**
 1. **Drill palette stays separate from the semantic tokens.** `DRILL_COLORS` in `theme.js` is a Flat-UI lineage (`#C0392B`/`#27AE60`/`#2980B9`/`#B47828`) distinct from the Tailwind-derived semantic tokens (`#f87171`/`#4ade80`/`#fbbf24`). Not interchangeable: drill colours are solid fills behind white text, semantic tokens are light tints for dark text, and "easy" blue has no semantic equivalent. Both stay.
 2. **Module accents come from context, not props.** `ModuleThemeProvider` / `useAccent(override)` in `src/context/ModuleThemeContext.jsx`. A module root wraps its screens with its own accent and `Chip`/`ToggleButton` (and any future accent-aware component) read it ambiently — passing it per-call-site failed silently when forgotten. The `accent` prop survives as an explicit per-instance override. Outside any provider the core teal applies, which is correct for the dashboard.
 3. **Components are named for their role, not their location.** `DrawerSelect`/`DrawerCheckbox`/`DrawerSectionHeader` → `Select`/`Checkbox`/`SectionHeader`. Don't reintroduce location-prefixed names.
-4. **`DeckComboBox` is the one deck picker.** Type-to-filter with an inline "+ Create «typed»" row; popover on desktop, bottom sheet on mobile. `DeckPickerSheet.jsx` and `SegmentedDeckAdd.jsx` are **retired** — port their call sites to `DeckComboBox` during the rebuild, then delete them along with `DeckPickerLabPage.jsx`.
+4. **`DeckComboBox` is the one deck picker.** Type-to-filter with an inline "+ Create «typed»" row; popover on desktop, bottom sheet on mobile. `DeckPickerSheet.jsx`, `SegmentedDeckAdd.jsx` and `DeckPickerLabPage.jsx` are **deleted** (Vocab SRS rebuild).
 5. **Atoms forward refs.** `Button` and `TextInput` use `forwardRef` so callers can measure and focus them (`DeckComboBox` positions its popover against the button and focuses the search field). Any new atom wrapping a DOM element should do the same.
 6. **Floating surface and its contents are separate components.** `Popover` owns anchoring (fixed positioning, flip-above, horizontal clamp, click-outside, close-on-scroll) and the desktop-popover / mobile-sheet switch, delegating the sheet to `Modal` rather than being a third sheet implementation. `OptionPicker` owns the search + list + optional inline "+ Create «typed»" behaviour and knows nothing about positioning or decks. This split is what lets `WordPopup` swap its own content from definition to deck list **in place** — previously it rendered a `DeckComboBox`, stacking a second floating layer inside the first with competing click-outside handlers. Anything that picks from a searchable list should compose `OptionPicker`, not reimplement it.
 7. **A stateful toggle is `ToggleButton`, not a `Button` variant.** The deciding test is what *hover* means: `Button`'s hover is derived from its variant and always reinforces the resting state, whereas a toggle's label, colour, and (with `destructiveHover`) the meaning of hovering all change with state. Folding that into `Button` would put four toggle-only props on a component ~50 non-toggle call sites use. `ToggleButton` composes `Chip` rather than restyling a button, so both share one visual language — a chip picks one option out of a set and keeps a fixed label; a toggle is a standalone binary that renames itself.
 8. **Every color-bearing shared component must actually check its own accent-awareness before a module rebuild, not assume it from Chip/ToggleButton being correct.** Anime Vocab (the first real module rebuild, `feat/design-system` → `design-system/anime-vocab`) found the *same* hardcoded-core-teal bug independently in `Button` (`primary`/`accent-outline`/`ghost` variants), `SelectAllCheckbox`, `DataList`'s `RowCheckbox`, and `SelectableRow` — none caught by the original build pass because nothing exercised `ModuleThemeProvider` with a non-teal accent until this rebuild. All are now accent-aware via `useAccent()`, verified zero-risk since no pre-existing call site sat inside a provider. `Badge` also gained an `accent` override prop (mirroring `Chip`'s) and a generic `dimmed` boolean (for approximate/inferred values, not JLPT-specific) during this pass. **Lesson for every future module rebuild:** grep for hardcoded core-teal/hex accent literals across `src/components/` *before* wiring `ModuleThemeProvider` at a new module root, don't wait to discover them one broken button at a time.
 9. **`DataList`'s `navigate` supports `href(row)` alongside `onClick(row)`.** Dictionary's rebuild (`feat/design-system` → `design-system/dictionary`) found that `EntryRow` and `DeckRow` were both real `<a href>` cross-route links — converting them to `navigate`'s onClick-only `<div>` would have silently dropped cmd/ctrl/middle-click, "open in new tab", and hover-preview. `navigate.href(row)` renders the row as a real `<a>` instead (onClick still fires alongside it if also given); `RowCheckbox` now also calls `preventDefault` (not just `stopPropagation`) since an ancestor `<a>`'s native navigation is gated on the click event's canceled flag, which only `preventDefault` sets — `stopPropagation` alone doesn't stop it. Existing onClick-only callers (`EpisodeList`, `TrackedAnimeSection` — same-app hash navigation via a side effect, not a real link) are unaffected. **Use `href` whenever the row is a genuine link to another route; keep `onClick` for a same-app navigation side effect that isn't itself a link.**
+
+10. **Hover/focus rules that fight an inline style need `!important` — and it's worth checking they ever applied.** `TextInput`'s hover *and* focus border rules had never fired (inline `border` outranked both) until the Story port noticed. When a class rule targets a property a component also sets inline, `!important` it, and if two pseudo-classes can apply at once (`:hover` + `:focus`) give the winner matching specificity (`:focus:not(:disabled)`). Per-instance colours a class needs (a module accent, a layout's tint) travel as CSS custom properties set inline — `TokenizedBody`'s `--reader-vocab`, `TextInput`'s `--focus-ring`.
+11. **A module's accent is `modules.js`'s, even when the page disagreed.** Vocab Drill had core teal hardcoded in nine places while `modules.js` said blue; the port wired blue. If a module should look different, change the one hex in `modules.js` — that file is the source of truth, not the page.
+12. **Grammar Map is not ported** — it's being removed. Don't spend time on it.
 
 **Still open:**
 - **Six greens.** `#4ade80` (success), `#6BCB6B` (read/tracked), `#7fe0c8` (mature), `#27AE60` (drill correct), `#5eb6a2` (young), `#4c8a7d` (learning). The last three are the validated CVD ramp and are legitimate; `#6BCB6B` vs `#4ade80` looks like plain drift and probably wants merging.
@@ -162,11 +170,10 @@ Used by multiple modules/pages:
 |---|---|
 | `PageHeader.jsx` | Breadcrumb header — all pages |
 | `AuthSlot.jsx` | Sign in / sign out control — dashboard header and module headers |
-| `DrawerSectionHeader.jsx` | Section label in settings panels |
-| `DrawerCheckbox.jsx` | Checkbox setting row |
-| `DrawerSelect.jsx` | Dropdown setting row |
+| `SectionHeader.jsx` / `Checkbox.jsx` / `Select.jsx` | Settings-drawer primitives (formerly `Drawer*`) — see the Style Guide section |
+| `SettingsSidebar.jsx` | The desktop chevron-rail / mobile-overlay settings panel — Vocab Drill, Anime Vocab, Vocab SRS |
 | `ModuleCard.jsx` | Dashboard module card |
-| `HeaderMenu.jsx` | Icon-button row that collapses into a dropdown below a width breakpoint — used for module header actions (e.g. Vocab drill, SRS) |
+| `HeaderMenu.jsx` | Icon-button row that collapses into a dropdown below a width breakpoint — used for module header actions (e.g. Vocab drill, SRS). Exports `HeaderMenuButton`, the "Options" text pill every drill header passes as `primary` |
 | `SpeakerIcon.jsx` | Muted/unmuted speaker SVG icon |
 | `AttributionFooter.jsx` | Third-party data credit line at the foot of a page — `<AttributionFooter sources={['dictionary', 'tanaka-corpus']} />`. See Attribution system section below |
 
@@ -213,12 +220,9 @@ Mirrors katsuyou-drill's UI exactly. Speed-mode only (no text input). Card front
 | `src/components/VocabCard.jsx` | Flip card — front (kanji) / back (kanji + furigana + English + optional sentence); wraps `FlipCard` |
 | `src/FlipCard.jsx` + `src/FlipCard.css` | 3D flip animation (ported from katsuyou-drill) |
 | `src/components/DrillHUD.jsx` | Streak display + undo + score (VocabPage-only) |
-| `src/components/SpeedModeControls.jsx` | Incorrect [Z] / Correct [X] verdict buttons (VocabPage-only) |
+| `src/components/SpeedModeControls.jsx` | Incorrect [Z] / Correct [X] pair — a named composition of `DrillButtonRow`/`DrillButton`, shared with Anime Vocab's `EpisodeDrill` |
 | `src/components/PageHeader.jsx` | Breadcrumb header |
-| `src/components/SelectButton.jsx` | Toggle button used in settings (word list selection) |
-| `src/components/DrawerSectionHeader.jsx` | Section label in settings panel |
-| `src/components/DrawerCheckbox.jsx` | Checkbox setting row |
-| `src/components/DrawerSelect.jsx` | Dropdown setting row (TTS voice) |
+| `src/components/SectionHeader.jsx`, `Checkbox.jsx`, `Select.jsx` | Settings-panel primitives |
 | `src/hooks/useDrill.js` | Drill state machine hook (VocabPage-only) |
 | `src/hooks/useTTS.js` | Browser Speech Synthesis TTS — fallback when Voicevox audio isn't available |
 | `src/hooks/useAudioGenerationStatus.js` | Polls the `audio_generation_status` row — drives the "Audio is being generated" note |
@@ -261,7 +265,7 @@ Mirrors katsuyou-drill's UI exactly. Speed-mode only (no text input). Card front
 }
 ```
 
-**UI behavior:** Flat sources render as a single SelectButton toggle. Hierarchical sources render as a collapsible accordion — click to expand and select individual sublists. A "N/M selected" count badge shows when the source is collapsed.
+**UI behavior:** the home screen is a `Select` of sources, then a grid of `SubListTile`s (label, word count, "New" badge or last-reviewed) for the chosen source's sublists — click tiles to toggle them into the drill. (An older accordion-of-`SelectButton`s UI this paragraph used to describe is gone.)
 
 ### Word data format
 
@@ -311,7 +315,7 @@ create policy "public read" on sentences for select using (true);
 ```
 `src/utils/sentenceLookup.js` (`fetchSentencesFor`) + `src/hooks/useSentenceForWord.js` (`useSentenceForWord`, `useSentencesForWords`) resolve the best sentence per `jmdictId` (quality-flagged first, then shortest), same cached-batch pattern as above.
 
-**Sentence resolution has the opposite priority rule from definitions** — a word/card's own curated `sentence` wins by default; a Tanaka sentence only fills the gap when there isn't one. `vocab-sentence-source` (Vocab Drill) / `srs-sentence-source` (SRS) — both `'custom' | 'tanaka'`, default `'custom'` — flip that priority outright when set to `'tanaka'`. Each renders as a `DrawerSelect` ("Sentence source", options from `src/data/sentenceSource.js`) nested under the "Show sentence" checkbox, shown only while it's checked — same visual pattern as "Enable audio" → "Text to speech". Attribution for Tanaka-sourced sentences is handled at the page level, not per-card — see Attribution system below.
+**Sentence resolution has the opposite priority rule from definitions** — a word/card's own curated `sentence` wins by default; a Tanaka sentence only fills the gap when there isn't one. `vocab-sentence-source` (Vocab Drill) / `srs-sentence-source` (SRS) — both `'custom' | 'tanaka'`, default `'custom'` — flip that priority outright when set to `'tanaka'`. Each renders as a `Select` ("Sentence source", options from `src/data/sentenceSource.js`) nested under the "Show sentence" checkbox, shown only while it's checked — same visual pattern as "Enable audio" → "Text to speech". Attribution for Tanaka-sourced sentences is handled at the page level, not per-card — see Attribution system below.
 
 ### Attribution system (`src/data/attributions.js` + `AttributionFooter.jsx`)
 

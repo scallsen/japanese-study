@@ -13,9 +13,53 @@ Three kinds of entry, tagged so they can be skimmed:
 - **[CANDIDATE]** — a pattern seen 2+ times that *could* become a component
   but wasn't needed to finish the port. Left bespoke on purpose.
 
-Branch stack (each cut from the previous tip, none merged):
-`feat/design-system` → `design-system/anime-vocab` → `design-system/dictionary`
-→ `design-system/immersion` → …
+Branch stack (each cut from the previous tip, none merged — review and
+merge in this order, each is a strict superset of the one before):
+
+```
+main
+└─ feat/design-system            component library + style guide
+   └─ design-system/anime-vocab   (13 commits)
+      └─ design-system/dictionary (5)
+         └─ design-system/immersion (2)
+            └─ design-system/story (2)
+               └─ design-system/vocab-drill (2)
+                  └─ design-system/vocab-srs (2)   ← everything, incl. this file
+```
+
+Grammar Map was skipped per your note (module being removed).
+
+## Summary — what changed in the shared library
+
+| Kind | What | Why (one line) |
+|---|---|---|
+| NEW | `hooks/useIsMobile.js` | copy-pasted into 10 files |
+| NEW | `theme.js`: `KANJI_FONT`, `SUCCESS`/`WARNING`/`DANGER` | declared in 5 files / only inside Badge+Button |
+| NEW | `SectionLabel` (promoted from Dictionary) | second consumer (Vocab Drill preview) |
+| NEW | `SignInGate` | identical block in SRS home + browse |
+| NEW | `FileButton` | identical label-wrapping-input in SRS home + import panel |
+| NEW | `HeaderMenuButton` (export) | the "Options" pill hand-rolled 4× |
+| CHANGED | `ToggleButton` `activeTone="neutral"` | furigana toggles in Immersion + Story |
+| CHANGED | `OptionPicker` accent ambient | hardcoded teal (decision #8 class) |
+| CHANGED | `TokenizedBody` ambient highlight + CSS hover | hardcoded red; useState hover |
+| CHANGED | `TextInput` accent focus ring; hover/focus rules fixed | rules had never applied |
+| CHANGED | `Select` `size` + grouped options | Story's form; optgroup source picker |
+| CHANGED | `Button` `warning-outline` | DoneScreen's amber Redo |
+| CHANGED | `SectionHeader` `action` slot | title + control on the right, 2 call sites |
+| CHANGED | `DataList` `bulkHeader: { selectFirst }`, editable `placeholder` | select-first-N header 2×; import hint |
+| CHANGED | `Modal` `size="xl"` | import panel's 640px table |
+| CHANGED | `HeaderMenu`, `SettingsSidebar` CSS hovers | useState-hover rule |
+| CHANGED | `SpeedModeControls` composes `DrillButton` | had never been migrated |
+| DELETED | `SelectButton`, `VocabModeToggle`, `DeckPickerSheet`, `SegmentedDeckAdd`, `DeckPickerLabPage` | superseded |
+
+Open questions I'd most like your call on (details in each section):
+1. **Vocab Drill is blue now** (modules.js accent) — keep, or change the hex?
+2. **Sign-in prompts:** neutral Button (as ported) vs a text-link affordance.
+3. **`SectionHeader` vs `SectionLabel`:** two heading components, or one with a `divider` flag?
+4. **`Select` md text colour:** stays dim (0.65 white) next to a bright TextInput.
+5. **FeedCard title font:** now `FONT` for Story's Japanese titles too.
+6. **Browse-page select-all** now scopes to the loaded page (50), not all filtered.
+7. **Vocab SRS signed-in screens weren't driven live** (OAuth gate) — please click through.
 
 ---
 

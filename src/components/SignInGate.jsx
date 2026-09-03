@@ -8,9 +8,10 @@ const BG = '#1E1E1E'
 // only in Supabase. VocabSrsModule and VocabSrsBrowsePage rendered this
 // identical block with a hand-styled accent button; the button is now the
 // shared primary in the ambient module accent.
-export default function SignInGate({ crumbs, title, subtitle, onSignIn }) {
+// `fullScreen` is only false in the style guide, where it renders inline.
+export default function SignInGate({ crumbs, title, subtitle, onSignIn, fullScreen = true }) {
   return (
-    <div style={{ width: '100vw', height: '100dvh', background: BG, fontFamily: FONT, letterSpacing: TRACKING, display: 'flex', flexDirection: 'column', color: TEXT }}>
+    <div style={{ width: fullScreen ? '100vw' : '100%', height: fullScreen ? '100dvh' : '100%', background: BG, fontFamily: FONT, letterSpacing: TRACKING, display: 'flex', flexDirection: 'column', color: TEXT }}>
       <PageHeader crumbs={crumbs} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
         <div style={{ fontSize: FS_BASE, color: TEXT }}>{title}</div>
