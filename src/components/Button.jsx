@@ -1,5 +1,5 @@
 import { forwardRef } from 'react'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, SPACE_8, SPACE_16, SPACE_24, DANGER } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, SPACE_8, SPACE_16, SPACE_24, DANGER, WARNING } from '../data/theme.js'
 import { useAccent } from '../context/ModuleThemeContext.jsx'
 
 // Reconciled from the real variants already in use across the app —
@@ -18,6 +18,9 @@ function buildVariants(accent) {
     'accent-outline': { background: `${accent}29`, border: `1px solid ${accent}6b`, color: accent },
     neutral: { background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', color: TEXT },
     'danger-outline': { background: 'rgba(248,113,113,0.15)', border: '1px solid rgba(248,113,113,0.4)', color: DANGER },
+    // Same tint recipe as danger-outline in the warning tone — VocabPage's
+    // DoneScreen "Redo Troubled", the one amber action in the app.
+    'warning-outline': { background: 'rgba(251,191,36,0.15)', border: '1px solid rgba(251,191,36,0.4)', color: WARNING },
     ghost: { background: 'transparent', border: 'none', color: accent },
     // Borderless neutral that reddens on hover — the dismiss/remove affordance
     // (a toast's ×, a row's remove). Replaces the former IconButton atom: an
@@ -49,6 +52,7 @@ const VARIANT_CLASS = {
   primary: 'btn btn-tint',
   'accent-outline': 'btn btn-tint',
   'danger-outline': 'btn btn-tint',
+  'warning-outline': 'btn btn-tint',
   neutral: 'btn btn-neutral',
   ghost: 'btn btn-ghost',
   'ghost-muted': 'btn btn-ghost-muted',

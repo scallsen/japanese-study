@@ -2,17 +2,21 @@ import { useState, useMemo, useEffect, useRef, Component } from 'react'
 import VocabCard from '../components/VocabCard.jsx'
 import DrillHUD from '../components/DrillHUD.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
-import VocabModeToggle from '../components/VocabModeToggle.jsx'
+import SectionLabel from '../components/SectionLabel.jsx'
+import ChipSelector from '../components/Chip.jsx'
 import Checkbox from '../components/Checkbox.jsx'
 import Select from '../components/Select.jsx'
+import Button from '../components/Button.jsx'
+import Badge from '../components/Badge.jsx'
+import DataList from '../components/DataList.jsx'
 import SpeedModeControls from '../components/SpeedModeControls.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import SpeakerIcon from '../components/SpeakerIcon.jsx'
 import HeaderMenu from '../components/HeaderMenu.jsx'
 import SettingsSidebar from '../components/SettingsSidebar.jsx'
-import SelectAllCheckbox from '../components/SelectAllCheckbox.jsx'
-import SelectableRow from '../components/SelectableRow.jsx'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_BADGE, FS_ENTRY_WORD, FS_STAT_VALUE, FS_DISPLAY_HEADING, KANJI_FONT } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_BADGE, FS_ENTRY_WORD, FS_STAT_VALUE, FS_DISPLAY_HEADING, KANJI_FONT, WARNING } from '../data/theme.js'
+import { MODULES } from '../data/modules.js'
+import { ModuleThemeProvider, useAccent } from '../context/ModuleThemeContext.jsx'
 import { WORD_SOURCES } from '../data/wordLists.js'
 import { SENTENCE_SOURCE_OPTIONS, DEFAULT_SENTENCE_SOURCE } from '../data/sentenceSource.js'
 import { useDrill } from '../hooks/useDrill.js'
@@ -39,9 +43,15 @@ import AttributionFooter from '../components/AttributionFooter.jsx'
 import { renderAttributionSegments } from '../utils/attributionSegments.jsx'
 import { useIsMobile } from '../hooks/useIsMobile.js'
 
-const ACCENT = '#3ABDA4'
+const VOCAB_ACCENT = MODULES.find(m => m.id === 'school-vocab').accent
 
-const MISTAKE_TIER_COLOR = { none: '#4ade80', one: '#fbbf24', many: '#f87171' }
+const MISTAKE_TIER_TONE = { none: 'success', one: 'warning', many: 'danger' }
+
+const REVIEW_MODE_OPTIONS = [
+  { value: 'kanji-front', label: 'Japanese → English' },
+  { value: 'meaning-front', label: 'English → Japanese' },
+]
+const WORD_SOURCE_OPTIONS = WORD_SOURCES.map(source => ({ value: source.id, label: source.label }))
 
 function mistakeTier(count) {
   if (!count) return 'none'
@@ -344,24 +354,6 @@ function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, rev
   )
 }
 
-function CaretButton({ open, onClick }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={open ? 'Collapse bulk select' : 'Expand bulk select'}
-      style={{ background: 'none', border: 'none', padding: 2, cursor: 'pointer', display: 'flex', alignItems: 'center', flexShrink: 0 }}
-    >
-      <span style={{
-        color: TEXT_MUTED, fontSize: '1.1rem', display: 'inline-block',
-        transform: open ? 'rotate(90deg)' : 'none', transition: 'transform 150ms',
-      }}>
-        ›
-      </span>
-    </button>
-  )
-}
-
 function DoneScreen({
   pool, mistakeCounts, correct, troubled, onRestart, onRedoTroubled, onRedoSelected, onBack,
   decks, isMobile, onAddToSrs, onCreateDeckAndAddToSrs, onUndoAdd,
@@ -377,20 +369,7 @@ function DoneScreen({
   const defaultSelectedIds = useMemo(() => new Set(rows.filter(r => r.mistakes > 0).map(r => r.id)), [rows])
   const [selected, setSelected] = useState(() => new Set(defaultSelectedIds))
   const { showToast } = useToast()
-  const [bulkOpen, setBulkOpen] = useState(false)
-  const [bulkCountInput, setBulkCountInput] = useState(() => String(Math.max(1, rows.length)))
   const selectionChanged = selected.size !== defaultSelectedIds.size || [...selected].some(id => !defaultSelectedIds.has(id))
-  const allSelected = rows.length > 0 && rows.every(r => selected.has(r.id))
-  const someSelected = rows.some(r => selected.has(r.id))
-
-  const btnBase = {
-    padding: '10px 28px',
-    fontSize: FS_BASE,
-    fontFamily: 'inherit',
-    borderRadius: 8,
-    cursor: 'pointer',
-    letterSpacing: '0.05em',
-  }
 
   function toggleRow(id) {
     setSelected(prev => {
@@ -400,26 +379,44 @@ function DoneScreen({
     })
   }
 
-  function toggleSelectAll() {
-    setSelected(allSelected ? new Set() : new Set(rows.map(r => r.id)))
-  }
-
-  function toggleBulkOpen() {
-    setBulkOpen(open => {
-      if (!open) setBulkCountInput(String(Math.max(1, selected.size || rows.length)))
-      return !open
-    })
-  }
-
-  function handleCancelBulk() {
-    setBulkOpen(false)
-  }
-
-  function handleConfirmBulk() {
-    const n = Math.max(1, Math.min(Number(bulkCountInput) || 1, rows.length || 1))
-    setSelected(new Set(rows.slice(0, n).map(r => r.id)))
-    setBulkOpen(false)
-  }
+  // Row content is a word/reading stack, a 2-line-clamped gloss and a
+  // mistake badge — three columns, the first two needing their own render.
+  const columns = useMemo(() => [
+    {
+      key: 'word', width: 100,
+      render: row => {
+        const dictEntry = row.word.jmdictId ? dictEntries[row.word.jmdictId] : null
+        const { displayForm, reading } = resolveWordDisplay(row.word, dictEntry)
+        return (
+          <span style={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%', overflow: 'hidden' }}>
+            <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {displayForm}
+            </span>
+            {reading && (
+              <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0, lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {reading}
+              </span>
+            )}
+          </span>
+        )
+      },
+    },
+    {
+      key: 'gloss', tone: 'muted', wrap: true,
+      render: row => {
+        const dictEntry = row.word.jmdictId ? dictEntries[row.word.jmdictId] : null
+        return (
+          <span style={{ lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+            {row.word.english ?? briefGloss(dictEntry)}
+          </span>
+        )
+      },
+    },
+    {
+      key: 'mistakes', width: 36, align: 'right',
+      render: row => row.mistakes > 0 ? <Badge variant="text" tone={MISTAKE_TIER_TONE[mistakeTier(row.mistakes)]}>{row.mistakes}×</Badge> : null,
+    },
+  ], [dictEntries])
 
   function showAddedToast(result) {
     if (!result) return
@@ -456,131 +453,49 @@ function DoneScreen({
         </div>
         <div style={{ color: 'rgba(255,255,255,0.15)', fontSize: FS_STAT_VALUE, alignSelf: 'center' }}>·</div>
         <div>
-          <div style={{ color: troubled > 0 ? '#fbbf24' : 'rgba(255,255,255,0.4)', fontSize: FS_CAPTION, marginBottom: 4 }}>TROUBLED</div>
-          <div style={{ color: troubled > 0 ? '#fbbf24' : 'rgba(255,255,255,0.4)', fontSize: FS_STAT_VALUE }}>{troubled}</div>
+          <div style={{ color: troubled > 0 ? WARNING : 'rgba(255,255,255,0.4)', fontSize: FS_CAPTION, marginBottom: 4 }}>TROUBLED</div>
+          <div style={{ color: troubled > 0 ? WARNING : 'rgba(255,255,255,0.4)', fontSize: FS_STAT_VALUE }}>{troubled}</div>
         </div>
       </div>
       <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
         {(troubled > 0 || selectionChanged) && (
-          <button
+          <Button
+            variant="warning-outline"
+            size="lg"
             onClick={() => {
               if (selectionChanged) onRedoSelected(pool.filter(p => selected.has(p.id)))
               else onRedoTroubled()
             }}
             disabled={selectionChanged && selected.size === 0}
-            className="done-btn"
-            style={{
-              ...btnBase,
-              background: 'rgba(251,191,36,0.15)',
-              color: '#fbbf24',
-              border: '1px solid rgba(251,191,36,0.4)',
-              opacity: selectionChanged && selected.size === 0 ? 0.4 : 1,
-              cursor: selectionChanged && selected.size === 0 ? 'not-allowed' : 'pointer',
-            }}
           >
             {selectionChanged ? `Redo Selected (${selected.size})` : `Redo Troubled (${troubled})`}
-          </button>
+          </Button>
         )}
-        <button
-          onClick={onRestart}
-          className="done-btn-neutral"
-          style={{ ...btnBase, background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.15)' }}
-        >
-          Restart
-        </button>
-        <button
-          onClick={onBack}
-          className="done-btn-neutral"
-          style={{ ...btnBase, background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.15)' }}
-        >
-          End review
-        </button>
+        <Button variant="neutral" size="lg" onClick={onRestart}>Restart</Button>
+        <Button variant="neutral" size="lg" onClick={onBack}>End review</Button>
       </div>
 
       {rows.length > 0 && (
         <div style={{ marginTop: 36, textAlign: 'left' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 8, flexWrap: 'wrap' }}>
-            <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, letterSpacing: '0.08em' }}>REVIEW WORDS</span>
-            <DeckComboBox
-              decks={decks}
-              isMobile={isMobile}
-              disabled={selected.size === 0}
-              buttonLabel={`Add ${selected.size} to SRS`}
-              onAdd={handleAdd}
-              onCreateAndAdd={handleCreateAndAdd}
-            />
-          </div>
-          <div style={{ background: '#2A2A2A', borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.08)', background: 'rgba(0,0,0,0.14)' }}>
-              <SelectAllCheckbox checked={allSelected} indeterminate={!allSelected && someSelected} onChange={toggleSelectAll} />
-              <CaretButton open={bulkOpen} onClick={toggleBulkOpen} />
-              {!bulkOpen ? (
-                <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-                  {selected.size} of {rows.length} selected
-                </span>
-              ) : (
-                <>
-                  <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>Select first</span>
-                  <input
-                    type="number"
-                    min={1}
-                    max={Math.max(rows.length, 1)}
-                    value={bulkCountInput}
-                    onChange={e => setBulkCountInput(e.target.value)}
-                    autoFocus
-                    style={{ width: 56, padding: '4px 8px', fontFamily: FONT, background: '#1E1E1E', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 4, color: TEXT }}
-                  />
-                  <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>words</span>
-                  <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, flexShrink: 0 }}>
-                    <button
-                      onClick={handleCancelBulk}
-                      className="done-btn-neutral"
-                      style={{ padding: '5px 14px', fontSize: FS_CAPTION, fontFamily: FONT, letterSpacing: TRACKING, borderRadius: 6, cursor: 'pointer', background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.15)' }}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleConfirmBulk}
-                      className="done-btn"
-                      style={{ padding: '5px 14px', fontSize: FS_CAPTION, fontFamily: FONT, letterSpacing: TRACKING, borderRadius: 6, cursor: 'pointer', background: 'rgba(58,189,164,0.15)', color: ACCENT, border: '1px solid rgba(58,189,164,0.4)' }}
-                    >
-                      Confirm
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-            {rows.map(row => {
-              const dictEntry = row.word.jmdictId ? dictEntries[row.word.jmdictId] : null
-              const { displayForm, reading } = resolveWordDisplay(row.word, dictEntry)
-              const resolvedEnglish = row.word.english ?? briefGloss(dictEntry)
-              return (
-                <SelectableRow key={row.id} selected={selected.has(row.id)} onToggle={() => toggleRow(row.id)}>
-                  <span style={{ display: 'flex', flexDirection: 'column', gap: 2, width: 100, flexShrink: 0, overflow: 'hidden' }}>
-                    <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {displayForm}
-                    </span>
-                    {reading && (
-                      <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0, lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {reading}
-                      </span>
-                    )}
-                  </span>
-                  <span style={{
-                    fontSize: FS_BASE, color: TEXT_MUTED, flex: 1, minWidth: 0, lineHeight: 1.35,
-                    display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
-                  }}>
-                    {resolvedEnglish}
-                  </span>
-                  {row.mistakes > 0 && (
-                    <span style={{ fontSize: FS_BADGE, color: MISTAKE_TIER_COLOR[mistakeTier(row.mistakes)], flexShrink: 0 }}>
-                      {row.mistakes}×
-                    </span>
-                  )}
-                </SelectableRow>
-              )
-            })}
-          </div>
+          <SectionHeader
+            title="Review words"
+            action={(
+              <DeckComboBox
+                decks={decks}
+                isMobile={isMobile}
+                disabled={selected.size === 0}
+                buttonLabel={`Add ${selected.size} to SRS`}
+                onAdd={handleAdd}
+                onCreateAndAdd={handleCreateAndAdd}
+              />
+            )}
+          />
+          <DataList
+            columns={columns}
+            rows={rows}
+            selection={{ selected, onToggle: toggleRow, bulkHeader: { selectFirst: true } }}
+            maxWidth="100%"
+          />
         </div>
       )}
     </div>
@@ -609,9 +524,11 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
   const jmdictIds = useMemo(() => words.map(w => w.jmdictId).filter(Boolean), [words])
   const { entries: dictEntries } = useDictionaryEntries(jmdictIds, true)
   const tanakaSentences = useSentencesForWords(jmdictIds, true)
+  const ACCENT = useAccent()
   const [expandedId, setExpandedId] = useState(null)
   const [expandedKanji, setExpandedKanji] = useState([])
   const kanjiCache = useRef({})
+  const expandedSet = useMemo(() => new Set(expandedId ? [expandedId] : []), [expandedId])
 
   async function handleToggleRow(word) {
     const next = expandedId === word.id ? null : word.id
@@ -645,165 +562,91 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
       .filter(g => g.words.length > 0)
   }, [words, selectedSubLists, availableSubLists])
 
+  function renderWordRow(word) {
+    const dictEntry = word.jmdictId ? dictEntries[word.jmdictId] : null
+    const { displayForm, reading } = resolveWordDisplay(word, dictEntry)
+    const posLabel = shortPos(Array.isArray(dictEntry?.pos) ? dictEntry.pos[0] : null)
+    return (
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 5 }}>
+          <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{displayForm}</span>
+          {reading && <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{reading}</span>}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {posLabel && <Badge variant="fill" tone="neutral">{posLabel}</Badge>}
+          <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+            {dictEntry?.gloss_en?.split('; ').slice(0, 2).join('; ') ?? word.english}
+          </span>
+        </div>
+      </div>
+    )
+  }
+
+  function renderWordDetail(word) {
+    const dictEntry = word.jmdictId ? dictEntries[word.jmdictId] : null
+    const tanakaSentence = word.jmdictId ? tanakaSentences[word.jmdictId] : null
+    const useTanakaSentence = sentenceSource === 'tanaka' ? !!tanakaSentence : (!word.sentence && !!tanakaSentence)
+    const sentenceText = useTanakaSentence ? tanakaSentence.japanese : word.sentence
+    const { displayForm } = resolveWordDisplay(word, dictEntry)
+    const kanjiChars = (displayForm ?? '').split('').filter(ch => /\p{Script=Han}/u.test(ch))
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {kanjiChars.length > 0 && (
+          expandedKanji.length > 0 ? (
+            expandedKanji.map(k => (
+              // Inner surface inside an already-raised list — lighter than Card
+              // on purpose so it reads as nested, not as a second card.
+              <div key={k.literal} style={{
+                display: 'flex', alignItems: 'flex-start', gap: 14, padding: '10px 12px',
+                background: 'rgba(255,255,255,0.03)', borderRadius: 6, border: '1px solid rgba(255,255,255,0.07)',
+              }}>
+                <div style={{ fontSize: '2rem', color: TEXT, minWidth: 44, textAlign: 'center', lineHeight: 1.1 }}>{k.literal}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  {k.on_readings?.length > 0 && <div style={{ fontSize: FS_BASE, color: TEXT, marginBottom: 2 }}>{k.on_readings.join('　')}</div>}
+                  {k.kun_readings?.length > 0 && <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginBottom: 4 }}>{k.kun_readings.join('　')}</div>}
+                  <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>{(k.meanings ?? '').split('; ').slice(0, 4).join(', ')}</div>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4, flexShrink: 0 }}>
+                  {k.jlpt != null && <Badge tone="accent">N{k.jlpt}</Badge>}
+                  {k.stroke_count != null && <Badge variant="text" tone="neutral">{k.stroke_count} strokes</Badge>}
+                </div>
+              </div>
+            ))
+          ) : (
+            <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, padding: '6px 0' }}>Loading…</div>
+          )
+        )}
+        {sentenceText && (
+          <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontStyle: 'italic', padding: '2px 0' }}>{sentenceText}</div>
+        )}
+        {dictEntry && (
+          <a
+            href={`#/dictionary/entry/${dictEntry.id}`}
+            className="srs-browse-link"
+            style={{ fontSize: FS_CAPTION, color: ACCENT, alignSelf: 'flex-start', marginTop: 2 }}
+          >
+            View full entry →
+          </a>
+        )}
+      </div>
+    )
+  }
+
+  const columns = [{ key: 'word', render: renderWordRow, wrap: true }]
+
   return (
     <div style={{ width: '100%', maxWidth: 680, margin: '0 auto', padding: '32px 24px 48px' }}>
       {grouped.map(group => (
         <div key={group.listId} style={{ marginBottom: 40 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-            <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, letterSpacing: '0.08em', whiteSpace: 'nowrap' }}>
-              {group.label.toUpperCase()}
-            </span>
-            <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.08)' }} />
-          </div>
-          <div style={{ background: '#2A2A2A', borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
-          {group.words.map(word => {
-            const dictEntry = word.jmdictId ? dictEntries[word.jmdictId] : null
-            const tanakaSentence = word.jmdictId ? tanakaSentences[word.jmdictId] : null
-            const useTanakaSentence = sentenceSource === 'tanaka' ? !!tanakaSentence : (!word.sentence && !!tanakaSentence)
-            const sentenceText = useTanakaSentence ? tanakaSentence.japanese : word.sentence
-            const isExpanded = expandedId === word.id
-            const { displayForm, reading } = resolveWordDisplay(word, dictEntry)
-            const kanjiChars = (displayForm ?? '').split('').filter(ch => /\p{Script=Han}/u.test(ch))
-            return (
-              <div key={word.id}>
-                <button
-                  type="button"
-                  className="vocab-glance-row"
-                  onClick={() => handleToggleRow(word)}
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 12,
-                    padding: '12px 16px',
-                    borderBottom: isExpanded ? 'none' : '1px solid rgba(255,255,255,0.05)',
-                    cursor: 'pointer',
-                    fontFamily: 'inherit',
-                    letterSpacing: TRACKING,
-                    textAlign: 'left',
-                    color: 'inherit',
-                    transition: 'background 130ms',
-                  }}
-                >
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 5 }}>
-                      <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
-                        {displayForm}
-                      </span>
-                      {reading && (
-                        <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{reading}</span>
-                      )}
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      {(() => {
-                        const posLabel = shortPos(Array.isArray(dictEntry?.pos) ? dictEntry.pos[0] : null)
-                        return posLabel ? (
-                          <span style={{
-                            fontSize: FS_BADGE,
-                            color: TEXT_MUTED,
-                            background: 'rgba(255,255,255,0.07)',
-                            borderRadius: 3,
-                            padding: '1px 6px',
-                            fontFamily: FONT,
-                            letterSpacing: TRACKING,
-                            flexShrink: 0,
-                          }}>{posLabel}</span>
-                        ) : null
-                      })()}
-                      <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-                        {dictEntry?.gloss_en?.split('; ').slice(0, 2).join('; ') ?? word.english}
-                      </span>
-                    </div>
-                  </div>
-                  <span style={{
-                    color: TEXT_MUTED,
-                    fontSize: '1.1rem',
-                    flexShrink: 0,
-                    display: 'inline-block',
-                    transform: isExpanded ? 'rotate(90deg)' : 'none',
-                    transition: 'transform 150ms',
-                  }}>›</span>
-                </button>
-
-                {isExpanded && (
-                  <div style={{
-                    padding: '8px 8px 16px',
-                    borderBottom: '1px solid rgba(255,255,255,0.06)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 8,
-                  }}>
-                    {kanjiChars.length > 0 && (
-                      expandedKanji.length > 0 ? (
-                        expandedKanji.map(k => (
-                          <div key={k.literal} style={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            gap: 14,
-                            padding: '10px 12px',
-                            background: 'rgba(255,255,255,0.03)',
-                            borderRadius: 6,
-                            border: '1px solid rgba(255,255,255,0.07)',
-                          }}>
-                            <div style={{ fontSize: '2rem', color: TEXT, minWidth: 44, textAlign: 'center', lineHeight: 1.1 }}>
-                              {k.literal}
-                            </div>
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                              {k.on_readings?.length > 0 && (
-                                <div style={{ fontSize: FS_BASE, color: TEXT, marginBottom: 2 }}>
-                                  {k.on_readings.join('　')}
-                                </div>
-                              )}
-                              {k.kun_readings?.length > 0 && (
-                                <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginBottom: 4 }}>
-                                  {k.kun_readings.join('　')}
-                                </div>
-                              )}
-                              <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>
-                                {(k.meanings ?? '').split('; ').slice(0, 4).join(', ')}
-                              </div>
-                            </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4, flexShrink: 0 }}>
-                              {k.jlpt != null && (
-                                <span style={{
-                                  fontSize: FS_BADGE,
-                                  padding: '2px 6px',
-                                  background: 'rgba(58,189,164,0.12)',
-                                  color: ACCENT,
-                                  border: '1px solid rgba(58,189,164,0.2)',
-                                  borderRadius: 3,
-                                }}>N{k.jlpt}</span>
-                              )}
-                              {k.stroke_count != null && (
-                                <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED }}>{k.stroke_count} strokes</span>
-                              )}
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, padding: '6px 0' }}>Loading…</div>
-                      )
-                    )}
-                    {sentenceText && (
-                      <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontStyle: 'italic', padding: '2px 0' }}>
-                        {sentenceText}
-                      </div>
-                    )}
-                    {dictEntry && (
-                      <a
-                        href={`#/dictionary/entry/${dictEntry.id}`}
-                        className="srs-browse-link"
-                        style={{ fontSize: FS_CAPTION, color: ACCENT, alignSelf: 'flex-start', marginTop: 2 }}
-                      >
-                        View full entry →
-                      </a>
-                    )}
-                  </div>
-                )}
-              </div>
-            )
-          })}
-          </div>
+          <SectionLabel label={group.label} />
+          <DataList
+            columns={columns}
+            rows={group.words}
+            rowKey={w => w.id}
+            expand={{ expanded: expandedSet, onToggle: id => handleToggleRow(group.words.find(w => w.id === id)), render: renderWordDetail }}
+            padding="12px 16px"
+            maxWidth="100%"
+          />
         </div>
       ))}
     </div>
@@ -813,7 +656,6 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
 // ── HomeScreen ────────────────────────────────────────────────────────────────
 
 function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selectedSubLists, onToggleSubList, wordCountByList, reviewWordCount, includeReview, onToggleIncludeReview, sentenceVocabWordCount, includeSentenceVocab, onToggleIncludeSentenceVocab, vocabProgress, reviewMode, onChangeReviewMode, onStart, onGlance }) {
-  const [startHovered, setStartHovered] = useState(false)
   const canStart = selectedSubLists.length > 0
 
   return (
@@ -832,7 +674,7 @@ function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selec
         <label style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, letterSpacing: '0.08em' }}>
           DRILL MODE
         </label>
-        <VocabModeToggle mode={reviewMode} onChange={onChangeReviewMode} />
+        <ChipSelector mode="single" size="md" grow options={REVIEW_MODE_OPTIONS} value={reviewMode} onChange={onChangeReviewMode} />
       </div>
 
       {/* Source selector */}
@@ -840,31 +682,7 @@ function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selec
         <label style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, letterSpacing: '0.08em' }}>
           WORD LIST
         </label>
-      <select
-        value={selectedSourceId}
-        onChange={e => onSelectSource(e.target.value)}
-        style={{
-          width: '100%',
-          padding: '8px 36px 8px 12px',
-          fontSize: FS_BASE,
-          fontFamily: 'inherit',
-          letterSpacing: TRACKING,
-          background: 'rgba(255,255,255,0.06)',
-          color: TEXT,
-          border: '1px solid rgba(255,255,255,0.15)',
-          borderRadius: 6,
-          cursor: 'pointer',
-          outline: 'none',
-          appearance: 'none',
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'right 12px center',
-        }}
-      >
-        {WORD_SOURCES.map(source => (
-          <option key={source.id} value={source.id}>{source.label}</option>
-        ))}
-      </select>
+      <Select value={selectedSourceId} onChange={onSelectSource} size="md" options={WORD_SOURCE_OPTIONS} />
       {reviewWordCount > 0 && (
         <div style={{ marginTop: 4 }}>
           <Checkbox checked={includeReview} onChange={onToggleIncludeReview} label={`Include review words (${reviewWordCount})`} />
@@ -898,84 +716,30 @@ function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selec
 
       {/* Actions */}
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-        <button
-          onClick={canStart ? onStart : undefined}
-          onMouseEnter={() => setStartHovered(true)}
-          onMouseLeave={() => setStartHovered(false)}
-          style={{
-            padding: '11px 28px',
-            fontSize: FS_BASE,
-            fontFamily: 'inherit',
-            letterSpacing: TRACKING,
-            borderRadius: 8,
-            cursor: canStart ? 'pointer' : 'not-allowed',
-            background: canStart
-              ? startHovered ? 'rgba(58,189,164,0.25)' : 'rgba(58,189,164,0.15)'
-              : 'rgba(255,255,255,0.04)',
-            color: canStart ? ACCENT : 'rgba(255,255,255,0.2)',
-            border: `1px solid ${canStart ? 'rgba(58,189,164,0.4)' : 'rgba(255,255,255,0.1)'}`,
-            transition: 'background 130ms, color 130ms, border-color 130ms',
-          }}
-        >
+        <Button variant="accent-outline" size="lg" onClick={onStart} disabled={!canStart}>
           Start review
           {selectedSubLists.length > 0 && (
             <span style={{ marginLeft: 8, fontSize: FS_CAPTION, opacity: 0.7 }}>
               ({selectedSubLists.reduce((sum, id) => sum + (wordCountByList[id] ?? 0), 0)} words)
             </span>
           )}
-        </button>
-
-        <button
-          className={canStart ? 'vocab-glance-btn' : undefined}
-          onClick={canStart ? onGlance : undefined}
-          style={{
-            padding: '11px 28px',
-            fontSize: FS_BASE,
-            fontFamily: 'inherit',
-            letterSpacing: TRACKING,
-            borderRadius: 8,
-            cursor: canStart ? 'pointer' : 'not-allowed',
-            background: canStart ? undefined : 'rgba(255,255,255,0.03)',
-            color: canStart ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.2)',
-            border: `1px solid ${canStart ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.08)'}`,
-            transition: 'background 130ms',
-            opacity: canStart ? 1 : 0.5,
-            pointerEvents: canStart ? 'auto' : 'none',
-          }}
-        >
-          Preview
-        </button>
-
-        <button
-          disabled
-          style={{
-            padding: '11px 28px',
-            fontSize: FS_BASE,
-            fontFamily: 'inherit',
-            letterSpacing: TRACKING,
-            borderRadius: 8,
-            cursor: 'not-allowed',
-            background: 'rgba(255,255,255,0.03)',
-            color: 'rgba(255,255,255,0.2)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            opacity: 0.5,
-          }}
-        >
-          Send to SRS
-        </button>
+        </Button>
+        <Button variant="neutral" size="lg" onClick={onGlance} disabled={!canStart}>Preview</Button>
+        <Button variant="neutral" size="lg" disabled>Send to SRS</Button>
       </div>
     </div>
   )
 }
 
+// A two-line selectable tile (label + count/recency). Kept bespoke: it's
+// a Chip with a second line and a grid layout, which Chip doesn't express —
+// see the review log. Hover is the .sublist-tile class in global.css.
 function SubListTile({ label, wordCount, progress, selected, onClick }) {
-  const [hovered, setHovered] = useState(false)
   const timeAgo = relativeTime(progress?.lastReviewed)
   return (
     <button
       onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      className={selected ? 'sublist-tile sublist-tile--selected' : 'sublist-tile'}
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -984,15 +748,11 @@ function SubListTile({ label, wordCount, progress, selected, onClick }) {
         width: '100%',
         minHeight: 54,
         padding: '10px 12px',
-        background: selected
-          ? 'rgba(255,255,255,0.1)'
-          : hovered ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.03)',
         border: `1px solid ${selected ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.1)'}`,
         borderRadius: 6,
         cursor: 'pointer',
         fontFamily: 'inherit',
         letterSpacing: TRACKING,
-        transition: 'background 130ms, border-color 130ms',
       }}
     >
       <span style={{ fontSize: FS_BASE, color: selected ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.7)' }}>
@@ -1001,15 +761,7 @@ function SubListTile({ label, wordCount, progress, selected, onClick }) {
       <span style={{ fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.35)', display: 'flex', alignItems: 'center', gap: 6 }}>
         {wordCount} words
         {!progress ? (
-          <span style={{
-            fontSize: FS_BADGE,
-            padding: '1px 5px',
-            background: 'rgba(58,189,164,0.12)',
-            color: 'rgba(58,189,164,0.65)',
-            border: '1px solid rgba(58,189,164,0.2)',
-            borderRadius: 3,
-            letterSpacing: '0.06em',
-          }}>New</span>
+          <Badge tone="accent" dimmed>New</Badge>
         ) : timeAgo ? (
           <>
             <span>·</span>
@@ -1024,6 +776,15 @@ function SubListTile({ label, wordCount, progress, selected, onClick }) {
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 export default function VocabPage() {
+  return (
+    <ModuleThemeProvider accent={VOCAB_ACCENT}>
+      <VocabPageScreens />
+    </ModuleThemeProvider>
+  )
+}
+
+function VocabPageScreens() {
+  const ACCENT = useAccent()
   const { user, signIn, signOut, loading: authLoading } = useAuth()
   const { data: vocabProgress, save: saveVocabProgress } = useProgress('vocab-flashcard')
   const { data: srsData, save: saveSrs } = useProgress('vocab-srs')
@@ -1073,7 +834,6 @@ export default function VocabPage() {
   const [pulseColor,       setPulseColor]       = useState(null)
   const [headerHeight,     setHeaderHeight]     = useState(72)
   const headerRef   = useRef(null)
-  const [optionsHovered, setOptionsHovered] = useState(false)
   const isMobile = useIsMobile()
   const isShort  = useIsShort()
   const jaVoices = useJaVoices()
@@ -1337,17 +1097,14 @@ export default function VocabPage() {
               primary={
                 <button
                   onClick={() => setShowOptions(v => !v)}
-                  onMouseEnter={() => setOptionsHovered(true)}
-                  onMouseLeave={() => setOptionsHovered(false)}
+                  className="header-menu-btn"
                   style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     height: 34, padding: '0 12px', fontSize: FS_BASE,
                     fontFamily: 'inherit',
-                    background: optionsHovered ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)',
                     color: 'rgba(255,255,255,0.7)',
                     border: '1px solid rgba(255,255,255,0.2)',
                     borderRadius: 8, cursor: 'pointer',
-                    transition: 'background 130ms',
                   }}
                 >
                   Options
@@ -1372,7 +1129,7 @@ export default function VocabPage() {
               <div style={{
                 height: '100%',
                 width: `${(drill.correct + drill.remaining) > 0 ? (drill.correct / (drill.correct + drill.remaining)) * 100 : 0}%`,
-                background: '#3ABDA4',
+                background: ACCENT,
                 transition: 'width 300ms ease',
               }} />
             </div>

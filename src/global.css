@@ -48,16 +48,6 @@ button, input, select, textarea {
   background: #313131;
 }
 
-.vocab-glance-row {
-  background: transparent;
-  border: none;
-  outline: none;
-}
-
-.vocab-glance-row:hover {
-  background: rgba(255,255,255,0.04);
-}
-
 .selectable-row {
   background: transparent;
   transition: background 120ms;
@@ -228,6 +218,21 @@ button, input, select, textarea {
   background: rgba(255,255,255,0.07);
 }
 
+/* VocabPage sublist tiles */
+.sublist-tile {
+  background: rgba(255,255,255,0.03);
+  transition: background 130ms, border-color 130ms;
+}
+
+.sublist-tile:hover {
+  background: rgba(255,255,255,0.06);
+}
+
+.sublist-tile--selected,
+.sublist-tile--selected:hover {
+  background: rgba(255,255,255,0.1);
+}
+
 /* SettingsSidebar's collapse/expand strip */
 .sidebar-chevron {
   background: transparent;
@@ -285,30 +290,6 @@ button, input, select, textarea {
 
 .selectable-row--selected:hover {
   background: rgba(0,0,0,0.20);
-}
-
-.vocab-glance-btn {
-  background: rgba(255,255,255,0.04);
-}
-
-.vocab-glance-btn:hover {
-  background: rgba(255,255,255,0.09);
-}
-
-.vocab-mode-btn {
-  background: rgba(255,255,255,0.04);
-}
-
-.vocab-mode-btn:hover {
-  background: rgba(255,255,255,0.09);
-}
-
-.vocab-mode-btn--active {
-  background: rgba(58,189,164,0.15);
-}
-
-.vocab-mode-btn--active:hover {
-  background: rgba(58,189,164,0.15);
 }
 
 .done-btn {

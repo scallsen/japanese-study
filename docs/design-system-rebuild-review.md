@@ -139,3 +139,75 @@ presentation (newspaper, chat bubbles, postcard), not UI chrome.
   dictionary is the source of truth), so the LLM prompt literally contains
   "undefined" for them. Needs an async dictionary resolve in
   `learnerContext.js`; out of scope for this pass.
+
+## Grammar Map — skipped
+
+Per your note mid-run: the module is being removed, so it was not ported.
+It still compiles and still uses `SectionHeader`/`useIsMobile`; nothing
+else touched.
+
+## Vocab Drill (`design-system/vocab-drill`)
+
+Files: `VocabPage.jsx` (all four screens), plus the shared drill pieces it
+owns (`SpeedModeControls`, `SettingsSidebar`, `HeaderMenu`).
+
+- **[INPUT — most visible change in the whole pass] The page is now BLUE.**
+  `modules.js` gives Vocab Drill (`school-vocab`) the accent `#3A7FEF`, but
+  the page had core teal `#3ABDA4` hardcoded in 9 places (and shared that
+  teal with Vocab SRS and the dashboard). Every other rebuild wired the
+  `modules.js` accent, so this one does too — chips, "New" badges, Start
+  review, the drill progress bar, JLPT badges and links are all blue now.
+  If you'd rather it stayed teal, change the one hex in `modules.js` (or
+  give it its own colour — that file is the source of truth now).
+- **[CHANGED] `DataList` — `selection.bulkHeader` accepts
+  `{ selectFirst: true }`.** Renders the caret → "Select first N words"
+  panel (NumberField + Cancel/Confirm) inside the bulk header. DoneScreen
+  and Anime Vocab's `EpisodeVocabBrowser` had hand-rolled the identical
+  header; DoneScreen is migrated. **[CANDIDATE]** EpisodeVocabBrowser could
+  follow, but its header only counts *eligible* rows (some words are
+  filtered out of select-all), which `bulkHeader` doesn't model yet — left
+  as is, with its local `SelectAllCheckbox`/`CaretButton` duplicates.
+- **[CHANGED] `SectionHeader` — `action` slot.** Any node on the right of
+  the title. DoneScreen's "Review words" + `DeckComboBox` uses it; Anime
+  Vocab's `EpisodeDrill` has the same shape ("Words from this drill" + a
+  Button) and could adopt it. The old `hasSelections`/`onClearAll` pair is
+  unchanged for the settings drawers.
+- **[NEW] `SectionLabel` promoted to `src/components/`.** Dictionary's
+  label-plus-hairline group divider (from `pages/dictionaryShared.jsx`) got
+  its second consumer in the Preview screen's per-sublist groups.
+  **[INPUT]** There are now two section-heading components: `SectionHeader`
+  (FS_BASE uppercase, action slot — drawers and done screens) and
+  `SectionLabel` (FS_BADGE uppercase + divider — inside page content). Both
+  have real, different call sites, but you may want one with a `divider`
+  boolean instead. The "Recent stories" / "Comprehension check" headings in
+  Story and Immersion are a *third* style (plain muted FS_HEADING), left
+  alone.
+- **[CHANGED] `Button` — `warning-outline` variant.** Same tint recipe as
+  `danger-outline` in the amber tone, for DoneScreen's "Redo Troubled" —
+  the one amber action in the app.
+- **[CHANGED] `SpeedModeControls`** is now a named composition over
+  `DrillButtonRow`/`DrillButton` with `DRILL_COLORS` (it had never actually
+  been migrated despite `DrillButton`'s doc saying so). Same props, shared
+  with Anime Vocab's `EpisodeDrill`.
+- **[CHANGED] `HeaderMenu`, `SettingsSidebar`** — `useState` hovers
+  (three of them) → CSS classes. Shared with Vocab SRS / Anime Vocab.
+- **Deleted:** `SelectButton.jsx` (no importers anywhere — pre-Chip),
+  `VocabModeToggle.jsx` (→ `ChipSelector mode="single" size="md" grow`),
+  and the `.vocab-mode-btn` / `.vocab-glance-*` CSS.
+- **[INPUT] Buttons.** Start review → `accent-outline lg` (the word-count
+  suffix is a child span); Preview / Send to SRS → `neutral lg`; Restart /
+  End review → `neutral lg`. Original padding was `10-11px 28px`; lg is
+  `10px 24px`.
+- **[INPUT] `SubListTile` kept bespoke** (hover moved to `.sublist-tile`,
+  "New" → `Badge tone="accent" dimmed`). It's a two-line selectable tile in
+  a grid — a Chip with a second line. If a "SelectableTile" ever gets built,
+  this and the anime-vocab tile grid are its call sites.
+- **[CANDIDATE] Progress bar.** The 3px drill progress bar under the header
+  stays inline (now on the ambient accent). `DistributionBar` is explicitly
+  not this; a `ProgressBar` atom would have this one call site.
+- **[CANDIDATE] Stat pair** ("CORRECT 13 · TROUBLED 2") kept bespoke;
+  `DrillHUD` renders the same numbers in a different layout.
+- Note: CLAUDE.md's Vocab Drill section describes the word-list UI as a
+  "collapsible accordion" of `SelectButton`s — that's stale, the real UI has
+  been a `Select` + sublist tile grid for a while. Fixing in the final docs
+  pass.

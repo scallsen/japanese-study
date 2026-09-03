@@ -1,25 +1,7 @@
 import Badge from '../components/Badge.jsx'
-import { FONT, KANJI_FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_ENTRY_KANJI } from '../data/theme.js'
+import { FONT, KANJI_FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_ENTRY_KANJI } from '../data/theme.js'
 
-
-// Uppercase small-caps label + trailing hairline divider, used to separate
-// sections on both Dictionary pages. Was duplicated near-identically in
-// each file with two genuinely different values (DictionaryPage: FS_BADGE
-// size, 0.1em tracking; DictionaryEntryPage: SUBHEADING_STYLE's larger
-// FS_BASE size, 0.08em tracking) -- reconciled to FS_BADGE/0.08em, which
-// matches the already-established cross-module convention for this exact
-// pattern (Anime Vocab's "Filter words" label uses the identical pair),
-// not an arbitrary pick between the two local variants.
-export function SectionLabel({ label, marginTop = 4 }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, marginTop }}>
-      <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: '0.08em', opacity: 0.5, textTransform: 'uppercase' }}>
-        {label}
-      </span>
-      <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.06)' }} />
-    </div>
-  )
-}
+export { default as SectionLabel } from '../components/SectionLabel.jsx'
 
 function kanjiGradeLabel(grade) {
   if (!grade) return null

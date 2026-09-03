@@ -1,5 +1,8 @@
+import { useState } from 'react'
 import SelectableRow from './SelectableRow.jsx'
 import SelectAllCheckbox from './SelectAllCheckbox.jsx'
+import NumberField from './NumberField.jsx'
+import Button from './Button.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, SPACE_4, SPACE_8, SPACE_12, SPACE_16 } from '../data/theme.js'
 import { useAccent } from '../context/ModuleThemeContext.jsx'
 
@@ -170,12 +173,94 @@ function Row({ row, rowKey, columns, selection, navigate, expand, editableFields
   return rowBody
 }
 
+function CaretButton({ open, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={open ? 'Collapse bulk select' : 'Expand bulk select'}
+      style={{ background: 'none', border: 'none', padding: 2, cursor: 'pointer', display: 'flex', alignItems: 'center', flexShrink: 0 }}
+    >
+      <span style={{
+        color: TEXT_MUTED, fontSize: '1.1rem', display: 'inline-block',
+        transform: open ? 'rotate(90deg)' : 'none', transition: 'transform 150ms',
+      }}>
+        ›
+      </span>
+    </button>
+  )
+}
+
+// Select-all + "N of M selected", optionally with the caret that opens the
+// "Select first N words" panel. Everything goes through selection.onToggle
+// per row, so the caller keeps one selection model — the bulk actions just
+// compute which rows need flipping to reach the target state.
+function BulkHeader({ rows, rowKey, selection, selected, allSelected, someSelected, padding, selectFirst }) {
+  const [open, setOpen] = useState(false)
+  const [countInput, setCountInput] = useState(rows.length)
+
+  function setSelectionTo(targetIds) {
+    rows.forEach(r => {
+      const id = rowKey(r)
+      const isOn = selected.has(id)
+      const shouldBeOn = targetIds.has(id)
+      if (isOn !== shouldBeOn) selection.onToggle(id)
+    })
+  }
+
+  function toggleAll() {
+    setSelectionTo(allSelected ? new Set() : new Set(rows.map(rowKey)))
+  }
+
+  function toggleOpen() {
+    setOpen(o => {
+      if (!o) setCountInput(Math.max(1, selected.size || rows.length))
+      return !o
+    })
+  }
+
+  function confirmFirst() {
+    const n = Math.max(1, Math.min(Number(countInput) || 1, rows.length || 1))
+    setSelectionTo(new Set(rows.slice(0, n).map(rowKey)))
+    setOpen(false)
+  }
+
+  return (
+    // gap: 10 matches EpisodeVocabBrowser's real bulk-select header exactly —
+    // not on the spacing scale, kept as a faithful port.
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding, borderBottom: `1px solid ${HAIRLINE}` }}>
+      <SelectAllCheckbox checked={allSelected} indeterminate={!allSelected && someSelected} onChange={toggleAll} />
+      {selectFirst && <CaretButton open={open} onClick={toggleOpen} />}
+      {!open ? (
+        <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
+          {selected.size} of {rows.length} selected
+        </span>
+      ) : (
+        <>
+          <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>Select first</span>
+          <NumberField value={countInput} onChange={setCountInput} min={1} max={Math.max(rows.length, 1)} width={56} />
+          <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>words</span>
+          <div style={{ marginLeft: 'auto', display: 'flex', gap: SPACE_8, flexShrink: 0 }}>
+            <Button variant="neutral" size="sm" onClick={() => setOpen(false)}>Cancel</Button>
+            <Button variant="primary" size="sm" onClick={confirmFirst}>Confirm</Button>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
 /**
  * The one flexible list/table primitive. Three orthogonal, independently
  * optional concerns — combine any of them:
  *
  *  - `selection`  — a checkbox column + bulk multi-select.
- *                    { selected: Set, onToggle(id), bulkHeader?: boolean }
+ *                    { selected: Set, onToggle(id), bulkHeader?: boolean | { selectFirst: true } }
+ *                    bulkHeader renders a select-all row with a count;
+ *                    `{ selectFirst: true }` adds the caret → "Select first
+ *                    N words" panel (NumberField + Cancel/Confirm) that
+ *                    VocabPage's DoneScreen and EpisodeVocabBrowser each
+ *                    hand-rolled identically above their lists.
  *  - `navigate`   — clicking a row's body (not its checkbox) opens something.
  *                    { onClick(row) } and/or { href(row) }. href renders the
  *                    row as a real <a> — needed for actual cross-route links
@@ -243,22 +328,16 @@ export default function DataList({
         )}
 
         {selection?.bulkHeader && (
-          // gap: 10 matches EpisodeVocabBrowser's real bulk-select header exactly —
-          // not on the spacing scale, kept as a faithful port.
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding, borderBottom: `1px solid ${HAIRLINE}` }}>
-            <SelectAllCheckbox
-              checked={allSelected}
-              indeterminate={!allSelected && someSelected}
-              onChange={() => rows.forEach(r => {
-                const id = rowKey(r)
-                const isOn = selected.has(id)
-                if (allSelected ? isOn : !isOn) selection.onToggle(id)
-              })}
-            />
-            <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-              {selected.size} of {rows.length} selected
-            </span>
-          </div>
+          <BulkHeader
+            rows={rows}
+            rowKey={rowKey}
+            selection={selection}
+            selected={selected}
+            allSelected={allSelected}
+            someSelected={someSelected}
+            padding={padding}
+            selectFirst={selection.bulkHeader?.selectFirst === true}
+          />
         )}
 
         {rows.length === 0 ? (
