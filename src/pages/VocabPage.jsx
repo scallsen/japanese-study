@@ -91,7 +91,26 @@ function shortPos(raw) {
   return raw.split(' ')[0].slice(0, 6).toLowerCase()
 }
 
+// The dashboard's "Start Lesson N" deep-links here as
+// `#/vocab?chapter=<listKey>&start=1`. The query is read once at mount to
+// seed the source/sublist selection (and optionally jump straight into the
+// drill), then stripped so a reload or a return from the drill lands on the
+// plain home screen.
+function hashQuery() {
+  return new URLSearchParams(window.location.hash.split('?')[1] ?? '')
+}
+
+function chapterFromHash() {
+  const chapter = hashQuery().get('chapter')
+  return chapter && WORD_DATA.some(w => w.listKey === chapter) ? chapter : null
+}
+
 function defaultSelectedSource() {
+  const chapter = chapterFromHash()
+  if (chapter) {
+    const source = WORD_SOURCES.find(s => s.id === chapter || s.lists?.some(l => l.id === chapter))
+    if (source) return source.id
+  }
   return safeLocalStorageGet('vocab-selected-source') ?? WORD_SOURCES[0].id
 }
 
@@ -790,9 +809,12 @@ function VocabPageScreens() {
 
   const [showOptions,       setShowOptions]       = useState(() => window.innerWidth > 768)
   const [selectedSourceId,  setSelectedSourceId]  = useState(defaultSelectedSource)
-  const [selectedSubLists,  setSelectedSubLists]  = useState([])
+  const [selectedSubLists,  setSelectedSubLists]  = useState(() => {
+    const chapter = chapterFromHash()
+    return chapter ? [chapter] : []
+  })
   const [reviewMode,       setReviewMode]       = useState(() => safeLocalStorageGet('vocab-review-mode') ?? 'kanji-front')
-  const [isDrilling,       setIsDrilling]       = useState(false)
+  const [isDrilling,       setIsDrilling]       = useState(() => !!chapterFromHash() && hashQuery().get('start') === '1')
   const [isGlancing,       setIsGlancing]       = useState(false)
   const [audioEnabled,     setAudioEnabled]     = useState(() => {
     const s = safeLocalStorageGet('vocab-audio-enabled'); return s === null ? true : s === 'true'
@@ -911,9 +933,15 @@ function VocabPageScreens() {
   const poolJmdictIds = useMemo(() => pool.map(p => p.word.jmdictId).filter(Boolean), [pool])
   const { entries: poolDictEntries } = useDictionaryEntries(poolJmdictIds, true)
 
-  // Save progress when session completes
   useEffect(() => {
-    if (!isDrilling || !drill.done || !user) return
+    if (window.location.hash.includes('?')) window.history.replaceState(null, '', '#/vocab')
+  }, [])
+
+  // Save progress when session completes. Not gated on sign-in: useProgress
+  // falls back to localStorage when logged out, and the dashboard's chapter
+  // pointer needs drilled state either way.
+  useEffect(() => {
+    if (!isDrilling || !drill.done) return
     const now = new Date().toISOString()
     const total = pool.length
     const updatedSublists = { ...(vocabProgress?.sublists ?? {}) }

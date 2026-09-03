@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE } from '../data/theme.js'
 
 function ExternalLinkIcon() {
@@ -9,9 +8,10 @@ function ExternalLinkIcon() {
   )
 }
 
+// Hover lives in global.css (.module-card) — the useState hover this used to
+// carry is the StrictMode double-invoke hazard every other component fixed.
 export default function ModuleCard({ module, disabled }) {
   const { label, sublabel, icon, href, external } = module
-  const [hovered, setHovered] = useState(false)
 
   const Tag = disabled ? 'div' : 'a'
   const linkProps = disabled ? {} : {
@@ -22,10 +22,10 @@ export default function ModuleCard({ module, disabled }) {
   return (
     <Tag
       {...linkProps}
+      className={disabled ? 'module-card module-card--disabled' : 'module-card'}
       style={{
         display: 'flex',
         flexDirection: 'column',
-        background: hovered && !disabled ? 'rgba(255,255,255,0.06)' : 'transparent',
         border: `1px solid ${disabled ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.18)'}`,
         borderRadius: 6,
         padding: '20px 20px',
@@ -37,16 +37,14 @@ export default function ModuleCard({ module, disabled }) {
         cursor: disabled ? 'default' : 'pointer',
         opacity: disabled ? 0.45 : 1,
       }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
     >
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-            <div style={{ fontSize: FS_BASE, color: hovered && !disabled ? 'rgba(255,255,255,0.85)' : TEXT, transition: 'color 130ms' }}>
+            <div style={{ fontSize: FS_BASE, color: TEXT }}>
               {label}
             </div>
-            {external && !icon && <ExternalLinkIcon />}
+            {external && <ExternalLinkIcon />}
           </div>
           <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginTop: 4 }}>
             {sublabel}

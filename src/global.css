@@ -385,3 +385,16 @@ button, input, select, textarea {
   to   { transform: translate(-50%, -100%); opacity: 0; }
 }
 
+
+/* Dashboard module card — resting state is transparent, so the hover rule
+   owns the background outright rather than fighting an inline value. */
+.module-card {
+  background: transparent;
+}
+.module-card:not(.module-card--disabled):hover {
+  background: rgba(255,255,255,0.06);
+}
+
+.footer-link:hover {
+  color: rgba(232,232,232,0.85) !important;
+}

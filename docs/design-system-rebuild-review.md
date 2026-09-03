@@ -375,3 +375,35 @@ Your first-pass feedback, applied on top of the stack.
   already `md` (the default); I read this as "not lg", so Vocab Drill's
   home actions dropped from `lg` to `md` when they moved into the bar. If
   you meant something else, say which.
+
+## Home redesign (`design-system/home-redesign`, stacked on review-round-1)
+
+Rough first pass at the textbook-led home page — New / Review cards,
+secondary module grid, stats sidebar. Full description in CLAUDE.md's
+"Home page" section. Not yet built: the chapters page (Vocab Drill home
+rebuilt around the chosen book) and the end-of-lesson "send to SRS" prompt.
+
+- **[NEW] `src/data/textbooks.js`, `src/lib/textbookProgress.js`,
+  `src/components/TextbookPicker.jsx`.** Config, pure resolver (unit
+  tested), and the picker (Modal + OptionPicker — no new list component).
+- **[CHANGED] `ModuleCard`** — `useState` hover → `.module-card` CSS class.
+  Was the last dashboard useState-hover.
+- **[CHANGED] `modules.js`** — `tier: 'primary'` on Vocab Drill + SRS;
+  Grammar Map entry removed (route left in place).
+- **[CHANGED] `VocabPage`** — honours `?chapter=<listKey>&start=1` at mount
+  (seeds selection, autostarts, strips the query); drill results now save
+  when signed out too (useProgress already falls back to localStorage — the
+  `!user` gate was the only thing stopping it).
+- **[CHANGED] `VocabSrsModule`** — honours `?start=1` once progress loads.
+- **[INPUT] Stats sidebar contents** — proposed as Textbook / Reviews /
+  Reading using only data that exists today. Streaks or a calendar need a
+  per-day review log that doesn't exist yet; decide before designing them.
+- **[INPUT] Textbook list** — seeded from the icons you provided (Quartet
+  1/2, Marugoto A1 ×2, So-Matome N1/N2/N3) plus Genki 1/2 with no art. Only
+  the So-Matome N3/N2 entries map to real word lists.
+- **[CANDIDATE] Progress bar** — the 4px accent fill under the New card's
+  title is the same inline bar Vocab Drill's header uses; a `ProgressBar`
+  atom now has two call sites.
+- **Not verified:** the mobile (single-column) layout — the browser tool's
+  window resize didn't change the viewport. It uses the same `useIsMobile`
+  switch as every other page.
