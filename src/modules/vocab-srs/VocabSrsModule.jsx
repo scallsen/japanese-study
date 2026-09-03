@@ -23,22 +23,12 @@ import { AUDIO_SOURCE_OPTIONS, DEFAULT_AUDIO_SOURCE, getVoicevoxCredit, speakerI
 import { SENTENCE_SOURCE_OPTIONS, DEFAULT_SENTENCE_SOURCE } from '../../data/sentenceSource.js'
 import AttributionFooter from '../../components/AttributionFooter.jsx'
 import { renderAttributionSegments } from '../../utils/attributionSegments.jsx'
+import { useIsMobile } from '../../hooks/useIsMobile.js'
 
 const ACCENT = '#3ABDA4'
 const PANEL_W = 420
 const CHEVRON_W = 28
 const PANEL_CONTENT_W = PANEL_W - CHEVRON_W
-
-function useIsMobile(breakpoint = 768) {
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= breakpoint)
-  useEffect(() => {
-    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`)
-    const handler = e => setIsMobile(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [breakpoint])
-  return isMobile
-}
 
 // Ordinal ramp (New→Learning→Young→Mature, one hue) + a distinct warning hue for
 // Relearning, validated with the dataviz skill's palette validator against this
@@ -572,7 +562,6 @@ export default function VocabSrsModule() {
     setProgress(newProgress)
     save(newProgress)
   }
-
 
   async function handleAnkiSyncFileChange(e) {
     const file = e.target.files[0]

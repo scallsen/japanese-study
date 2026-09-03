@@ -15,6 +15,7 @@ import { useToast } from '../../context/ToastContext.jsx'
 import { supabase } from '../../lib/supabase.js'
 import { gradeAnswer } from './api.js'
 import { lookupVocabulary } from './lookupVocabulary.js'
+import { useIsMobile } from '../../hooks/useIsMobile.js'
 
 const FORMAT_LAYOUTS = {
   news: NewspaperLayout,
@@ -23,17 +24,6 @@ const FORMAT_LAYOUTS = {
   interview: InterviewLayout,
   letter: LetterLayout,
   postcard: PostcardLayout,
-}
-
-function useIsMobile(breakpoint = 768) {
-  const [isMobile, setIsMobile] = useState(() => window.matchMedia(`(max-width: ${breakpoint}px)`).matches)
-  useEffect(() => {
-    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`)
-    const handler = e => setIsMobile(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [breakpoint])
-  return isMobile
 }
 
 function Question({ q, index }) {

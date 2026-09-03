@@ -15,6 +15,7 @@ import { useAuth } from '../../context/AuthContext.jsx'
 import { supabase } from '../../lib/supabase.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
 import { generateStory } from './api.js'
+import { useIsMobile } from '../../hooks/useIsMobile.js'
 
 const MAX_RECENT_STORIES = 20
 
@@ -35,17 +36,6 @@ const LENGTHS = [
   { id: 'medium', label: 'Medium' },
   { id: 'long', label: 'Long' },
 ]
-
-function useIsMobile(breakpoint = 768) {
-  const [isMobile, setIsMobile] = useState(() => window.matchMedia(`(max-width: ${breakpoint}px)`).matches)
-  useEffect(() => {
-    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`)
-    const handler = e => setIsMobile(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [breakpoint])
-  return isMobile
-}
 
 function Field({ label, children }) {
   return (

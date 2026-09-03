@@ -13,17 +13,7 @@ import SelectAllCheckbox from '../../components/SelectAllCheckbox.jsx'
 import SelectableRow from '../../components/SelectableRow.jsx'
 import { useToast } from '../../context/ToastContext.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION } from '../../data/theme.js'
-
-function useIsMobile(breakpoint = 768) {
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= breakpoint)
-  useEffect(() => {
-    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`)
-    const handler = e => setIsMobile(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [breakpoint])
-  return isMobile
-}
+import { useIsMobile } from '../../hooks/useIsMobile.js'
 
 function parseHashQuery() {
   const hash = window.location.hash.slice(1)

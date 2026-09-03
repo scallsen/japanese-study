@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useTrackedAnime } from './useTrackedAnime.js'
 import { difficultyLabel } from './difficultyLabels.js'
@@ -6,20 +5,11 @@ import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE } fr
 import ToggleButton from '../../components/ToggleButton.jsx'
 import DataList from '../../components/DataList.jsx'
 import Badge from '../../components/Badge.jsx'
+import { useIsMobile } from '../../hooks/useIsMobile.js'
 
 // Duplicated per-file (matches this module's own established convention —
 // see e.g. AnimeVocabModule.jsx — each self-contained module keeps its own
 // small copy rather than a shared hook).
-function useIsMobile(breakpoint = 768) {
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= breakpoint)
-  useEffect(() => {
-    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`)
-    const handler = e => setIsMobile(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [breakpoint])
-  return isMobile
-}
 
 function episodeColumns(isMobile) {
   return [

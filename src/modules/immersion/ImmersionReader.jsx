@@ -10,22 +10,12 @@ import { useToast } from '../../context/ToastContext.jsx'
 import { createCard } from '../vocab-srs/srs.js'
 import { ensureDeck, createDeck, deleteCards } from '../vocab-srs/deckUtils.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CONTENT_HEADING, FS_CAPTION, FS_ARTICLE_BODY } from '../../data/theme.js'
+import { useIsMobile } from '../../hooks/useIsMobile.js'
 
 const ACCENT = '#E05A4E'
 
 function formatDate(iso) {
   return new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-}
-
-function useIsMobile(breakpoint = 768) {
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= breakpoint)
-  useEffect(() => {
-    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`)
-    const handler = e => setIsMobile(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [breakpoint])
-  return isMobile
 }
 
 export default function ImmersionReader({ article, onBack, isRead, onMarkRead }) {

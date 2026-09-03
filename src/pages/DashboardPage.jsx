@@ -1,23 +1,11 @@
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import ModuleCard from '../components/ModuleCard.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { FONT, TRACKING, TEXT, FS_BASE } from '../data/theme.js'
 import { MODULES } from '../data/modules.js'
-
-
-function useIsMobile(breakpoint = 768) {
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= breakpoint)
-  useEffect(() => {
-    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`)
-    const handler = e => setIsMobile(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [breakpoint])
-  return isMobile
-}
-
+import { useIsMobile } from '../hooks/useIsMobile.js'
 
 export default function DashboardPage() {
   const gridRef = useRef(null)

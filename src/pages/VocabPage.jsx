@@ -37,6 +37,7 @@ import { useToast } from '../context/ToastContext.jsx'
 import { AUDIO_SOURCE_OPTIONS, DEFAULT_AUDIO_SOURCE, getVoicevoxAudioUrl, getVoicevoxCredit, speakerIdFromAudioSource } from '../utils/voicevoxAudio.js'
 import AttributionFooter from '../components/AttributionFooter.jsx'
 import { renderAttributionSegments } from '../utils/attributionSegments.jsx'
+import { useIsMobile } from '../hooks/useIsMobile.js'
 
 const ACCENT = '#3ABDA4'
 const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
@@ -83,17 +84,6 @@ function shortPos(raw) {
 
 function defaultSelectedSource() {
   return safeLocalStorageGet('vocab-selected-source') ?? WORD_SOURCES[0].id
-}
-
-function useIsMobile(breakpoint = 768) {
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= breakpoint)
-  useEffect(() => {
-    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`)
-    const handler = e => setIsMobile(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [breakpoint])
-  return isMobile
 }
 
 function useIsShort(breakpoint = 680) {

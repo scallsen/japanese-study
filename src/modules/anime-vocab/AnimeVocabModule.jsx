@@ -22,22 +22,13 @@ import { SENTENCE_SOURCE_OPTIONS, DEFAULT_SENTENCE_SOURCE } from '../../data/sen
 import { FONT, TRACKING, FS_BASE } from '../../data/theme.js'
 import { MODULES } from '../../data/modules.js'
 import { ModuleThemeProvider, useAccent } from '../../context/ModuleThemeContext.jsx'
+import { useIsMobile } from '../../hooks/useIsMobile.js'
 
 const ANIME_ACCENT = MODULES.find(m => m.id === 'anime-vocab').accent
 
 // Duplicated per-file (matches this module's own established convention —
 // see e.g. GrammarMapModule.jsx, VocabSrsModule.jsx, StoryModule.jsx — each
 // self-contained module keeps its own small copy rather than a shared hook).
-function useIsMobile(breakpoint = 768) {
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= breakpoint)
-  useEffect(() => {
-    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`)
-    const handler = e => setIsMobile(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [breakpoint])
-  return isMobile
-}
 
 // Self-contained module: anime lookup -> episode list -> episode vocab browser
 // -> one-off drill, all as in-component state under a single #/anime-vocab

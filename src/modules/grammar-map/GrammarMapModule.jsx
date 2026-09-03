@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { ReactFlow, Background, Controls, MarkerType } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import PageHeader from '../../components/PageHeader.jsx'
@@ -9,6 +9,7 @@ import { GRAMMAR_NODES } from './grammarNodes.js'
 import { computeGroupedLayout } from './layout.js'
 import GrammarNode from './GrammarNode.jsx'
 import GrammarGroupNode from './GrammarGroupNode.jsx'
+import { useIsMobile } from '../../hooks/useIsMobile.js'
 
 const ACCENT = '#8B7CF8'
 const STORAGE_KEY = 'grammar-map-known'
@@ -16,17 +17,6 @@ const nodeTypes = { grammarNode: GrammarNode, grammarGroup: GrammarGroupNode }
 const PANEL_W = 380
 const CHEVRON_W = 28
 const PANEL_CONTENT_W = PANEL_W - CHEVRON_W
-
-function useIsMobile(breakpoint = 768) {
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= breakpoint)
-  useEffect(() => {
-    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`)
-    const handler = e => setIsMobile(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [breakpoint])
-  return isMobile
-}
 
 function loadKnown() {
   try { return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')) }
@@ -38,7 +28,6 @@ function saveKnown(set) {
 }
 
 const CORE_LEVELS = new Set(['N5', 'N4'])
-
 
 export default function GrammarMapModule() {
   const { user, signIn, loading: authLoading } = useAuth()
