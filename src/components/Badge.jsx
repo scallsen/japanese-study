@@ -1,4 +1,4 @@
-import { FONT, TRACKING, FS_BADGE, TEXT_MUTED } from '../data/theme.js'
+import { FONT, TRACKING, FS_BADGE, TEXT_MUTED, SUCCESS, WARNING, DANGER } from '../data/theme.js'
 import { useAccent } from '../context/ModuleThemeContext.jsx'
 
 // Small classification pill — JLPT level, part-of-speech, difficulty, SRS
@@ -22,9 +22,9 @@ export default function Badge({ tone = 'neutral', variant = 'fill', accent, dimm
   const moduleAccent = useAccent(accent)
   const TONE_COLORS = {
     accent: moduleAccent,
-    success: '#4ade80',
-    warning: '#fbbf24',
-    danger: '#f87171',
+    success: SUCCESS,
+    warning: WARNING,
+    danger: DANGER,
     neutral: TEXT_MUTED,
   }
   const color = TONE_COLORS[tone] ?? TONE_COLORS.neutral

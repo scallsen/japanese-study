@@ -58,6 +58,15 @@ export const SPACE_16 = 16  // standard card/section padding
 export const SPACE_24 = 24  // page-level padding, section separation
 export const SPACE_32 = 32  // large section breaks
 
+// Semantic tones (Tailwind-derived light tints for dark text — see the
+// DRILL_COLORS note below for why the drill palette is NOT these). Badge and
+// Button read these; Story's grading result and error lines are the first
+// non-component consumers, replacing a module red and the core teal that had
+// been standing in for "wrong" and "right".
+export const SUCCESS = '#4ade80'
+export const WARNING = '#fbbf24'
+export const DANGER = '#f87171'
+
 // ── Component colour sets ────────────────────────────────────────────────
 // These live here rather than in their components so every colour the app
 // uses is declared in one file, and so the components themselves stay

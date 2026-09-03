@@ -1,7 +1,7 @@
 import { TokenizedBody } from '../../components/JapaneseReader.jsx'
 import { parseDialogue } from './parseDialogue.js'
-import { FONT, TRACKING, BORDER, TEXT, TEXT_MUTED, FS_BASE } from '../../data/theme.js'
-import { KANJI_FONT, SURFACE } from './storyUI.jsx'
+import { FONT, KANJI_FONT, TRACKING, BORDER, TEXT, TEXT_MUTED, FS_BASE } from '../../data/theme.js'
+import { SURFACE } from './storyUI.jsx'
 
 const MINCHO = "'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif CJK JP', serif"
 const LINE_FONT = "-apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', 'Segoe UI', sans-serif"

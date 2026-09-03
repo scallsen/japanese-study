@@ -161,12 +161,16 @@ button, input, select, textarea {
   transition: border-color 120ms, background 120ms;
 }
 
+/* !important: TextInput sets its border inline (the variant needs it), and
+   inline beats a class — neither of these rules had ever actually applied. */
 .text-input:hover:not(:disabled) {
-  border-color: rgba(255,255,255,0.25);
+  border-color: rgba(255,255,255,0.25) !important;
 }
 
-.text-input:focus {
-  border-color: rgba(58,189,164,0.55);
+.text-input:focus:not(:disabled) {
+  /* --focus-ring is the module accent, set inline by TextInput. The :not()
+     keeps this at the hover rule's specificity so focus wins while hovered. */
+  border-color: var(--focus-ring, rgba(58,189,164,0.55)) !important;
 }
 
 .text-input::placeholder {
@@ -203,6 +207,14 @@ button, input, select, textarea {
 }
 
 /* FeedCard */
+.feed-card {
+  transition: background 120ms, border-color 120ms;
+}
+
+.feed-card:hover {
+  background: #313131;
+}
+
 /* TokenizedBody words. Colours come from CSS variables set inline on the
    wrapper so each reader/layout can theme them; !important because the
    token sets its own inline background for the active (popup-open) state. */
@@ -213,15 +225,6 @@ button, input, select, textarea {
 .reader-token--vocab:hover {
   background: var(--reader-vocab) !important;
 }
-
-.feed-card {
-  transition: background 120ms, border-color 120ms;
-}
-
-.feed-card:hover {
-  background: #313131;
-}
-
 
 /* DrillButton — moved here from FlipCard.css, where it was only loaded when
    a FlipCard happened to be mounted. It's a shared button style, not a
@@ -276,18 +279,6 @@ button, input, select, textarea {
   background: rgba(58,189,164,0.15);
 }
 
-.story-btn {
-  transition: filter 120ms, background 120ms, border-color 120ms;
-}
-
-.story-btn:hover:not(:disabled) {
-  filter: brightness(1.2);
-}
-
-.story-btn:active:not(:disabled) {
-  filter: brightness(0.92);
-}
-
 .done-btn {
   transition: filter 120ms, background 120ms, border-color 120ms;
 }
@@ -313,27 +304,6 @@ button, input, select, textarea {
 
 .done-btn-neutral:active:not(:disabled) {
   background: rgba(255,255,255,0.06) !important;
-}
-
-.story-field {
-  transition: border-color 120ms, background 120ms;
-}
-
-.story-field:hover:not(:disabled) {
-  border-color: #4a4a4a;
-}
-
-.story-field:focus {
-  border-color: #cc8a3d;
-  outline: none;
-}
-
-.story-recent-card {
-  transition: background 120ms;
-}
-
-.story-recent-card:hover {
-  background: #313131;
 }
 
 .srs-browse-row:hover {

@@ -1,5 +1,6 @@
 import { forwardRef } from 'react'
 import { FONT, TEXT, FS_BASE, SPACE_4, SPACE_8, SPACE_12, SPACE_16 } from '../data/theme.js'
+import { useAccent } from '../context/ModuleThemeContext.jsx'
 
 // Reconciled from the four real text inputs in the app: MediaSearch's
 // prominent search box (lg), DeckPickerSheet's "Deck name" field (md),
@@ -50,6 +51,9 @@ const TextInput = forwardRef(function TextInput({
   style,
   ...rest
 }, ref) {
+  // The focus ring lives in global.css but must be the module accent, so it
+  // travels as a CSS variable — the same decision-#8 gap Button/Badge had.
+  const accent = useAccent()
   return (
     <input
       {...rest}
@@ -74,6 +78,7 @@ const TextInput = forwardRef(function TextInput({
         letterSpacing: 'normal',
         outline: 'none',
         opacity: disabled ? 0.4 : 1,
+        '--focus-ring': `${accent}8c`,
         ...style,
       }}
     />

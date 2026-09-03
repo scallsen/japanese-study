@@ -1,8 +1,6 @@
 import { forwardRef } from 'react'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, SPACE_8, SPACE_16, SPACE_24 } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, SPACE_8, SPACE_16, SPACE_24, DANGER } from '../data/theme.js'
 import { useAccent } from '../context/ModuleThemeContext.jsx'
-
-const DANGER = '#f87171'
 
 // Reconciled from the real variants already in use across the app —
 // ConfirmDialog, WordImportPanel, VocabSrsModule, DeckComboBox, etc. each

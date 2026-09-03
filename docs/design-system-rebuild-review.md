@@ -80,3 +80,62 @@ Files: `ImmersionModule.jsx`, `ImmersionReader.jsx`, plus the shared
 - Not migrated, on purpose: article title/date typography, the
   "Recent reading — N items" line, `WordPopup` internals (already on
   Popover + OptionPicker + Button from the first build).
+
+## Story (`design-system/story`)
+
+Files: `StoryModule.jsx`, `StoryReviewPage.jsx`, `storyUI.jsx` (now just
+`BG`/`SURFACE`), `storyFieldStyles.js` (now just `labelStyle`). The six
+format layouts in `StoryLayouts.jsx` are untouched — they're content
+presentation (newspaper, chat bubbles, postcard), not UI chrome.
+
+- **[NEW] `KANJI_FONT` token in `theme.js`.** Declared identically in five
+  files. Pure dedup, all call sites migrated.
+- **[NEW] `SUCCESS` / `WARNING` / `DANGER` tokens in `theme.js`.** The
+  semantic tones existed only as literals inside `Badge` and `Button`.
+  Story was colouring "Correct" with the *core teal* and errors with
+  *Immersion's red* — module colours standing in for semantics. Badge and
+  Button now import the tokens (no visual change); Story's grading result
+  and error lines use them.
+- **[CHANGED] `Select` — `size` prop (`sm` default, `md`) and grouped
+  options.** `sm` is the settings-drawer control it was extracted from;
+  `md` matches TextInput's md padding so a select and an input sit level in
+  a form. Story's generator form is the first place a select is a primary
+  form field, not a drawer row. An option shaped `{ label, options: [...] }`
+  renders as a native `<optgroup>` — the vocabulary-source picker groups
+  sublists under their source and SRS decks under their own heading. Five
+  existing callers untouched (default size, flat options).
+  **[INPUT]** `Select`'s text stays `rgba(255,255,255,0.65)` at both sizes.
+  In a drawer the value is secondary; in Story's form it's the main content
+  and reads slightly dim next to a `TextInput` (which uses `TEXT`). Left as
+  is rather than making colour depend on size — your call whether md should
+  brighten.
+- **[CHANGED] `TextInput` — focus ring is now the module accent**, passed as
+  a `--focus-ring` CSS variable (same trick as `TokenizedBody`). In doing so
+  found that neither the hover nor focus border rule had **ever** applied —
+  the inline `border` outranked both (the documented gotcha). Both now
+  `!important`; focus uses `:focus:not(:disabled)` so it matches hover's
+  specificity and wins while the pointer is still over the field.
+- **[INPUT] Story's local `Button` → shared `Button`.** The old primary was
+  the accent with *dark* (`#1E1E1E`) text; the shared primary is accent with
+  white text. Padding `10px 18px` → md `8px 16px`. "Generate" and "Check"
+  are `primary`, "Preview context" / "New content" are `neutral`.
+- **[INPUT] `RecentCard` → `FeedCard`.** Title font changes from
+  `KANJI_FONT` to `FONT` (the open "Feed card title font" question in
+  CLAUDE.md — both cards show Japanese titles, so this is the moment to
+  decide it app-wide).
+- **[INPUT] Story's `Field` (caption label above a control) kept as a local
+  helper.** `Select` has a `subtext` slot that renders identically above the
+  control, but it's named/documented as a field *description*, not a label.
+  Using it for labels would be a naming lie; a proper `label` slot on
+  `Select`/`TextInput` is the cleaner fix if forms recur (Vocab SRS's
+  import panel is the next one).
+- Dropped `StoryReviewPage`'s explicit `vocabHighlight="rgba(204,138,61,0.25)"`
+  for the plain-text layout — the ambient default is now the same orange at
+  0.22.
+- Deleted `.story-btn`, `.story-field`, `.story-recent-card` CSS.
+- **Pre-existing bug observed (not fixed, not UI):** the context preview
+  shows "— undefined" for most words. `buildLearnerContext` reads
+  `w.english`, but most Vocab Drill words now carry only `jmdictId` (the
+  dictionary is the source of truth), so the LLM prompt literally contains
+  "undefined" for them. Needs an async dictionary resolve in
+  `learnerContext.js`; out of scope for this pass.

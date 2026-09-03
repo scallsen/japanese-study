@@ -3,10 +3,15 @@ import PageHeader from '../../components/PageHeader.jsx'
 import AuthSlot from '../../components/AuthSlot.jsx'
 import { TokenizedBody, WordPopup } from '../../components/JapaneseReader.jsx'
 import { NewspaperLayout, ChatLayout, DiaryLayout, InterviewLayout, LetterLayout, PostcardLayout } from './StoryLayouts.jsx'
-import { Button, KANJI_FONT, BG, SURFACE } from './storyUI.jsx'
-import { fieldStyle } from './storyFieldStyles.js'
+import Button from '../../components/Button.jsx'
+import TextInput from '../../components/TextInput.jsx'
+import Card from '../../components/Card.jsx'
+import ToggleButton from '../../components/ToggleButton.jsx'
+import { BG } from './storyUI.jsx'
 import { buildVocabMap } from '../../utils/vocabMap.js'
-import { FONT, TRACKING, BORDER, TEXT, TEXT_MUTED, FS_ARTICLE_BODY, FS_BASE, FS_CAPTION, FS_HEADING, FS_CONTENT_HEADING } from '../../data/theme.js'
+import { FONT, KANJI_FONT, TRACKING, TEXT, TEXT_MUTED, FS_ARTICLE_BODY, FS_BASE, FS_CAPTION, FS_HEADING, FS_CONTENT_HEADING, SUCCESS, DANGER } from '../../data/theme.js'
+import { MODULES } from '../../data/modules.js'
+import { ModuleThemeProvider } from '../../context/ModuleThemeContext.jsx'
 // Cross-module write: creates cards in vocab-srs progress namespace (same pattern as ImmersionReader)
 import { createCard } from '../vocab-srs/srs.js'
 import { ensureDeck, createDeck, deleteCards } from '../vocab-srs/deckUtils.js'
@@ -16,6 +21,8 @@ import { supabase } from '../../lib/supabase.js'
 import { gradeAnswer } from './api.js'
 import { lookupVocabulary } from './lookupVocabulary.js'
 import { useIsMobile } from '../../hooks/useIsMobile.js'
+
+const STORY_ACCENT = MODULES.find(m => m.id === 'story').accent
 
 const FORMAT_LAYOUTS = {
   news: NewspaperLayout,
@@ -47,26 +54,26 @@ function Question({ q, index }) {
   }
 
   return (
-    <div style={{ background: SURFACE, border: `1px solid ${BORDER}`, borderRadius: 6, padding: 16, marginBottom: 12 }}>
+    <Card style={{ marginBottom: 12 }}>
       <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: 6 }}>Question {index + 1}</div>
       <div style={{ fontFamily: KANJI_FONT, fontSize: 17, lineHeight: 1.7, marginBottom: 12 }}>{q.question}</div>
       <div style={{ display: 'flex', gap: 8 }}>
-        <input
+        <TextInput
           value={answer}
-          onChange={e => setAnswer(e.target.value)}
+          onChange={setAnswer}
           onKeyDown={e => { if (e.key === 'Enter') check() }}
           placeholder="Type your answer in Japanese"
           disabled={state.status === 'done'}
-          className="story-field" style={{ ...fieldStyle, fontFamily: KANJI_FONT, flex: 1 }}
+          style={{ fontFamily: KANJI_FONT, flex: 1 }}
         />
-        <Button onClick={check} disabled={!answer.trim() || state.status !== 'idle'} primary>
+        <Button onClick={check} disabled={!answer.trim() || state.status !== 'idle'}>
           {state.status === 'grading' ? 'Grading…' : 'Check'}
         </Button>
       </div>
-      {state.error && <div style={{ marginTop: 10, fontSize: FS_CAPTION, color: '#E05A4E' }}>{state.error}</div>}
+      {state.error && <div style={{ marginTop: 10, fontSize: FS_CAPTION, color: DANGER }}>{state.error}</div>}
       {state.status === 'done' && (
         <div style={{ marginTop: 12, fontSize: FS_BASE, lineHeight: 1.5 }}>
-          <span style={{ color: state.pass ? '#3ABDA4' : '#E05A4E' }}>
+          <span style={{ color: state.pass ? SUCCESS : DANGER }}>
             {state.pass ? 'Correct' : 'Not quite'}
           </span>
           <span style={{ color: TEXT_MUTED }}> — {state.feedback}</span>
@@ -77,11 +84,19 @@ function Question({ q, index }) {
           )}
         </div>
       )}
-    </div>
+    </Card>
   )
 }
 
 export default function StoryReviewPage({ storyId }) {
+  return (
+    <ModuleThemeProvider accent={STORY_ACCENT}>
+      <StoryReview storyId={storyId} />
+    </ModuleThemeProvider>
+  )
+}
+
+function StoryReview({ storyId }) {
   const isMobile = useIsMobile()
   const { data: srsData, save: saveSrs } = useProgress('vocab-srs')
   const { showToast } = useToast()
@@ -212,26 +227,14 @@ export default function StoryReviewPage({ storyId }) {
             )}
             <div style={{ display: 'flex', gap: 10, marginLeft: 'auto' }}>
               {hasTokens && (
-                <button
-                  className="story-btn"
+                <ToggleButton
+                  active={showFurigana}
+                  labels={{ on: 'Hide furigana', off: 'Show furigana' }}
+                  activeTone="neutral"
                   onClick={() => setShowFurigana(f => !f)}
-                  style={{
-                    fontSize: FS_BASE,
-                    fontFamily: FONT,
-                    letterSpacing: TRACKING,
-                    color: showFurigana ? TEXT : TEXT_MUTED,
-                    background: showFurigana ? 'rgba(255,255,255,0.08)' : 'transparent',
-                    border: `1px solid ${showFurigana ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)'}`,
-                    borderRadius: 4,
-                    padding: '3px 12px',
-                    cursor: 'pointer',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {showFurigana ? 'Hide furigana' : 'Show furigana'}
-                </button>
+                />
               )}
-              <Button onClick={() => { window.location.hash = '#/story' }}>New content</Button>
+              <Button variant="neutral" onClick={() => { window.location.hash = '#/story' }}>New content</Button>
             </div>
           </div>
           <div style={{ marginBottom: 40 }}>
@@ -262,7 +265,6 @@ export default function StoryReviewPage({ storyId }) {
                       onWordClick={handleWordClick}
                       showFurigana={showFurigana}
                       activeIdx={popup?.idx ?? null}
-                      vocabHighlight="rgba(204,138,61,0.25)"
                     />
                   )
                   : story.story}
