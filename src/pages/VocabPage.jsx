@@ -12,7 +12,7 @@ import DataList from '../components/DataList.jsx'
 import SpeedModeControls from '../components/SpeedModeControls.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import SpeakerIcon from '../components/SpeakerIcon.jsx'
-import HeaderMenu from '../components/HeaderMenu.jsx'
+import HeaderMenu, { HeaderMenuButton } from '../components/HeaderMenu.jsx'
 import SettingsSidebar from '../components/SettingsSidebar.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_BADGE, FS_ENTRY_WORD, FS_STAT_VALUE, FS_DISPLAY_HEADING, KANJI_FONT, WARNING } from '../data/theme.js'
 import { MODULES } from '../data/modules.js'
@@ -1095,20 +1095,7 @@ function VocabPageScreens() {
             }
             rightSlot={<HeaderMenu
               primary={
-                <button
-                  onClick={() => setShowOptions(v => !v)}
-                  className="header-menu-btn"
-                  style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    height: 34, padding: '0 12px', fontSize: FS_BASE,
-                    fontFamily: 'inherit',
-                    color: 'rgba(255,255,255,0.7)',
-                    border: '1px solid rgba(255,255,255,0.2)',
-                    borderRadius: 8, cursor: 'pointer',
-                  }}
-                >
-                  Options
-                </button>
+                <HeaderMenuButton onClick={() => setShowOptions(v => !v)}>Options</HeaderMenuButton>
               }
               items={[
                 {

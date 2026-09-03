@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import PageHeader from '../components/PageHeader.jsx'
+import Button from '../components/Button.jsx'
 import Toast from '../components/Toast.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_CONTENT_HEADING, FS_HEADING } from '../data/theme.js'
 
@@ -19,17 +20,9 @@ function Section({ title, description, onTrigger, log }) {
     <div style={{ background: SURFACE, border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: 24, marginBottom: 24 }}>
       <div style={{ fontSize: FS_HEADING, color: TEXT, marginBottom: 6 }}>{title}</div>
       <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginBottom: 16, lineHeight: 1.5, maxWidth: 560 }}>{description}</div>
-      <button
-        onClick={onTrigger}
-        className="done-btn"
-        style={{
-          padding: '8px 16px', fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING,
-          background: 'rgba(58,189,164,0.15)', border: '1px solid rgba(58,189,164,0.4)',
-          borderRadius: 6, color: ACCENT, cursor: 'pointer', marginBottom: log ? 10 : 0,
-        }}
-      >
-        Trigger toast
-      </button>
+      <div style={{ marginBottom: log ? 10 : 0 }}>
+        <Button variant="accent-outline" onClick={onTrigger}>Trigger toast</Button>
+      </div>
       {log && <div style={{ fontSize: FS_CAPTION, color: ACCENT }}>{log}</div>}
     </div>
   )

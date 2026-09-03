@@ -211,3 +211,78 @@ owns (`SpeedModeControls`, `SettingsSidebar`, `HeaderMenu`).
   "collapsible accordion" of `SelectButton`s — that's stale, the real UI has
   been a `Select` + sublist tile grid for a while. Fixing in the final docs
   pass.
+
+## Vocab SRS (`design-system/vocab-srs`)
+
+Files: `VocabSrsModule.jsx`, `VocabSrsDrill.jsx`, `VocabSrsBrowsePage.jsx`,
+`WordImportPanel.jsx`, new `cardStates.js`. Accent is unchanged (the
+`modules.js` entry is the same teal the page had hardcoded).
+
+**⚠ Verification caveat.** This module is sign-in gated and I can't drive
+GitHub OAuth. I tried a temporary dev-only `useAuth` stub to exercise the
+screens against localStorage and the permission classifier blocked editing
+`AuthContext` — correctly, so I didn't work around it. The `SignInGate` is
+verified live; the home, drill, browse and import screens are verified by
+lint/build/tests and a line-by-line read of the diff only. **Please click
+through them first when you review** — this is the one module where a
+runtime surprise is possible.
+
+- **[NEW] `SignInGate`** — full-page "sign in to use this" screen. The
+  Module and Browse page rendered the identical block with a hand-styled
+  accent button; now one component with the shared primary Button.
+- **[NEW] `FileButton`** — a `Button` that opens a file picker (hidden
+  input, `accept`/`capture` pass-through, value reset so re-picking the same
+  file fires). Replaces the Module's `FileInput` and the import panel's
+  `FileTrigger`, which were the same label-wrapping-an-input.
+- **[NEW] `HeaderMenuButton`** (named export from `HeaderMenu.jsx`) — the
+  "Options" text pill that VocabPage, VocabSrsModule and VocabSrsDrill each
+  hand-rolled (with their own useState hover). All four call sites use it.
+- **[NEW] `vocab-srs/cardStates.js`** — `STATE_SEGMENTS` / labels /
+  descriptions, which the Module and Browse page each carried a copy of.
+  Colours are `SEGMENT_COLORS` in theme.js (the Browse page had a third copy
+  of the ramp).
+- **[CHANGED] `Modal` — `size="xl"` (640).** Its own comment already noted
+  WordImportPanel's review table was wider than `lg`.
+- **[CHANGED] `DataList` — editable columns accept `placeholder`** (string
+  or `row => string`) for the import table's "no dictionary match — enter
+  meaning" hint.
+- **Module home:** `DeckProgressBar` → `DistributionBar` + a danger `Badge`
+  for the suspended count (a status, not a learning stage, so it stays out
+  of the ramp); deck On/Off → `ToggleButton`; Start review →
+  `accent-outline lg fullWidth`; daily-new / leech / advance-days →
+  `NumberField` (the component existed; these three inputs had never used
+  it); Apply / Reset → `neutral sm` / `danger-outline sm`; import buttons →
+  `FileButton` / `Button neutral`; the whole desktop-rail + mobile-overlay
+  sidebar → the shared `SettingsSidebar` (it was a verbatim copy).
+- **Drill:** `RatingButton` → `DrillButton` + `DrillButtonRow` with
+  `DRILL_COLORS` (fill opacity 0.75 → 0.85, the reconciled value the style
+  guide already shows); `AudioButton` / Undo → `Button ghost-muted sm`;
+  Done → `neutral lg`; amber literals → `WARNING`. `SrsCardFace` and
+  `KanjiMeaningBar` stay bespoke (card-face content, container-query
+  scaling).
+- **Browse page:** `StateTabs` → `ChipSelector single md` with a stacked
+  count/label node as each chip's label; state pills → `Badge` with the
+  `SEGMENT_COLORS` accent override; Delete deck / Delete (N) →
+  `danger-outline`; Select / Done selecting → `ToggleButton`; search →
+  `TextInput`; the card list → `DataList` (selection + `bulkHeader` in
+  manage mode, "Load more" in `footer`); **`DeckPickerSheet` → `DeckComboBox`**
+  for "Move to deck".
+  **[INPUT] Select-all scope changed.** The old header selected every
+  *filtered* card across pages; `DataList`'s bulk header selects the loaded
+  rows (50 per page) and counts "N of 50". To bulk-act on more, Load more
+  first. If that's wrong, `bulkHeader` needs an "all rows" override.
+- **Import panel:** hand-rolled scrim/panel → `Modal xl` (gains the mobile
+  bottom-sheet it never had); tabs → `ChipSelector`; `PrimaryButton` →
+  `accent-outline`; Back/Done → `neutral`; the review checklist →
+  `DataList` with `editableFields` + selection + `bulkHeader` (replacing the
+  Select all/none text buttons). **[INPUT]** Unselected rows used to dim to
+  0.4 opacity; DataList's selectable rows don't dim, they show the checkbox
+  and a selected background instead. **[CANDIDATE]** the paste `<textarea>`
+  stays bespoke — no multiline `TextInput` in the library.
+- **Retired and deleted:** `DeckPickerSheet.jsx`, `SegmentedDeckAdd.jsx`,
+  `DeckPickerLabPage.jsx` (+ its `#/dev/deck-picker-lab` route) and every
+  `.deck-picker-*` / `.deck-row-delete-btn` / `.deck-chip-btn` / `.srs-tab`
+  / `.srs-browse-row` / `.done-btn*` CSS rule. `ToastLabPage`'s trigger
+  button moved to `Button` since it was the last `.done-btn` user.
+- **[CANDIDATE]** The relearn countdown, the per-deck due/new breakdown
+  rows and the "N total cards" caption on the home screen stay bespoke.

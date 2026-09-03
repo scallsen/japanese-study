@@ -6,8 +6,8 @@ const HAIRLINE = 'rgba(255,255,255,0.08)'
 const EXIT_MS = 160
 
 // Real widths already in use: ConfirmDialog 380, DeckPickerSheet 420,
-// WordImportPanel's review panel is wider.
-const WIDTHS = { sm: 380, md: 420, lg: 560 }
+// WordImportPanel's review table 640 (three editable columns need the room).
+const WIDTHS = { sm: 380, md: 420, lg: 560, xl: 640 }
 
 /**
  * The scrim + panel shell every overlay in the app should mount into.

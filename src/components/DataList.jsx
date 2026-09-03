@@ -25,6 +25,7 @@ function Cell({ column, row, editable, onFieldChange }) {
         value={row[column.key] ?? ''}
         onChange={e => onFieldChange(row, column.key, e.target.value)}
         onClick={e => e.stopPropagation()}
+        placeholder={typeof column.placeholder === 'function' ? column.placeholder(row) : column.placeholder}
         style={{
           ...cellStyle(column),
           background: 'rgba(255,255,255,0.06)',
@@ -281,8 +282,10 @@ function BulkHeader({ rows, rowKey, selection, selected, allSelected, someSelect
  * box to bulk-select, click elsewhere on the row to open it. The checkbox
  * stops its own click from also firing `navigate.onClick`.
  *
- * columns: [{ key, render?(row), width?, flex?, align?, tone?: 'muted', wrap? }]
+ * columns: [{ key, render?(row), width?, flex?, align?, tone?: 'muted', wrap?, placeholder?: string | (row) => string }]
  * editableFields: string[] of column keys to render as inline text inputs
+ *   (`placeholder` applies to those — WordImportPanel hints "no dictionary
+ *   match — enter meaning" on rows the lookup couldn't fill)
  * onFieldChange: (row, key, value) => void — required if editableFields is set
  * search: { value, onChange, placeholder } — renders a search row when present
  * footer: ReactNode rendered below the rows (e.g. a primary action button)

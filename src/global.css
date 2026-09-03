@@ -81,7 +81,7 @@ button, input, select, textarea {
 }
 
 /* Button atom — colored variants (primary/accent-outline/danger-outline)
-   brighten via filter, same idiom as .done-btn/.story-btn already use.
+   brighten via filter, same idiom .verdict-btn uses.
    Neutral/ghost shift background directly since filter can't visibly
    lighten a near-transparent fill. */
 .btn {
@@ -292,45 +292,6 @@ button, input, select, textarea {
   background: rgba(0,0,0,0.20);
 }
 
-.done-btn {
-  transition: filter 120ms, background 120ms, border-color 120ms;
-}
-
-.done-btn:hover:not(:disabled) {
-  filter: brightness(1.2);
-}
-
-.done-btn:active:not(:disabled) {
-  filter: brightness(0.92);
-}
-
-/* filter: brightness() can't visibly lighten these — their background is
-   white at low alpha, already clamped near-white, so bump the alpha instead. */
-.done-btn-neutral {
-  transition: background 120ms, border-color 120ms;
-}
-
-.done-btn-neutral:hover:not(:disabled) {
-  background: rgba(255,255,255,0.14) !important;
-  border-color: rgba(255,255,255,0.25) !important;
-}
-
-.done-btn-neutral:active:not(:disabled) {
-  background: rgba(255,255,255,0.06) !important;
-}
-
-.srs-browse-row:hover {
-  background: rgba(255,255,255,0.04);
-}
-
-.srs-tab {
-  background: transparent;
-}
-
-.srs-tab:hover {
-  background: rgba(255,255,255,0.08);
-}
-
 .srs-browse-link {
   text-decoration: none;
 }
@@ -434,36 +395,3 @@ button, input, select, textarea {
   to   { transform: translate(-50%, -100%); opacity: 0; }
 }
 
-.deck-picker-row:hover {
-  background: rgba(255,255,255,0.06) !important;
-}
-
-.deck-picker-close-btn:hover {
-  color: #fff !important;
-}
-
-.deck-picker-primary-btn:hover:not(:disabled) {
-  background: rgba(58,189,164,0.28) !important;
-}
-
-.deck-picker-secondary-btn:hover {
-  background: rgba(255,255,255,0.09) !important;
-}
-
-.deck-picker-input:focus {
-  border-color: #3ABDA4 !important;
-  outline: none;
-}
-
-.deck-row-delete-btn {
-  transition: background 120ms, border-color 120ms;
-}
-
-.deck-row-delete-btn:hover {
-  background: rgba(192,57,43,0.28) !important;
-  border-color: rgba(192,57,43,0.65) !important;
-}
-
-.deck-chip-btn:hover {
-  background: rgba(58,189,164,0.18) !important;
-}

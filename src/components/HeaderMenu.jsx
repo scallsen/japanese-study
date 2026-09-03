@@ -14,6 +14,21 @@ const ghostBtn = {
   color: 'rgba(255,255,255,0.7)',
 }
 
+// The text-pill button HeaderMenu's own items use, exported for the
+// "Options" toggle every drill screen passes as `primary` — VocabPage,
+// VocabSrsModule and VocabSrsDrill each hand-rolled this exact button.
+export function HeaderMenuButton({ onClick, children }) {
+  return (
+    <button
+      onClick={onClick}
+      className="header-menu-btn"
+      style={{ ...ghostBtn, height: 34, padding: '0 12px', fontSize: FS_BASE }}
+    >
+      {children}
+    </button>
+  )
+}
+
 // items: [{ label, icon?, desktopLabel?, onClick, dim? }]
 // - icon present → renders as 34x34 icon button on desktop; icon + label in dropdown
 // - no icon → renders as text button on desktop using desktopLabel ?? label
