@@ -110,19 +110,7 @@ export default function DashboardPage() {
       letterSpacing: TRACKING,
       color: TEXT,
     }}>
-      <PageHeader crumbs={[{ label: 'Japanese Study' }]} rightSlot={<AuthSlot />}>
-        {signedOut && (
-          <div style={{
-            background: 'rgba(37, 99, 235, 0.1)',
-            borderTop: '1px solid rgba(59, 130, 246, 0.2)',
-            padding: '8px 24px',
-            fontSize: FS_BASE,
-            color: '#93C5FD',
-          }}>
-            New accounts are currently disabled. Most features are available without logging in!
-          </div>
-        )}
-      </PageHeader>
+      <PageHeader crumbs={[{ label: 'Japanese Study' }]} rightSlot={<AuthSlot />} />
 
       <main style={{
         flex: 1,
@@ -200,7 +188,10 @@ export default function DashboardPage() {
 
 // ── Primary cards ─────────────────────────────────────────────────────────────
 
-function PrimaryCard({ accent, eyebrow, title, subtitle, icon, progress, children }) {
+// `actions` is pinned to the card's bottom edge so the two cards' primary
+// buttons sit on the same line however much body content each one has;
+// `children` is the body above it and takes the slack.
+function PrimaryCard({ accent, eyebrow, title, subtitle, icon, progress, actions, children }) {
   return (
     <ModuleThemeProvider accent={accent}>
       <Card padding={SPACE_24} style={{ display: 'flex', flexDirection: 'column', gap: SPACE_16, minHeight: 250 }}>
@@ -221,8 +212,9 @@ function PrimaryCard({ accent, eyebrow, title, subtitle, icon, progress, childre
           </div>
         )}
 
-        <div style={{ flex: 1 }} />
         {children}
+        <div style={{ flex: 1, minHeight: SPACE_8 }} />
+        {actions}
       </Card>
     </ModuleThemeProvider>
   )
@@ -233,7 +225,7 @@ function PrimaryCard({ accent, eyebrow, title, subtitle, icon, progress, childre
 // null) get a plain spine-and-cover placeholder in the module accent; cards
 // with no icon at all (undefined) render no slot.
 function IconSlot({ icon, accent }) {
-  const size = 64
+  const size = 104
   if (icon) {
     return <img src={icon} alt="" style={{ width: size, height: size, flexShrink: 0, imageRendering: 'pixelated' }} />
   }
@@ -252,6 +244,18 @@ function ButtonRow({ children }) {
   return <div style={{ display: 'flex', flexWrap: 'wrap', gap: SPACE_8, alignItems: 'center' }}>{children}</div>
 }
 
+// The bottom-pinned block. Quiet links go above the primary row so the
+// primary button is always the card's last element and lines up with the
+// other card's, whichever branch either one is rendering.
+function CardActions({ links, children }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE_12 }}>
+      {links && <ButtonRow>{links}</ButtonRow>}
+      {children && <ButtonRow>{children}</ButtonRow>}
+    </div>
+  )
+}
+
 function NewCard({ loading, state, onStart, onChangeTextbook }) {
   const accent = VOCAB_MODULE.accent
 
@@ -265,11 +269,13 @@ function NewCard({ loading, state, onStart, onChangeTextbook }) {
 
   if (!state) {
     return (
-      <PrimaryCard accent={accent} eyebrow="New" title="Pick a textbook" subtitle="One book at a time, at your own pace.">
-        <ButtonRow>
-          <Button size="lg" onClick={onChangeTextbook}>Choose textbook</Button>
-        </ButtonRow>
-      </PrimaryCard>
+      <PrimaryCard
+        accent={accent}
+        eyebrow="New"
+        title="Pick a textbook"
+        subtitle="One book at a time, at your own pace."
+        actions={<CardActions><Button size="lg" onClick={onChangeTextbook}>Choose textbook</Button></CardActions>}
+      />
     )
   }
 
@@ -284,12 +290,16 @@ function NewCard({ loading, state, onStart, onChangeTextbook }) {
       subtitle={subtitle}
       icon={textbook.icon}
       progress={chapters.length ? doneCount / chapters.length : 0}
-    >
-      {!hasWords ? (
-        <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>No words for this book yet.</div>
-      ) : (
-        <ButtonRow>
-          {current.drilled && next ? (
+      actions={
+        <CardActions
+          links={
+            <>
+              <Button variant="ghost" size="sm" onClick={() => navigate('#/vocab')}>View all chapters</Button>
+              <Button variant="ghost-muted" size="sm" onClick={onChangeTextbook}>Change textbook</Button>
+            </>
+          }
+        >
+          {hasWords && (current.drilled && next ? (
             <>
               <Button size="lg" onClick={() => onStart(next)}>Start {next.label}</Button>
               <Button size="lg" variant="neutral" onClick={() => onStart(current)}>Continue {current.label}</Button>
@@ -301,13 +311,11 @@ function NewCard({ loading, state, onStart, onChangeTextbook }) {
             </>
           ) : (
             <Button size="lg" onClick={() => onStart(current)}>Start {current.label}</Button>
-          )}
-        </ButtonRow>
-      )}
-      <ButtonRow>
-        <Button variant="ghost" size="sm" onClick={() => navigate('#/vocab')}>View all chapters</Button>
-        <Button variant="ghost-muted" size="sm" onClick={onChangeTextbook}>Change textbook</Button>
-      </ButtonRow>
+          ))}
+        </CardActions>
+      }
+    >
+      {!hasWords && <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>No words for this book yet.</div>}
     </PrimaryCard>
   )
 }
@@ -325,21 +333,29 @@ function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary }) {
 
   if (signedOut) {
     return (
-      <PrimaryCard accent={accent} eyebrow="Review" title="Reviews" subtitle="Spaced repetition for the words you've studied. Sign in to sync your decks across devices.">
-        <ButtonRow>
-          <Button size="lg" onClick={onSignIn}>Sign in with GitHub</Button>
-        </ButtonRow>
-      </PrimaryCard>
+      <PrimaryCard
+        accent={accent}
+        eyebrow="Review"
+        title="Reviews"
+        subtitle="Spaced repetition for the words you've studied. Sign in to sync your decks across devices."
+        actions={<CardActions><Button size="lg" onClick={onSignIn}>Sign in with GitHub</Button></CardActions>}
+      />
     )
   }
 
   if (!summary || summary.totalCards === 0) {
     return (
-      <PrimaryCard accent={accent} eyebrow="Review" title="Reviews" subtitle="No cards yet. Finish a chapter and send its words here.">
-        <ButtonRow>
-          <Button variant="ghost" size="sm" onClick={() => navigate('#/vocab-srs')}>Manage decks</Button>
-        </ButtonRow>
-      </PrimaryCard>
+      <PrimaryCard
+        accent={accent}
+        eyebrow="Review"
+        title="Reviews"
+        subtitle="No cards yet. Finish a chapter and send its words here."
+        actions={
+          <CardActions>
+            <Button size="lg" variant="neutral" onClick={() => navigate('#/vocab-srs')}>Manage decks</Button>
+          </CardActions>
+        }
+      />
     )
   }
 
@@ -351,19 +367,23 @@ function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary }) {
   ].filter(Boolean).join(' · ')
 
   return (
-    <PrimaryCard accent={accent} eyebrow="Review" title="Reviews" subtitle={caption}>
+    <PrimaryCard
+      accent={accent}
+      eyebrow="Review"
+      title="Reviews"
+      subtitle={caption}
+      actions={
+        <CardActions links={<Button variant="ghost" size="sm" onClick={() => navigate('#/vocab-srs')}>Manage decks</Button>}>
+          <Button size="lg" disabled={!canStart} onClick={() => navigate('#/vocab-srs?start=1')}>
+            {canStart ? 'Start reviews' : 'Nothing due'}
+          </Button>
+        </CardActions>
+      }
+    >
       <div style={{ display: 'flex', gap: SPACE_24 }}>
         <Stat value={due} label="Due" />
         <Stat value={newToday} label="New today" />
       </div>
-      <ButtonRow>
-        <Button size="lg" disabled={!canStart} onClick={() => navigate('#/vocab-srs?start=1')}>
-          {canStart ? 'Start reviews' : 'Nothing due'}
-        </Button>
-      </ButtonRow>
-      <ButtonRow>
-        <Button variant="ghost" size="sm" onClick={() => navigate('#/vocab-srs')}>Manage decks</Button>
-      </ButtonRow>
     </PrimaryCard>
   )
 }
