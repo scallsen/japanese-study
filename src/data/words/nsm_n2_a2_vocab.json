@@ -32,7 +32,6 @@
     "english": "Mr./Ms. (honorific)",
     "sentence": "山川様はいらっしゃいますか？",
     "listKey": "n2-a2-w1d1",
-    "isReview": true,
     "voicevoxVoices": [
       2,
       11
@@ -45,7 +44,6 @@
     "english": "various",
     "sentence": "東京では様々な国の料理が楽しめます。",
     "listKey": "n2-a2-w1d1",
-    "isReview": true,
     "voicevoxVoices": [
       2,
       11
@@ -58,7 +56,6 @@
     "english": "important",
     "sentence": "重要データのファイルにはパスワードをかけてください。",
     "listKey": "n2-a2-w1d1",
-    "isReview": true,
     "voicevoxVoices": [
       2,
       11
@@ -110,7 +107,6 @@
     "english": "use, utilization",
     "sentence": "いつもご利用いただきありがとうございます。",
     "listKey": "n2-a2-w1d1",
-    "isReview": true,
     "voicevoxVoices": [
       2,
       11
@@ -149,7 +145,6 @@
     "english": "advantageous",
     "sentence": "資格を持っていると、就職に有利です。",
     "listKey": "n2-a2-w1d1",
-    "isReview": true,
     "voicevoxVoices": [
       2,
       11
@@ -162,7 +157,6 @@
     "english": "detailed statement",
     "sentence": "利用明細はインターネットで確認できます。",
     "listKey": "n2-a2-w1d1",
-    "isReview": true,
     "voicevoxVoices": [
       2,
       11
@@ -175,7 +169,6 @@
     "english": "fine, detailed",
     "sentence": "外は細かい雨が降っています。",
     "listKey": "n2-a2-w1d1",
-    "isReview": true,
     "voicevoxVoices": [
       2,
       11
@@ -188,7 +181,6 @@
     "english": "thin, narrow",
     "sentence": "ラーメンは細い麺のほうが好きです。",
     "listKey": "n2-a2-w1d1",
-    "isReview": true,
     "voicevoxVoices": [
       2,
       11
@@ -214,7 +206,6 @@
     "english": "enclosed (in envelope)",
     "sentence": "封筒に「申込書在中」と書いてお送りください。",
     "listKey": "n2-a2-w1d1",
-    "isReview": true,
     "voicevoxVoices": [
       2,
       11
@@ -279,7 +270,6 @@
     "english": "passenger",
     "sentence": "そのバスの事故では乗客にけがはありませんでした。",
     "listKey": "n2-a2-w1d1",
-    "isReview": true,
     "voicevoxVoices": [
       2,
       11
@@ -292,7 +282,6 @@
     "english": "customer, guest",
     "sentence": "お客様との約束には遅れないようにしましょう。",
     "listKey": "n2-a2-w1d1",
-    "isReview": true,
     "voicevoxVoices": [
       2,
       11
@@ -305,7 +294,6 @@
     "english": "picture frame",
     "sentence": "自分で描いた絵を額に入れて飾っています。",
     "listKey": "n2-a2-w1d1",
-    "isReview": true,
     "voicevoxVoices": [
       2,
       11
@@ -318,7 +306,6 @@
     "english": "picture frame",
     "sentence": "額の汗を拭きました。",
     "listKey": "n2-a2-w1d1",
-    "isReview": true,
     "voicevoxVoices": [
       2,
       11
@@ -331,7 +318,6 @@
     "english": "amount of money",
     "sentence": "明細書の合計金額を見てびっくりしました。",
     "listKey": "n2-a2-w1d1",
-    "isReview": true,
     "voicevoxVoices": [
       2,
       11
@@ -357,7 +343,6 @@
     "english": "to pay in",
     "sentence": "税金は期限までに払い込んでください。",
     "listKey": "n2-a2-w1d1",
-    "isReview": true,
     "voicevoxVoices": [
       2,
       11
@@ -396,7 +381,6 @@
     "english": "to be convinced, assume",
     "sentence": "会議は明日だと思い込んでいて欠席してしまいました。",
     "listKey": "n2-a2-w1d1",
-    "isReview": true,
     "voicevoxVoices": [
       2,
       11
@@ -409,7 +393,6 @@
     "english": "receipt",
     "sentence": "領収書をいただけますか？",
     "listKey": "n2-a2-w1d1",
-    "isReview": true,
     "voicevoxVoices": [
       2,
       11
@@ -526,7 +509,6 @@
     "english": "machine",
     "sentence": "機械化が進んで、人がする仕事が減ってきました。",
     "listKey": "n2-a2-w1d1",
-    "isReview": true,
     "voicevoxVoices": [
       2,
       11
@@ -578,7 +560,6 @@
     "english": "to bend, fold",
     "sentence": "この書類は折り曲げないで送ってください。",
     "listKey": "n2-a2-w1d1",
-    "isReview": true,
     "voicevoxVoices": [
       2,
       11
@@ -630,7 +611,6 @@
     "english": "to dirty, soil",
     "sentence": "コーヒーをこぼして服を汚してしまいました。",
     "listKey": "n2-a2-w1d1",
-    "isReview": true,
     "voicevoxVoices": [
       2,
       11
@@ -669,7 +649,6 @@
     "english": "Mr./Esq. (formal honorific)",
     "sentence": "山田一郎殿 大阪支店勤務を命じます。",
     "listKey": "n2-a2-w1d1",
-    "isReview": true,
     "voicevoxVoices": [
       2,
       11
