@@ -715,9 +715,9 @@ function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selec
       </div>
 
       <ActionBar maxWidth={680}>
-        <Button variant="neutral" disabled>Send to SRS</Button>
-        <Button variant="neutral" onClick={onGlance} disabled={!canStart}>Preview</Button>
-        <Button onClick={onStart} disabled={!canStart}>
+        <Button variant="neutral" size="xl" disabled>Send to SRS</Button>
+        <Button variant="neutral" size="xl" onClick={onGlance} disabled={!canStart}>Preview</Button>
+        <Button size="xl" onClick={onStart} disabled={!canStart}>
           Start review
           {selectedSubLists.length > 0 && (
             <span style={{ marginLeft: 8, fontSize: FS_CAPTION, opacity: 0.8 }}>

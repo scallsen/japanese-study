@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../../lib/supabase.js'
 import { syncEpisodeVocab } from './api.js'
 import { useDictionaryEntries } from '../../hooks/useDictionaryEntries.js'
@@ -6,18 +6,15 @@ import { briefGloss } from '../../utils/dictionaryEntryLookup.js'
 import { useProgress } from '../../hooks/useProgress.js'
 import { migrateProgress } from '../vocab-srs/migrate.js'
 import { buildJmdictIdCardIndex, resolveStatus } from './srsStatusResolver.js'
-import NumberField from '../../components/NumberField.jsx'
 import Button from '../../components/Button.jsx'
-import TextInput from '../../components/TextInput.jsx'
 import DataList from '../../components/DataList.jsx'
 import ActionBar from '../../components/ActionBar.jsx'
 import Badge from '../../components/Badge.jsx'
 import { Chip, default as ChipSelector } from '../../components/Chip.jsx'
-import Checkbox from '../../components/Checkbox.jsx'
-import Card from '../../components/Card.jsx'
+import FilterCard, { FilterRow } from '../../components/FilterCard.jsx'
 import CenteredLoadingMessage from '../../components/CenteredLoadingMessage.jsx'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_LIST_TITLE, KANJI_FONT } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE, KANJI_FONT } from '../../data/theme.js'
 import { useAccent } from '../../context/ModuleThemeContext.jsx'
 
 const DEFAULT_WORD_LIMIT = 20
@@ -78,43 +75,6 @@ const WORD_COLUMNS = [
 ]
 
 
-// Native checkboxes don't expose an "indeterminate" prop — it can only be set
-// as a DOM property, hence the ref + effect instead of a plain <input>.
-function SelectAllCheckbox({ checked, indeterminate, onChange }) {
-  const ACCENT = useAccent()
-  const ref = useRef(null)
-  useEffect(() => {
-    if (ref.current) ref.current.indeterminate = indeterminate
-  }, [indeterminate])
-  return (
-    <input
-      ref={ref}
-      type="checkbox"
-      checked={checked}
-      onChange={onChange}
-      style={{ flexShrink: 0, width: 16, height: 16, accentColor: ACCENT }}
-    />
-  )
-}
-
-function CaretButton({ open, onClick }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={open ? 'Collapse bulk select' : 'Expand bulk select'}
-      style={{ background: 'none', border: 'none', padding: 2, cursor: 'pointer', display: 'flex', alignItems: 'center', flexShrink: 0 }}
-    >
-      <span style={{
-        color: TEXT_MUTED, fontSize: '1.1rem', display: 'inline-block',
-        transform: open ? 'rotate(90deg)' : 'none', transition: 'transform 150ms',
-      }}>
-        ›
-      </span>
-    </button>
-  )
-}
-
 export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLoadingChange }) {
   const ACCENT = useAccent()
   const [occurrences, setOccurrences] = useState([])
@@ -140,8 +100,6 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
   // filter changes keep re-selecting the top DEFAULT_WORD_LIMIT eligible
   // words so the list isn't empty on first load.
   const [selectionTouched, setSelectionTouched] = useState(false)
-  const [bulkOpen, setBulkOpen] = useState(false)
-  const [bulkCountInput, setBulkCountInput] = useState(String(DEFAULT_WORD_LIMIT))
 
   const { data: srsData } = useProgress('vocab-srs')
   const cardIndex = useMemo(() => buildJmdictIdCardIndex(migrateProgress(srsData)), [srsData])
@@ -197,6 +155,30 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
   )
   const knownCount = useMemo(() => candidateRows.filter(r => r.status === 'young' || r.status === 'mature').length, [candidateRows])
 
+  // The four filter checkboxes as one multi-select chip row — independent
+  // toggles, so the Set ChipSelector hands back on each click can be
+  // decomposed straight into the four booleans, no diffing needed (unlike
+  // MediaSearch's Difficulty row, which has its own "snap back to All when
+  // empty" behavior).
+  const filterOptions = [
+    { value: 'grammar', label: `Grammar words (${grammarCount})` },
+    { value: 'names', label: `Names (${namesCount})` },
+    { value: 'generic', label: `Very common words (${genericCount})` },
+    { value: 'known', label: `Known (${knownCount})` },
+  ]
+  const filterValue = new Set([
+    includeGrammar && 'grammar',
+    includeNames && 'names',
+    includeGeneric && 'generic',
+    includeKnown && 'known',
+  ].filter(Boolean))
+  function handleFilterChange(next) {
+    setIncludeGrammar(next.has('grammar'))
+    setIncludeNames(next.has('names'))
+    setIncludeGeneric(next.has('generic'))
+    setIncludeKnown(next.has('known'))
+  }
+
   const eligible = useMemo(() =>
     candidateRows
       .filter(r => includeGrammar || !r.is_grammar)
@@ -230,32 +212,6 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
       if (next.has(id)) next.delete(id); else next.add(id)
       return next
     })
-  }
-
-  const allEligibleSelected = eligible.length > 0 && eligible.every(r => selected.has(r.id))
-  const someEligibleSelected = eligible.some(r => selected.has(r.id))
-
-  function toggleSelectAll() {
-    setSelectionTouched(true)
-    setSelected(allEligibleSelected ? new Set() : new Set(eligible.map(r => r.id)))
-  }
-
-  function toggleBulkOpen() {
-    setBulkOpen(open => {
-      if (!open) setBulkCountInput(String(Math.max(1, selected.size || DEFAULT_WORD_LIMIT)))
-      return !open
-    })
-  }
-
-  function handleCancelBulk() {
-    setBulkOpen(false)
-  }
-
-  function handleConfirmBulk() {
-    const n = Math.max(1, Math.min(Number(bulkCountInput) || 1, eligible.length || 1))
-    setSelectionTouched(true)
-    setSelected(new Set(eligible.slice(0, n).map(r => r.id)))
-    setBulkOpen(false)
   }
 
   function handleStartDrill() {
@@ -300,10 +256,9 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
         </div>
       </div>
 
-      <Card padding="14px 16px" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: FS_LIST_TITLE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>Minimum JLPT level</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <FilterCard>
+        <FilterRow key="jlpt" label="JLPT level">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             <Chip label="Any level" active={minJlptLevel === 'any'} onClick={() => setMinJlptLevel('any')} />
             <ChipSelector
               options={JLPT_CHIP_OPTIONS}
@@ -313,68 +268,27 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
               thresholdDirection="forward"
             />
           </div>
-        </div>
-        <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 12 }}>
-          <div style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 10 }}>
-            Filter words
-          </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
-            <Checkbox label={`Grammar words (${grammarCount})`} checked={includeGrammar} onChange={() => setIncludeGrammar(v => !v)} />
-            <Checkbox label={`Names (${namesCount})`} checked={includeNames} onChange={() => setIncludeNames(v => !v)} />
-            <Checkbox label={`Very common words (${genericCount})`} checked={includeGeneric} onChange={() => setIncludeGeneric(v => !v)} />
-            <Checkbox label={`Known (${knownCount})`} checked={includeKnown} onChange={() => setIncludeKnown(v => !v)} />
-          </div>
-        </div>
-      </Card>
+        </FilterRow>
+        <FilterRow key="filter" label="Filter">
+          <ChipSelector mode="multi" options={filterOptions} value={filterValue} onChange={handleFilterChange} />
+        </FilterRow>
+      </FilterCard>
 
-      <div style={{ background: '#2A2A2A', borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
-        <div style={{ padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-          <TextInput value={lookupQuery} onChange={setLookupQuery} placeholder="Look up a word from this episode..." variant="bare" />
-        </div>
-        {lookupQuery.trim() && displayedRows.length === 0 ? (
-          <div style={{ padding: '10px 14px', fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-            No match in this episode — try <a href="#/dictionary" style={{ color: ACCENT }}>the full dictionary search</a>.
-          </div>
-        ) : (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-            <SelectAllCheckbox checked={allEligibleSelected} indeterminate={!allEligibleSelected && someEligibleSelected} onChange={toggleSelectAll} />
-            <CaretButton open={bulkOpen} onClick={toggleBulkOpen} />
-            {!bulkOpen ? (
-              <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-                {selected.size} of {eligible.length} selected
-              </span>
-            ) : (
-              <>
-                <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>Select first</span>
-                <NumberField
-                  value={Number(bulkCountInput) || ''}
-                  onChange={v => setBulkCountInput(String(v))}
-                  min={1}
-                  max={Math.max(eligible.length, 1)}
-                  width={56}
-                />
-                <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>words</span>
-                <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, flexShrink: 0 }}>
-                  <Button variant="neutral" onClick={handleCancelBulk}>Cancel</Button>
-                  <Button variant="primary" onClick={handleConfirmBulk}>Confirm</Button>
-                </div>
-              </>
-            )}
-          </div>
-        )}
-      </div>
-
-      {displayedRows.length > 0 && (
-        <DataList
-          columns={WORD_COLUMNS}
-          rows={displayedRows}
-          selection={{ selected, onToggle: toggleRow }}
-          maxWidth="100%"
-        />
-      )}
+      <DataList
+        columns={WORD_COLUMNS}
+        rows={displayedRows}
+        selection={{ selected, onToggle: toggleRow, bulkHeader: { selectFirst: true } }}
+        search={{ value: lookupQuery, onChange: setLookupQuery, placeholder: 'Look up a word from this episode...' }}
+        emptyMessage={
+          lookupQuery.trim()
+            ? <>No match in this episode — try <a href="#/dictionary" style={{ color: ACCENT }}>the full dictionary search</a>.</>
+            : 'No words match these filters.'
+        }
+        maxWidth="100%"
+      />
 
       <ActionBar>
-        <Button variant="primary" size="lg" onClick={handleStartDrill} disabled={selected.size === 0}>
+        <Button variant="primary" size="xl" onClick={handleStartDrill} disabled={selected.size === 0}>
           Start Drill ({selected.size})
         </Button>
       </ActionBar>
