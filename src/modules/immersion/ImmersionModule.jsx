@@ -8,14 +8,15 @@ import ImmersionReader from './ImmersionReader.jsx'
 import { supabase } from '../../lib/supabase.js'
 import { useProgress } from '../../hooks/useProgress.js'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
+import { useAuth } from '../../context/AuthContext.jsx'
 import { MODULES } from '../../data/modules.js'
 import { ModuleThemeProvider } from '../../context/ModuleThemeContext.jsx'
 import { FONT, TRACKING, TEXT_MUTED, FS_BASE } from '../../data/theme.js'
+import { SOURCE_LABEL } from './sourceLabels.js'
 
 const IMMERSION_ACCENT = MODULES.find(m => m.id === 'immersion').accent
 
 const DIFFICULTY_LABEL = { 1: 'N5', 2: 'N4', 3: 'N3', 4: 'N2', 5: 'N1' }
-const SOURCE_LABEL = { news: 'News', yahoo: 'News', nhk: 'NHK Easy', tadoku: 'Tadoku' }
 
 function formatDate(iso) {
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
@@ -48,6 +49,7 @@ export default function ImmersionModule() {
 // returned early from the same component, and wrapping only the list branch
 // would leave the reader's chips/toggles on the core teal.
 function ImmersionScreens() {
+  const { user } = useAuth()
   const [selectedArticle, setSelectedArticle] = useState(null)
   const [articles, setArticles] = useState([])
   const [loading, setLoading] = useState(true)
@@ -67,6 +69,15 @@ function ImmersionScreens() {
       },
     })
   }
+
+  // Opening an article marks it read — no explicit "Mark as read" control
+  // anymore. Gated on `user` (mirroring the old signed-out "Sign in to save
+  // reading history" prompt, which never offered marking at all when
+  // signed out); `markRead` itself de-dupes against readSet.
+  useEffect(() => {
+    if (user && selectedArticle) markRead(selectedArticle.slug)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedArticle, user])
 
   useEffect(() => {
     if (!supabase) {
@@ -95,8 +106,6 @@ function ImmersionScreens() {
       <ImmersionReader
         article={selectedArticle}
         onBack={() => setSelectedArticle(null)}
-        isRead={readSet.has(selectedArticle.slug)}
-        onMarkRead={() => markRead(selectedArticle.slug)}
       />
     )
   }

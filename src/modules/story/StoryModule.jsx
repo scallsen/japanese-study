@@ -6,12 +6,11 @@ import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import Button from '../../components/Button.jsx'
 import Select from '../../components/Select.jsx'
 import ChipSelector from '../../components/Chip.jsx'
-import Card from '../../components/Card.jsx'
 import FeedCard from '../../components/FeedCard.jsx'
 import FilterCard, { FilterRow } from '../../components/FilterCard.jsx'
 import ActionBar, { ACTION_BAR_HEIGHT } from '../../components/ActionBar.jsx'
 import { BG } from './storyUI.jsx'
-import { FONT, KANJI_FONT, TRACKING, TEXT, TEXT_MUTED, FS_CAPTION, FS_HEADING, DANGER } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_CAPTION, FS_HEADING, DANGER } from '../../data/theme.js'
 import { MODULES } from '../../data/modules.js'
 import { ModuleThemeProvider } from '../../context/ModuleThemeContext.jsx'
 import { WORD_SOURCES } from '../../data/wordLists.js'
@@ -110,7 +109,6 @@ function StoryGenerator() {
   const [grammarLevel, setGrammarRaw] = useState(() => safeLocalStorageGet('story-grammar') ?? 'N3')
   const [format, setFormatRaw] = useState(() => safeLocalStorageGet('story-format') ?? 'story')
   const [length, setLength] = useState('short')
-  const [showPreview, setShowPreview] = useState(false)
   const [generating, setGenerating] = useState(false)
   const [error, setError] = useState(null)
   const showGenerating = useDelayedLoading(generating)
@@ -206,7 +204,7 @@ function StoryGenerator() {
         <div style={{ maxWidth: 760, margin: '0 auto', padding: isMobile ? `18px 14px ${ACTION_BAR_HEIGHT + 18}px` : `24px 20px ${ACTION_BAR_HEIGHT + 24}px` }}>
           <FilterCard>
             <FilterRow key="source" label="Vocabulary">
-              <Select value={source} onChange={setSource} size="md" options={sourceOptions} />
+              <Select value={source} onChange={setSource} variant="inline" options={sourceOptions} />
               {isSrsSource && !user && (
                 <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: 8 }}>Sign in to use SRS decks as a source.</div>
               )}
@@ -217,7 +215,7 @@ function StoryGenerator() {
               </FilterRow>
             )}
             <FilterRow key="format" label="Format">
-              <Select value={format} onChange={setFormat} size="md" options={FORMAT_OPTIONS} />
+              <Select value={format} onChange={setFormat} variant="inline" options={FORMAT_OPTIONS} />
             </FilterRow>
             <FilterRow key="length" label="Length">
               <ChipSelector mode="single" options={LENGTH_OPTIONS} value={length} onChange={setLength} />
@@ -242,18 +240,10 @@ function StoryGenerator() {
               </span>
             )}
           >
-            <Button variant="neutral" onClick={() => setShowPreview(p => !p)}>
-              {showPreview ? 'Hide context' : 'Preview context'}
-            </Button>
-            <Button onClick={generate} disabled={!canGenerate}>
+            <Button size="xl" onClick={generate} disabled={!canGenerate}>
               {generating ? 'Generating…' : 'Generate'}
             </Button>
           </ActionBar>
-          {showPreview && context && (
-            <Card style={{ marginTop: 16, maxHeight: 360, overflowY: 'auto' }}>
-              <pre style={{ margin: 0, fontSize: FS_CAPTION, lineHeight: 1.6, whiteSpace: 'pre-wrap', fontFamily: KANJI_FONT }}>{context.text}</pre>
-            </Card>
-          )}
 
           <div style={{ marginTop: 36 }}>
             <div style={{ fontSize: FS_HEADING, color: TEXT_MUTED, marginBottom: 12 }}>Recent stories</div>
