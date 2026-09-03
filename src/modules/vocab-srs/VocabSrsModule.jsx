@@ -266,6 +266,25 @@ function VocabSrsHome() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, user])
 
+  // The dashboard's "Start reviews" deep-links here as `#/vocab-srs?start=1`.
+  // Once progress is loaded, start the same session the home screen's button
+  // would, then strip the query so returning to the home screen (or a
+  // reload) doesn't restart it.
+  const autoStartedRef = useRef(false)
+  useEffect(() => {
+    if (!progress || session || autoStartedRef.current) return
+    const query = new URLSearchParams(window.location.hash.split('?')[1] ?? '')
+    if (query.get('start') !== '1') return
+    autoStartedRef.current = true
+    window.history.replaceState(null, '', '#/vocab-srs')
+    const today = new Date().toISOString().split('T')[0]
+    const day = progress.newCardDay ?? { date: '', count: 0 }
+    const newPerDay = Math.max(0, dailyNewCards - (day.date === today ? day.count : 0))
+    const queue = getTodaysQueue(progress.cards ?? {}, progress.decks ?? {}, { newPerDay })
+    if (queue.due.length > 0 || queue.newCards.length > 0 || queue.rescheduled.length > 0) handleStartReview(newPerDay)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [progress])
+
   const isMobile = useIsMobile()
   const jaVoices = useJaVoices()
   const { isProcessing: audioProcessing } = useAudioGenerationStatus()
