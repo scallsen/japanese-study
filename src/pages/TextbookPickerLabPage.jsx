@@ -6,6 +6,7 @@ import Button from '../components/Button.jsx'
 import Badge from '../components/Badge.jsx'
 import TextInput from '../components/TextInput.jsx'
 import Modal from '../components/Modal.jsx'
+import { TextbookBrowser } from '../components/TextbookPicker.jsx'
 import { ModuleThemeProvider } from '../context/ModuleThemeContext.jsx'
 import { useIsMobile } from '../hooks/useIsMobile.js'
 import { TEXTBOOKS } from '../data/textbooks.js'
@@ -49,7 +50,7 @@ const LAYOUTS = [
   {
     value: 'split',
     label: 'Split',
-    blurb: 'Master list left, full detail right. The only layout where description and shops are visible without an extra interaction — needs the width, so desktop-only.',
+    blurb: 'Master list left, full detail right. The only layout where description and shops are visible without an extra interaction. Under 560px it stacks: detail pinned on top, list scrolling below, confirm button pinned at the bottom.',
   },
   {
     value: 'spotlight',
@@ -59,6 +60,8 @@ const LAYOUTS = [
 ]
 
 const WIDTHS = [
+  { value: 375, label: '375 (phone)' },
+  { value: 393, label: '393 (phone)' },
   { value: 420, label: '420 (md)' },
   { value: 560, label: '560 (lg)' },
   { value: 640, label: '640 (xl)' },
@@ -173,7 +176,15 @@ function MockPanel({ width, children }) {
 
 function PickerBody(props) {
   if (props.layout === 'gallery') return <GalleryLayout {...props} />
-  if (props.layout === 'split') return <SplitLayout {...props} />
+  // The real component, so the bench can't drift from what ships.
+  if (props.layout === 'split') return (
+    <TextbookBrowser
+      currentId={props.currentId}
+      onChoose={props.onChoose}
+      wordCountFor={id => WORD_COUNTS[id] ?? 0}
+      stacked={props.width < 560}
+    />
+  )
   if (props.layout === 'spotlight') return <SpotlightLayout {...props} />
   return <RowsLayout {...props} />
 }
@@ -344,59 +355,6 @@ function GalleryLayout({ currentId, selectedId, onSelect, onChoose, width }) {
         <BuyLinks book={selected} />
         <div>
           <Button disabled={selected.id === currentId} onClick={() => onChoose(selected.id)}>
-            {selected.id === currentId ? 'In use' : 'Use this textbook'}
-          </Button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// ── C. Split ──────────────────────────────────────────────────────────────────
-
-function SplitLayout({ currentId, selectedId, onSelect, onChoose }) {
-  const selected = TEXTBOOKS.find(b => b.id === selectedId) ?? TEXTBOOKS[0]
-  return (
-    <div style={{ display: 'flex', minHeight: 380 }}>
-      <div style={{ width: 200, flexShrink: 0, borderRight: `1px solid ${HAIRLINE}`, overflowY: 'auto', maxHeight: 420 }}>
-        {TEXTBOOKS.map(book => {
-          const isSelected = book.id === selected.id
-          return (
-            <button
-              key={book.id}
-              type="button"
-              className="tb-row"
-              onClick={() => onSelect(book.id)}
-              style={{
-                display: 'block', width: '100%', textAlign: 'left', cursor: 'pointer',
-                padding: `10px ${SPACE_12}px`, border: 'none',
-                borderLeft: `2px solid ${isSelected ? ACCENT : 'transparent'}`,
-                background: isSelected ? 'rgba(255,255,255,0.05)' : 'none',
-                fontFamily: FONT, letterSpacing: TRACKING, color: isSelected ? TEXT : 'rgba(255,255,255,0.7)',
-                fontSize: FS_CAPTION,
-              }}
-            >
-              {book.title}
-              {book.id === currentId && <span style={{ color: ACCENT, marginLeft: SPACE_4 }}>•</span>}
-            </button>
-          )
-        })}
-      </div>
-
-      <div style={{ flex: 1, minWidth: 0, padding: SPACE_16, display: 'flex', flexDirection: 'column', gap: SPACE_12 }}>
-        <div style={{ display: 'flex', gap: SPACE_16, alignItems: 'flex-start' }}>
-          <Cover book={selected} size={96} />
-          <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: FS_LIST_TITLE, color: TEXT }}>{selected.title}</div>
-            <div style={{ marginTop: SPACE_4 }}><Meta book={selected} /></div>
-            {selected.id === currentId && <div style={{ marginTop: SPACE_8 }}><CurrentBadge /></div>}
-          </div>
-        </div>
-        <Description book={selected} />
-        <BuyLinks book={selected} />
-        <div style={{ flex: 1 }} />
-        <div>
-          <Button fullWidth disabled={selected.id === currentId} onClick={() => onChoose(selected.id)}>
             {selected.id === currentId ? 'In use' : 'Use this textbook'}
           </Button>
         </div>

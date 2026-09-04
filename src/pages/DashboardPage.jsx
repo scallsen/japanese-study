@@ -7,6 +7,7 @@ import SectionLabel from '../components/SectionLabel.jsx'
 import TextbookPicker from '../components/TextbookPicker.jsx'
 import { NewCard, ReviewCard } from './homeCards.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
+import { ModuleThemeProvider } from '../context/ModuleThemeContext.jsx'
 import { useProgress } from '../hooks/useProgress.js'
 import { useIsMobile } from '../hooks/useIsMobile.js'
 import { MODULES } from '../data/modules.js'
@@ -22,6 +23,7 @@ import {
 } from '../data/theme.js'
 
 const SECONDARY_MODULES = MODULES.filter(m => m.tier !== 'primary')
+const VOCAB_ACCENT = MODULES.find(m => m.id === 'school-vocab').accent
 
 const SIDEBAR_WIDTH = 280
 // Below this the right-hand sidebar would squeeze the two primary cards into
@@ -181,13 +183,17 @@ export default function DashboardPage() {
         <Footer />
       </main>
 
-      <TextbookPicker
-        open={pickerOpen}
-        onClose={() => setPickerOpen(false)}
-        currentId={textbookState?.textbook.id ?? null}
-        onSelect={chooseTextbook}
-        wordCountFor={wordCountFor}
-      />
+      {/* The picker is opened from the New card, so it wears that card's
+          accent rather than the dashboard's ambient core teal. */}
+      <ModuleThemeProvider accent={VOCAB_ACCENT}>
+        <TextbookPicker
+          open={pickerOpen}
+          onClose={() => setPickerOpen(false)}
+          currentId={textbookState?.textbook.id ?? null}
+          onSelect={chooseTextbook}
+          wordCountFor={wordCountFor}
+        />
+      </ModuleThemeProvider>
     </div>
   )
 }
