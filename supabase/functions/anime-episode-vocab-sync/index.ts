@@ -133,13 +133,19 @@ async function resolveJmdictIds(supabase: any, words: any[]) {
   for (const word of words) {
     const { kanjiForms, kanaForms } = formsByWordId.get(word.wordId)!
     let matched: any = null
+    let matchedForm: string | null = null
     for (const kanji of kanjiForms) {
       const candidates = byPrimaryForm.get(kanji) ?? []
       if (!candidates.length) continue
       const verified = kanaForms.length ? candidates.filter((r: any) => kanaForms.some((k: string) => r.kana_forms.includes(k))) : candidates
-      if (verified.length) { matched = pickBest(verified); break }
+      if (verified.length) { matched = pickBest(verified); matchedForm = kanji; break }
     }
-    if (matched) result.set(word.wordId, { jmdictId: matched.id, surfaceForm: kanjiForms[0] ?? kanaForms[0] ?? word.mainReading?.text })
+    // surfaceForm is the specific form that verified against the dictionary,
+    // not just kanjiForms[0] — Jiten's frequency-sorted first candidate for a
+    // word isn't necessarily the one that actually matched (and can itself be
+    // a messy/composite reading), so falling back to it here would display an
+    // unverified form even though jmdictId correctly points at a clean entry.
+    if (matched) result.set(word.wordId, { jmdictId: matched.id, surfaceForm: matchedForm ?? kanjiForms[0] ?? kanaForms[0] ?? word.mainReading?.text })
     else needsKanaFallback.push(word)
   }
 
@@ -150,6 +156,7 @@ async function resolveJmdictIds(supabase: any, words: any[]) {
     for (const word of needsKanaFallback) {
       const { kanjiForms, kanaForms } = formsByWordId.get(word.wordId)!
       let matched: any = null
+      let matchedForm: string | null = null
       for (const kana of kanaForms) {
         let candidates = byKanaForm.get(kana) ?? []
         if (!candidates.length) continue
@@ -159,9 +166,11 @@ async function resolveJmdictIds(supabase: any, words: any[]) {
           const kanaOnly = candidates.filter((r: any) => r.kanji_forms.length === 0)
           candidates = kanaOnly.length === 1 ? kanaOnly : []
         }
-        if (candidates.length) { matched = pickBest(candidates); break }
+        if (candidates.length) { matched = pickBest(candidates); matchedForm = kana; break }
       }
-      result.set(word.wordId, { jmdictId: matched?.id ?? null, surfaceForm: kanjiForms[0] ?? kanaForms[0] ?? word.mainReading?.text })
+      // matchedForm (the verified kana) only when a match was actually found
+      // — an unresolved word still falls back to its best-guess display form.
+      result.set(word.wordId, { jmdictId: matched?.id ?? null, surfaceForm: matchedForm ?? kanjiForms[0] ?? kanaForms[0] ?? word.mainReading?.text })
     }
   }
 

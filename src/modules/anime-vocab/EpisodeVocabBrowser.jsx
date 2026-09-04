@@ -106,6 +106,11 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
 
   const jmdictIds = useMemo(() => occurrences.map(o => o.jmdict_id).filter(Boolean), [occurrences])
   const { entries: dictEntries } = useDictionaryEntries(jmdictIds, true)
+  // Every jmdict_id must have resolved before a drill can start — rows built
+  // from a not-yet-loaded dictEntry fall back to raw Jiten surface_form/no
+  // gloss (see the `rows` useMemo below), and Start Drill snapshots `rows`
+  // at click time with no re-resolution once the drill is running.
+  const dictReady = jmdictIds.every(id => id in dictEntries)
 
   useEffect(() => {
     let cancelled = false
@@ -288,8 +293,8 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
       />
 
       <ActionBar>
-        <Button variant="primary" size="xl" onClick={handleStartDrill} disabled={selected.size === 0}>
-          Start Drill ({selected.size})
+        <Button variant="primary" size="xl" onClick={handleStartDrill} disabled={selected.size === 0 || !dictReady}>
+          {dictReady ? `Start Drill (${selected.size})` : 'Loading definitions…'}
         </Button>
       </ActionBar>
     </div>
