@@ -223,9 +223,10 @@ The dashboard is organised around two primary actions, **New** (work through one
 | `src/pages/DashboardPage.jsx` | Home layout — card/stats/module composition, data loading, textbook picker wiring |
 | `src/pages/homeCards.jsx` | `NewCard` / `ReviewCard` themselves (+ `PrimaryCard`) — kept out of the page so the lab below renders the real components |
 | `src/pages/HomeCardsLabPage.jsx` | Dev-only harness at `#/dev/home-cards` — every card state side by side, plus realistic New+Review pairs and a column-width picker. Not linked from the dashboard (same convention as `ToastLabPage`). New-card states are built by feeding fabricated progress through the real `resolveTextbookState`; review-card summaries are hand-written objects |
-| `src/data/textbooks.js` | Textbook + chapter config |
+| `src/data/textbooks.js` | Textbook + chapter config — also `publisher`, `description` and `purchase` links (retailer *search* URLs, not product ids, so they don't rot) |
 | `src/lib/textbookProgress.js` (+ `.test.js`) | Pure current/next-chapter resolver |
-| `src/components/TextbookPicker.jsx` | "Change textbook" — `Modal` + `OptionPicker` |
+| `src/components/TextbookPicker.jsx` | "Change textbook" — `Modal` + `OptionPicker`. Name + meta only; the richer options are being tried in the lab below |
+| `src/pages/TextbookPickerLabPage.jsx` | Dev-only bench at `#/dev/textbook-picker` — four candidate picker layouts (Rows, Gallery, Split, Spotlight) with cover/description/buy links, a panel-width picker and a mock-panel preview plus a real-Modal mount. Nothing here is wired into the app yet |
 | `src/data/modules.js` | Module config array — accents, hrefs, `tier` |
 | `src/components/ModuleCard.jsx` | Secondary module card (hover via `.module-card` in `global.css`) |
 | `src/App.jsx` | Hash router |

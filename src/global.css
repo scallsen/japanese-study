@@ -432,3 +432,15 @@ button, input, select, textarea {
 @media (prefers-reduced-motion: reduce) {
   .textbook-marquee__track { animation: none; }
 }
+
+/* Textbook picker lab (#/dev/textbook-picker) — hover states for the
+   candidate layouts' rows and tiles. */
+.tb-row:hover {
+  background: rgba(255,255,255,0.04);
+}
+.tb-tile:hover {
+  border-color: rgba(255,255,255,0.28) !important;
+}
+.tb-buy:hover {
+  text-decoration: underline !important;
+}
