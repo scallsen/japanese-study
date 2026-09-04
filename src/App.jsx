@@ -12,6 +12,7 @@ import DictionaryEntryPage from './pages/DictionaryEntryPage.jsx'
 import AnimeVocabModule from './modules/anime-vocab/AnimeVocabModule.jsx'
 import ToastLabPage from './pages/ToastLabPage.jsx'
 import StyleGuideLabPage from './pages/StyleGuideLabPage.jsx'
+import HomeCardsLabPage from './pages/HomeCardsLabPage.jsx'
 
 function getRoute() {
   // Strip any query string (e.g. '/vocab-srs/browse?deck=x&manage=1') before
@@ -54,5 +55,7 @@ export default function App() {
   if (route === '/dev/toast-lab') return <ToastLabPage />
   // Living style guide for shared components (DataList, and whatever joins it next), not linked from the dashboard
   if (route === '/dev/style-guide') return <StyleGuideLabPage />
+  // Dev-only harness for the home page's two primary cards in every state, not linked from the dashboard
+  if (route === '/dev/home-cards') return <HomeCardsLabPage />
   return <DashboardPage />
 }

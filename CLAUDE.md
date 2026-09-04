@@ -220,7 +220,9 @@ The dashboard is organised around two primary actions, **New** (work through one
 
 | File | Purpose |
 |---|---|
-| `src/pages/DashboardPage.jsx` | Home layout — New/Review cards, secondary grid, stats sidebar, textbook picker wiring |
+| `src/pages/DashboardPage.jsx` | Home layout — card/stats/module composition, data loading, textbook picker wiring |
+| `src/pages/homeCards.jsx` | `NewCard` / `ReviewCard` themselves (+ `PrimaryCard`) — kept out of the page so the lab below renders the real components |
+| `src/pages/HomeCardsLabPage.jsx` | Dev-only harness at `#/dev/home-cards` — every card state side by side, plus realistic New+Review pairs and a column-width picker. Not linked from the dashboard (same convention as `ToastLabPage`). New-card states are built by feeding fabricated progress through the real `resolveTextbookState`; review-card summaries are hand-written objects |
 | `src/data/textbooks.js` | Textbook + chapter config |
 | `src/lib/textbookProgress.js` (+ `.test.js`) | Pure current/next-chapter resolver |
 | `src/components/TextbookPicker.jsx` | "Change textbook" — `Modal` + `OptionPicker` |
