@@ -20,7 +20,7 @@ import { getGlobalStats, getStateDistribution, getTodaysQueue } from '../modules
 import { STATE_SEGMENTS } from '../modules/vocab-srs/cardStates.js'
 import { safeLocalStorageGet } from '../utils/storage.js'
 import {
-  FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_CONTENT_HEADING, FS_STAT_VALUE,
+  FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_CONTENT_HEADING, FS_STAT_VALUE,
   SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24,
 } from '../data/theme.js'
 
@@ -30,6 +30,10 @@ const SECONDARY_MODULES = MODULES.filter(m => m.tier !== 'primary')
 
 const HAIRLINE = 'rgba(255,255,255,0.08)'
 const SIDEBAR_WIDTH = 280
+// Below this the right-hand sidebar would squeeze the two primary cards into
+// tall, narrow slivers, so it moves under them as a full-width stats strip
+// and the cards get their squarer proportions back.
+const SIDEBAR_BREAKPOINT = 1100
 
 // Sentence-review words are extras layered onto a list, not part of the
 // textbook's own chapter — they don't count toward a chapter's size.
@@ -76,6 +80,7 @@ function navigate(hash) {
 
 export default function DashboardPage() {
   const isMobile = useIsMobile()
+  const sidebarBelow = useIsMobile(SIDEBAR_BREAKPOINT)
   const { user, loading: authLoading, signIn } = useAuth()
   const signedOut = !authLoading && !user
 
@@ -101,6 +106,17 @@ export default function DashboardPage() {
     navigate(`#/vocab?chapter=${encodeURIComponent(chapter.id)}&start=1`)
   }
 
+  const stats = (
+    <StatsPanel
+      columns={sidebarBelow && !isMobile ? 3 : 1}
+      textbookState={textbookState}
+      signedOut={signedOut}
+      srs={srs}
+      articlesRead={Object.keys(immersionProgress?.read ?? {}).length}
+      seriesTracked={Object.keys(animeTracking?.tracked ?? {}).length}
+    />
+  )
+
   return (
     <div style={{
       height: '100%',
@@ -122,7 +138,7 @@ export default function DashboardPage() {
         <div style={{ flex: 1 }}>
           <div style={{
             display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : `minmax(0, 1fr) ${SIDEBAR_WIDTH}px`,
+            gridTemplateColumns: sidebarBelow ? '1fr' : `minmax(0, 1fr) ${SIDEBAR_WIDTH}px`,
             gap: SPACE_24,
             maxWidth: 1120,
             margin: '0 auto',
@@ -148,6 +164,8 @@ export default function DashboardPage() {
                 />
               </div>
 
+              {sidebarBelow && stats}
+
               <div>
                 <SectionLabel label="More tools" />
                 <div style={{
@@ -162,13 +180,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <StatsSidebar
-              textbookState={textbookState}
-              signedOut={signedOut}
-              srs={srs}
-              articlesRead={Object.keys(immersionProgress?.read ?? {}).length}
-              seriesTracked={Object.keys(animeTracking?.tracked ?? {}).length}
-            />
+            {!sidebarBelow && stats}
           </div>
         </div>
 
@@ -191,16 +203,16 @@ export default function DashboardPage() {
 // `actions` is pinned to the card's bottom edge so the two cards' primary
 // buttons sit on the same line however much body content each one has;
 // `children` is the body above it and takes the slack.
-function PrimaryCard({ accent, eyebrow, title, subtitle, icon, progress, actions, children }) {
+function PrimaryCard({ accent, title, subtitle, icon, progress, actions, children }) {
+  // Stacked one-per-row, a card has no neighbour to line up with, so the
+  // floor that keeps the pair squarish side by side would only add dead air.
+  const isMobile = useIsMobile()
   return (
     <ModuleThemeProvider accent={accent}>
-      <Card padding={SPACE_24} style={{ display: 'flex', flexDirection: 'column', gap: SPACE_16, minHeight: 250 }}>
+      <Card padding={SPACE_24} style={{ display: 'flex', flexDirection: 'column', gap: SPACE_16, minHeight: isMobile ? 0 : 250 }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: SPACE_16 }}>
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: FS_BADGE, color: accent, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-              {eyebrow}
-            </div>
-            <div style={{ fontSize: FS_CONTENT_HEADING, color: TEXT, marginTop: SPACE_4 }}>{title}</div>
+            <div style={{ fontSize: FS_CONTENT_HEADING, color: TEXT }}>{title}</div>
             {subtitle && <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginTop: SPACE_4 }}>{subtitle}</div>}
           </div>
           {icon !== undefined && <IconSlot icon={icon} accent={accent} />}
@@ -261,7 +273,7 @@ function NewCard({ loading, state, onStart, onChangeTextbook }) {
 
   if (loading) {
     return (
-      <PrimaryCard accent={accent} eyebrow="New" title="Textbook">
+      <PrimaryCard accent={accent} title="Textbook">
         <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>Loading…</div>
       </PrimaryCard>
     )
@@ -271,7 +283,6 @@ function NewCard({ loading, state, onStart, onChangeTextbook }) {
     return (
       <PrimaryCard
         accent={accent}
-        eyebrow="New"
         title="Pick a textbook"
         subtitle="One book at a time, at your own pace."
         actions={<CardActions><Button size="lg" onClick={onChangeTextbook}>Choose textbook</Button></CardActions>}
@@ -285,7 +296,6 @@ function NewCard({ loading, state, onStart, onChangeTextbook }) {
   return (
     <PrimaryCard
       accent={accent}
-      eyebrow="New"
       title={textbook.title}
       subtitle={subtitle}
       icon={textbook.icon}
@@ -325,7 +335,7 @@ function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary }) {
 
   if (authLoading || loading) {
     return (
-      <PrimaryCard accent={accent} eyebrow="Review" title="Reviews">
+      <PrimaryCard accent={accent} title="Reviews">
         <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>Loading…</div>
       </PrimaryCard>
     )
@@ -335,7 +345,6 @@ function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary }) {
     return (
       <PrimaryCard
         accent={accent}
-        eyebrow="Review"
         title="Reviews"
         subtitle="Spaced repetition for the words you've studied. Sign in to sync your decks across devices."
         actions={<CardActions><Button size="lg" onClick={onSignIn}>Sign in with GitHub</Button></CardActions>}
@@ -347,7 +356,6 @@ function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary }) {
     return (
       <PrimaryCard
         accent={accent}
-        eyebrow="Review"
         title="Reviews"
         subtitle="No cards yet. Finish a chapter and send its words here."
         actions={
@@ -369,7 +377,6 @@ function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary }) {
   return (
     <PrimaryCard
       accent={accent}
-      eyebrow="Review"
       title="Reviews"
       subtitle={caption}
       actions={
@@ -399,9 +406,17 @@ function Stat({ value, label }) {
 
 // ── Stats sidebar ─────────────────────────────────────────────────────────────
 
-function StatsSidebar({ textbookState, signedOut, srs, articlesRead, seriesTracked }) {
+// Same three groups either way — `columns` only decides whether they stack in
+// the right-hand rail or sit side by side in the strip under the cards.
+function StatsPanel({ columns, textbookState, signedOut, srs, articlesRead, seriesTracked }) {
   return (
-    <aside style={{ display: 'flex', flexDirection: 'column', gap: SPACE_24, minWidth: 0 }}>
+    <aside style={{
+      display: columns > 1 ? 'grid' : 'flex',
+      gridTemplateColumns: columns > 1 ? `repeat(${columns}, minmax(0, 1fr))` : undefined,
+      flexDirection: 'column',
+      gap: SPACE_24,
+      minWidth: 0,
+    }}>
       <div>
         <SectionLabel label="Textbook" />
         {textbookState ? (
