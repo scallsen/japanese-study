@@ -202,7 +202,13 @@ function SplitPreview({ currentId, onChoose, width }) {
       />
       {stacked && (
         <div style={{ padding: `14px ${SPACE_16}px`, borderTop: `1px solid ${HAIRLINE}` }}>
-          <ConfirmButton selected={selected} currentId={currentId} onChoose={() => onChoose(selected.id)} withTitle />
+          <ConfirmButton
+            selected={selected}
+            currentId={currentId}
+            onChoose={() => onChoose(selected.id)}
+            withTitle
+            available={selected.chapters.some(ch => (WORD_COUNTS[ch.id] ?? 0) > 0)}
+          />
         </div>
       )}
     </div>
