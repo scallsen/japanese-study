@@ -234,7 +234,11 @@ function StateGrid({ title, width, states, render }) {
   return (
     <div style={{ marginTop: SPACE_32 }}>
       <SectionLabel label={title} />
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: SPACE_24 }}>
+      {/* flex-start, not the default stretch: a stretched cell would make the
+          card's own height: 100% resolve against a box that includes this
+          caption, and the card would overflow it. Equal heights are what the
+          Pairs section below is for — there the cards are real grid siblings. */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: SPACE_24, alignItems: 'flex-start' }}>
         {states.map(state => (
           <div key={state.key} style={{ width }}>
             <Caption label={state.label} note={state.note} />

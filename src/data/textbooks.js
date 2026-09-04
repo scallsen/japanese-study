@@ -29,8 +29,8 @@ function weekDays(prefix, weeks, days = 3) {
 const ICONS = '/placeholder-svg'
 
 export const TEXTBOOKS = [
-  { id: 'genki-1', title: 'Genki 1', subtitle: 'Beginner · N5', icon: null, chapters: lessons('genki-1', 1, 12) },
-  { id: 'genki-2', title: 'Genki 2', subtitle: 'Beginner · N4', icon: null, chapters: lessons('genki-2', 13, 23) },
+  { id: 'genki-1', title: 'Genki 1', subtitle: 'Beginner · N5', icon: `${ICONS}/genki-1.svg`, chapters: lessons('genki-1', 1, 12) },
+  { id: 'genki-2', title: 'Genki 2', subtitle: 'Beginner · N4', icon: `${ICONS}/genki-2.svg`, chapters: lessons('genki-2', 13, 23) },
   { id: 'quartet-1', title: 'Quartet 1', subtitle: 'Intermediate · N3', icon: `${ICONS}/quartet-1.svg`, chapters: lessons('quartet-1', 1, 6) },
   { id: 'quartet-2', title: 'Quartet 2', subtitle: 'Intermediate · N2', icon: `${ICONS}/quartet-2.svg`, chapters: lessons('quartet-2', 7, 12) },
   { id: 'marugoto-a1-rikai', title: 'Marugoto A1 Rikai', subtitle: 'Starter · A1', icon: `${ICONS}/marugoto-a1-rikai.svg`, chapters: topics('marugoto-a1-rikai', 9) },
