@@ -216,6 +216,8 @@ The dashboard is organised around two primary actions, **New** (work through one
 
 **Stats sidebar:** Textbook (chapters done, words drilled, up next), Reviews (`DistributionBar` over active-deck card states + cards/learned/lifetime reviews), Reading (articles read from `immersion`, series tracked from `anime-vocab-tracking`). There is no per-day review log, so streaks/heatmaps would need new logging first.
 
+**Responsive layout** — three bands, both driven by `useIsMobile`: above `SIDEBAR_BREAKPOINT` (1100) the stats are a 280px right-hand rail and the two primary cards sit beside it; between 769 and 1100 the rail moves *below* the cards as a full-width three-column strip (`StatsPanel columns={3}`) so the cards get their squarish proportions back instead of being squeezed into slivers; at 768 and under everything is one column and `PrimaryCard` drops its 250px min-height (with no neighbour to line up with it would only add dead air).
+
 **Module config:** `tier: 'primary'` on `school-vocab` and `vocab-srs` marks the two big cards; everything else renders as a secondary `ModuleCard` (Conjugation Drill stays, marked external). Grammar Map was removed from the config (module slated for removal; its route still exists).
 
 | File | Purpose |

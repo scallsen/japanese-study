@@ -504,3 +504,21 @@ rebuilt around the chosen book) and the end-of-lesson "send to SRS" prompt.
 - **Not verified:** the mobile (single-column) layout — the browser tool's
   window resize didn't change the viewport. It uses the same `useIsMobile`
   switch as every other page.
+
+### Home redesign — round 2 (visual pass)
+
+- Header notice ("New accounts are currently disabled…") dropped.
+- Primary cards: `actions` slot pinned to the bottom edge, quiet links
+  stacked above it, so the two cards' main buttons align in every branch.
+- Textbook cover 64 → 104px.
+- Eyebrow labels (NEW / REVIEW) dropped; the title is the card's first line.
+- Module accent bars added then removed again at your request — the
+  secondary cards are waiting on per-module SVG icons instead.
+- **[INPUT] Narrow-window fix.** Your window is ~900px, which put a 280px
+  rail beside two cards in ~600px and squeezed them tall. Options
+  considered: (a) rail moves below the cards as a 3-column strip,
+  (b) collapsible rail behind a chevron like `SettingsSidebar`, (c) keep
+  the rail and stack the two cards, (d) hide stats below some width. Took
+  (a) — nothing is hidden, no new affordance to learn, and the cards get a
+  near-square ratio back (≈480×440 at 820–1040px). (b) is the fallback if
+  you want the stats visible beside the cards at every width.

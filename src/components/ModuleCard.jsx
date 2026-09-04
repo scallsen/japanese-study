@@ -11,7 +11,7 @@ function ExternalLinkIcon() {
 // Hover lives in global.css (.module-card) — the useState hover this used to
 // carry is the StrictMode double-invoke hazard every other component fixed.
 export default function ModuleCard({ module, disabled }) {
-  const { label, sublabel, icon, href, external, accent } = module
+  const { label, sublabel, icon, href, external } = module
 
   const Tag = disabled ? 'div' : 'a'
   const linkProps = disabled ? {} : {
@@ -38,10 +38,7 @@ export default function ModuleCard({ module, disabled }) {
         opacity: disabled ? 0.45 : 1,
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'stretch', gap: 14, flex: 1 }}>
-        {/* The module's own accent, carried inside the card rather than as a
-            border, so the card's own hairline stays uniform. */}
-        <div style={{ width: 3, borderRadius: 2, flexShrink: 0, background: accent, alignSelf: 'stretch' }} />
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, flex: 1 }}>
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
             <div style={{ fontSize: FS_BASE, color: TEXT }}>
