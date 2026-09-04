@@ -575,3 +575,25 @@ there would include the caption in the card's 100%.
   **[INPUT]** if you want them distinct, pick a second green here.
 - Cover hover fades the artwork to 0.2 rather than laying a scrim over it —
   a scrim could only ever cover the artwork's bounds, not the canvas.
+
+### Textbook picker layout bench (`#/dev/textbook-picker`)
+
+The shipped picker is name + meta only. `textbooks.js` gained `publisher`,
+`description` and `purchase` (retailer **search** URLs — a product id rots
+at the next edition; swap in real ones if you'd rather), and the lab shows
+four ways to spend that content:
+
+- **Rows** — today's list, enriched; a row expands in place for description,
+  shops and a confirm button. Keeps search, scales past a dozen books.
+- **Gallery** — cover grid with the selection's detail underneath. Leans on
+  the pixel art being each book's most recognisable feature.
+- **Split** — master list left, full detail right. The only one where
+  description and shops need no extra click; wants ≥560px, so it needs a
+  mobile fallback (Rows is the obvious one).
+- **Spotlight** — one book at a time with a cover filmstrip. Most room per
+  book, worst for finding a known title.
+
+**[INPUT] My pick: Split on desktop, Rows on mobile** — buying a textbook is
+a decision people make once, so showing the description without an extra
+interaction is worth the width, and Rows already handles the narrow case.
+Gallery is the strongest if the covers become the identity of the feature.

@@ -206,7 +206,7 @@ export function NewCard({ loading, state, onStart, onChangeTextbook }) {
     return (
       <PrimaryCard
         accent={accent}
-        title="Pick a textbook"
+        title="Choose your textbook"
         actions={<CardActions><Button size="lg" onClick={onChangeTextbook}>Choose textbook</Button></CardActions>}
       >
         <TextbookCarousel />
