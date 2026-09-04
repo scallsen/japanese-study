@@ -433,10 +433,29 @@ button, input, select, textarea {
   .textbook-marquee__track { animation: none; }
 }
 
-/* Textbook picker lab (#/dev/textbook-picker) — hover states for the
-   candidate layouts' rows and tiles. */
-.tb-row:hover {
-  background: rgba(255,255,255,0.04);
+/* Textbook picker rows (the real picker and the layout bench). Every one of
+   these needs !important: the rows set background, colour and border-left
+   inline, and an inline style outranks a class rule outright — the gotcha
+   that had already bitten .btn-neutral, .chip--off and TextInput's focus
+   ring. The accent half of the hover arrives as --tb-accent-dim, set inline
+   by the row, since a class can't read a prop. */
+.tb-row {
+  transition: background 120ms, color 120ms, border-left-color 120ms;
+}
+.tb-row:hover:not(.tb-row--selected) {
+  background: rgba(255,255,255,0.05) !important;
+  color: #E8E8E8 !important;
+  border-left-color: var(--tb-accent-dim, transparent) !important;
+}
+.tb-row--selected:hover {
+  background: rgba(255,255,255,0.08) !important;
+}
+.tb-row:active {
+  background: rgba(255,255,255,0.09) !important;
+}
+.tb-row:focus-visible {
+  outline: 1px solid var(--tb-accent-dim, rgba(255,255,255,0.4));
+  outline-offset: -1px;
 }
 .tb-tile:hover {
   border-color: rgba(255,255,255,0.28) !important;

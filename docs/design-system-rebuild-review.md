@@ -627,3 +627,21 @@ phone, and the rest scroll under a detail that stays put.
   with the Vocab accent: it opens from the New card, but rendered at the page
   root it was inheriting the dashboard's core teal, so its CTA was teal
   inside a blue card's flow.
+
+### Textbook picker — row hover, mobile confirm in the footer
+
+- **Row hover/active/focus** (`.tb-row` in `global.css`): background lift,
+  text to full `TEXT`, and a left border at 50% of the module accent. Every
+  rule needed `!important` — the rows set background, colour and border-left
+  inline, and the pre-existing `.tb-row:hover` from the bench had therefore
+  never fired. Verified live rather than assumed: hovering a row computes
+  `rgba(255,255,255,0.05)` / `rgb(232,232,232)` / `rgba(58,127,239,0.5)`.
+  The accent half travels as `--tb-accent-dim` set inline, since a class
+  can't read a prop (decision #10's pattern).
+- **Mobile confirm moved into `Modal`'s `footer` slot**, so it sits outside
+  the body's scroll entirely instead of riding along with the sticky detail.
+  That required lifting selection state from `TextbookBrowser` up into
+  `TextbookPicker` — a footer rendered by the Modal can't read state held by
+  the Modal's child. `TextbookBrowser` is now controlled
+  (`selectedId`/`onSelectedChange`) with a `showConfirm` escape hatch, and
+  the bench mirrors the same arrangement.

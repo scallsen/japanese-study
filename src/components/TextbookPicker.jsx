@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Modal from './Modal.jsx'
 import Button from './Button.jsx'
 import Badge from './Badge.jsx'
@@ -22,37 +22,78 @@ const LIST_WIDTH = 200
 // under) the selected book's cover, description and where to buy it. The
 // alternatives that were tried and rejected are in the bench at
 // #/dev/textbook-picker.
+//
+// Selection lives here rather than in the browser because on mobile the
+// confirm button is Modal's `footer` — outside the body's scroll, so it
+// stays put — and a footer rendered by the Modal can't read state held by
+// its own child.
 export default function TextbookPicker({ open, onClose, currentId, onSelect, wordCountFor }) {
   const isMobile = useIsMobile()
+  const [selectedId, setSelectedId] = useState(currentId ?? TEXTBOOKS[0].id)
+
+  // Reopening should present the book in use, not wherever browsing stopped
+  // last time.
+  useEffect(() => {
+    if (open) setSelectedId(currentId ?? TEXTBOOKS[0].id)
+  }, [open, currentId])
+
+  const selected = TEXTBOOKS.find(b => b.id === selectedId) ?? TEXTBOOKS[0]
+  const confirm = (
+    <ConfirmButton selected={selected} currentId={currentId} onChoose={() => { onSelect(selected.id); onClose() }} withTitle={isMobile} />
+  )
+
   return (
-    <Modal open={open} onClose={onClose} title="Change textbook" size="lg" isMobile={isMobile} bodyPadding={0}>
+    <Modal
+      open={open}
+      onClose={onClose}
+      title="Change textbook"
+      size="lg"
+      isMobile={isMobile}
+      bodyPadding={0}
+      footer={isMobile ? confirm : undefined}
+    >
       <TextbookBrowser
         currentId={currentId}
+        selectedId={selectedId}
+        onSelectedChange={setSelectedId}
         onChoose={id => { onSelect(id); onClose() }}
         wordCountFor={wordCountFor}
         stacked={isMobile}
+        showConfirm={!isMobile}
       />
     </Modal>
   )
 }
 
+export function ConfirmButton({ selected, currentId, onChoose, withTitle = false }) {
+  const isCurrent = selected.id === currentId
+  return (
+    <Button fullWidth disabled={isCurrent} onClick={onChoose}>
+      {isCurrent ? 'In use' : withTitle ? `Use ${selected.title}` : 'Use this textbook'}
+    </Button>
+  )
+}
+
 /**
- * `stacked` puts the detail above a scrolling list instead of beside it.
- * It's a prop rather than an internal `useIsMobile` so the layout bench can
- * preview the phone arrangement at any window size.
+ * `stacked` puts the detail above the list instead of beside it, and
+ * `showConfirm` drops the in-body confirm button for hosts that render one
+ * outside the scroll area (the Modal footer on mobile). Both are props
+ * rather than an internal `useIsMobile` so the layout bench can preview the
+ * phone arrangement at any window size.
  *
  * In stacked mode the detail block is `position: sticky` inside the modal
- * body's own scroll, so it and the confirm button stay put while the list
- * scrolls beneath them. The first attempt gave the browser `height: 100%`
- * and scrolled the list itself; measured on a 375×667 viewport the height
- * silently didn't resolve (the sheet is max-height-driven, so the body's
- * height is not definite and a percentage child falls back to auto), the
- * body scrolled instead, and the confirm button sat below the fold. Sticky
+ * body's own scroll, so it stays put while the list scrolls beneath it. The
+ * first attempt scrolled the list itself, via `height: 100%` on the browser;
+ * measured on a 375×667 viewport that height silently didn't resolve (the
+ * sheet is max-height-driven, so the body's height is not definite and a
+ * percentage child falls back to auto) and the body scrolled instead. Sticky
  * needs no definite height and no magic numbers.
  */
-export function TextbookBrowser({ currentId, onChoose, wordCountFor, stacked = false }) {
+export function TextbookBrowser({
+  currentId, selectedId, onSelectedChange, onChoose, wordCountFor,
+  stacked = false, showConfirm = true,
+}) {
   const accent = useAccent()
-  const [selectedId, setSelectedId] = useState(currentId ?? TEXTBOOKS[0].id)
   const selected = TEXTBOOKS.find(b => b.id === selectedId) ?? TEXTBOOKS[0]
   const isCurrent = selected.id === currentId
 
@@ -106,10 +147,12 @@ export function TextbookBrowser({ currentId, onChoose, wordCountFor, stacked = f
         ))}
       </div>
 
-      {!stacked && <div style={{ flex: 1, minHeight: SPACE_8 }} />}
-      <Button fullWidth disabled={isCurrent} onClick={() => onChoose(selected.id)}>
-        {isCurrent ? 'In use' : stacked ? `Use ${selected.title}` : 'Use this textbook'}
-      </Button>
+      {showConfirm && (
+        <>
+          {!stacked && <div style={{ flex: 1, minHeight: SPACE_8 }} />}
+          <ConfirmButton selected={selected} currentId={currentId} onChoose={() => onChoose(selected.id)} withTitle={stacked} />
+        </>
+      )}
     </div>
   )
 
@@ -127,8 +170,8 @@ export function TextbookBrowser({ currentId, onChoose, wordCountFor, stacked = f
           <button
             key={book.id}
             type="button"
-            className="tb-row"
-            onClick={() => setSelectedId(book.id)}
+            className={isSelected ? 'tb-row tb-row--selected' : 'tb-row'}
+            onClick={() => onSelectedChange(book.id)}
             style={{
               display: 'flex', alignItems: 'center', gap: SPACE_8,
               width: '100%', textAlign: 'left', cursor: 'pointer',
@@ -138,6 +181,10 @@ export function TextbookBrowser({ currentId, onChoose, wordCountFor, stacked = f
               background: isSelected ? 'rgba(255,255,255,0.05)' : 'none',
               fontFamily: FONT, letterSpacing: TRACKING, fontSize: FS_CAPTION,
               color: isSelected ? TEXT : 'rgba(255,255,255,0.7)',
+              // The hover rule needs the module accent, and a CSS class can't
+              // read a prop — so it travels as a custom property, the same way
+              // TokenizedBody and TextInput pass theirs (settled decision #10).
+              '--tb-accent-dim': `${accent}80`,
             }}
           >
             {stacked && <Cover book={book} size={28} accent={accent} />}
