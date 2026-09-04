@@ -500,3 +500,33 @@ four ways to spend that content:
 a decision people make once, so showing the description without an extra
 interaction is worth the width, and Rows already handles the narrow case.
 Gallery is the strongest if the covers become the identity of the feature.
+
+### Textbook picker — Split promoted, with a measured mobile arrangement
+
+`TextbookPicker` is now the split browser rather than `Modal` +
+`OptionPicker`; the bench keeps all four options and imports the real
+`TextbookBrowser` for its Split tab so the two can't drift.
+
+Mobile answers the "is there room?" question with numbers rather than a
+guess, measured live in a 375×667 viewport (the smallest realistic phone):
+
+| | 375×667 | 393×852 |
+|---|---|---|
+| Sheet (80vh) | 532 | 680 |
+| Header | 59 | 59 |
+| Pinned detail (cover 64, 3-line description, buy links, CTA) | 261 | 261 |
+| List visible | 210 (≈4.8 rows) | 358 (≈8 rows) |
+
+So yes — the whole detail plus about five of nine books fit on the smallest
+phone, and the rest scroll under a detail that stays put.
+
+- **Bug the measurement caught:** the first attempt scrolled the list itself
+  (`height: 100%` on the browser, `flex: 1` on the list). The height never
+  resolved — Modal's sheet is `max-height`-driven, so the body's height isn't
+  definite and a percentage child falls back to auto — and the confirm button
+  ended up below the fold. `position: sticky` on the detail needs no definite
+  height and no magic numbers.
+- **[CHANGED] `DashboardPage`** wraps the picker in `ModuleThemeProvider`
+  with the Vocab accent: it opens from the New card, but rendered at the page
+  root it was inheriting the dashboard's core teal, so its CTA was teal
+  inside a blue card's flow.
