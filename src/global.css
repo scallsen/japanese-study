@@ -398,3 +398,28 @@ button, input, select, textarea {
 .footer-link:hover {
   color: rgba(232,232,232,0.85) !important;
 }
+
+/* Textbook cover on the home page's New card — the change-textbook link is
+   revealed on hover/focus rather than held in a useState. */
+.textbook-cover__label {
+  opacity: 0;
+  transition: opacity 130ms;
+  pointer-events: none;
+}
+.textbook-cover:hover .textbook-cover__label,
+.textbook-cover:focus-visible .textbook-cover__label {
+  opacity: 1;
+}
+
+/* Cover carousel on the empty New card. The track renders the covers twice,
+   so animating it to -50% loops seamlessly. */
+@keyframes textbook-marquee-drift {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.textbook-marquee__track {
+  animation: textbook-marquee-drift 42s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .textbook-marquee__track { animation: none; }
+}

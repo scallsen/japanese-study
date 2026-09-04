@@ -538,3 +538,26 @@ rather than a copy that would drift.
   keep both as buttons and accept the offset; make Continue a quiet link
   in the links row (one lg button per card, guaranteed alignment); or make
   the pair a single split control. Left as is pending your call.
+
+### Home redesign — round 3 (card content pass)
+
+New card: cover is now the change-textbook affordance (hover reveals a link
+over the artwork; tap works on touch), so the separate "Change textbook"
+link left the row — **[INPUT]** if you'd rather keep a visible link as well,
+it's one line back. Covers are pulled right by their own transparent gutter
+(`COVER_GUTTER`) so the artwork, not the 32px canvas, aligns with the card
+edge. Subtitle is just "N of 12 chapters" now; a finished book reads "Book
+completed" with a **[Pick new textbook]** CTA and no badge. The empty state
+drifts a cover marquee instead of the tagline. Quiet links shift left by
+`GHOST_TEXT_INSET` (Button's own sm padding) so the first link's text lines
+up with the primary button's box edge.
+
+Review card: "Sign in with GitHub" → "Create account".
+
+Genki 1/2 covers wired up.
+
+**Equal heights confirmed, not incidental.** `PrimaryCard` now sets
+`height: 100%` explicitly rather than leaning on the grid's default stretch;
+measured live at 331×411 for both cards with very different content. The lab
+grid deliberately opts out (`alignItems: flex-start`) — a stretched cell
+there would include the caption in the card's 100%.
