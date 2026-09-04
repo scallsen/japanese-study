@@ -464,3 +464,17 @@ Genki 1/2 covers wired up.
 measured live at 331×411 for both cards with very different content. The lab
 grid deliberately opts out (`alignItems: flex-start`) — a stretched cell
 there would include the caption in the card's 100%.
+
+### Home redesign — round 4
+
+- Empty-state carousel runs at true cover size (104px), each cover pulled
+  left by one gutter so the artwork sits close rather than floating in its
+  own transparent canvas.
+- **[CHANGED] `modules.js` — Vocab SRS accent `#3ABDA4` → `#27AE60`.** Per
+  settled decision #11 the accent is `modules.js`'s, so this repaints the
+  whole SRS module (home, drill, browse), not just the home card. `#27AE60`
+  is `DRILL_COLORS.good` without its alpha, so no new hue enters the palette
+  — but it is now doing double duty as both "correct" and a module identity.
+  **[INPUT]** if you want them distinct, pick a second green here.
+- Cover hover fades the artwork to 0.2 rather than laying a scrim over it —
+  a scrim could only ever cover the artwork's bounds, not the canvas.

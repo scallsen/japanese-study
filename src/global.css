@@ -399,8 +399,17 @@ button, input, select, textarea {
   color: rgba(232,232,232,0.85) !important;
 }
 
-/* Textbook cover on the home page's New card — the change-textbook link is
-   revealed on hover/focus rather than held in a useState. */
+/* Textbook cover on the home page's New card — hovering fades the artwork
+   back and brings up the change-textbook link over it, rather than holding
+   the state in a useState. Fading the art beats a scrim: a scrim can only
+   cover the artwork's own bounds, leaving the canvas around it untouched. */
+.textbook-cover__art {
+  transition: opacity 130ms;
+}
+.textbook-cover:hover .textbook-cover__art,
+.textbook-cover:focus-visible .textbook-cover__art {
+  opacity: 0.2;
+}
 .textbook-cover__label {
   opacity: 0;
   transition: opacity 130ms;
