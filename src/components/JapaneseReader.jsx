@@ -1,41 +1,49 @@
-import { useState, useEffect, useLayoutEffect, useRef } from 'react'
-import DeckComboBox from './DeckComboBox.jsx'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_ENTRY_WORD } from '../data/theme.js'
+import { useState } from 'react'
+import { isBundledDeck } from '../modules/vocab-srs/deckUtils.js'
+import Button from './Button.jsx'
+import Popover from './Popover.jsx'
+import OptionPicker from './OptionPicker.jsx'
+import { deckPickerItems } from './deckPickerItems.js'
+import { TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_ENTRY_WORD, SPACE_8, SPACE_12 } from '../data/theme.js'
+import { useAccent } from '../context/ModuleThemeContext.jsx'
 
+// Hover is a CSS class (.reader-token) per the StrictMode rule, not a
+// hovered-index useState as it was originally. The two highlight colours are
+// themeable per call site (Story's light newspaper/letter layouts pass their
+// own), so they travel as CSS custom properties on the wrapper for the
+// :hover rules to read — a class can't otherwise take per-instance colours.
+// `vocabHighlight` defaults to the module accent; it was Immersion's red
+// hardcoded, which only looked right because Immersion was the first reader.
 export function TokenizedBody({
   tokens,
   vocabMap,
   onWordClick,
   showFurigana,
   activeIdx,
-  vocabHighlight = 'rgba(224,90,78,0.22)',
+  vocabHighlight,
   hoverBg = 'rgba(255,255,255,0.1)',
   rtColor = TEXT_MUTED,
 }) {
-  const [hoveredIdx, setHoveredIdx] = useState(null)
-
-  useEffect(() => {
-    if (activeIdx === null) setHoveredIdx(null)
-  }, [activeIdx])
+  const accent = useAccent()
+  const vocabBg = vocabHighlight ?? `${accent}38`
 
   if (!Array.isArray(tokens) || tokens.length === 0) return null
   return (
-    <span>
+    <span style={{ '--reader-hover': hoverBg, '--reader-vocab': vocabBg }}>
       {tokens.map((tok, i) => {
         if (!tok.w) return <span key={i}>{tok.t}</span>
-        const isActive = hoveredIdx === i || activeIdx === i
+        const isActive = activeIdx === i
         const inVocab = !!vocabMap[tok.t]
         return (
           <span
             key={i}
-            onMouseEnter={() => setHoveredIdx(i)}
-            onMouseLeave={() => setHoveredIdx(null)}
+            className={inVocab ? 'reader-token reader-token--vocab' : 'reader-token'}
             onClick={e => { e.stopPropagation(); onWordClick(tok, e, i) }}
             style={{
               cursor: 'pointer',
               borderRadius: 3,
               background: isActive
-                ? inVocab ? vocabHighlight : hoverBg
+                ? inVocab ? vocabBg : hoverBg
                 : 'transparent',
               padding: '0 1px',
               transition: 'background 80ms',
@@ -56,74 +64,53 @@ export function TokenizedBody({
   )
 }
 
-export function WordPopup({ token, vocabEntry, onAdd, onCreateAndAdd, decks, isMobile, onClose, anchorRect }) {
-  const popupRef = useRef(null)
+export function WordPopup({ token, vocabEntry, onAdd, onCreateAndAdd, decks, isMobile, onClose, anchorRect, lastUsedDeckId }) {
+  // The deck list is a second *view of this same surface*, not a second
+  // floating layer. Previously this popup rendered a DeckComboBox, which
+  // opened its own popover anchored to a button inside this one — two
+  // stacked layers with competing click-outside handlers and independent
+  // positioning. Swapping content in place removes that entirely.
+  const [view, setView] = useState('definition')
 
-  useEffect(() => {
-    function handleClick(e) {
-      if (popupRef.current && !popupRef.current.contains(e.target)) onClose()
-    }
-    document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
-  }, [onClose])
-
-  useLayoutEffect(() => {
-    if (!popupRef.current || !anchorRect) return
-    const el = popupRef.current
-    const { width, height } = el.getBoundingClientRect()
-    const vw = window.innerWidth
-    const vh = window.innerHeight
-
-    let top = anchorRect.bottom + 6
-    let left = anchorRect.left
-
-    if (left + width + 8 > vw) left = vw - width - 8
-    left = Math.max(8, left)
-
-    if (top + height + 8 > vh) top = anchorRect.top - height - 6
-    top = Math.max(8, top)
-
-    el.style.top = top + 'px'
-    el.style.left = left + 'px'
-  }, [anchorRect])
+  function close() {
+    setView('definition')
+    onClose()
+  }
 
   return (
-    <div
-      ref={popupRef}
-      style={{
-        position: 'fixed',
-        top: anchorRect ? anchorRect.bottom + 6 : 0,
-        left: anchorRect ? anchorRect.left : 0,
-        zIndex: 200,
-        background: '#2A2A2A',
-        border: '1px solid rgba(255,255,255,0.15)',
-        borderRadius: 8,
-        padding: '10px 14px',
-        minWidth: 160,
-        maxWidth: 260,
-        boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
-        fontFamily: FONT,
-        letterSpacing: TRACKING,
-      }}
+    <Popover
+      open
+      onClose={close}
+      anchorRect={anchorRect}
+      isMobile={isMobile}
+      title={view === 'deck' ? 'Add to which deck?' : token.t}
+      bodyPadding={view === 'deck' ? 0 : undefined}
     >
-      <div style={{ fontSize: FS_ENTRY_WORD, color: TEXT, marginBottom: 2 }}>{token.t}</div>
-      {token.r && (
-        <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginBottom: (vocabEntry?.pos || vocabEntry?.meaning) ? 4 : 10 }}>{token.r}</div>
+      {view === 'deck' ? (
+        <OptionPicker
+          items={deckPickerItems(decks, { lastUsedDeckId, exclude: isBundledDeck })}
+          onSelect={deckId => { onAdd(token, vocabEntry, deckId); close() }}
+          onCreate={name => { onCreateAndAdd(token, vocabEntry, name); close() }}
+          placeholder="Search or create a deck"
+          emptyMessage="No decks yet"
+        />
+      ) : (
+        <div style={{ padding: `${SPACE_8}px ${SPACE_12}px`, minWidth: 160 }}>
+          <div style={{ fontSize: FS_ENTRY_WORD, color: TEXT, marginBottom: 2 }}>{token.t}</div>
+          {token.r && (
+            <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginBottom: (vocabEntry?.pos || vocabEntry?.meaning) ? 4 : 10 }}>{token.r}</div>
+          )}
+          {vocabEntry?.pos && (
+            <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: vocabEntry.meaning ? 4 : 10, opacity: 0.7 }}>{vocabEntry.pos}</div>
+          )}
+          {vocabEntry?.meaning && (
+            <div style={{ fontSize: FS_BASE, color: TEXT, marginBottom: 10 }}>{vocabEntry.meaning}</div>
+          )}
+          <Button variant="accent-outline" fullWidth onClick={() => setView('deck')}>
+            Add to SRS
+          </Button>
+        </div>
       )}
-      {vocabEntry?.pos && (
-        <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: vocabEntry.meaning ? 4 : 10, opacity: 0.7 }}>{vocabEntry.pos}</div>
-      )}
-      {vocabEntry?.meaning && (
-        <div style={{ fontSize: FS_BASE, color: TEXT, marginBottom: 10 }}>{vocabEntry.meaning}</div>
-      )}
-      <DeckComboBox
-        decks={decks}
-        isMobile={isMobile}
-        fullWidth
-        buttonLabel="Add to SRS"
-        onAdd={deckId => onAdd(token, vocabEntry, deckId)}
-        onCreateAndAdd={name => onCreateAndAdd(token, vocabEntry, name)}
-      />
-    </div>
+    </Popover>
   )
 }

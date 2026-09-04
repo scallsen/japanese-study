@@ -9,13 +9,23 @@ import VocabSrsDrill from './VocabSrsDrill.jsx'
 import WordImportPanel from './WordImportPanel.jsx'
 import { ensureDeck, createDeck, renameDeck, deleteCards } from './deckUtils.js'
 import PageHeader from '../../components/PageHeader.jsx'
-import SpeakerIcon from '../../components/SpeakerIcon.jsx'
-import HeaderMenu from '../../components/HeaderMenu.jsx'
+import AuthSlot from '../../components/AuthSlot.jsx'
+import SettingsSidebar, { SidebarHeaderToggle } from '../../components/SettingsSidebar.jsx'
+import SignInGate from '../../components/SignInGate.jsx'
+import Button from '../../components/Button.jsx'
+import FileButton from '../../components/FileButton.jsx'
+import NumberField from '../../components/NumberField.jsx'
+import ToggleButton from '../../components/ToggleButton.jsx'
+import Badge from '../../components/Badge.jsx'
+import DistributionBar from '../../components/DistributionBar.jsx'
 import { useToast } from '../../context/ToastContext.jsx'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_NAV, SUBHEADING_STYLE, FS_CAPTION, FS_CONTENT_HEADING } from '../../data/theme.js'
-import DrawerSectionHeader from '../../components/DrawerSectionHeader.jsx'
-import DrawerCheckbox from '../../components/DrawerCheckbox.jsx'
-import DrawerSelect from '../../components/DrawerSelect.jsx'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_NAV, SUBHEADING_STYLE, FS_CAPTION, FS_CONTENT_HEADING, SUCCESS } from '../../data/theme.js'
+import { MODULES } from '../../data/modules.js'
+import { ModuleThemeProvider, useAccent } from '../../context/ModuleThemeContext.jsx'
+import { STATE_SEGMENTS, SUSPENDED_DESCRIPTION } from './cardStates.js'
+import SectionHeader from '../../components/SectionHeader.jsx'
+import Checkbox from '../../components/Checkbox.jsx'
+import Select from '../../components/Select.jsx'
 import { useJaVoices } from '../../hooks/useTTS.js'
 import { useAudioGenerationStatus } from '../../hooks/useAudioGenerationStatus.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
@@ -23,116 +33,30 @@ import { AUDIO_SOURCE_OPTIONS, DEFAULT_AUDIO_SOURCE, getVoicevoxCredit, speakerI
 import { SENTENCE_SOURCE_OPTIONS, DEFAULT_SENTENCE_SOURCE } from '../../data/sentenceSource.js'
 import AttributionFooter from '../../components/AttributionFooter.jsx'
 import { renderAttributionSegments } from '../../utils/attributionSegments.jsx'
+import { useIsMobile } from '../../hooks/useIsMobile.js'
 
-const ACCENT = '#3ABDA4'
-const PANEL_W = 420
-const CHEVRON_W = 28
-const PANEL_CONTENT_W = PANEL_W - CHEVRON_W
+const SRS_ACCENT = MODULES.find(m => m.id === 'vocab-srs').accent
 
-function useIsMobile(breakpoint = 768) {
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= breakpoint)
-  useEffect(() => {
-    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`)
-    const handler = e => setIsMobile(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [breakpoint])
-  return isMobile
-}
-
-// Ordinal ramp (New→Learning→Young→Mature, one hue) + a distinct warning hue for
-// Relearning, validated with the dataviz skill's palette validator against this
-// module's dark background for CVD/contrast separation. Unlearned is a neutral
-// grey (not part of the ramp) since it's inert — cards that haven't been
-// touched yet, not a step in the learning progression.
-const STATE_COLORS = {
-  new: '#aaaaaa',
-  learning: '#4c8a7d',
-  young: '#5eb6a2',
-  mature: '#7fe0c8',
-  relearning: '#e0a72e',
-}
-const STATE_SEGMENTS = [
-  { key: 'new', label: 'Unlearned', description: 'Never reviewed — waiting for its first study session' },
-  { key: 'learning', label: 'Learning', description: 'Answered correctly once, but not yet graduated to a real spaced interval' },
-  { key: 'young', label: 'Young', description: 'Graduated, but its current interval is under 21 days — still fragile' },
-  { key: 'mature', label: 'Mature', description: 'Graduated with a 21+ day interval — well established' },
-  { key: 'relearning', label: 'Relearning', description: 'Was graduated, just answered wrong — cooling down before rejoining the queue' },
-]
-const SUSPENDED_DESCRIPTION = 'Paused after too many lapses (leech threshold) — won\'t appear in reviews until its progress is reset'
-
+// DistributionBar owns the bar + legend; the suspended count sits outside the
+// ramp (it's a status, not a learning stage) so it's a danger Badge below.
 function DeckProgressBar({ distribution }) {
   if (distribution.total === 0) return null
-  const segments = STATE_SEGMENTS
-    .map(s => ({ ...s, count: distribution[s.key], pct: (distribution[s.key] / distribution.total) * 100 }))
-    .filter(s => s.count > 0)
-
+  // Pre-filtered so the legend only lists states that are present, as before.
+  const segments = STATE_SEGMENTS.map(seg => ({ ...seg, count: distribution[seg.key] })).filter(seg => seg.count > 0)
   return (
     <div>
-      <div style={{ display: 'flex', height: 10, borderRadius: 5, overflow: 'hidden', gap: 2 }}>
-        {segments.map(s => (
-          <div
-            key={s.key}
-            title={`${s.label}: ${s.count} (${s.pct.toFixed(1)}%) — ${s.description}`}
-            style={{ flex: `${s.count} 0 0`, background: STATE_COLORS[s.key] }}
-          />
-        ))}
-      </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 14px', marginTop: 8 }}>
-        {segments.map(s => (
-          <span key={s.key} title={s.description} style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, display: 'flex', alignItems: 'center', gap: 5, cursor: 'help' }}>
-            <span style={{ width: 8, height: 8, borderRadius: 2, background: STATE_COLORS[s.key], display: 'inline-block', flexShrink: 0 }} />
-            {s.label} {s.count}
-          </span>
-        ))}
-      </div>
+      <DistributionBar segments={segments} />
       {distribution.suspended > 0 && (
-        <div
-          title={SUSPENDED_DESCRIPTION}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 6,
-            marginTop: 10,
-            padding: '4px 10px',
-            fontSize: FS_CAPTION,
-            background: 'rgba(192,57,43,0.15)',
-            border: '1px solid rgba(192,57,43,0.4)',
-            borderRadius: 5,
-            color: '#f87171',
-            cursor: 'help',
-          }}>
-          ⚠ {distribution.suspended} suspended
+        <div title={SUSPENDED_DESCRIPTION} style={{ display: 'inline-flex', marginTop: 10, cursor: 'help' }}>
+          <Badge tone="danger">⚠ {distribution.suspended} suspended</Badge>
         </div>
       )}
     </div>
   )
 }
 
-function FileInput({ onChange, accept = '.txt', label = 'Choose .txt file' }) {
-  return (
-    <label style={{ cursor: 'pointer' }}>
-      <div style={{
-        display: 'inline-block',
-        padding: '8px 16px',
-        background: 'rgba(255,255,255,0.06)',
-        border: '1px solid rgba(255,255,255,0.15)',
-        borderRadius: 6,
-        fontSize: FS_BASE,
-        color: 'rgba(255,255,255,0.7)',
-        cursor: 'pointer',
-        fontFamily: FONT,
-        letterSpacing: TRACKING,
-      }}>
-        {label}
-      </div>
-      <input type="file" accept={accept} style={{ display: 'none' }} onChange={onChange} />
-    </label>
-  )
-}
-
 function DeckRow({ deck, stats, onToggle, onRename }) {
-  const [hovered, setHovered] = useState(false)
+  const ACCENT = useAccent()
   const [editing, setEditing] = useState(false)
   const [draftName, setDraftName] = useState(deck.name)
   const canManage = deck.source === 'imported'
@@ -197,28 +121,7 @@ function DeckRow({ deck, stats, onToggle, onRename }) {
           </div>
           <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: 2 }}>{infoText}</div>
         </div>
-        <button
-          onClick={onToggle}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
-          style={{
-            flexShrink: 0,
-            padding: '4px 10px',
-            fontSize: FS_BASE,
-            fontFamily: 'inherit',
-            letterSpacing: TRACKING,
-            background: deck.active
-              ? hovered ? 'rgba(58,189,164,0.2)' : 'rgba(58,189,164,0.12)'
-              : hovered ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.06)',
-            color: deck.active ? ACCENT : TEXT_MUTED,
-            border: `1px solid ${deck.active ? 'rgba(58,189,164,0.35)' : 'rgba(255,255,255,0.15)'}`,
-            borderRadius: 5,
-            cursor: 'pointer',
-            transition: 'background 130ms',
-          }}
-        >
-          {deck.active ? 'On' : 'Off'}
-        </button>
+        <ToggleButton active={deck.active} labels={{ on: 'On', off: 'Off' }} onClick={onToggle} />
       </div>
       {canManage && (
         <a
@@ -251,7 +154,16 @@ function resolvedArrayToCardsObj(resolvedCards, decks) {
 }
 
 export default function VocabSrsModule() {
-  const { user, signIn, signOut, loading: authLoading } = useAuth()
+  return (
+    <ModuleThemeProvider accent={SRS_ACCENT}>
+      <VocabSrsHome />
+    </ModuleThemeProvider>
+  )
+}
+
+function VocabSrsHome() {
+  const ACCENT = useAccent()
+  const { user, signIn } = useAuth()
   const { data: rawProgress, save, loading } = useProgress('vocab-srs')
   const { showToast } = useToast()
   const [progress, setProgress] = useState(null)
@@ -267,9 +179,6 @@ export default function VocabSrsModule() {
   const [showWordImport, setShowWordImport] = useState(false)
   const [advanceDays, setAdvanceDays] = useState(3)
   const [showOptions, setShowOptions] = useState(() => window.innerWidth > 768)
-  const [chevronHovered, setChevronHovered] = useState(false)
-  const [startHovered, setStartHovered] = useState(false)
-  const [optionsHovered, setOptionsHovered] = useState(false)
 
   const [showVisualEffects, setShowVisualEffects] = useState(() => {
     const s = safeLocalStorageGet('srs-visual-effects'); return s === null ? true : s === 'true'
@@ -357,6 +266,25 @@ export default function VocabSrsModule() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, user])
 
+  // The dashboard's "Start reviews" deep-links here as `#/vocab-srs?start=1`.
+  // Once progress is loaded, start the same session the home screen's button
+  // would, then strip the query so returning to the home screen (or a
+  // reload) doesn't restart it.
+  const autoStartedRef = useRef(false)
+  useEffect(() => {
+    if (!progress || session || autoStartedRef.current) return
+    const query = new URLSearchParams(window.location.hash.split('?')[1] ?? '')
+    if (query.get('start') !== '1') return
+    autoStartedRef.current = true
+    window.history.replaceState(null, '', '#/vocab-srs')
+    const today = new Date().toISOString().split('T')[0]
+    const day = progress.newCardDay ?? { date: '', count: 0 }
+    const newPerDay = Math.max(0, dailyNewCards - (day.date === today ? day.count : 0))
+    const queue = getTodaysQueue(progress.cards ?? {}, progress.decks ?? {}, { newPerDay })
+    if (queue.due.length > 0 || queue.newCards.length > 0 || queue.rescheduled.length > 0) handleStartReview(newPerDay)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [progress])
+
   const isMobile = useIsMobile()
   const jaVoices = useJaVoices()
   const { isProcessing: audioProcessing } = useAudioGenerationStatus()
@@ -365,19 +293,12 @@ export default function VocabSrsModule() {
 
   if (!user) {
     return (
-      <div style={{ width: '100vw', height: '100dvh', background: '#1E1E1E', fontFamily: FONT, letterSpacing: TRACKING, display: 'flex', flexDirection: 'column', color: TEXT }}>
-        <PageHeader crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'SRS' }]} />
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-          <div style={{ fontSize: FS_BASE, color: TEXT }}>Sign in to use Vocab SRS</div>
-          <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginBottom: 8 }}>Progress syncs to your account across devices</div>
-          <button
-            onClick={signIn}
-            style={{ padding: '10px 24px', background: ACCENT, border: 'none', borderRadius: 8, color: '#fff', fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING, cursor: 'pointer' }}
-          >
-            Sign in with GitHub
-          </button>
-        </div>
-      </div>
+      <SignInGate
+        crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'SRS' }]}
+        title="Sign in to use Vocab SRS"
+        subtitle="Progress syncs to your account across devices"
+        onSignIn={signIn}
+      />
     )
   }
 
@@ -491,16 +412,13 @@ export default function VocabSrsModule() {
     save(newProgress)
   }
 
-  async function handleFileChange(e) {
-    const file = e.target.files[0]
-    if (!file) return
+  async function handleFileChange(file) {
     const text = await file.text()
     const existingIds = Object.keys(cardsObj)
     const imported = parseAnkiExport(text, existingIds)
 
     if (imported.length === 0) {
       setImportMsg('No new cards found')
-      e.target.value = ''
       return
     }
 
@@ -516,7 +434,6 @@ export default function VocabSrsModule() {
     setProgress(newProgress)
     await save(newProgress)
     setImportMsg(`${imported.length} card${imported.length === 1 ? '' : 's'} imported`)
-    e.target.value = ''
   }
 
   function buildWordImportCards(words, deckId) {
@@ -573,23 +490,17 @@ export default function VocabSrsModule() {
     save(newProgress)
   }
 
-
-  async function handleAnkiSyncFileChange(e) {
-    const file = e.target.files[0]
-    if (!file) return
-
+  async function handleAnkiSyncFileChange(file) {
     let syncCards
     try {
       syncCards = JSON.parse(await file.text())
     } catch {
       setAnkiSyncMsg('Invalid JSON file')
-      e.target.value = ''
       return
     }
 
     if (typeof syncCards !== 'object' || Array.isArray(syncCards)) {
       setAnkiSyncMsg('Expected a JSON object')
-      e.target.value = ''
       return
     }
 
@@ -612,16 +523,6 @@ export default function VocabSrsModule() {
     setProgress(merged)
     await save(merged)
     setAnkiSyncMsg(`${count} card${count === 1 ? '' : 's'} synced`)
-    e.target.value = ''
-  }
-
-  function handleSidebarFocus(e) {
-    const container = e.currentTarget
-    const target = e.target
-    const cRect = container.getBoundingClientRect()
-    const tRect = target.getBoundingClientRect()
-    if (tRect.top < cRect.top + 8) container.scrollTop += tRect.top - cRect.top - 8
-    else if (tRect.bottom > cRect.bottom - 8) container.scrollTop += tRect.bottom - cRect.bottom + 8
   }
 
   function renderPanelContent(paddingH) {
@@ -630,7 +531,7 @@ export default function VocabSrsModule() {
       <div style={{ padding: `16px ${paddingH}px 16px` }}>
 
         {/* ── Deck Stats (global) ── */}
-        <DrawerSectionHeader title="Deck Stats" />
+        <SectionHeader title="Deck Stats" />
         {stateDistribution.total === 0 ? (
           <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, padding: '4px 0 8px' }}>
             No cards yet
@@ -647,7 +548,7 @@ export default function VocabSrsModule() {
         <div style={hairline} />
 
         {/* ── Decks ── */}
-        <DrawerSectionHeader title="Decks" />
+        <SectionHeader title="Decks" />
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           {deckList.map(deck => (
             <DeckRow
@@ -663,54 +564,20 @@ export default function VocabSrsModule() {
         <div style={hairline} />
 
         {/* ── SRS Settings ── */}
-        <DrawerSectionHeader title="SRS Settings" />
+        <SectionHeader title="SRS Settings" />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Daily new cards</span>
-            <input
-              type="number"
-              value={dailyNewCards}
-              min={1}
-              onChange={e => setDailyNewCards(Math.max(1, parseInt(e.target.value) || 1))}
-              style={{
-                width: 60,
-                padding: '4px 8px',
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.15)',
-                borderRadius: 4,
-                color: TEXT,
-                fontFamily: 'inherit',
-                fontSize: FS_BASE,
-                letterSpacing: TRACKING,
-                textAlign: 'center',
-              }}
-            />
+            <NumberField value={dailyNewCards} min={1} onChange={v => setDailyNewCards(Math.max(1, parseInt(v) || 1))} />
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>
               Leech threshold
               <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginLeft: 6 }}>lapses (0 = off)</span>
             </span>
-            <input
-              type="number"
-              value={leechThreshold}
-              min={0}
-              onChange={e => setLeechThreshold(Math.max(0, parseInt(e.target.value) || 0))}
-              style={{
-                width: 60,
-                padding: '4px 8px',
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.15)',
-                borderRadius: 4,
-                color: TEXT,
-                fontFamily: 'inherit',
-                fontSize: FS_BASE,
-                letterSpacing: TRACKING,
-                textAlign: 'center',
-              }}
-            />
+            <NumberField value={leechThreshold} min={0} onChange={v => setLeechThreshold(Math.max(0, parseInt(v) || 0))} />
           </div>
-          <DrawerCheckbox
+          <Checkbox
             checked={showHardEasy}
             onChange={() => setShowHardEasy(v => !v)}
             label="Show Hard / Easy buttons"
@@ -720,17 +587,17 @@ export default function VocabSrsModule() {
         <div style={hairline} />
 
         {/* ── Additional Settings ── */}
-        <DrawerSectionHeader title="Additional Settings" />
+        <SectionHeader title="Additional Settings" />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <DrawerCheckbox checked={showVisualEffects} onChange={() => setShowVisualEffects(v => !v)} label="Show visual effects" />
-          <DrawerCheckbox checked={pixelFont} onChange={() => setPixelFont(v => !v)} label="Use pixel font" />
-          <DrawerCheckbox checked={showTranslation} onChange={() => setShowTranslation(v => !v)} label="Show translation" />
-          <DrawerCheckbox checked={showFurigana} onChange={() => setShowFurigana(v => !v)} label="Show furigana on front" />
-          <DrawerCheckbox checked={showSentence} onChange={() => setShowSentence(v => !v)} label="Show sentence" />
+          <Checkbox checked={showVisualEffects} onChange={() => setShowVisualEffects(v => !v)} label="Show visual effects" />
+          <Checkbox checked={pixelFont} onChange={() => setPixelFont(v => !v)} label="Use pixel font" />
+          <Checkbox checked={showTranslation} onChange={() => setShowTranslation(v => !v)} label="Show translation" />
+          <Checkbox checked={showFurigana} onChange={() => setShowFurigana(v => !v)} label="Show furigana on front" />
+          <Checkbox checked={showSentence} onChange={() => setShowSentence(v => !v)} label="Show sentence" />
           {showSentence && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
               <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Sentence source</span>
-              <DrawerSelect
+              <Select
                 value={sentenceSource}
                 onChange={setSentenceSource}
                 options={SENTENCE_SOURCE_OPTIONS}
@@ -738,15 +605,15 @@ export default function VocabSrsModule() {
               />
             </div>
           )}
-          <DrawerCheckbox checked={showKanjiMeaning} onChange={() => setShowKanjiMeaning(v => !v)} label="Show kanji meaning" />
-          <DrawerCheckbox
+          <Checkbox checked={showKanjiMeaning} onChange={() => setShowKanjiMeaning(v => !v)} label="Show kanji meaning" />
+          <Checkbox
             checked={audioEnabled}
             onChange={() => setAudioEnabled(v => !v)}
             label="Enable audio"
           />
           {audioEnabled && (
             <>
-              <DrawerCheckbox
+              <Checkbox
                 checked={autoplayAudio}
                 onChange={() => setAutoplayAudio(v => !v)}
                 label="Auto-play"
@@ -754,13 +621,13 @@ export default function VocabSrsModule() {
               />
               {autoplayAudio && (
                 <>
-                  <DrawerCheckbox
+                  <Checkbox
                     checked={autoplayFront}
                     onChange={() => setAutoplayFront(v => !v)}
                     label="On front"
                     indent={2}
                   />
-                  <DrawerCheckbox
+                  <Checkbox
                     checked={autoplayBack}
                     onChange={() => setAutoplayBack(v => !v)}
                     label="On back (word then sentence)"
@@ -770,7 +637,7 @@ export default function VocabSrsModule() {
               )}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
                 <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Text to speech</span>
-                <DrawerSelect
+                <Select
                   value={audioSource}
                   onChange={setAudioSource}
                   options={AUDIO_SOURCE_OPTIONS}
@@ -783,7 +650,7 @@ export default function VocabSrsModule() {
                   <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>Audio is being generated</span>
                 )}
                 {audioSource === 'browser' && jaVoices.length > 0 && (
-                  <DrawerSelect
+                  <Select
                     value={ttsVoice}
                     onChange={setTtsVoice}
                     options={[{ value: '', label: 'Default' }, ...jaVoices.map(v => ({ value: v.name, label: v.name }))]}
@@ -792,7 +659,7 @@ export default function VocabSrsModule() {
                   />
                 )}
               </div>
-              <DrawerCheckbox
+              <Checkbox
                 checked={sfxEnabled}
                 onChange={() => setSfxEnabled(v => !v)}
                 label="Sound effects"
@@ -807,28 +674,14 @@ export default function VocabSrsModule() {
         {import.meta.env.DEV && globalStats.totalCards > 0 && (
           <>
             <div style={hairline} />
-            <DrawerSectionHeader title="Dev" />
+            <SectionHeader title="Dev" />
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
               <span style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>Advance</span>
-              <input
-                type="number"
-                value={advanceDays}
-                min={1}
-                onChange={e => setAdvanceDays(Number(e.target.value))}
-                style={{
-                  width: 60,
-                  padding: '4px 8px',
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.15)',
-                  borderRadius: 4,
-                  color: TEXT,
-                  fontFamily: 'inherit',
-                  fontSize: FS_BASE,
-                  letterSpacing: TRACKING,
-                }}
-              />
+              <NumberField value={advanceDays} min={1} onChange={v => setAdvanceDays(Number(v))} />
               <span style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>days</span>
-              <button
+              <Button
+                variant="neutral"
+                size="sm"
                 onClick={() => {
                   const ms = advanceDays * 24 * 60 * 60 * 1000
                   const newCardsObj = {}
@@ -839,23 +692,14 @@ export default function VocabSrsModule() {
                   setProgress(newProgress)
                   save(newProgress)
                 }}
-                style={{
-                  padding: '4px 12px',
-                  background: 'rgba(255,255,255,0.08)',
-                  border: '1px solid rgba(255,255,255,0.15)',
-                  borderRadius: 4,
-                  color: TEXT,
-                  fontFamily: 'inherit',
-                  fontSize: FS_BASE,
-                  cursor: 'pointer',
-                  letterSpacing: TRACKING,
-                }}
               >
                 Apply
-              </button>
+              </Button>
             </div>
             <div style={{ marginTop: 10 }}>
-              <button
+              <Button
+                variant="danger-outline"
+                size="sm"
                 onClick={() => {
                   const activeDeckIds = new Set(
                     Object.values(decks).filter(d => d.active).map(d => d.id)
@@ -868,20 +712,9 @@ export default function VocabSrsModule() {
                   setProgress(newProgress)
                   save(newProgress)
                 }}
-                style={{
-                  padding: '4px 12px',
-                  background: 'rgba(192,57,43,0.15)',
-                  border: '1px solid rgba(192,57,43,0.4)',
-                  borderRadius: 4,
-                  color: '#f87171',
-                  fontFamily: 'inherit',
-                  fontSize: FS_BASE,
-                  cursor: 'pointer',
-                  letterSpacing: TRACKING,
-                }}
               >
                 Reset active decks
-              </button>
+              </Button>
             </div>
           </>
         )}
@@ -933,39 +766,12 @@ export default function VocabSrsModule() {
           <div style={{ height: '100%', display: 'flex', flexDirection: 'column', color: TEXT }}>
             <PageHeader
               crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'SRS' }]}
-              rightSlot={<HeaderMenu
-                primary={
-                  <button
-                    onClick={() => setShowOptions(v => !v)}
-                    onMouseEnter={() => setOptionsHovered(true)}
-                    onMouseLeave={() => setOptionsHovered(false)}
-                    style={{
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      height: 34, padding: '0 12px', fontSize: FS_BASE,
-                      fontFamily: 'inherit',
-                      background: optionsHovered ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)',
-                      color: 'rgba(255,255,255,0.7)',
-                      border: '1px solid rgba(255,255,255,0.2)',
-                      borderRadius: 8, cursor: 'pointer',
-                      transition: 'background 130ms',
-                    }}
-                  >
-                    Options
-                  </button>
-                }
-                items={[
-                  {
-                    label: audioEnabled ? 'Mute' : 'Unmute',
-                    icon: <SpeakerIcon muted={!audioEnabled} size={20} />,
-                    onClick: () => setAudioEnabled(v => !v),
-                    dim: !audioEnabled,
-                  },
-                  ...(!authLoading ? [{
-                    label: user ? 'Sign out' : 'Sign in',
-                    onClick: user ? signOut : signIn,
-                  }] : []),
-                ]}
-              />}
+              rightSlot={(
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <AuthSlot />
+                  {isMobile && <SidebarHeaderToggle onClick={() => setShowOptions(true)} />}
+                </div>
+              )}
             />
 
             <main style={{ flex: 1, overflowY: 'auto', padding: '28px 24px', display: 'flex', flexDirection: 'column' }}>
@@ -1013,30 +819,11 @@ export default function VocabSrsModule() {
                       </div>
                     )}
 
-                    <button
-                      onClick={canStart ? () => handleStartReview(effectiveNewPerDay) : undefined}
-                      onMouseEnter={() => setStartHovered(true)}
-                      onMouseLeave={() => setStartHovered(false)}
-                      disabled={!canStart}
-                      style={{
-                        width: '100%',
-                        height: 44,
-                        fontSize: FS_BASE,
-                        fontFamily: 'inherit',
-                        letterSpacing: TRACKING,
-                        background: canStart
-                          ? startHovered ? 'rgba(58,189,164,0.25)' : 'rgba(58,189,164,0.15)'
-                          : 'rgba(255,255,255,0.04)',
-                        color: canStart ? ACCENT : TEXT_MUTED,
-                        border: `1px solid ${canStart ? 'rgba(58,189,164,0.4)' : 'rgba(255,255,255,0.1)'}`,
-                        borderRadius: 8,
-                        cursor: canStart ? 'pointer' : 'default',
-                        transition: 'background 130ms',
-                        marginBottom: 28,
-                      }}
-                    >
-                      {canStart ? `Start review (${due.length + rescheduled.length + newCards.length})` : 'Nothing due'}
-                    </button>
+                    <div style={{ marginBottom: 28 }}>
+                      <Button variant="accent-outline" size="lg" fullWidth onClick={() => handleStartReview(effectiveNewPerDay)} disabled={!canStart}>
+                        {canStart ? `Start review (${due.length + rescheduled.length + newCards.length})` : 'Nothing due'}
+                      </Button>
+                    </div>
 
                     <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 20 }}>
                       <div style={{ ...SUBHEADING_STYLE, color: TEXT_MUTED, marginBottom: 10 }}>
@@ -1044,38 +831,19 @@ export default function VocabSrsModule() {
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-                          <FileInput onChange={handleFileChange} />
+                          <FileButton accept=".txt" onFile={handleFileChange}>Choose .txt file</FileButton>
                           {importMsg && (
-                            <span style={{ fontSize: FS_BASE, color: '#4ade80' }}>{importMsg}</span>
+                            <span style={{ fontSize: FS_BASE, color: SUCCESS }}>{importMsg}</span>
                           )}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-                          <FileInput
-                            accept=".json"
-                            label="Sync from Anki (.json)"
-                            onChange={handleAnkiSyncFileChange}
-                          />
+                          <FileButton accept=".json" onFile={handleAnkiSyncFileChange}>Sync from Anki (.json)</FileButton>
                           {ankiSyncMsg && (
-                            <span style={{ fontSize: FS_BASE, color: '#4ade80' }}>{ankiSyncMsg}</span>
+                            <span style={{ fontSize: FS_BASE, color: SUCCESS }}>{ankiSyncMsg}</span>
                           )}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-                          <button
-                            onClick={() => setShowWordImport(true)}
-                            style={{
-                              padding: '8px 16px',
-                              background: 'rgba(255,255,255,0.06)',
-                              border: '1px solid rgba(255,255,255,0.15)',
-                              borderRadius: 6,
-                              fontSize: FS_BASE,
-                              color: 'rgba(255,255,255,0.7)',
-                              fontFamily: 'inherit',
-                              letterSpacing: TRACKING,
-                              cursor: 'pointer',
-                            }}
-                          >
-                            Import from text / image
-                          </button>
+                          <Button variant="neutral" onClick={() => setShowWordImport(true)}>Import from text / image</Button>
                         </div>
                       </div>
                       <div style={{ marginTop: 8, fontSize: 12, color: 'rgba(255,255,255,0.2)' }}>
@@ -1097,76 +865,14 @@ export default function VocabSrsModule() {
         )}
       </div>
 
-      {/* ── Desktop sidebar ── */}
-      {!isMobile && (
-        <>
-          <div
-            onClick={() => setShowOptions(v => !v)}
-            onMouseEnter={() => setChevronHovered(true)}
-            onMouseLeave={() => setChevronHovered(false)}
-            style={{
-              flexShrink: 0,
-              width: CHEVRON_W,
-              borderLeft: '1px solid rgba(255,255,255,0.1)',
-              borderRight: showOptions ? '1px solid rgba(255,255,255,0.1)' : 'none',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer',
-              background: chevronHovered ? 'rgba(255,255,255,0.05)' : 'transparent',
-              transition: 'background 130ms',
-            }}
-          >
-            <button style={{
-              width: CHEVRON_W, height: 44,
-              background: 'none', border: 'none',
-              color: 'rgba(255,255,255,0.5)', fontSize: 14,
-              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontFamily: 'inherit', padding: 0,
-            }}>
-              {showOptions ? '›' : '‹'}
-            </button>
-          </div>
-          <div style={{
-            flexShrink: 0,
-            width: showOptions ? PANEL_CONTENT_W : 0,
-            overflow: 'hidden',
-            transition: 'width 220ms ease',
-          }}>
-            <div className="sidebar-scroll" style={{ width: PANEL_CONTENT_W, height: '100%', overflowY: 'auto' }} onFocus={handleSidebarFocus}>
-              {renderPanelContent(16)}
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* ── Mobile overlay ── */}
-      {isMobile && showOptions && (
-        <>
-          <div onClick={() => setShowOptions(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 20 }} />
-          <div style={{
-            position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-            zIndex: 30, background: '#2E2E2E',
-            display: 'flex', flexDirection: 'column', overflow: 'hidden',
-          }}>
-            <div style={{
-              padding: '16px 20px',
-              borderBottom: '1px solid rgba(255,255,255,0.08)',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              flexShrink: 0,
-            }}>
-              <div style={{ color: '#fff', fontSize: FS_BASE, fontWeight: 700 }}>Options</div>
-              <button
-                onClick={() => setShowOptions(false)}
-                style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: FS_BASE, fontFamily: 'inherit', cursor: 'pointer', padding: 0 }}
-              >
-                Back
-              </button>
-            </div>
-            <div className="sidebar-scroll" style={{ flex: 1, overflowY: 'auto', paddingBottom: 'env(safe-area-inset-bottom)' }} onFocus={handleSidebarFocus}>
-              {renderPanelContent(20)}
-            </div>
-          </div>
-        </>
-      )}
+      <SettingsSidebar
+        open={showOptions}
+        onToggle={() => setShowOptions(v => !v)}
+        onClose={() => setShowOptions(false)}
+        isMobile={isMobile}
+      >
+        {renderPanelContent}
+      </SettingsSidebar>
 
       <WordImportPanel
         open={showWordImport}

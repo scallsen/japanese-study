@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import PageHeader from '../components/PageHeader.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
 import { supabase } from '../lib/supabase.js'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_ENTRY_KANJI, FS_ENTRY_HEADING, FS_ENTRY_ALT, SUBHEADING_STYLE } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_ENTRY_HEADING, FS_ENTRY_ALT, KANJI_FONT } from '../data/theme.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useProgress } from '../hooks/useProgress.js'
 import { migrateProgress } from '../modules/vocab-srs/migrate.js'
@@ -10,10 +10,16 @@ import { resolveCard, cardStateLabel } from '../modules/vocab-srs/srs.js'
 import { WORD_DATA } from '../data/wordData.js'
 import { WORD_SOURCES } from '../data/wordLists.js'
 import AttributionFooter from '../components/AttributionFooter.jsx'
+import Badge from '../components/Badge.jsx'
+import Card from '../components/Card.jsx'
+import CenteredLoadingMessage from '../components/CenteredLoadingMessage.jsx'
+import DataList from '../components/DataList.jsx'
+import { MODULES } from '../data/modules.js'
+import { ModuleThemeProvider } from '../context/ModuleThemeContext.jsx'
+import { SectionLabel, KanjiBreakdownEntry } from './dictionaryShared.jsx'
 
 const BG = '#1E1E1E'
-const SURFACE = '#2A2A2A'
-const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
+const DICTIONARY_ACCENT = MODULES.find(m => m.id === 'dictionary').accent
 
 function isSingleKanji(ch) {
   return /^[一-鿿]$/.test(ch)
@@ -75,21 +81,6 @@ function labelForListKey(listKey) {
 const LANG_NAMES = { eng: 'English', fre: 'French', ger: 'German', deu: 'German', por: 'Portuguese', ita: 'Italian', spa: 'Spanish', chi: 'Chinese', zho: 'Chinese', kor: 'Korean', nld: 'Dutch', rus: 'Russian', ara: 'Arabic', per: 'Persian', hin: 'Hindi' }
 function langName(code) { return LANG_NAMES[code] ?? code }
 
-function PosTag({ label }) {
-  return (
-    <span style={{
-      fontSize: FS_BADGE,
-      color: TEXT_MUTED,
-      background: 'rgba(255,255,255,0.07)',
-      borderRadius: 3,
-      padding: '2px 7px',
-      fontFamily: FONT,
-      letterSpacing: TRACKING,
-      flexShrink: 0,
-    }}>{label}</span>
-  )
-}
-
 function MetaTag({ label, color }) {
   return (
     <span style={{
@@ -123,7 +114,7 @@ function SensesSection({ senses }) {
         <div key={gi}>
           {group.pos.length > 0 && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 8 }}>
-              {group.pos.map((p, i) => <PosTag key={i} label={p} />)}
+              {group.pos.map((p, i) => <Badge key={i} variant="fill" tone="neutral">{p}</Badge>)}
             </div>
           )}
           <ol style={{ margin: 0, padding: '0 0 0 20px', display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -163,113 +154,43 @@ function SensesSection({ senses }) {
   )
 }
 
-function gradeLabel(grade) {
-  if (!grade) return null
-  if (grade <= 6) return `G${grade}`
-  if (grade <= 8) return 'Secondary'
-  return 'Jinmeiyō'
-}
-
 function KanjiCard({ entry }) {
-  const jlpt = entry.jlpt ? `N${entry.jlpt}` : null
-  const grade = gradeLabel(entry.grade)
-
   return (
-    <div style={{
-      background: SURFACE,
-      borderRadius: 8,
-      border: '1px solid rgba(255,255,255,0.06)',
-      padding: '14px 16px',
-      display: 'flex',
-      gap: 16,
-      alignItems: 'flex-start',
-    }}>
-      <span style={{ fontSize: FS_ENTRY_KANJI, color: TEXT, fontFamily: KANJI_FONT, lineHeight: 1, letterSpacing: 0, flexShrink: 0, minWidth: 44, textAlign: 'center' }}>
-        {entry.literal}
-      </span>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 5 }}>
-          {entry.on_readings?.length > 0 && (
-            <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
-              {entry.on_readings.join('、')}
-            </span>
-          )}
-          {entry.kun_readings?.length > 0 && (
-            <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
-              {entry.kun_readings.join('、')}
-            </span>
-          )}
-          {jlpt && (
-            <span style={{ fontSize: FS_BADGE, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>{jlpt}</span>
-          )}
-          {grade && (
-            <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{grade}</span>
-          )}
-          {entry.stroke_count && (
-            <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.6 }}>
-              {entry.stroke_count} strokes
-            </span>
-          )}
-          {entry.frequency && (
-            <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.6 }}>
-              freq #{entry.frequency}
-            </span>
-          )}
-        </div>
-        {entry.meanings && (
-          <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-            {entry.meanings}
-          </span>
-        )}
-      </div>
-    </div>
-  )
-}
-
-function SectionLabel({ label }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12, marginTop: 28 }}>
-      <span style={{ ...SUBHEADING_STYLE, color: TEXT_MUTED, fontFamily: FONT, opacity: 0.5 }}>
-        {label}
-      </span>
-      <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.06)' }} />
-    </div>
+    <Card style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+      <KanjiBreakdownEntry entry={entry} />
+    </Card>
   )
 }
 
 const SRS_STATE_LABELS = { new: 'New', learning: 'Learning', young: 'Young', mature: 'Mature', relearning: 'Relearning' }
 
-function DeckRow({ label, href, meta }) {
+// Content-only — DataList's Cell wraps this; the row's own <a>, background,
+// border and hover treatment come from DataList itself (navigate.href
+// below), converging onto the same list surface EntryRow uses rather than
+// each deck staying its own floating card.
+function deckRowContent({ label, meta }) {
   return (
-    <a href={href} className="dict-deck-row" style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: 12,
-      background: SURFACE,
-      borderRadius: 8,
-      border: '1px solid rgba(255,255,255,0.06)',
-      padding: '10px 14px',
-      textDecoration: 'none',
-    }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, width: '100%' }}>
       <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>{label}</span>
       {meta && (
         <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>{meta}</span>
       )}
-    </a>
+    </div>
   )
 }
 
+const DECK_ROW_COLUMNS = [{ key: 'content', render: deckRowContent }]
+
 function SentenceCard({ sentence }) {
   return (
-    <div style={{ background: SURFACE, borderRadius: 8, border: '1px solid rgba(255,255,255,0.06)', padding: '12px 16px' }}>
+    <Card padding="12px 16px">
       <div style={{ fontSize: FS_BASE, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, lineHeight: 1.6 }}>
         {sentence.japanese}
       </div>
       <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, marginTop: 4 }}>
         {sentence.english}
       </div>
-    </div>
+    </Card>
   )
 }
 
@@ -335,6 +256,16 @@ export default function DictionaryEntryPage({ entryId }) {
 
   const showDecksSection = vocabDrillMatches.length > 0 || !!user
 
+  const deckRows = useMemo(() => {
+    const rows = vocabDrillMatches.map(label => ({ id: `vocab-${label}`, label, href: '#/vocab', meta: 'Vocab Drill' }))
+    if (user) {
+      for (const m of srsMatches) {
+        rows.push({ id: m.cardId, label: m.deckName, href: '#/vocab-srs', meta: SRS_STATE_LABELS[m.state] ?? m.state })
+      }
+    }
+    return rows
+  }, [vocabDrillMatches, user, srsMatches])
+
   const allForms = entry
     ? [...new Set([
         ...(entry.kanji_forms ?? []),
@@ -345,6 +276,7 @@ export default function DictionaryEntryPage({ entryId }) {
   const altForms = allForms.filter(f => f !== entry?.primary_form)
 
   return (
+    <ModuleThemeProvider accent={DICTIONARY_ACCENT}>
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', background: BG }}>
       <PageHeader
         crumbs={[
@@ -357,11 +289,7 @@ export default function DictionaryEntryPage({ entryId }) {
       <div style={{ flex: 1, overflowY: 'auto', padding: '32px 16px 64px', display: 'flex', flexDirection: 'column' }}>
         <div style={{ maxWidth: 600, margin: '0 auto', width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
         <div style={{ flex: 1 }}>
-          {loading && (
-            <div style={{ textAlign: 'center', padding: '64px 0', color: TEXT_MUTED, fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING }}>
-              Loading...
-            </div>
-          )}
+          {loading && <CenteredLoadingMessage text="Loading..." />}
 
           {!loading && error && (
             <div style={{ textAlign: 'center', padding: '64px 0', color: '#E05A4E', fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING }}>
@@ -377,9 +305,7 @@ export default function DictionaryEntryPage({ entryId }) {
                   <span style={{ fontSize: FS_ENTRY_HEADING, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, lineHeight: 1.1 }}>
                     {entry.primary_form}
                   </span>
-                  {entry.common && (
-                    <span style={{ fontSize: FS_BADGE, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>common</span>
-                  )}
+                  {entry.common && <Badge variant="text" tone="accent">common</Badge>}
                 </div>
 
                 {altForms.length > 0 && (
@@ -394,7 +320,7 @@ export default function DictionaryEntryPage({ entryId }) {
               </div>
 
               {/* Definitions */}
-              <div style={{ background: SURFACE, borderRadius: 8, border: '1px solid rgba(255,255,255,0.06)', padding: '18px 20px' }}>
+              <Card padding="18px 20px">
                 {entry.senses ? (
                   <SensesSection senses={entry.senses} />
                 ) : (
@@ -403,37 +329,34 @@ export default function DictionaryEntryPage({ entryId }) {
                     {entry.gloss_en}
                   </div>
                 )}
-              </div>
+              </Card>
 
               {/* Your decks */}
               {showDecksSection && (
                 <>
-                  <SectionLabel label="Your Decks" />
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {vocabDrillMatches.map(label => (
-                      <DeckRow key={`vocab-${label}`} label={label} href="#/vocab" meta="Vocab Drill" />
-                    ))}
-                    {user && srsMatches.length > 0 && srsMatches.map(m => (
-                      <DeckRow
-                        key={m.cardId}
-                        label={m.deckName}
-                        href="#/vocab-srs"
-                        meta={SRS_STATE_LABELS[m.state] ?? m.state}
-                      />
-                    ))}
-                    {user && srsMatches.length === 0 && (
-                      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.6, padding: '2px 2px' }}>
-                        Not in any of your SRS decks yet.
-                      </div>
-                    )}
-                  </div>
+                  <SectionLabel label="Your Decks" marginTop={28} />
+                  {deckRows.length > 0 && (
+                    <DataList
+                      columns={DECK_ROW_COLUMNS}
+                      rows={deckRows}
+                      rowKey={row => row.id}
+                      navigate={{ href: row => row.href }}
+                      padding="10px 14px"
+                      maxWidth={600}
+                    />
+                  )}
+                  {user && srsMatches.length === 0 && (
+                    <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.6, padding: '2px 2px', marginTop: deckRows.length > 0 ? 8 : 0 }}>
+                      Not in any of your SRS decks yet.
+                    </div>
+                  )}
                 </>
               )}
 
               {/* Kanji breakdown */}
               {kanjiDetails.length > 0 && (
                 <>
-                  <SectionLabel label="Kanji" />
+                  <SectionLabel label="Kanji" marginTop={28} />
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {kanjiDetails.map(k => <KanjiCard key={k.literal} entry={k} />)}
                   </div>
@@ -443,7 +366,7 @@ export default function DictionaryEntryPage({ entryId }) {
               {/* Example sentences */}
               {sentences.length > 0 && (
                 <>
-                  <SectionLabel label="Example Sentences" />
+                  <SectionLabel label="Example Sentences" marginTop={28} />
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {sentences.map(s => <SentenceCard key={s.id} sentence={s} />)}
                   </div>
@@ -459,5 +382,6 @@ export default function DictionaryEntryPage({ entryId }) {
         </div>
       </div>
     </div>
+    </ModuleThemeProvider>
   )
 }

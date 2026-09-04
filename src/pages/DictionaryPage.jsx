@@ -6,13 +6,20 @@ import TopProgressBar from '../components/TopProgressBar.jsx'
 import CenteredLoadingMessage from '../components/CenteredLoadingMessage.jsx'
 import { useDelayedLoading } from '../hooks/useDelayedLoading.js'
 import { supabase } from '../lib/supabase.js'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_NAV, FS_BADGE, FS_CAPTION, FS_ENTRY_KANJI, FS_ENTRY_WORD, FS_CONTENT_HEADING } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_ENTRY_WORD, FS_CONTENT_HEADING, KANJI_FONT } from '../data/theme.js'
 import AttributionFooter from '../components/AttributionFooter.jsx'
+import Badge from '../components/Badge.jsx'
+import Card from '../components/Card.jsx'
+import TextInput from '../components/TextInput.jsx'
+import Checkbox from '../components/Checkbox.jsx'
+import Button from '../components/Button.jsx'
+import DataList from '../components/DataList.jsx'
+import { MODULES } from '../data/modules.js'
+import { ModuleThemeProvider, useAccent } from '../context/ModuleThemeContext.jsx'
+import { SectionLabel, KanjiBreakdownEntry } from './dictionaryShared.jsx'
 
 const BG = '#1E1E1E'
-const SURFACE = '#2A2A2A'
-const ACCENT = '#3ABDA4'
-const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
+const DICTIONARY_ACCENT = MODULES.find(m => m.id === 'dictionary').accent
 
 const PAGE_SIZE = 20
 
@@ -211,52 +218,10 @@ async function doSearch(term, offset, commonOnly) {
   return { rows: data ?? [], hasMore: (data ?? []).length === PAGE_SIZE }
 }
 
-function kanjiGradeLabel(grade) {
-  if (!grade) return null
-  if (grade <= 6) return `G${grade}`
-  if (grade <= 8) return 'Secondary'
-  return 'Jinmeiyō'
-}
-
 function KanjiRow({ entry }) {
-  const jlptLabel = entry.jlpt ? `N${entry.jlpt}` : null
-  const gradeLabel = kanjiGradeLabel(entry.grade)
-
   return (
     <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-      <span style={{ fontSize: FS_ENTRY_KANJI, color: TEXT, fontFamily: KANJI_FONT, lineHeight: 1, flexShrink: 0, letterSpacing: 0, minWidth: 40, textAlign: 'center' }}>
-        {entry.literal}
-      </span>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 5 }}>
-          {entry.on_readings.length > 0 && (
-            <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
-              {entry.on_readings.join('、')}
-            </span>
-          )}
-          {entry.kun_readings.length > 0 && (
-            <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
-              {entry.kun_readings.join('、')}
-            </span>
-          )}
-          {jlptLabel && (
-            <span style={{ fontSize: FS_BADGE, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>{jlptLabel}</span>
-          )}
-          {gradeLabel && (
-            <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{gradeLabel}</span>
-          )}
-          {entry.stroke_count && (
-            <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.6 }}>
-              {entry.stroke_count} strokes
-            </span>
-          )}
-        </div>
-        {entry.meanings && (
-          <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-            {entry.meanings.split('; ').slice(0, 4).join('; ')}
-          </span>
-        )}
-      </div>
+      <KanjiBreakdownEntry entry={entry} truncateMeanings />
     </div>
   )
 }
@@ -267,13 +232,7 @@ function KanjiSection({ entries, hasWords }) {
   return (
     <>
       <SectionLabel label="Kanji" />
-      <div style={{
-        background: SURFACE,
-        borderRadius: 8,
-        border: '1px solid rgba(255,255,255,0.06)',
-        overflow: expanded ? 'hidden' : 'visible',
-        marginBottom: hasWords ? 20 : 0,
-      }}>
+      <Card padding={0} style={{ overflow: expanded ? 'hidden' : 'visible', marginBottom: hasWords ? 20 : 0 }}>
         {!expanded ? (
           <div
             onClick={() => setExpanded(true)}
@@ -330,75 +289,39 @@ function KanjiSection({ entries, hasWords }) {
             </div>
           </>
         )}
-      </div>
+      </Card>
     </>
   )
 }
 
-function SectionLabel({ label }) {
-  return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: 8,
-      marginBottom: 8,
-      marginTop: 4,
-    }}>
-      <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: '0.1em', opacity: 0.5, textTransform: 'uppercase' }}>
-        {label}
-      </span>
-      <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.06)' }} />
-    </div>
-  )
-}
-
-function EntryRow({ entry }) {
+// Content-only — DataList's Cell wraps this; the row's own <a> and
+// hover/divider treatment come from DataList itself (navigate.href below).
+function entryRowContent(entry) {
   const kana = entry.kana_forms?.[0]
   const showKana = kana && kana !== entry.primary_form
   const posLabel = shortPos(Array.isArray(entry.pos) ? entry.pos[0] : null)
   const meaning = entry.gloss_en?.split('; ').slice(0, 3).join('; ') ?? ''
 
   return (
-    <a
-      href={`#/dictionary/entry/${entry.id}`}
-      className="dict-entry-row"
-      style={{
-        display: 'block',
-        padding: '12px 16px',
-        borderBottom: '1px solid rgba(255,255,255,0.05)',
-        textDecoration: 'none',
-        cursor: 'pointer',
-      }}
-    >
+    <div style={{ width: '100%' }}>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 5 }}>
         <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{entry.primary_form}</span>
         {showKana && (
           <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{kana}</span>
         )}
-        {entry.common && (
-          <span style={{ fontSize: FS_BADGE, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING }}>common</span>
-        )}
+        {entry.common && <Badge variant="text" tone="accent">common</Badge>}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        {posLabel && (
-          <span style={{
-            fontSize: FS_BADGE,
-            color: TEXT_MUTED,
-            background: 'rgba(255,255,255,0.07)',
-            borderRadius: 3,
-            padding: '1px 6px',
-            fontFamily: FONT,
-            letterSpacing: TRACKING,
-            flexShrink: 0,
-          }}>{posLabel}</span>
-        )}
+        {posLabel && <Badge variant="fill" tone="neutral">{posLabel}</Badge>}
         {meaning && (
           <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>{meaning}</span>
         )}
       </div>
-    </a>
+    </div>
   )
 }
+
+const ENTRY_ROW_COLUMNS = [{ key: 'content', render: entryRowContent, wrap: true }]
 
 const SESSION_KEY = 'dict-search-state'
 
@@ -407,6 +330,10 @@ function loadSaved() {
 }
 
 export default function DictionaryPage() {
+  // Explicit override, not ambient useAccent() — this component is the one
+  // establishing ModuleThemeProvider below, so it can't read back the value
+  // it's about to provide to its own children.
+  const ACCENT = useAccent(DICTIONARY_ACCENT)
   const saved = useMemo(loadSaved, [])
   const [query, setQuery] = useState(saved?.query ?? '')
   const [results, setResults] = useState(saved?.results ?? [])
@@ -418,7 +345,6 @@ export default function DictionaryPage() {
   const showLoadingMessage = useDelayedLoading(loading)
   const [commonOnly, setCommonOnly] = useState(saved?.commonOnly ?? false)
   const [error, setError] = useState(null)
-  const [inputFocused, setInputFocused] = useState(false)
   const debounceRef = useRef(null)
   const ticketRef = useRef(0)
   const restoredRef = useRef(saved?.results?.length > 0 ? 2 : 0)
@@ -509,6 +435,7 @@ export default function DictionaryPage() {
   const showResults = results.length > 0
 
   return (
+    <ModuleThemeProvider accent={DICTIONARY_ACCENT}>
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', background: BG }}>
       <PageHeader
         crumbs={[
@@ -522,33 +449,17 @@ export default function DictionaryPage() {
       <div ref={scrollRef} onScroll={handleScroll} style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 48px', display: 'flex', flexDirection: 'column' }}>
         <div style={{ maxWidth: 600, margin: '0 auto', width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
         <div style={{ flex: 1 }}>
-          <input
-            type="text"
+          <TextInput
             placeholder="Search Japanese or English..."
             value={query}
-            onChange={e => setQuery(e.target.value)}
-            onFocus={() => setInputFocused(true)}
-            onBlur={() => setInputFocused(false)}
+            onChange={setQuery}
+            size="lg"
             autoFocus
             autoComplete="off"
             autoCorrect="off"
             autoCapitalize="none"
             spellCheck={false}
-            style={{
-              width: '100%',
-              boxSizing: 'border-box',
-              background: SURFACE,
-              border: `1px solid ${inputFocused ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.1)'}`,
-              borderRadius: 8,
-              padding: '12px 16px',
-              fontSize: FS_NAV,
-              fontFamily: FONT,
-              letterSpacing: TRACKING,
-              color: TEXT,
-              outline: 'none',
-              marginBottom: romajiHint ? 6 : 12,
-              transition: 'border-color 100ms',
-            }}
+            style={{ marginBottom: romajiHint ? 6 : 12 }}
           />
 
           {romajiHint && (
@@ -565,17 +476,7 @@ export default function DictionaryPage() {
           )}
 
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', userSelect: 'none' }}>
-              <input
-                type="checkbox"
-                checked={commonOnly}
-                onChange={e => setCommonOnly(e.target.checked)}
-                style={{ cursor: 'pointer', accentColor: '#3ABDA4' }}
-              />
-              <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-                Common words only
-              </span>
-            </label>
+            <Checkbox checked={commonOnly} onChange={() => setCommonOnly(v => !v)} label="Common words only" />
             {showResults && (
               <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, marginLeft: 'auto', opacity: 0.55 }}>
                 {results.length}{hasMore ? '+' : ''} results
@@ -616,35 +517,20 @@ export default function DictionaryPage() {
           {showResults && !loading && (
             <>
               {kanjiResults.length > 0 && <SectionLabel label="Words" />}
-              <div style={{
-                background: SURFACE,
-                borderRadius: 8,
-                overflow: 'hidden',
-                border: '1px solid rgba(255,255,255,0.06)',
-              }}>
-                {results.map(entry => <EntryRow key={entry.id} entry={entry} />)}
-              </div>
+              <DataList
+                columns={ENTRY_ROW_COLUMNS}
+                rows={results}
+                rowKey={entry => entry.id}
+                navigate={{ href: entry => `#/dictionary/entry/${entry.id}` }}
+                padding="12px 16px"
+                maxWidth={600}
+              />
 
               {hasMore && (
                 <div style={{ textAlign: 'center', marginTop: 16 }}>
-                  <button
-                    onClick={() => runSearch(query, offset, true, commonOnly)}
-                    disabled={loadingMore}
-                    style={{
-                      fontSize: FS_BASE,
-                      fontFamily: FONT,
-                      letterSpacing: TRACKING,
-                      color: TEXT_MUTED,
-                      background: SURFACE,
-                      border: '1px solid rgba(255,255,255,0.1)',
-                      borderRadius: 6,
-                      padding: '8px 28px',
-                      cursor: loadingMore ? 'default' : 'pointer',
-                      opacity: loadingMore ? 0.5 : 1,
-                    }}
-                  >
+                  <Button variant="neutral" onClick={() => runSearch(query, offset, true, commonOnly)} disabled={loadingMore}>
                     {loadingMore ? 'Loading...' : 'Load more'}
-                  </button>
+                  </Button>
                 </div>
               )}
             </>
@@ -655,5 +541,6 @@ export default function DictionaryPage() {
         </div>
       </div>
     </div>
+    </ModuleThemeProvider>
   )
 }

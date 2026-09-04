@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE } from '../data/theme.js'
+import Button from './Button.jsx'
+import { FONT, TRACKING, TEXT, FS_BASE } from '../data/theme.js'
 
-const ACCENT = '#3ABDA4'
 const SURFACE = '#2A2A2A'
 // PageHeader always renders a fixed 64px row (plus its own safe-area padding) —
 // the top variants sit directly under it so they read as an extension of it.
@@ -102,24 +102,18 @@ export default function Toast({ open, message, actionLabel, onAction, onDismiss,
 
   const isCard = IS_CARD[variant]
 
+  // Both controls are Buttons rather than bare <button>s so they pick up the
+  // system's hover/active states — previously neither gave any feedback on
+  // hover, so they didn't read as interactive.
   const content = (
     <>
       <span>{message}</span>
       {actionLabel && (
-        <button
-          onClick={handleAction}
-          style={{ background: 'none', border: 'none', color: ACCENT, textDecoration: 'underline', cursor: 'pointer', fontFamily: 'inherit', fontSize: FS_BASE, padding: 0, flexShrink: 0 }}
-        >
+        <Button variant="ghost" size="sm" onClick={handleAction}>
           {actionLabel}
-        </button>
+        </Button>
       )}
-      <button
-        onClick={startClose}
-        aria-label="Dismiss"
-        style={{ background: 'none', border: 'none', color: TEXT_MUTED, cursor: 'pointer', fontSize: FS_BASE, padding: 0, flexShrink: 0 }}
-      >
-        ×
-      </button>
+      <Button variant="ghost-muted" size="sm" onClick={startClose} label="Dismiss" icon="×" />
     </>
   )
 
@@ -155,22 +149,28 @@ export default function Toast({ open, message, actionLabel, onAction, onDismiss,
   }
 
   return (
-    <div style={{
-      position: 'fixed',
-      zIndex: 70,
-      display: 'flex',
-      alignItems: 'center',
-      gap: 16,
-      fontFamily: FONT,
-      letterSpacing: TRACKING,
-      fontSize: FS_BASE,
-      color: TEXT,
-      animation: closing
-        ? `${EXIT_ANIMATIONS[variant]} ${EXIT_MS}ms ease-in forwards`
-        : `${ANIMATIONS[variant]} 220ms ease-out`,
-      transform: isCard ? 'translateX(-50%)' : undefined,
-      ...VARIANT_STYLES[variant],
-    }}>
+    // .toast-card widens the card variants to fill the viewport on phones
+    // (see global.css). It's done by widening rather than by repositioning so
+    // the centred slide-in/out keyframes keep working untouched.
+    <div
+      className={isCard ? 'toast-card' : undefined}
+      style={{
+        position: 'fixed',
+        zIndex: 70,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 16,
+        fontFamily: FONT,
+        letterSpacing: TRACKING,
+        fontSize: FS_BASE,
+        color: TEXT,
+        animation: closing
+          ? `${EXIT_ANIMATIONS[variant]} ${EXIT_MS}ms ease-in forwards`
+          : `${ANIMATIONS[variant]} 220ms ease-out`,
+        transform: isCard ? 'translateX(-50%)' : undefined,
+        ...VARIANT_STYLES[variant],
+      }}
+    >
       {content}
     </div>
   )

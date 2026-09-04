@@ -1,11 +1,35 @@
-import { useState } from 'react'
-import { FS_BASE } from '../data/theme.js'
+import { FONT, FS_BASE } from '../data/theme.js'
 
 const PANEL_W = 420
 const CHEVRON_W = 28
 const PANEL_CONTENT_W = PANEL_W - CHEVRON_W
 
-// Keeps focused rows (e.g. a DrawerSelect opened via keyboard) inside the
+// The mobile counterpart of the desktop chevron rail: a small right-aligned
+// section in the PageHeader, divided from the rest by a rule, with the same
+// chevron — so the top bar stays a normal header (crumbs + AuthSlot) and
+// Options isn't a bespoke button. Render it in PageHeader's rightSlot after
+// AuthSlot, only when isMobile.
+export function SidebarHeaderToggle({ onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="Open options"
+      className="sidebar-chevron"
+      style={{
+        marginLeft: 12, height: 44, width: 40,
+        border: 'none', borderLeft: '1px solid rgba(255,255,255,0.1)', borderRadius: 0,
+        background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: FS_BASE,
+        cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+        fontFamily: FONT, padding: '0 0 0 12px',
+      }}
+    >
+      ‹
+    </button>
+  )
+}
+
+// Keeps focused rows (e.g. a Select opened via keyboard) inside the
 // scrollable panel instead of letting the browser's default focus-scroll
 // yank the whole page.
 function handleSidebarFocus(e) {
@@ -31,8 +55,6 @@ function handleSidebarFocus(e) {
 // `children` is a render-prop `(paddingH) => node` so callers can match
 // VocabPage's own panel-content padding convention (16 desktop / 20 mobile).
 export default function SettingsSidebar({ open, onToggle, onClose, isMobile, children }) {
-  const [chevronHovered, setChevronHovered] = useState(false)
-
   return (
     <>
       {/* ── Desktop sidebar ── */}
@@ -40,8 +62,7 @@ export default function SettingsSidebar({ open, onToggle, onClose, isMobile, chi
         <>
           <div
             onClick={onToggle}
-            onMouseEnter={() => setChevronHovered(true)}
-            onMouseLeave={() => setChevronHovered(false)}
+            className="sidebar-chevron"
             style={{
               flexShrink: 0,
               width: CHEVRON_W,
@@ -49,15 +70,13 @@ export default function SettingsSidebar({ open, onToggle, onClose, isMobile, chi
               borderRight: open ? '1px solid rgba(255,255,255,0.1)' : 'none',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               cursor: 'pointer',
-              background: chevronHovered ? 'rgba(255,255,255,0.05)' : 'transparent',
-              transition: 'background 130ms',
             }}>
             <button style={{
               width: CHEVRON_W, height: 44,
               background: 'none', border: 'none',
               color: 'rgba(255,255,255,0.5)', fontSize: FS_BASE,
               cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontFamily: 'inherit', padding: 0,
+              fontFamily: FONT, padding: 0,
             }}>
               {open ? '›' : '‹'}
             </button>
@@ -93,7 +112,7 @@ export default function SettingsSidebar({ open, onToggle, onClose, isMobile, chi
               <div style={{ color: '#fff', fontSize: FS_BASE, fontWeight: 700 }}>Options</div>
               <button
                 onClick={onClose}
-                style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: FS_BASE, fontFamily: 'inherit', cursor: 'pointer', padding: 0 }}
+                style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: FS_BASE, fontFamily: FONT, cursor: 'pointer', padding: 0 }}
               >
                 Back
               </button>

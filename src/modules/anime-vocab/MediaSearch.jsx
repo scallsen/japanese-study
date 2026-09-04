@@ -1,14 +1,45 @@
 import { useState, useEffect, useRef } from 'react'
-import { createPortal } from 'react-dom'
 import { selectMedia, browseMedia } from './api.js'
 import { fetchRecommendedMedia } from './recommendedMediaCache.js'
 import { difficultyLabel } from './difficultyLabels.js'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE } from '../../data/theme.js'
+import Select from '../../components/Select.jsx'
+import TextInput from '../../components/TextInput.jsx'
+import Button from '../../components/Button.jsx'
+import DataList from '../../components/DataList.jsx'
+import Badge from '../../components/Badge.jsx'
+import FilterCard, { FilterRow } from '../../components/FilterCard.jsx'
+import FeedCard from '../../components/FeedCard.jsx'
+import { Chip, default as ChipSelector } from '../../components/Chip.jsx'
+import Popover from '../../components/Popover.jsx'
 
-const ACCENT = '#D46EA3'
 const DEBOUNCE_MS = 400
+
+const RESULT_COLUMNS = [
+  {
+    key: 'cover', width: 40,
+    render: r => r.coverUrl && <img src={r.coverUrl} alt="" style={{ width: 40, height: 56, objectFit: 'cover', borderRadius: 4 }} />,
+  },
+  {
+    key: 'content', flex: 1,
+    render: r => (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4, width: '100%', minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Badge tone="accent">{r.mediaType}</Badge>
+          {r.difficulty?.difficulty != null && (
+            <Badge tone="accent">{difficultyLabel(r.difficulty.difficulty)} ({Number(r.difficulty.difficulty).toFixed(1)})</Badge>
+          )}
+        </div>
+        <div style={{ fontSize: FS_LIST_TITLE, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.title}</div>
+        {r.originalTitle && r.originalTitle !== r.title && (
+          <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.originalTitle}</div>
+        )}
+      </div>
+    ),
+  },
+]
 
 // Duplicated from providers/jitenClient.js — that file is server-only (see
 // its own header comment), never imported into browser code.
@@ -49,100 +80,35 @@ const SORT_OPTIONS = [
 const DEFAULT_SORT = 'difficulty-asc'
 const RESULTS_PAGE_SIZE = 24
 
-function ViewModeButton({ label, active, onClick }) {
-  const [hovered, setHovered] = useState(false)
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        padding: '5px 12px', borderRadius: 4, cursor: 'pointer',
-        fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING,
-        background: active ? `${ACCENT}22` : hovered ? 'rgba(255,255,255,0.06)' : 'transparent',
-        color: active ? ACCENT : TEXT_MUTED,
-        border: `1px solid ${active ? `${ACCENT}55` : 'rgba(255,255,255,0.12)'}`,
-      }}
-    >
-      {label}
-    </button>
-  )
-}
-
-function SortSelect({ value, onChange }) {
-  return (
-    <select
-      value={value}
-      onChange={e => onChange(e.target.value)}
-      style={{
-        padding: '5px 26px 5px 10px',
-        fontSize: FS_BASE,
-        fontFamily: FONT,
-        letterSpacing: TRACKING,
-        borderRadius: 4,
-        cursor: 'pointer',
-        background: 'rgba(255,255,255,0.06)',
-        color: TEXT_MUTED,
-        border: '1px solid rgba(255,255,255,0.12)',
-        outline: 'none',
-        appearance: 'none',
-        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'right 8px center',
-      }}
-    >
-      {SORT_OPTIONS.map(o => (
-        <option key={o.value} value={o.value}>{o.label}</option>
-      ))}
-    </select>
-  )
-}
-
 // Small "i" info icon. Hovering shows the popover; clicking pins it open
 // (stays open after the mouse leaves) until a click outside closes it.
-// Portaled to document.body and positioned via the icon's own screen
-// coordinates (position: fixed) rather than a plain position:absolute
-// child, since the filter card it lives in has overflow:hidden (for its
-// rounded corners) and would otherwise clip the popover.
+// The hover/pin state machine stays local here — it's a narrow,
+// single-call-site need, not promoted into Popover's own API (every other
+// Popover consumer is click-triggered). Popover itself owns the
+// positioning (flip/clamp, escapes the filter card's overflow:hidden via
+// position:fixed — no portal needed) and the outside-click-to-close
+// behavior, so this is real simplification over the old hand-rolled
+// getBoundingClientRect/portal version, not just a reskin.
 function InfoIcon({ text }) {
   const [open, setOpen] = useState(false)
   const [pinned, setPinned] = useState(false)
-  const [coords, setCoords] = useState(null)
   const wrapRef = useRef(null)
-  const popoverRef = useRef(null)
-
-  function updateCoords() {
-    const rect = wrapRef.current?.getBoundingClientRect()
-    if (rect) setCoords({ top: rect.bottom + 6, left: rect.left })
-  }
 
   function handleMouseEnter() {
-    if (pinned) return
-    updateCoords()
-    setOpen(true)
+    if (!pinned) setOpen(true)
   }
   function handleMouseLeave() {
-    if (pinned) return
-    setOpen(false)
+    if (!pinned) setOpen(false)
   }
   function handleClick(e) {
     e.stopPropagation()
-    updateCoords()
     setOpen(true)
     setPinned(true)
   }
-
-  useEffect(() => {
-    if (!pinned) return
-    function handleOutsideClick(e) {
-      if (wrapRef.current?.contains(e.target) || popoverRef.current?.contains(e.target)) return
-      setOpen(false)
-      setPinned(false)
-    }
-    document.addEventListener('mousedown', handleOutsideClick)
-    return () => document.removeEventListener('mousedown', handleOutsideClick)
-  }, [pinned])
+  function handleClose() {
+    setOpen(false)
+    setPinned(false)
+  }
 
   return (
     <span
@@ -165,148 +131,36 @@ function InfoIcon({ text }) {
       >
         i
       </button>
-      {open && coords && createPortal(
-        <span ref={popoverRef} style={{
-          position: 'fixed', top: coords.top, left: coords.left, zIndex: 1000,
-          width: 220, padding: '8px 10px', borderRadius: 6,
-          background: '#1E1E1E', border: '1px solid rgba(255,255,255,0.15)',
-          color: TEXT_MUTED, fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, lineHeight: 1.4,
-        }}>
+      <Popover open={open} onClose={handleClose} anchorRef={wrapRef} width={220} bodyPadding="8px 10px">
+        <span style={{ display: 'block', color: TEXT_MUTED, fontSize: FS_BADGE, lineHeight: 1.4 }}>
           {text}
-        </span>,
-        document.body
-      )}
+        </span>
+      </Popover>
     </span>
   )
 }
 
-// Shared toggle chip — used for both the media-type and difficulty filter
-// rows (same click-to-select/click-to-deselect interaction either way).
-function Chip({ label, active, onClick }) {
-  const [hovered, setHovered] = useState(false)
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        padding: '4px 11px', borderRadius: 4, cursor: 'pointer',
-        fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING,
-        background: active ? `${ACCENT}22` : hovered ? 'rgba(255,255,255,0.06)' : 'transparent',
-        color: active ? ACCENT : TEXT_MUTED,
-        border: `1px solid ${active ? `${ACCENT}55` : 'rgba(255,255,255,0.12)'}`,
-      }}
-    >
-      {label}
-    </button>
-  )
-}
 
 // Fixed width (not just flexShrink: 0) so every section's chips start at the
 // same x position regardless of label length, and a top margin to match a
 // chip's own vertical padding — needed once alignItems switches to
 // flex-start so the label sits level with the first line of chips instead
 // of vertically centering against however many lines they wrap onto.
-function FilterSectionLabel({ children }) {
-  return (
-    <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0, width: 92, marginTop: 4 }}>
-      {children}
-    </span>
-  )
-}
-
-function DifficultyBadge({ difficulty }) {
-  if (difficulty == null) return null
-  return (
-    <span style={{
-      fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, color: ACCENT,
-      background: `${ACCENT}22`, border: `1px solid ${ACCENT}55`, borderRadius: 4, padding: '1px 7px', flexShrink: 0,
-    }}>
-      {difficultyLabel(difficulty)} ({Number(difficulty).toFixed(1)})
-    </span>
-  )
-}
-
 function ResultTile({ result, onClick, busy }) {
-  const [hovered, setHovered] = useState(false)
+  const badges = result.difficulty?.difficulty != null
+    ? [{ label: `${difficultyLabel(result.difficulty.difficulty)} (${Number(result.difficulty.difficulty).toFixed(1)})`, tone: 'accent' }]
+    : []
   return (
-    <div
-      onClick={busy ? undefined : onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        background: hovered ? '#313131' : '#2A2A2A',
-        border: '1px solid rgba(255,255,255,0.07)',
-        borderRadius: 8,
-        overflow: 'hidden',
-        cursor: busy ? 'default' : 'pointer',
-        opacity: busy ? 0.5 : 1,
-        transition: 'background 130ms',
-      }}
-    >
-      {result.coverUrl ? (
-        <img src={result.coverUrl} alt="" style={{ width: '100%', aspectRatio: '5 / 7', objectFit: 'cover', display: 'block' }} />
-      ) : (
-        <div style={{ width: '100%', aspectRatio: '5 / 7', background: '#1E1E1E' }} />
-      )}
-      <div style={{ padding: '8px 10px', display: 'flex', flexDirection: 'column', gap: 6 }}>
-        <div style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {result.title}
-        </div>
-        <div style={{ alignSelf: 'flex-start' }}>
-          <DifficultyBadge difficulty={result.difficulty?.difficulty} />
-        </div>
-      </div>
-    </div>
+    <FeedCard
+      image={{ src: result.coverUrl, aspectRatio: '5 / 7' }}
+      title={result.title}
+      badges={badges}
+      onClick={onClick}
+      disabled={busy}
+    />
   )
 }
 
-function ResultListRow({ result, onClick, busy }) {
-  const [hovered, setHovered] = useState(false)
-  return (
-    <div
-      onClick={busy ? undefined : onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        background: hovered ? '#313131' : '#2A2A2A',
-        border: '1px solid rgba(255,255,255,0.07)',
-        borderRadius: 8,
-        padding: '14px 18px',
-        cursor: busy ? 'default' : 'pointer',
-        opacity: busy ? 0.5 : 1,
-        transition: 'background 130ms',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 12,
-      }}
-    >
-      {result.coverUrl && (
-        <img src={result.coverUrl} alt="" style={{ width: 40, height: 56, objectFit: 'cover', borderRadius: 4, flexShrink: 0 }} />
-      )}
-      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 4 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{
-            fontSize: FS_BADGE, fontFamily: FONT, letterSpacing: TRACKING, color: ACCENT,
-            background: `${ACCENT}22`, border: `1px solid ${ACCENT}55`, borderRadius: 4, padding: '1px 7px',
-          }}>
-            {result.mediaType}
-          </span>
-          <DifficultyBadge difficulty={result.difficulty?.difficulty} />
-        </div>
-        <div style={{ fontSize: FS_LIST_TITLE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {result.title}
-        </div>
-        {result.originalTitle && result.originalTitle !== result.title && (
-          <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {result.originalTitle}
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
 
 // Search + select screen. On selecting a result, links it into media/media_provider_ref/
 // media_episode (via the anime-media-select edge function) and calls onSelected(media, episodes).
@@ -351,14 +205,6 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
   }, [busy, onLoadingChange])
   const showSearching = useDelayedLoading(loading)
 
-  function toggleType(t) {
-    setMediaTypes(prev => {
-      const next = new Set(prev)
-      if (next.has(t)) next.delete(t); else next.add(t)
-      return next
-    })
-  }
-
   // Clicking a level while "All" is active starts a fresh single-level
   // selection (rather than toggling it out of the full set, which would
   // leave a confusing 5-of-6 state). From there, clicks add/remove
@@ -378,16 +224,6 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
     setDifficulties(new Set(ALL_DIFFICULTY_LEVELS))
   }
 
-  // Plain multi-select toggle, same shape as toggleType — but snaps back to
-  // the default ("safe" only) rather than allowing zero levels selected,
-  // since an empty maturity set would silently show nothing.
-  function toggleMaturity(level) {
-    setMaturity(prev => {
-      const next = new Set(prev)
-      if (next.has(level)) next.delete(level); else next.add(level)
-      return next.size === 0 ? new Set(DEFAULT_MATURITY) : next
-    })
-  }
 
   const isDefaultMediaTypes = mediaTypes.size === DEFAULT_MEDIA_TYPES.length && DEFAULT_MEDIA_TYPES.every(t => mediaTypes.has(t))
   const isAllDifficulties = difficulties.size === ALL_DIFFICULTY_LEVELS.length
@@ -514,70 +350,54 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
     }
   }
 
-  const ResultItem = viewMode === 'tiles' ? ResultTile : ResultListRow
-
   return (
     <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <input
-        type="text"
+      <TextInput
         value={query}
-        onChange={e => setQuery(e.target.value)}
+        onChange={setQuery}
         placeholder="Search Jiten.moe"
+        size="lg"
         autoFocus
-        style={{
-          width: '100%',
-          padding: '12px 16px',
-          fontSize: FS_LIST_TITLE,
-          fontFamily: FONT,
-          letterSpacing: 'normal',
-          background: '#2A2A2A',
-          border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: 8,
-          color: TEXT,
-          outline: 'none',
-        }}
       />
 
-      <div style={{ display: 'flex', flexDirection: 'column', background: '#2A2A2A', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, overflow: 'hidden' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '12px 16px' }}>
-          <FilterSectionLabel>Content</FilterSectionLabel>
-          {/* flex: 1 + minWidth: 0 lets this wrap its OWN chips onto multiple
-              lines within the remaining width, instead of the outer row (which
-              sees its unwrapped max-content width) dropping the whole thing —
-              label included — onto a line of its own. */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, flex: 1, minWidth: 0 }}>
-            {ALL_MEDIA_TYPES.map(t => (
-              <Chip key={t} label={MEDIA_TYPE_LABELS[t]} active={mediaTypes.has(t)} onClick={() => toggleType(t)} />
-            ))}
+      <FilterCard>
+        <FilterRow key="content" label="Content">
+          <ChipSelector
+            options={ALL_MEDIA_TYPES.map(t => ({ value: t, label: MEDIA_TYPE_LABELS[t] }))}
+            value={mediaTypes}
+            onChange={setMediaTypes}
+            mode="multi"
+          />
+        </FilterRow>
+        <FilterRow key="difficulty" label="Difficulty">
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            <Chip label="All" active={isAllDifficulties} onClick={selectAllDifficulties} />
+            <ChipSelector
+              options={ALL_DIFFICULTY_LEVELS.map(level => ({ value: level, label: difficultyLabel(level) }))}
+              value={difficulties}
+              onChange={next => {
+                // ChipSelector's multi mode always toggles the one clicked
+                // option against the CURRENT set — recover which option
+                // that was via set diff, then replay it through
+                // toggleDifficulty's own "start fresh from All" / "snap
+                // back when empty" logic, which a plain toggle-against-
+                // full-set can't express.
+                const clicked = [...next].find(v => !difficulties.has(v)) ?? [...difficulties].find(v => !next.has(v))
+                toggleDifficulty(clicked)
+              }}
+              mode="multi"
+            />
           </div>
-        </div>
-        <div style={{ height: 1, background: 'rgba(255,255,255,0.08)' }} />
-        <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-            <FilterSectionLabel>Difficulty</FilterSectionLabel>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, flex: 1, minWidth: 0 }}>
-              <Chip label="All" active={isAllDifficulties} onClick={selectAllDifficulties} />
-              {ALL_DIFFICULTY_LEVELS.map(level => (
-                <Chip key={level} label={difficultyLabel(level)} active={difficulties.has(level)} onClick={() => toggleDifficulty(level)} />
-              ))}
-            </div>
-          </div>
-        </div>
-        <div style={{ height: 1, background: 'rgba(255,255,255,0.08)' }} />
-        <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-            <FilterSectionLabel>
-              Maturity
-              <InfoIcon text="Content maturity rating is estimated based on tags, and is not always accurate." />
-            </FilterSectionLabel>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, flex: 1, minWidth: 0 }}>
-              {MATURITY_LEVELS.map(level => (
-                <Chip key={level} label={MATURITY_LABELS[level]} active={maturity.has(level)} onClick={() => toggleMaturity(level)} />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
+        </FilterRow>
+        <FilterRow key="maturity" label={<>Maturity<InfoIcon text="Content maturity rating is estimated based on tags, and is not always accurate." /></>}>
+          <ChipSelector
+            options={MATURITY_LEVELS.map(level => ({ value: level, label: MATURITY_LABELS[level] }))}
+            value={maturity}
+            onChange={next => setMaturity(next.size === 0 ? new Set(DEFAULT_MATURITY) : next)}
+            mode="multi"
+          />
+        </FilterRow>
+      </FilterCard>
 
       {error && (
         <div style={{ fontSize: FS_BASE, color: '#f87171', fontFamily: FONT, letterSpacing: TRACKING }}>{error}</div>
@@ -589,11 +409,15 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
             Recommended — beginner friendly
           </span>
         ) : (
-          <SortSelect value={sortValue} onChange={setSortValue} />
+          <Select value={sortValue} onChange={setSortValue} options={SORT_OPTIONS} label="Sort by" />
         )}
-        <div style={{ display: 'flex', gap: 6, marginLeft: 'auto' }}>
-          <ViewModeButton label="List" active={viewMode === 'list'} onClick={() => setViewMode('list')} />
-          <ViewModeButton label="Tiles" active={viewMode === 'tiles'} onClick={() => setViewMode('tiles')} />
+        <div style={{ marginLeft: 'auto' }}>
+          <ChipSelector
+            options={[{ value: 'list', label: 'List' }, { value: 'tiles', label: 'Tiles' }]}
+            value={viewMode}
+            onChange={setViewMode}
+            mode="single"
+          />
         </div>
       </div>
 
@@ -602,37 +426,31 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
           {isIdle ? 'Loading recommended series...' : 'Searching...'}
         </div>
       )}
-      <div style={viewMode === 'tiles'
-        ? { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 12 }
-        : { display: 'flex', flexDirection: 'column', gap: 10 }
-      }>
-        {results.map(r => (
-          <ResultItem key={r.externalId} result={r} busy={selectingId === r.externalId} onClick={() => handleSelect(r)} />
-        ))}
-      </div>
+      {viewMode === 'tiles' ? (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 12 }}>
+          {results.map(r => (
+            <ResultTile key={r.externalId} result={r} busy={selectingId === r.externalId} onClick={() => handleSelect(r)} />
+          ))}
+        </div>
+      ) : results.length > 0 && (
+        <DataList
+          columns={RESULT_COLUMNS}
+          rows={results}
+          rowKey={r => r.externalId}
+          maxWidth="100%"
+          navigate={{ onClick: handleSelect }}
+          rowState={r => ({ disabled: selectingId === r.externalId })}
+        />
+      )}
       {!loading && !isIdle && results.length === 0 && !error && (
         <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>No results.</div>
       )}
       {!isIdle && !loading && cursor && (
-        <button
-          type="button"
-          onClick={handleLoadMore}
-          disabled={loadingMore}
-          style={{
-            alignSelf: 'center',
-            padding: '8px 20px',
-            fontSize: FS_BASE,
-            fontFamily: FONT,
-            letterSpacing: TRACKING,
-            borderRadius: 6,
-            cursor: loadingMore ? 'default' : 'pointer',
-            background: 'rgba(255,255,255,0.06)',
-            color: loadingMore ? 'rgba(255,255,255,0.3)' : TEXT_MUTED,
-            border: '1px solid rgba(255,255,255,0.15)',
-          }}
-        >
-          {loadingMore ? 'Loading more...' : 'Load more'}
-        </button>
+        <div style={{ alignSelf: 'center' }}>
+          <Button variant="neutral" onClick={handleLoadMore} disabled={loadingMore}>
+            {loadingMore ? 'Loading more...' : 'Load more'}
+          </Button>
+        </div>
       )}
     </div>
   )

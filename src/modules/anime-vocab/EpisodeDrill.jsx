@@ -10,11 +10,13 @@ import { useAuth } from '../../context/AuthContext.jsx'
 import { useProgress } from '../../hooks/useProgress.js'
 import { createCard } from '../vocab-srs/srs.js'
 import {
-  FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION,
+  FONT, TEXT_MUTED, FS_BADGE, FS_CAPTION,
   FS_DISPLAY_HEADING, FS_STAT_VALUE, FS_LIST_TITLE,
 } from '../../data/theme.js'
+import { useAccent } from '../../context/ModuleThemeContext.jsx'
+import Button from '../../components/Button.jsx'
+import DataList from '../../components/DataList.jsx'
 
-const ACCENT = '#D46EA3'
 const ANIME_WORDS_DECK_ID = 'anime-words'
 
 // One-off drill session — same tech/flow as Vocab Drill's speed mode
@@ -121,15 +123,23 @@ function ActiveEpisodeDrill({
   )
 }
 
+const WORD_REVIEW_COLUMNS = [
+  { key: 'word', width: 100, fontSize: FS_LIST_TITLE, render: row => row.word.kanji || row.word.kana },
+  { key: 'english', flex: 1, tone: 'muted', render: row => row.word.english },
+  {
+    key: 'mistakes', width: 40, align: 'right',
+    render: row => row.mistakes > 0 && <span style={{ fontSize: FS_BADGE, color: '#fbbf24' }}>{row.mistakes}×</span>,
+  },
+]
+
 function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onBack, onAddToSrs, requiresSignIn, onSignIn }) {
+  const ACCENT = useAccent()
   const rows = useMemo(() =>
     pool.map(({ id, word }) => ({ id, word, mistakes: mistakeCounts[id] ?? 0 })).sort((a, b) => b.mistakes - a.mistakes),
     [pool, mistakeCounts]
   )
   const [selected, setSelected] = useState(() => new Set(rows.filter(r => r.mistakes > 0).map(r => r.id)))
   const [addedCount, setAddedCount] = useState(null)
-
-  const btnBase = { padding: '10px 28px', fontSize: FS_BASE, fontFamily: 'inherit', borderRadius: 8, cursor: 'pointer', letterSpacing: '0.05em' }
 
   function toggleRow(id) {
     setSelected(prev => {
@@ -160,12 +170,8 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onBack,
         </div>
       </div>
       <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
-        <button onClick={onRestart} style={{ ...btnBase, background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.15)' }}>
-          Restart
-        </button>
-        <button onClick={onBack} style={{ ...btnBase, background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.1)' }}>
-          Back to episode
-        </button>
+        <Button variant="neutral" size="lg" onClick={onRestart}>Restart</Button>
+        <Button variant="neutral" size="lg" onClick={onBack}>Back to episode</Button>
       </div>
 
       {rows.length > 0 && (
@@ -173,23 +179,11 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onBack,
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 8 }}>
             <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, letterSpacing: '0.08em' }}>WORDS FROM THIS DRILL</span>
             {requiresSignIn ? (
-              <button onClick={onSignIn} style={{ ...btnBase, padding: '6px 16px', fontSize: FS_CAPTION, background: 'rgba(255,255,255,0.06)', color: TEXT_MUTED, border: '1px solid rgba(255,255,255,0.15)' }}>
-                Sign in to add to SRS
-              </button>
+              <Button variant="neutral" size="sm" onClick={onSignIn}>Sign in to add to SRS</Button>
             ) : (
-              <button
-                onClick={handleAdd}
-                disabled={selected.size === 0}
-                style={{
-                  ...btnBase, padding: '6px 16px', fontSize: FS_CAPTION,
-                  background: selected.size > 0 ? 'rgba(212,110,163,0.15)' : 'rgba(255,255,255,0.04)',
-                  color: selected.size > 0 ? ACCENT : 'rgba(255,255,255,0.2)',
-                  border: `1px solid ${selected.size > 0 ? 'rgba(212,110,163,0.4)' : 'rgba(255,255,255,0.1)'}`,
-                  cursor: selected.size > 0 ? 'pointer' : 'not-allowed',
-                }}
-              >
+              <Button variant="accent-outline" size="sm" onClick={handleAdd} disabled={selected.size === 0}>
                 Add {selected.size} to SRS
-              </button>
+              </Button>
             )}
           </div>
           {addedCount !== null && (
@@ -197,16 +191,12 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onBack,
               {addedCount > 0 ? `Added ${addedCount} word${addedCount === 1 ? '' : 's'} to Anime Words.` : 'Selected words are already in Anime Words.'}
             </div>
           )}
-          <div style={{ background: '#2A2A2A', borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
-            {rows.map(row => (
-              <label key={row.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.05)', cursor: requiresSignIn ? 'default' : 'pointer', fontFamily: 'inherit', letterSpacing: TRACKING }}>
-                <input type="checkbox" checked={selected.has(row.id)} disabled={requiresSignIn} onChange={() => toggleRow(row.id)} style={{ flexShrink: 0, width: 16, height: 16, accentColor: ACCENT }} />
-                <span style={{ fontSize: FS_LIST_TITLE, color: TEXT, fontFamily: FONT, letterSpacing: 0, flexShrink: 0 }}>{row.word.kanji || row.word.kana}</span>
-                <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.word.english}</span>
-                {row.mistakes > 0 && <span style={{ fontSize: FS_BADGE, color: '#fbbf24', flexShrink: 0 }}>{row.mistakes}×</span>}
-              </label>
-            ))}
-          </div>
+          <DataList
+            columns={WORD_REVIEW_COLUMNS}
+            rows={rows}
+            maxWidth="100%"
+            selection={requiresSignIn ? undefined : { selected, onToggle: toggleRow }}
+          />
         </div>
       )}
     </div>

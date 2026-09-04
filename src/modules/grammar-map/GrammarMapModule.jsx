@@ -1,14 +1,15 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { ReactFlow, Background, Controls, MarkerType } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import PageHeader from '../../components/PageHeader.jsx'
-import DrawerSectionHeader from '../../components/DrawerSectionHeader.jsx'
+import SectionHeader from '../../components/SectionHeader.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_CONTENT_HEADING } from '../../data/theme.js'
 import { GRAMMAR_NODES } from './grammarNodes.js'
 import { computeGroupedLayout } from './layout.js'
 import GrammarNode from './GrammarNode.jsx'
 import GrammarGroupNode from './GrammarGroupNode.jsx'
+import { useIsMobile } from '../../hooks/useIsMobile.js'
 
 const ACCENT = '#8B7CF8'
 const STORAGE_KEY = 'grammar-map-known'
@@ -16,17 +17,6 @@ const nodeTypes = { grammarNode: GrammarNode, grammarGroup: GrammarGroupNode }
 const PANEL_W = 380
 const CHEVRON_W = 28
 const PANEL_CONTENT_W = PANEL_W - CHEVRON_W
-
-function useIsMobile(breakpoint = 768) {
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= breakpoint)
-  useEffect(() => {
-    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`)
-    const handler = e => setIsMobile(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [breakpoint])
-  return isMobile
-}
 
 function loadKnown() {
   try { return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')) }
@@ -38,7 +28,6 @@ function saveKnown(set) {
 }
 
 const CORE_LEVELS = new Set(['N5', 'N4'])
-
 
 export default function GrammarMapModule() {
   const { user, signIn, loading: authLoading } = useAuth()
@@ -259,7 +248,7 @@ export default function GrammarMapModule() {
 
           {prereqNodes.length > 0 && (
             <>
-              <DrawerSectionHeader title="Prerequisites" />
+              <SectionHeader title="Prerequisites" />
               {prereqNodes.map(pNode => (
                 <div
                   key={pNode.id}
@@ -283,7 +272,7 @@ export default function GrammarMapModule() {
 
           {dependents.length > 0 && (
             <>
-              <DrawerSectionHeader title="Unlocks" />
+              <SectionHeader title="Unlocks" />
               {dependents.map(dNode => (
                 <div
                   key={dNode.id}
@@ -310,7 +299,7 @@ export default function GrammarMapModule() {
     const total = visibleGrammarNodes.length
     return (
       <div style={{ padding: `16px ${px}px` }}>
-        <DrawerSectionHeader title="Progress" />
+        <SectionHeader title="Progress" />
         <div style={{ marginBottom: 20 }}>
           {[
             { label: 'Known', value: `${known.size} / ${total}` },
@@ -324,7 +313,7 @@ export default function GrammarMapModule() {
           ))}
         </div>
 
-        <DrawerSectionHeader title="View" />
+        <SectionHeader title="View" />
         <div
           onClick={() => setCoreOnly(v => !v)}
           style={{
@@ -351,7 +340,7 @@ export default function GrammarMapModule() {
             : `Showing all ${GRAMMAR_NODES.length} grammar points`}
         </div>
 
-        <DrawerSectionHeader title="How to use" />
+        <SectionHeader title="How to use" />
         <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, lineHeight: 1.65 }}>
           Click any node to view its details. Mark nodes as known to unlock dependent grammar points.
         </div>

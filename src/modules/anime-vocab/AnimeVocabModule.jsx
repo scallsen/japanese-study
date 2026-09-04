@@ -5,10 +5,10 @@ import AuthSlot from '../../components/AuthSlot.jsx'
 import AttributionFooter from '../../components/AttributionFooter.jsx'
 import TopProgressBar from '../../components/TopProgressBar.jsx'
 import CenteredLoadingMessage from '../../components/CenteredLoadingMessage.jsx'
-import DrawerSectionHeader from '../../components/DrawerSectionHeader.jsx'
-import DrawerCheckbox from '../../components/DrawerCheckbox.jsx'
-import DrawerSelect from '../../components/DrawerSelect.jsx'
-import SettingsSidebar from '../../components/SettingsSidebar.jsx'
+import SectionHeader from '../../components/SectionHeader.jsx'
+import Checkbox from '../../components/Checkbox.jsx'
+import Select from '../../components/Select.jsx'
+import SettingsSidebar, { SidebarHeaderToggle } from '../../components/SettingsSidebar.jsx'
 import MediaSearch from './MediaSearch.jsx'
 import EpisodeList from './EpisodeList.jsx'
 import EpisodeVocabBrowser from './EpisodeVocabBrowser.jsx'
@@ -20,22 +20,15 @@ import { useJaVoices } from '../../hooks/useTTS.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
 import { SENTENCE_SOURCE_OPTIONS, DEFAULT_SENTENCE_SOURCE } from '../../data/sentenceSource.js'
 import { FONT, TRACKING, FS_BASE } from '../../data/theme.js'
+import { MODULES } from '../../data/modules.js'
+import { ModuleThemeProvider, useAccent } from '../../context/ModuleThemeContext.jsx'
+import { useIsMobile } from '../../hooks/useIsMobile.js'
 
-const ACCENT = '#D46EA3'
+const ANIME_ACCENT = MODULES.find(m => m.id === 'anime-vocab').accent
 
 // Duplicated per-file (matches this module's own established convention —
 // see e.g. GrammarMapModule.jsx, VocabSrsModule.jsx, StoryModule.jsx — each
 // self-contained module keeps its own small copy rather than a shared hook).
-function useIsMobile(breakpoint = 768) {
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= breakpoint)
-  useEffect(() => {
-    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`)
-    const handler = e => setIsMobile(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [breakpoint])
-  return isMobile
-}
 
 // Self-contained module: anime lookup -> episode list -> episode vocab browser
 // -> one-off drill, all as in-component state under a single #/anime-vocab
@@ -44,6 +37,10 @@ function useIsMobile(breakpoint = 768) {
 // #/anime-vocab/:mediaId route (initialMediaId) that resumes straight into
 // a tracked series' episode list.
 export default function AnimeVocabModule({ initialMediaId }) {
+  // Explicit override, not ambient useAccent() — this component is the one
+  // establishing ModuleThemeProvider below, so it can't read back the value
+  // it's about to provide to its own children.
+  const ACCENT = useAccent(ANIME_ACCENT)
   const [media, setMedia] = useState(null)
   const [episodes, setEpisodes] = useState([])
   const [episode, setEpisode] = useState(null)
@@ -196,18 +193,18 @@ export default function AnimeVocabModule({ initialMediaId }) {
   function renderSettingsPanel(paddingH) {
     return (
       <div style={{ padding: `16px ${paddingH}px 16px` }}>
-        <DrawerSectionHeader title="Settings" />
+        <SectionHeader title="Settings" />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <DrawerCheckbox checked={showStreak}        onChange={() => setShowStreak(v => !v)}        label="Show streak" />
-          <DrawerCheckbox checked={showFurigana}      onChange={() => setShowFurigana(v => !v)}      label="Show furigana" />
-          <DrawerCheckbox checked={showVisualEffects} onChange={() => setShowVisualEffects(v => !v)} label="Show visual effects" />
-          <DrawerCheckbox checked={pixelFont}         onChange={() => setPixelFont(v => !v)}         label="Use pixel font" />
-          <DrawerCheckbox checked={showTranslation}   onChange={() => setShowTranslation(v => !v)}   label="Show translation" />
-          <DrawerCheckbox checked={showSentence}      onChange={() => setShowSentence(v => !v)}       label="Show sentence" />
+          <Checkbox checked={showStreak}        onChange={() => setShowStreak(v => !v)}        label="Show streak" />
+          <Checkbox checked={showFurigana}      onChange={() => setShowFurigana(v => !v)}      label="Show furigana" />
+          <Checkbox checked={showVisualEffects} onChange={() => setShowVisualEffects(v => !v)} label="Show visual effects" />
+          <Checkbox checked={pixelFont}         onChange={() => setPixelFont(v => !v)}         label="Use pixel font" />
+          <Checkbox checked={showTranslation}   onChange={() => setShowTranslation(v => !v)}   label="Show translation" />
+          <Checkbox checked={showSentence}      onChange={() => setShowSentence(v => !v)}       label="Show sentence" />
           {showSentence && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
               <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Sentence source</span>
-              <DrawerSelect
+              <Select
                 value={sentenceSource}
                 onChange={setSentenceSource}
                 options={SENTENCE_SOURCE_OPTIONS}
@@ -215,8 +212,8 @@ export default function AnimeVocabModule({ initialMediaId }) {
               />
             </div>
           )}
-          <DrawerCheckbox checked={showKanjiMeaning}  onChange={() => setShowKanjiMeaning(v => !v)}   label="Show kanji meaning" />
-          <DrawerCheckbox
+          <Checkbox checked={showKanjiMeaning}  onChange={() => setShowKanjiMeaning(v => !v)}   label="Show kanji meaning" />
+          <Checkbox
             checked={audioEnabled}
             onChange={() => setAudioEnabled(v => !v)}
             label="Enable audio"
@@ -225,7 +222,7 @@ export default function AnimeVocabModule({ initialMediaId }) {
             <>
               {jaVoices.length > 0 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
-                  <DrawerSelect
+                  <Select
                     value={ttsVoice}
                     onChange={setTtsVoice}
                     options={[{ value: '', label: 'Default' }, ...jaVoices.map(v => ({ value: v.name, label: v.name }))]}
@@ -234,7 +231,7 @@ export default function AnimeVocabModule({ initialMediaId }) {
                   />
                 </div>
               )}
-              <DrawerCheckbox
+              <Checkbox
                 checked={sfxEnabled}
                 onChange={() => setSfxEnabled(v => !v)}
                 label="Sound effects"
@@ -249,8 +246,17 @@ export default function AnimeVocabModule({ initialMediaId }) {
   }
 
   return (
+    <ModuleThemeProvider accent={ANIME_ACCENT}>
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', background: '#1E1E1E', fontFamily: FONT, letterSpacing: TRACKING }}>
-      <PageHeader crumbs={crumbs} rightSlot={<AuthSlot />}>
+      <PageHeader
+        crumbs={crumbs}
+        rightSlot={(
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <AuthSlot />
+            {isMobile && <SidebarHeaderToggle onClick={() => setShowOptions(true)} />}
+          </div>
+        )}
+      >
         <TopProgressBar loading={showProgressBar} color={ACCENT} />
       </PageHeader>
       <div style={{ flex: 1, display: 'flex', minHeight: 0, position: 'relative' }}>
@@ -310,5 +316,6 @@ export default function AnimeVocabModule({ initialMediaId }) {
         )}
       </div>
     </div>
+    </ModuleThemeProvider>
   )
 }

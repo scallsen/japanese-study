@@ -1,12 +1,12 @@
 import { TRACKING } from '../data/theme.js'
-
-const ACCENT = '#3ABDA4'
+import { useAccent } from '../context/ModuleThemeContext.jsx'
 
 // Shared shell for a clickable, checkbox-selectable list row — click anywhere
 // on the row (not just the checkbox) toggles selection via native <label>
 // wrapping, and hover/selected visuals come from the .selectable-row classes
 // in global.css. Callers supply their own row content as children.
-export default function SelectableRow({ selected, onToggle, children, gap = 12, padding = '10px 14px' }) {
+export default function SelectableRow({ selected, onToggle, children, gap = 12, padding = '10px 14px', borderBottom = '1px solid rgba(255,255,255,0.05)' }) {
+  const ACCENT = useAccent()
   return (
     <label
       className={selected ? 'selectable-row selectable-row--selected' : 'selectable-row'}
@@ -15,7 +15,7 @@ export default function SelectableRow({ selected, onToggle, children, gap = 12, 
         alignItems: 'center',
         gap,
         padding,
-        borderBottom: '1px solid rgba(255,255,255,0.05)',
+        borderBottom,
         cursor: 'pointer',
         fontFamily: 'inherit',
         letterSpacing: TRACKING,

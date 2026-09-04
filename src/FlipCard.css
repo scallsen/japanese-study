@@ -180,19 +180,6 @@
 
 /* ── Verdict buttons ─────────────────────────────────────────── */
 
-.verdict-btn {
-  transition: transform 80ms ease-out, filter 120ms ease;
-}
-
-.verdict-btn:hover:not(:disabled) {
-  filter: brightness(1.18);
-}
-
-.verdict-btn:active:not(:disabled) {
-  transform: scale(0.93);
-  transition: transform 40ms ease-in;
-}
-
 /* ── Marching ants border (answering state) ───────────────────── */
 
 @keyframes march {

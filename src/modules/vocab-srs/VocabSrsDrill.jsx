@@ -1,7 +1,11 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import FlipCard from '../../FlipCard.jsx'
 import PageHeader from '../../components/PageHeader.jsx'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_DISPLAY_HEADING, FS_STAT_VALUE, FS_CAPTION } from '../../data/theme.js'
+import { SidebarHeaderToggle } from '../../components/SettingsSidebar.jsx'
+import Button from '../../components/Button.jsx'
+import DrillButtonRow, { DrillButton } from '../../components/DrillButton.jsx'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_DISPLAY_HEADING, FS_STAT_VALUE, FS_CAPTION, WARNING, DRILL_COLORS } from '../../data/theme.js'
+import { useAccent } from '../../context/ModuleThemeContext.jsx'
 import { Rating, State, previewIntervals } from './srs.js'
 import { answerCard, undoLastAnswer, isComplete, getSessionStats, getCurrentCard, getWaitMs } from './session.js'
 import { useTTS } from '../../hooks/useTTS.js'
@@ -190,70 +194,7 @@ function SrsCardFace({ text, kana, isBack, backText, jmdictId, sentence, sentenc
   )
 }
 
-function AudioButton({ label, onClick }) {
-  const [hovered, setHovered] = useState(false)
-  return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        padding: '4px 10px',
-        fontSize: FS_BASE,
-        fontFamily: 'inherit',
-        letterSpacing: TRACKING,
-        background: hovered ? 'rgba(255,255,255,0.1)' : 'transparent',
-        color: 'rgba(255,255,255,0.45)',
-        border: '1px solid rgba(255,255,255,0.12)',
-        borderRadius: 5,
-        cursor: 'pointer',
-        transition: 'background 130ms, color 130ms',
-      }}
-    >
-      ▶ {label}
-    </button>
-  )
-}
-
-function RatingButton({ label, hint, interval, color, onClick, flex = 1, disabled = false }) {
-  return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className="verdict-btn"
-      style={{
-        flex,
-        padding: '8px 0',
-        fontSize: FS_BASE,
-        fontFamily: 'inherit',
-        letterSpacing: TRACKING,
-        background: color,
-        color: '#fff',
-        border: 'none',
-        borderRadius: 8,
-        cursor: disabled ? 'default' : 'pointer',
-        opacity: disabled ? 0.6 : 1,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 2,
-      }}
-    >
-      <span>{label} {hint && <span style={{ opacity: 0.6, fontSize: FS_CAPTION }}>[{hint}]</span>}</span>
-      {interval && <span style={{ fontSize: FS_CAPTION, opacity: 0.65 }}>{interval}</span>}
-    </button>
-  )
-}
-
 function DoneScreen({ stats, onDone }) {
-  const btnBase = {
-    padding: '10px 28px',
-    fontSize: FS_BASE,
-    fontFamily: FONT,
-    letterSpacing: TRACKING,
-    borderRadius: 8,
-    cursor: 'pointer',
-  }
   return (
     <div style={{ textAlign: 'center', fontFamily: FONT, letterSpacing: TRACKING }}>
       <div style={{ color: TEXT, fontSize: FS_DISPLAY_HEADING, marginBottom: 16 }}>Session complete</div>
@@ -264,8 +205,8 @@ function DoneScreen({ stats, onDone }) {
         </div>
         <div style={{ color: 'rgba(255,255,255,0.15)', fontSize: FS_STAT_VALUE, alignSelf: 'center' }}>·</div>
         <div>
-          <div style={{ color: stats.againCount > 0 ? '#fbbf24' : TEXT_MUTED, fontSize: FS_CAPTION, marginBottom: 4 }}>AGAIN</div>
-          <div style={{ color: stats.againCount > 0 ? '#fbbf24' : TEXT_MUTED, fontSize: FS_STAT_VALUE }}>{stats.againCount}</div>
+          <div style={{ color: stats.againCount > 0 ? WARNING : TEXT_MUTED, fontSize: FS_CAPTION, marginBottom: 4 }}>AGAIN</div>
+          <div style={{ color: stats.againCount > 0 ? WARNING : TEXT_MUTED, fontSize: FS_STAT_VALUE }}>{stats.againCount}</div>
         </div>
         <div style={{ color: 'rgba(255,255,255,0.15)', fontSize: FS_STAT_VALUE, alignSelf: 'center' }}>·</div>
         <div>
@@ -278,17 +219,7 @@ function DoneScreen({ stats, onDone }) {
           You missed {stats.againCount} {stats.againCount === 1 ? 'card' : 'cards'} — all cleared by end of session
         </div>
       )}
-      <button
-        onClick={onDone}
-        style={{
-          ...btnBase,
-          background: 'rgba(255,255,255,0.08)',
-          color: 'rgba(255,255,255,0.6)',
-          border: '1px solid rgba(255,255,255,0.15)',
-        }}
-      >
-        Done
-      </button>
+      <Button variant="neutral" size="lg" onClick={onDone}>Done</Button>
     </div>
   )
 }
@@ -306,7 +237,7 @@ export default function VocabSrsDrill({
   const [session, setSession] = useState(initialSession)
   const [localCards, setLocalCards] = useState(initialCards)
   const [flipped, setFlipped] = useState(false)
-  const [optionsHovered, setOptionsHovered] = useState(false)
+  const ACCENT = useAccent()
   const [leechNotice, setLeechNotice] = useState(null)
   const [transitioning, setTransitioning] = useState(false)
   const [exitDir, setExitDir] = useState(null)
@@ -592,24 +523,7 @@ export default function VocabSrsDrill({
       }}>
         <PageHeader
           crumbs={drillCrumbs}
-          rightSlot={isMobile && onShowOptions && (
-            <button
-              onClick={onShowOptions}
-              onMouseEnter={() => setOptionsHovered(true)}
-              onMouseLeave={() => setOptionsHovered(false)}
-              style={{
-                height: 34, padding: '0 12px', fontSize: FS_BASE,
-                fontFamily: 'inherit',
-                background: optionsHovered ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)',
-                color: 'rgba(255,255,255,0.7)',
-                border: '1px solid rgba(255,255,255,0.2)',
-                borderRadius: 8, cursor: 'pointer',
-                transition: 'background 130ms',
-              }}
-            >
-              Options
-            </button>
-          )}
+          rightSlot={isMobile && onShowOptions && <SidebarHeaderToggle onClick={onShowOptions} />}
         />
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <DoneScreen stats={stats} onDone={() => onDone(localCards, stats.goodCount)} />
@@ -632,26 +546,9 @@ export default function VocabSrsDrill({
     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
       <span style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>
         {stats.goodCount} / {stats.total}
-        {stats.waitingCount > 0 && <span style={{ marginLeft: 6, color: '#fbbf24' }}>{stats.waitingCount} waiting</span>}
+        {stats.waitingCount > 0 && <span style={{ marginLeft: 6, color: WARNING }}>{stats.waitingCount} waiting</span>}
       </span>
-      {isMobile && onShowOptions && (
-        <button
-          onClick={onShowOptions}
-          onMouseEnter={() => setOptionsHovered(true)}
-          onMouseLeave={() => setOptionsHovered(false)}
-          style={{
-            height: 34, padding: '0 12px', fontSize: FS_BASE,
-            fontFamily: 'inherit',
-            background: optionsHovered ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.1)',
-            color: 'rgba(255,255,255,0.7)',
-            border: '1px solid rgba(255,255,255,0.2)',
-            borderRadius: 8, cursor: 'pointer',
-            transition: 'background 130ms',
-          }}
-        >
-          Options
-        </button>
-      )}
+      {isMobile && onShowOptions && <SidebarHeaderToggle onClick={onShowOptions} />}
     </div>
   )
 
@@ -689,7 +586,7 @@ export default function VocabSrsDrill({
         <div style={{
           height: '100%',
           width: `${progressPct}%`,
-          background: '#3ABDA4',
+          background: ACCENT,
           transition: 'width 300ms ease',
         }} />
       </div>
@@ -702,7 +599,7 @@ export default function VocabSrsDrill({
           margin: '8px 16px 0',
           padding: '8px 12px',
           fontSize: FS_BASE,
-          color: '#fbbf24',
+          color: WARNING,
           flexShrink: 0,
         }}>
           Leech — &quot;{leechNotice}&quot; suspended after too many failed reviews
@@ -770,89 +667,64 @@ export default function VocabSrsDrill({
                   width: 8,
                   height: 8,
                   borderRadius: '50%',
-                  background: '#fbbf24',
+                  background: WARNING,
                 }} />
               )}
             </div>
 
             {audioEnabled && currentCard && currentAudioUrls.word && flipped && (
               <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
-                <AudioButton label="Word" onClick={() => playAudioRef.current(currentAudioUrls.word)} />
+                <Button variant="ghost-muted" size="sm" onClick={() => playAudioRef.current(currentAudioUrls.word)}>▶ Word</Button>
                 {currentAudioUrls.sentence && (
-                  <AudioButton label="Sentence" onClick={() => playAudioRef.current(currentAudioUrls.sentence)} />
+                  <Button variant="ghost-muted" size="sm" onClick={() => playAudioRef.current(currentAudioUrls.sentence)}>▶ Sentence</Button>
                 )}
               </div>
             )}
 
             {!flipped ? (
-              <div style={{
-                width: 'min(380px, calc(100vw - 32px))',
-                textAlign: 'center',
-                color: 'rgba(255,255,255,0.25)',
-                fontSize: FS_BASE,
-                padding: '10px 0',
-              }}>
-                Space or tap to flip
-              </div>
+              <DrillButtonRow placeholder="Space or tap to flip" />
             ) : (
-              <div style={{ width: 'min(380px, calc(100vw - 32px))', display: 'flex', gap: 8 }}>
-                <RatingButton
+              <DrillButtonRow>
+                <DrillButton
                   label="Again"
                   hint="1"
-                  interval={againInterval ?? (intervals ? formatInterval(intervals[Rating.Again]) : null)}
-                  color="rgba(192,57,43,0.75)"
+                  sublabel={againInterval ?? (intervals ? formatInterval(intervals[Rating.Again]) : null)}
+                  color={DRILL_COLORS.again}
                   onClick={() => handleAnswerRef.current(Rating.Again)}
                   disabled={transitioning}
                 />
                 {showHardEasy && (
-                  <RatingButton
+                  <DrillButton
                     label="Hard"
                     hint="2"
-                    interval={intervals ? formatInterval(intervals[Rating.Hard]) : null}
-                    color="rgba(180,120,40,0.75)"
+                    sublabel={intervals ? formatInterval(intervals[Rating.Hard]) : null}
+                    color={DRILL_COLORS.hard}
                     onClick={() => handleAnswerRef.current(Rating.Hard)}
                     disabled={transitioning}
                   />
                 )}
-                <RatingButton
+                <DrillButton
                   label="Good"
                   hint={showHardEasy ? '3' : '2'}
-                  interval={intervals ? formatInterval(intervals[Rating.Good]) : null}
-                  color="rgba(39,174,96,0.75)"
+                  sublabel={intervals ? formatInterval(intervals[Rating.Good]) : null}
+                  color={DRILL_COLORS.good}
                   onClick={() => handleAnswerRef.current(Rating.Good)}
                   disabled={transitioning}
                 />
                 {showHardEasy && (
-                  <RatingButton
+                  <DrillButton
                     label="Easy"
                     hint="4"
-                    interval={intervals ? formatInterval(intervals[Rating.Easy]) : null}
-                    color="rgba(41,128,185,0.75)"
+                    sublabel={intervals ? formatInterval(intervals[Rating.Easy]) : null}
+                    color={DRILL_COLORS.easy}
                     onClick={() => handleAnswerRef.current(Rating.Easy)}
                     disabled={transitioning}
                   />
                 )}
-              </div>
+              </DrillButtonRow>
             )}
             {stats.canUndo && (
-              <button
-                onClick={() => handleUndoRef.current()}
-                disabled={transitioning}
-                style={{
-                  padding: '6px 16px',
-                  fontSize: FS_BASE,
-                  fontFamily: 'inherit',
-                  letterSpacing: TRACKING,
-                  background: 'transparent',
-                  color: 'rgba(255,255,255,0.35)',
-                  border: '1px solid rgba(255,255,255,0.12)',
-                  borderRadius: 6,
-                  cursor: transitioning ? 'default' : 'pointer',
-                  opacity: transitioning ? 0.5 : 1,
-                }}
-              >
-                Undo [Z]
-              </button>
+              <Button variant="ghost-muted" size="sm" onClick={() => handleUndoRef.current()} disabled={transitioning}>Undo [Z]</Button>
             )}
           </>
         )}

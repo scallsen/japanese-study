@@ -100,6 +100,74 @@ Each entry in `src/data/modules.js`:
 | `TEXT` | `#E8E8E8` | Primary text |
 | `TEXT_MUTED` | `#888888` | Secondary / label text |
 
+## Style Guide (`#/dev/style-guide`)
+
+Living component library + progress tracker for the app-wide design-system consolidation. Dev-only lab page, same pattern as `ToastLabPage` — not linked from the dashboard. **Status (Sep 2026): every module is ported** — Anime Vocab, Dictionary, Immersion, Story, Vocab Drill, Vocab SRS, each on its own `design-system/<module>` branch stacked on `feat/design-system` (Grammar Map skipped: being removed). The branch-by-branch decision log, every shared-component change and every judgement call that wants a second opinion, is in `docs/design-system-rebuild-review.md` — read it before relitigating anything below. Left nav lists every planned component (built + placeholder); clicking a placeholder shows its description and "Not built yet" rather than being hidden, so the roster below doubles as the page's own content.
+
+**Key files:** `src/pages/StyleGuideLabPage.jsx` (the whole page — nav, `ComponentPage`/`FoundationPage` wrappers, per-component demo + controls). Design-system components live in `src/components/`: `Button.jsx`, `Badge.jsx`, `Card.jsx`, `TextInput.jsx`, `NumberField.jsx`, `Select.jsx`, `Checkbox.jsx`, `FileButton.jsx`, `SectionHeader.jsx`, `SectionLabel.jsx`, `SignInGate.jsx`, `ActionBar.jsx`, `FilterCard.jsx` (+ `FilterRow`), `Disclosure.jsx`, `Chip.jsx`, `DataList.jsx`, `Modal.jsx`, `ConfirmDialog.jsx`, `Toast.jsx`, `FeedCard.jsx`, `ToggleButton.jsx`, `DistributionBar.jsx`, `Popover.jsx`, `OptionPicker.jsx`, `DeckComboBox.jsx`, `DrillButton.jsx`, `SpeedModeControls.jsx` (a named composition of DrillButton), `DrillHUD.jsx`, `SettingsSidebar.jsx` (+ its `SidebarHeaderToggle` export), `NewspaperLayout.jsx` (promoted from Story, shared with Immersion). Module accent context: `src/context/ModuleThemeContext.jsx`. Shared hook: `src/hooks/useIsMobile.js`. Semantic colour tokens `SUCCESS`/`WARNING`/`DANGER` and `KANJI_FONT` live in `theme.js`.
+
+**Conventions established while building this — follow for every remaining component:**
+- **Ground every value in real code, never invent.** Before designing a component, read the actual call sites it's meant to unify and extract real pixel values/colors/behavior rather than guessing something "reasonable." Where real call sites disagree, reconcile deliberately and say so in a comment (e.g. `Button`'s `danger-outline` fixed `ConfirmDialog`'s mismatched background/text hue instead of copying the bug forward).
+- **Token discipline:** `FS_BASE` (15px) and `SPACE_12` are the defaults — use them unless a specific, stated reason calls for something else. `theme.js`'s `SPACE_4/8/12/16/24/32` and the `FS_*` constants are the sanctioned scale; a literal is fine when it's a faithful port of a real historical value (comment why) or must stay byte-identical to another component's own default (e.g. `DataList`'s row padding matching `SelectableRow`'s). Simplify token scales rather than cataloguing every pixel value already in use — colors should be grounded in exact real values since they carry identity, but a spacing/type scale exists to *constrain* choice.
+- **Component API shape:** prop names describe what they configure, not a generic `mode` enum — see `DataList`'s independently-combinable `selection`/`navigate`/`expand` instead of one flat mode string. Variant-style components (`Button`, `Badge`) use a `variant`/`tone` string prop against a lookup object.
+- **Hover states are CSS classes in `global.css`, never `useState`** — the StrictMode double-invoke rule above applies to every new component too. Reuse the existing `filter: brightness()` idiom for colored/tinted elements (`.btn-tint`); explicit background-shift for near-transparent ones (`.btn-neutral`, `.btn-ghost`, `.data-list-row`).
+- **Page pattern:** `ComponentPage` (heading + description + preview-left/controls-right split, controls built from the real `Select`/`Checkbox` — dogfooding on purpose) for interactive components; `FoundationPage` (full-width reference list, no controls) for token references like Type/Spacing/Color.
+
+**Deliberate non-components** — these were on the roster and were *removed* after examination, not skipped. Don't re-add them:
+- **Info Row** — a read-only list row is `DataList` with no `selection`/`navigate`/`expand`. A separate component would be the same thing with fewer options.
+- **Verdict Buttons / Rating Button** — one component (`DrillButton`), not two. They already shared the `.verdict-btn` class, row width, radius, and fill treatment; they differed only in padding, fill opacity, and whether a second line rendered (`sublabel`).
+- **Icon Button** — an icon-only button is `Button` with an `icon` and no children, not a separate component. `Button`'s `icon` prop also covers icon **+** label, which a dedicated IconButton couldn't express. Use `variant="ghost-muted"` for dismiss/remove affordances (muted until hovered, then reddens).
+
+**Gotcha — inline styles outrank hover classes.** A component that sets `background` inline (`transparent`, a tint) needs `!important` on the matching `:hover` rule in `global.css` or the hover silently does nothing. This has now bitten `.btn-neutral`, `.chip--off`, and `.track-toggle`. Check hover actually fires when adding a component that styles `background` inline.
+
+**Component roster** (`NAV` in `StyleGuideLabPage.jsx` — flip `built: false` → `true` and register in `PAGES` once built):
+
+| Component | Status | Real call sites it replaces |
+|---|---|---|
+| Type, Spacing, Color | Built (Foundations) | `theme.js` |
+| Button, Badge, Card, Text Input, Number Field | Built (Atoms) | `ConfirmDialog`, `WordImportPanel`, `VocabSrsModule`, `DeckComboBox`, `TrackedAnimeSection`, `Toast`, `MediaSearch`, `DeckPickerSheet` |
+| Chip Selector | Built, migrated everywhere | `MediaSearch`'s `Chip` + `ViewModeButton`, `EpisodeVocabBrowser`'s JLPT filter + its four filter checkboxes (now one `mode="multi"` row), Immersion's Simple/Intermediate toggle, `VocabModeToggle` (deleted), `WordImportPanel`'s `TabButton`, `VocabSrsBrowsePage`'s `StateTabs`, Story's Length/Grammar/Card maturity (all migrated). Story's Vocabulary/Format use `Select variant="inline"` instead — they're a single value from a long list, not a small visible set |
+| Data List | Built, migrated everywhere | `EpisodeVocabBrowser`, `EpisodeList`, `TrackedAnimeSection`, `EpisodeDrill`'s `DoneScreen`, `MediaSearch`'s list results, `DictionaryPage`'s `EntryRow`, `DictionaryEntryPage`'s `DeckRow`, `VocabPage`'s `DoneScreen` + Preview groups, `VocabSrsBrowsePage`'s card list, `WordImportPanel`'s review table (all migrated). Gained `navigate.href`, `rowState`, `selection.bulkHeader: { selectFirst }`, and per-column `placeholder` for editable cells along the way |
+| Modal | Built — `ConfirmDialog` now composes it | `WordImportPanel`, `DeckComboBox` (mobile), `DeckPickerSheet`, `SegmentedDeckAdd`'s `CreateDeckModal` |
+| Toast | Built (pre-existing component, now in the guide) | — |
+| Feed Card | Built, migrated everywhere — gained an `image?: {src?, aspectRatio?}` cover slot + `disabled` boolean | `MediaSearch`'s `ResultTile`, `ImmersionModule`'s `ArticleCard`, `StoryModule`'s `RecentCard` (all migrated) |
+| Toggle Button | Built, migrated everywhere — composes Chip; tones `accent` / `success` / `neutral` | `EpisodeList`'s `TrackToggle`, `VocabSrsModule`'s deck On/Off, Immersion's and Story's Show/Hide furigana (`neutral`), `VocabSrsBrowsePage`'s Select/Done selecting (all migrated) |
+| Distribution Bar | Built, migrated | `VocabSrsModule`'s `DeckProgressBar` (now a thin wrapper adding the suspended Badge) |
+| Drill Button | Built, migrated | `SpeedModeControls` (now composes it), `VocabSrsDrill`'s `RatingButton` (deleted) |
+| Drill HUD | Built (pre-existing component, now in the guide) | — |
+| Popover, Option Picker | Built | The duplicated anchored-popover math in `DeckComboBox` + `WordPopup`; the search/list/create surface in `DeckComboBox` |
+| Deck Picker | Built — `DeckComboBox`, now a thin wrapper over Popover + OptionPicker | `DeckPickerSheet.jsx`, `SegmentedDeckAdd.jsx`, `DeckPickerLabPage.jsx` (all deleted; `VocabSrsBrowsePage`'s "Move to deck" was the last caller) |
+| Select | Built — `size` sm/md, `variant` default/inline, grouped options → `<optgroup>` | `VocabPage`'s word-list picker, every settings drawer (`size`); Story's generator form's Vocabulary/Format rows (`variant="inline"`, living inside a `FilterCard` next to chip rows) |
+| File Button | Built | `VocabSrsModule`'s `FileInput`, `WordImportPanel`'s `FileTrigger` |
+| Section Header / Section Label | Built — Header has an `action` slot (done screens); Label is the label+hairline group divider (Dictionary, Vocab Drill preview) | see the review log's open question on whether they should merge |
+| Sign-in Gate | Built | `VocabSrsModule`, `VocabSrsBrowsePage` |
+| Definition Popover | Built — `WordPopup`, now Popover + an in-place view switch | — |
+
+**Settled design decisions — don't relitigate:**
+1. **Drill palette stays separate from the semantic tokens.** `DRILL_COLORS` in `theme.js` is a Flat-UI lineage (`#C0392B`/`#27AE60`/`#2980B9`/`#B47828`) distinct from the Tailwind-derived semantic tokens (`#f87171`/`#4ade80`/`#fbbf24`). Not interchangeable: drill colours are solid fills behind white text, semantic tokens are light tints for dark text, and "easy" blue has no semantic equivalent. Both stay.
+2. **Module accents come from context, not props.** `ModuleThemeProvider` / `useAccent(override)` in `src/context/ModuleThemeContext.jsx`. A module root wraps its screens with its own accent and `Chip`/`ToggleButton` (and any future accent-aware component) read it ambiently — passing it per-call-site failed silently when forgotten. The `accent` prop survives as an explicit per-instance override. Outside any provider the core teal applies, which is correct for the dashboard.
+3. **Components are named for their role, not their location.** `DrawerSelect`/`DrawerCheckbox`/`DrawerSectionHeader` → `Select`/`Checkbox`/`SectionHeader`. Don't reintroduce location-prefixed names.
+4. **`DeckComboBox` is the one deck picker.** Type-to-filter with an inline "+ Create «typed»" row; popover on desktop, bottom sheet on mobile. `DeckPickerSheet.jsx`, `SegmentedDeckAdd.jsx` and `DeckPickerLabPage.jsx` are **deleted** (Vocab SRS rebuild).
+5. **Atoms forward refs.** `Button` and `TextInput` use `forwardRef` so callers can measure and focus them (`DeckComboBox` positions its popover against the button and focuses the search field). Any new atom wrapping a DOM element should do the same.
+6. **Floating surface and its contents are separate components.** `Popover` owns anchoring (fixed positioning, flip-above, horizontal clamp, click-outside, close-on-scroll) and the desktop-popover / mobile-sheet switch, delegating the sheet to `Modal` rather than being a third sheet implementation. `OptionPicker` owns the search + list + optional inline "+ Create «typed»" behaviour and knows nothing about positioning or decks. This split is what lets `WordPopup` swap its own content from definition to deck list **in place** — previously it rendered a `DeckComboBox`, stacking a second floating layer inside the first with competing click-outside handlers. Anything that picks from a searchable list should compose `OptionPicker`, not reimplement it.
+7. **A stateful toggle is `ToggleButton`, not a `Button` variant.** The deciding test is what *hover* means: `Button`'s hover is derived from its variant and always reinforces the resting state, whereas a toggle's label, colour, and (with `destructiveHover`) the meaning of hovering all change with state. Folding that into `Button` would put four toggle-only props on a component ~50 non-toggle call sites use. `ToggleButton` composes `Chip` rather than restyling a button, so both share one visual language — a chip picks one option out of a set and keeps a fixed label; a toggle is a standalone binary that renames itself.
+8. **Every color-bearing shared component must actually check its own accent-awareness before a module rebuild, not assume it from Chip/ToggleButton being correct.** Anime Vocab (the first real module rebuild, `feat/design-system` → `design-system/anime-vocab`) found the *same* hardcoded-core-teal bug independently in `Button` (`primary`/`accent-outline`/`ghost` variants), `SelectAllCheckbox`, `DataList`'s `RowCheckbox`, and `SelectableRow` — none caught by the original build pass because nothing exercised `ModuleThemeProvider` with a non-teal accent until this rebuild. All are now accent-aware via `useAccent()`, verified zero-risk since no pre-existing call site sat inside a provider. `Badge` also gained an `accent` override prop (mirroring `Chip`'s) and a generic `dimmed` boolean (for approximate/inferred values, not JLPT-specific) during this pass. **Lesson for every future module rebuild:** grep for hardcoded core-teal/hex accent literals across `src/components/` *before* wiring `ModuleThemeProvider` at a new module root, don't wait to discover them one broken button at a time.
+9. **`DataList`'s `navigate` supports `href(row)` alongside `onClick(row)`.** Dictionary's rebuild (`feat/design-system` → `design-system/dictionary`) found that `EntryRow` and `DeckRow` were both real `<a href>` cross-route links — converting them to `navigate`'s onClick-only `<div>` would have silently dropped cmd/ctrl/middle-click, "open in new tab", and hover-preview. `navigate.href(row)` renders the row as a real `<a>` instead (onClick still fires alongside it if also given); `RowCheckbox` now also calls `preventDefault` (not just `stopPropagation`) since an ancestor `<a>`'s native navigation is gated on the click event's canceled flag, which only `preventDefault` sets — `stopPropagation` alone doesn't stop it. Existing onClick-only callers (`EpisodeList`, `TrackedAnimeSection` — same-app hash navigation via a side effect, not a real link) are unaffected. **Use `href` whenever the row is a genuine link to another route; keep `onClick` for a same-app navigation side effect that isn't itself a link.**
+
+10. **Hover/focus rules that fight an inline style need `!important` — and it's worth checking they ever applied.** `TextInput`'s hover *and* focus border rules had never fired (inline `border` outranked both) until the Story port noticed. When a class rule targets a property a component also sets inline, `!important` it, and if two pseudo-classes can apply at once (`:hover` + `:focus`) give the winner matching specificity (`:focus:not(:disabled)`). Per-instance colours a class needs (a module accent, a layout's tint) travel as CSS custom properties set inline — `TokenizedBody`'s `--reader-vocab`, `TextInput`'s `--focus-ring`.
+11. **A module's accent is `modules.js`'s, even when the page disagreed.** Vocab Drill had core teal hardcoded in nine places while `modules.js` said blue; the port wired blue. If a module should look different, change the one hex in `modules.js` — that file is the source of truth, not the page.
+12. **Grammar Map is not ported** — it's being removed. Don't spend time on it.
+13. **Cards are for content, lists are for data.** A `FeedCard` represents an actual thing to read (an article, a story); a `DataList` row is a record among records (a word, a card, a deck). Don't render word lists as cards or articles as list rows.
+14. **A screen's primary actions live in `ActionBar`**, the sticky bottom bar — Anime Vocab's Start Drill, Vocab Drill's Start review / Preview, Story's Generate. Consumers pad their scroll container by `ACTION_BAR_HEIGHT`. It's `position: fixed`, so with a settings sidebar open it spans under the sidebar column too (the pre-existing Anime Vocab behaviour) — a known imperfection, not a bug to fix per screen.
+15. **Module headers are the plain `PageHeader` + `AuthSlot`.** No per-module header buttons (the old `HeaderMenu` with Mute/Options is gone — audio lives in the settings sidebar). On mobile, screens with a `SettingsSidebar` add `SidebarHeaderToggle` after `AuthSlot`: a chevron in a rule-divided section, the header's counterpart of the desktop rail.
+16. **Comprehension checks are gone** from both the News reader and Story review (the data and the `story-grade` function remain; only the UI was dropped). The reader's "English summary" is a `Disclosure`.
+17. **A screen's `ActionBar` buttons are `size="xl"`**, one step up from the `lg` a bare primary CTA elsewhere in the app uses — the sticky bar is meant to read as *the* action for the whole screen, not one button among several. Every `ActionBar` consumer (Story's Generate, Vocab Drill's Start review, Anime Vocab's Start Drill) was moved up when `xl` was added; a future `ActionBar` consumer should default to it too.
+18. **`Select`'s `inline` variant is for a Select living inside a `FilterCard`/`FilterRow`** next to chip rows — no background/border, same height as a `sm` Chip, so it doesn't read as a different kind of control from its neighbours. The bordered `default` variant stays for settings drawers and any Select that's the only control in its row. `EpisodeVocabBrowser`'s filter block and its lookup/bulk-select header are the template for absorbing a module's remaining hand-rolled filter UI into `FilterCard` + `DataList`'s `search`/`bulkHeader` — look here first before hand-rolling either again.
+
+**Still open:**
+- **Six greens.** `#4ade80` (success), `#6BCB6B` (read/tracked), `#7fe0c8` (mature), `#27AE60` (drill correct), `#5eb6a2` (young), `#4c8a7d` (learning). The last three are the validated CVD ramp and are legitimate; `#6BCB6B` vs `#4ade80` looks like plain drift and probably wants merging.
+- **Feed card title font.** `ArticleCard` used `FONT` (DotGothic16), `RecentCard` used `KANJI_FONT` (Hiragino), both for Japanese titles. `FeedCard` currently standardises on `FONT`.
+
 ## Shared components (`src/components/`)
 
 Used by multiple modules/pages:
@@ -108,12 +176,11 @@ Used by multiple modules/pages:
 |---|---|
 | `PageHeader.jsx` | Breadcrumb header — all pages |
 | `AuthSlot.jsx` | Sign in / sign out control — dashboard header and module headers |
-| `DrawerSectionHeader.jsx` | Section label in settings panels |
-| `DrawerCheckbox.jsx` | Checkbox setting row |
-| `DrawerSelect.jsx` | Dropdown setting row |
+| `SectionHeader.jsx` / `Checkbox.jsx` / `Select.jsx` | Settings-drawer primitives (formerly `Drawer*`) — see the Style Guide section |
+| `SettingsSidebar.jsx` | The desktop chevron-rail / mobile-overlay settings panel — Vocab Drill, Anime Vocab, Vocab SRS. Exports `SidebarHeaderToggle`, the mobile header chevron that opens it |
+| `ActionBar.jsx` | Sticky bottom bar for a screen's primary actions (see settled decision #14) |
+| `FilterCard.jsx` | Card of labelled control rows — Anime Vocab's search filters, Story's generator form |
 | `ModuleCard.jsx` | Dashboard module card |
-| `HeaderMenu.jsx` | Icon-button row that collapses into a dropdown below a width breakpoint — used for module header actions (e.g. Vocab drill, SRS) |
-| `SpeakerIcon.jsx` | Muted/unmuted speaker SVG icon |
 | `AttributionFooter.jsx` | Third-party data credit line at the foot of a page — `<AttributionFooter sources={['dictionary', 'tanaka-corpus']} />`. See Attribution system section below |
 
 ### PageHeader
@@ -137,14 +204,33 @@ A crumb with `href` navigates via hash change. Use `onClick` when you need to ex
 
 `src/FlipCard.jsx` + `src/FlipCard.css` — low-level 3D flip animation. Shared between `VocabCard` (vocab drill) and `VocabSrsDrill` (SRS). Click, Space, or Enter flips; `isFlipped` prop controls state from parent.
 
-## Key files — Dashboard
+## Home page (`#/`) — textbook-led redesign (in progress, `design-system/home-redesign`)
+
+The dashboard is organised around two primary actions, **New** (work through one textbook's chapters in the Vocab Drill) and **Review** (the SRS), with the other modules as secondary cards below and a global stats sidebar on the right. Rough pass only — the chapters page (`#/vocab`'s home screen rebuilt as "this book, featured, with its chapter list") and the end-of-lesson "send to SRS" prompt are not built yet.
+
+**Model:** one textbook has chapters, nothing else. `src/data/textbooks.js` (`TEXTBOOKS`) is the config: `{ id, title, subtitle, icon, chapters: [{ id, label }] }`. A chapter's `id` is the `listKey` its words carry in `src/data/words/*.json`; chapter labels follow the book's own naming (Genki "Lesson 1", So-Matome "Week 1, Day 1"), never "Chapter N". Books with no word data yet still list their chapters (the picker shows "no words yet"). Only the two So-Matome entries have words today. Pixel-art covers live in `public/placeholder-svg/` (32×32, rendered with `image-rendering: pixelated`); a book with `icon: null` gets a plain spine placeholder. Every cover's artwork occupies x 5–27 of its 32-wide canvas, so `COVER_GUTTER` in `homeCards.jsx` pulls that transparent gutter off the right margin to sit the art itself against the card padding — recheck that constant if a new cover is drawn to different bounds.
+
+**Progress:** stored in the existing `vocab-flashcard` progress namespace — `textbook: { id, currentChapterId }` plus the pre-existing per-list `sublists` drill records. `src/lib/textbookProgress.js` (`resolveTextbookState(progress, wordCountFor)`) derives everything the UI needs: chapters with `drilled`/`wordCount`, `current` (the pointer if it belongs to the book, else the first undrilled chapter), `next`, `doneCount`. A drilled current chapter renders as **[Start next] [Continue current]**; an undrilled one as **[Start current]**; a finished book replaces the chapter count with "Book completed" and the CTA with **[Pick new textbook]**. With no textbook chosen the card drifts a marquee of the available covers (`.textbook-marquee__track` in `global.css`). Changing textbook is the cover itself — hovering it reveals a link over the artwork (`.textbook-cover`), which is why there's no separate "Change textbook" link in the row. The dashboard's Start sets the pointer and deep-links to `#/vocab?chapter=<id>&start=1`; `VocabPage` seeds its source/sublist selection from that query, jumps straight into the drill, and strips the query. Drill results now save signed-out too (localStorage via `useProgress`), so the chapter pointer works without an account.
+
+**Review card:** signed-out → sign-in CTA; signed-in → due / new-today counts computed with the same `getTodaysQueue` maths as the SRS home (`summariseSrs` in `DashboardPage.jsx`), "Start reviews" deep-links to `#/vocab-srs?start=1` which `VocabSrsModule` honours once progress has loaded (then strips the query). "Manage decks" is the full SRS home.
+
+**Stats sidebar:** Textbook (chapters done, words drilled, up next), Reviews (`DistributionBar` over active-deck card states + cards/learned/lifetime reviews), Reading (articles read from `immersion`, series tracked from `anime-vocab-tracking`). There is no per-day review log, so streaks/heatmaps would need new logging first.
+
+**Responsive layout** — three bands, both driven by `useIsMobile`: above `SIDEBAR_BREAKPOINT` (1100) the stats are a 280px right-hand rail and the two primary cards sit beside it; between 769 and 1100 the rail moves *below* the cards as a full-width three-column strip (`StatsPanel columns={3}`) so the cards get their squarish proportions back instead of being squeezed into slivers; at 768 and under everything is one column and `PrimaryCard` drops its 250px min-height (with no neighbour to line up with it would only add dead air).
+
+**Module config:** `tier: 'primary'` on `school-vocab` and `vocab-srs` marks the two big cards; everything else renders as a secondary `ModuleCard` (Conjugation Drill stays, marked external). Grammar Map was removed from the config (module slated for removal; its route still exists).
 
 | File | Purpose |
 |---|---|
-| `src/data/modules.js` | Module config array — single source of truth for dashboard cards |
-| `src/data/theme.js` | Design tokens |
-| `src/components/ModuleCard.jsx` | Renders one module card |
-| `src/pages/DashboardPage.jsx` | Dashboard layout — header, module grid |
+| `src/pages/DashboardPage.jsx` | Home layout — card/stats/module composition, data loading, textbook picker wiring |
+| `src/pages/homeCards.jsx` | `NewCard` / `ReviewCard` themselves (+ `PrimaryCard`) — kept out of the page so the lab below renders the real components |
+| `src/pages/HomeCardsLabPage.jsx` | Dev-only harness at `#/dev/home-cards` — every card state side by side, plus realistic New+Review pairs and a column-width picker. Not linked from the dashboard (same convention as `ToastLabPage`). New-card states are built by feeding fabricated progress through the real `resolveTextbookState`; review-card summaries are hand-written objects |
+| `src/data/textbooks.js` | Textbook + chapter config — also `publisher`, `description` and `purchase` links (retailer *search* URLs, not product ids, so they don't rot) |
+| `src/lib/textbookProgress.js` (+ `.test.js`) | Pure current/next-chapter resolver |
+| `src/components/TextbookPicker.jsx` | "Change textbook" — `Modal` + the split browser (`TextbookBrowser`, also exported for the lab): book list beside the selected book's cover, description and buy links. On mobile the confirm button is Modal's own `footer` (outside the body scroll, so it never moves) — which is why selection state lives in `TextbookPicker`, not the browser. On mobile (`stacked`) the detail becomes a `position: sticky` block above the list — **not** a nested scroller: the sheet is max-height-driven, so a percentage-height child silently falls back to auto and pushes the confirm button below the fold. Measured budget on a 375×667 phone: 532px sheet, 261px pinned detail, ~210px (≈5 rows) of list visible; 393×852 gives ~8 rows |
+| `src/pages/TextbookPickerLabPage.jsx` | Dev-only bench at `#/dev/textbook-picker` — four candidate picker layouts (Rows, Gallery, Split, Spotlight) with cover/description/buy links, a panel-width picker and a mock-panel preview plus a real-Modal mount. Nothing here is wired into the app yet |
+| `src/data/modules.js` | Module config array — accents, hrefs, `tier` |
+| `src/components/ModuleCard.jsx` | Secondary module card (hover via `.module-card` in `global.css`) |
 | `src/App.jsx` | Hash router |
 
 ## Vocabulary Drill (`#/vocab`)
@@ -159,12 +245,9 @@ Mirrors katsuyou-drill's UI exactly. Speed-mode only (no text input). Card front
 | `src/components/VocabCard.jsx` | Flip card — front (kanji) / back (kanji + furigana + English + optional sentence); wraps `FlipCard` |
 | `src/FlipCard.jsx` + `src/FlipCard.css` | 3D flip animation (ported from katsuyou-drill) |
 | `src/components/DrillHUD.jsx` | Streak display + undo + score (VocabPage-only) |
-| `src/components/SpeedModeControls.jsx` | Incorrect [Z] / Correct [X] verdict buttons (VocabPage-only) |
+| `src/components/SpeedModeControls.jsx` | Incorrect [Z] / Correct [X] pair — a named composition of `DrillButtonRow`/`DrillButton`, shared with Anime Vocab's `EpisodeDrill` |
 | `src/components/PageHeader.jsx` | Breadcrumb header |
-| `src/components/SelectButton.jsx` | Toggle button used in settings (word list selection) |
-| `src/components/DrawerSectionHeader.jsx` | Section label in settings panel |
-| `src/components/DrawerCheckbox.jsx` | Checkbox setting row |
-| `src/components/DrawerSelect.jsx` | Dropdown setting row (TTS voice) |
+| `src/components/SectionHeader.jsx`, `Checkbox.jsx`, `Select.jsx` | Settings-panel primitives |
 | `src/hooks/useDrill.js` | Drill state machine hook (VocabPage-only) |
 | `src/hooks/useTTS.js` | Browser Speech Synthesis TTS — fallback when Voicevox audio isn't available |
 | `src/hooks/useAudioGenerationStatus.js` | Polls the `audio_generation_status` row — drives the "Audio is being generated" note |
@@ -207,7 +290,7 @@ Mirrors katsuyou-drill's UI exactly. Speed-mode only (no text input). Card front
 }
 ```
 
-**UI behavior:** Flat sources render as a single SelectButton toggle. Hierarchical sources render as a collapsible accordion — click to expand and select individual sublists. A "N/M selected" count badge shows when the source is collapsed.
+**UI behavior:** the home screen is a `Select` of sources, then a grid of `SubListTile`s (label, word count, "New" badge or last-reviewed) for the chosen source's sublists — click tiles to toggle them into the drill. (An older accordion-of-`SelectButton`s UI this paragraph used to describe is gone.)
 
 ### Word data format
 
@@ -257,7 +340,7 @@ create policy "public read" on sentences for select using (true);
 ```
 `src/utils/sentenceLookup.js` (`fetchSentencesFor`) + `src/hooks/useSentenceForWord.js` (`useSentenceForWord`, `useSentencesForWords`) resolve the best sentence per `jmdictId` (quality-flagged first, then shortest), same cached-batch pattern as above.
 
-**Sentence resolution has the opposite priority rule from definitions** — a word/card's own curated `sentence` wins by default; a Tanaka sentence only fills the gap when there isn't one. `vocab-sentence-source` (Vocab Drill) / `srs-sentence-source` (SRS) — both `'custom' | 'tanaka'`, default `'custom'` — flip that priority outright when set to `'tanaka'`. Each renders as a `DrawerSelect` ("Sentence source", options from `src/data/sentenceSource.js`) nested under the "Show sentence" checkbox, shown only while it's checked — same visual pattern as "Enable audio" → "Text to speech". Attribution for Tanaka-sourced sentences is handled at the page level, not per-card — see Attribution system below.
+**Sentence resolution has the opposite priority rule from definitions** — a word/card's own curated `sentence` wins by default; a Tanaka sentence only fills the gap when there isn't one. `vocab-sentence-source` (Vocab Drill) / `srs-sentence-source` (SRS) — both `'custom' | 'tanaka'`, default `'custom'` — flip that priority outright when set to `'tanaka'`. Each renders as a `Select` ("Sentence source", options from `src/data/sentenceSource.js`) nested under the "Show sentence" checkbox, shown only while it's checked — same visual pattern as "Enable audio" → "Text to speech". Attribution for Tanaka-sourced sentences is handled at the page level, not per-card — see Attribution system below.
 
 ### Attribution system (`src/data/attributions.js` + `AttributionFooter.jsx`)
 
@@ -659,8 +742,9 @@ Visible in the settings sidebar when `import.meta.env.DEV` and cards exist. "Adv
 
 | File | Purpose |
 |---|---|
-| `src/modules/immersion/ImmersionModule.jsx` | Article list screen — fetches from Supabase, reading history |
-| `src/modules/immersion/ImmersionReader.jsx` | Reader — tokenized body, word popup, furigana toggle, SRS bridge |
+| `src/modules/immersion/ImmersionModule.jsx` | Article list screen — fetches from Supabase, reading history, auto-marks the opened article read |
+| `src/modules/immersion/ImmersionReader.jsx` | Reader — renders inside the shared `NewspaperLayout`, word popup, furigana toggle, SRS bridge |
+| `src/modules/immersion/sourceLabels.js` | `SOURCE_LABEL` — shared between the list's `ArticleCard` badge and the reader's `NewspaperLayout` masthead |
 | `scripts/fetch-nhk.mjs` | Nightly pipeline — discovers current news topics across a broad range of sources via Claude's web search tool, generates articles via Claude Haiku, tokenizes with Kuromoji, looks up JMdict definitions |
 | `scripts/import-jmdict.mjs` | One-time import — downloads jmdict-simplified JSON and populates the Supabase `dictionary` table |
 | `scripts/backfill-jmdict.mjs` | One-off backfill — re-tokenizes existing articles and regenerates `vocabulary_ja` from JMdict |
@@ -731,6 +815,10 @@ Lookup in the pipeline uses a two-stage query: stage 1 matches `primary_form` ag
 
 Every content token (`w: true`) in `tokens_ja`/`tokens_simple` is clickable in the reader. Clicking shows a popup with the word, its reading, part of speech, and an English definition sourced from `vocabulary_ja`. Run `backfill-jmdict.mjs` to regenerate definitions for existing articles.
 
+### Reader layout
+
+The article (title, `title_en` as a subtitle, date, body) renders inside the shared `NewspaperLayout` (`src/components/NewspaperLayout.jsx`, promoted from Story's `news` format so both modules render real reading content the same way) — `masthead` is the article's source label, `edition` is "Simple edition" / "Intermediate edition" from the active toggle. The version toggle is labelled **Simple / Intermediate**, not Original/Simplified — `body_simple` is the beginner rewrite, `body_ja` (the "original") is the intermediate one; a true beginner tier would need a `fetch-nhk.mjs` pipeline change, not a UI one. The toggle and furigana `ToggleButton` sit in a row above the paper; the English-summary `Disclosure` sits below it.
+
 ### Article retention
 
 Articles accumulate indefinitely — there is no cleanup job. The reader fetches the 10 most recent (`limit(10)` ordered by `published_at desc`), so old articles are invisible to users but stay in the database. At ~5 articles/day × ~10 KB each (with JSONB tokens), growth is ~18 MB/year — well within Supabase free tier limits. If storage ever becomes a concern, add a post-upsert delete to `fetch-nhk.mjs` that removes rows beyond the newest N.
@@ -740,6 +828,8 @@ Articles accumulate indefinitely — there is no cleanup job. The reader fetches
 ```js
 { read: { [slug]: { readAt: ISO string, score: null } } }
 ```
+
+Marked automatically — `ImmersionModule` calls `markRead` in a `useEffect` keyed on `selectedArticle`, gated on `user` (signed-out visitors never mark; the same gating the old explicit button had). There is no "Mark as read" control; opening an article is the action. `markRead` itself de-dupes against `readSet`, so re-opening an already-read article is a no-op.
 
 ### SRS bridge
 
@@ -941,7 +1031,7 @@ create index if not exists stories_created_at_idx on stories (created_at desc);
 | `src/modules/story/lookupVocabulary.js` | Client-side JMdict lookup for clicked words — two-stage `dictionary` table query (primary_form, then kana_forms overlap), returns `vocabulary_ja`-shaped entries keyed by surface form |
 | `src/components/JapaneseReader.jsx` | **Shared** `TokenizedBody` + `WordPopup` — extracted from ImmersionReader; both Immersion and Story use them (furigana toggle, clickable words, dictionary popup, Add to SRS) |
 | `src/utils/vocabMap.js` | Shared `buildVocabMap(vocabulary)` (kept out of the .jsx to satisfy react-refresh lint) |
-| `src/modules/story/StoryLayouts.jsx` | Format-specific reading layouts — `NewspaperLayout` (paper card, mincho serif, 2-column desktop / 1-column mobile), `ChatLayout` (LINE-style bubbles with avatars; narration lines render as centered pills; body text uses a system sans-serif stack, not the app's pixel font — see below), `DiaryLayout` (notebook-lined page; splits the date-line header from the entry body), `InterviewLayout` (printed Q&A column reusing `parseDialogue`, colored left-border per speaker instead of bubbles), `LetterLayout` (cream card, mincho serif, no stamp), `PostcardLayout` (portrait card, CSS-perforated stamp, 7-box postal code grid, vertical `writing-mode: vertical-rl` message area — see below) |
+| `src/modules/story/StoryLayouts.jsx` | Format-specific reading layouts — `NewspaperLayout` (paper card, mincho serif, 2-column desktop / 1-column mobile; promoted to `src/components/NewspaperLayout.jsx` — see the Style Guide's component list and the Immersion module, which reuses it for real news articles — this file re-exports it so `StoryReviewPage`'s import is unchanged), `ChatLayout` (LINE-style bubbles with avatars; narration lines render as centered pills; body text uses a system sans-serif stack, not the app's pixel font — see below), `DiaryLayout` (notebook-lined page; splits the date-line header from the entry body), `InterviewLayout` (printed Q&A column reusing `parseDialogue`, colored left-border per speaker instead of bubbles), `LetterLayout` (cream card, mincho serif, no stamp), `PostcardLayout` (portrait card, CSS-perforated stamp, 7-box postal code grid, vertical `writing-mode: vertical-rl` message area — see below) |
 | `src/modules/story/parseDialogue.js` | Splits the flat token stream into 名前「セリフ」 speaker lines, preserving global token indices so popup/highlight indexing stays correct across bubbles |
 | `src/modules/story/parseDialogue.test.js` | Vitest unit tests for the dialogue parser |
 | `supabase/functions/story-generate/index.ts` | Edge function — story generation (default model `claude-sonnet-5`, override via `STORY_MODEL` secret or request `model`) |

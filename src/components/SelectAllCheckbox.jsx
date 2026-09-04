@@ -1,6 +1,5 @@
 import { useRef, useEffect } from 'react'
-
-const ACCENT = '#3ABDA4'
+import { useAccent } from '../context/ModuleThemeContext.jsx'
 
 // Chrome always draws the native indeterminate dash in white regardless of
 // accent-color, so a custom-drawn box is the only way to make it match the
@@ -8,6 +7,7 @@ const ACCENT = '#3ABDA4'
 // (visually hidden) for click/keyboard/screen-reader behavior, including
 // the "indeterminate" DOM property, which can only be set imperatively.
 export default function SelectAllCheckbox({ checked, indeterminate, onChange }) {
+  const ACCENT = useAccent()
   const ref = useRef(null)
   useEffect(() => {
     if (ref.current) ref.current.indeterminate = indeterminate

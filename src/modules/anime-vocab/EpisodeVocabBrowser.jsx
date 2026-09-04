@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../../lib/supabase.js'
 import { syncEpisodeVocab } from './api.js'
 import { useDictionaryEntries } from '../../hooks/useDictionaryEntries.js'
@@ -6,14 +6,18 @@ import { briefGloss } from '../../utils/dictionaryEntryLookup.js'
 import { useProgress } from '../../hooks/useProgress.js'
 import { migrateProgress } from '../vocab-srs/migrate.js'
 import { buildJmdictIdCardIndex, resolveStatus } from './srsStatusResolver.js'
-import DrawerSelect from '../../components/DrawerSelect.jsx'
+import Button from '../../components/Button.jsx'
+import DataList from '../../components/DataList.jsx'
+import ActionBar from '../../components/ActionBar.jsx'
+import Badge from '../../components/Badge.jsx'
+import { Chip, default as ChipSelector } from '../../components/Chip.jsx'
+import FilterCard, { FilterRow } from '../../components/FilterCard.jsx'
 import CenteredLoadingMessage from '../../components/CenteredLoadingMessage.jsx'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_LIST_TITLE } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE, KANJI_FONT } from '../../data/theme.js'
+import { useAccent } from '../../context/ModuleThemeContext.jsx'
 
-const ACCENT = '#D46EA3'
 const DEFAULT_WORD_LIMIT = 20
-const KANJI_FONT = "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif"
 // global_frequency_rank = this word's rank across ALL of Jiten's indexed
 // media (rank 1 = most common word in Japanese overall), not just this
 // episode. 200 was picked empirically against a synced episode: it catches
@@ -27,63 +31,52 @@ const GENERIC_RANK_THRESHOLD = 200
 // in rather than assumed easy — the level filter only ever removes words we
 // have positive (if approximate) data for.
 const JLPT_LEVEL_ORDER = { N5: 1, N4: 2, N3: 3, N2: 4, N1: 5 }
-const JLPT_LEVEL_OPTIONS = [
-  { value: 'any', label: 'Any level' },
-  { value: 'N4', label: 'N4 and above' },
-  { value: 'N3', label: 'N3 and above' },
-  { value: 'N2', label: 'N2 and above' },
-  { value: 'N1', label: 'N1 only' },
+// "any" isn't a threshold point (it means "disable the filter"), so it's a
+// standalone Chip beside the 4-option ChipSelector rather than a 5th option
+// — passing it as an option would either misrender (thresholdIndex -1 shows
+// nothing active, not "everything") or, worse, light every chip if it ever
+// matched index 0.
+const JLPT_CHIP_OPTIONS = [
+  { value: 'N4', label: 'N4' },
+  { value: 'N3', label: 'N3' },
+  { value: 'N2', label: 'N2' },
+  { value: 'N1', label: 'N1' },
 ]
 
 const STATUS_LABEL = { new: 'New', learning: 'Learning', young: 'Young', mature: 'Mature', relearning: 'Relearning', 'not-in-deck': null }
 const STATUS_COLOR = { new: TEXT_MUTED, learning: '#fbbf24', young: '#60a5fa', mature: '#4ade80', relearning: '#f87171' }
 
-function checkboxRow(label, checked, onChange) {
-  return (
-    <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, cursor: 'pointer' }}>
-      <input type="checkbox" checked={checked} onChange={onChange} style={{ width: 15, height: 15, accentColor: ACCENT }} />
-      {label}
-    </label>
-  )
-}
+// SRS status pill stays a bespoke color rather than routing through Badge's
+// tone system — "young"'s blue (#60a5fa) has no matching semantic tone
+// (accent/success/warning/danger/neutral), and this 4-color status palette
+// isn't reused elsewhere, so it doesn't earn a place in Badge's fixed set.
+const WORD_COLUMNS = [
+  { key: 'displayForm', width: 90, fontFamily: KANJI_FONT, fontSize: FS_LIST_TITLE, render: row => row.displayForm },
+  { key: 'reading', width: 70, fontFamily: KANJI_FONT, tone: 'muted', render: row => (row.reading && row.reading !== row.displayForm ? row.reading : '') },
+  { key: 'gloss', flex: 1, tone: 'muted', render: row => row.gloss ?? (row.jmdict_id ? '' : '(no dictionary match)') },
+  {
+    key: 'badges', width: 160,
+    render: row => (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        {row.jlptLevel && (
+          <span title={row.jlptLevelInferred ? 'Approximate — inferred from a related word, not directly sourced' : undefined}>
+            <Badge tone="accent" dimmed={row.jlptLevelInferred}>{row.jlptLevelInferred ? `~${row.jlptLevel}` : row.jlptLevel}</Badge>
+          </span>
+        )}
+        {row.is_grammar && <Badge variant="text" tone="neutral">grammar</Badge>}
+        {row.is_name && <Badge variant="text" tone="neutral">name</Badge>}
+        {STATUS_LABEL[row.status] && (
+          <span style={{ fontSize: FS_BADGE, color: STATUS_COLOR[row.status], fontFamily: FONT, letterSpacing: TRACKING }}>{STATUS_LABEL[row.status]}</span>
+        )}
+      </div>
+    ),
+  },
+  { key: 'occurrence_count', width: 30, align: 'right', tone: 'muted', render: row => row.occurrence_count ?? '' },
+]
 
-// Native checkboxes don't expose an "indeterminate" prop — it can only be set
-// as a DOM property, hence the ref + effect instead of a plain <input>.
-function SelectAllCheckbox({ checked, indeterminate, onChange }) {
-  const ref = useRef(null)
-  useEffect(() => {
-    if (ref.current) ref.current.indeterminate = indeterminate
-  }, [indeterminate])
-  return (
-    <input
-      ref={ref}
-      type="checkbox"
-      checked={checked}
-      onChange={onChange}
-      style={{ flexShrink: 0, width: 16, height: 16, accentColor: ACCENT }}
-    />
-  )
-}
-
-function CaretButton({ open, onClick }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={open ? 'Collapse bulk select' : 'Expand bulk select'}
-      style={{ background: 'none', border: 'none', padding: 2, cursor: 'pointer', display: 'flex', alignItems: 'center', flexShrink: 0 }}
-    >
-      <span style={{
-        color: TEXT_MUTED, fontSize: '1.1rem', display: 'inline-block',
-        transform: open ? 'rotate(90deg)' : 'none', transition: 'transform 150ms',
-      }}>
-        ›
-      </span>
-    </button>
-  )
-}
 
 export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLoadingChange }) {
+  const ACCENT = useAccent()
   const [occurrences, setOccurrences] = useState([])
   const [loading, setLoading] = useState(true)
   const [syncing, setSyncing] = useState(false)
@@ -107,8 +100,6 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
   // filter changes keep re-selecting the top DEFAULT_WORD_LIMIT eligible
   // words so the list isn't empty on first load.
   const [selectionTouched, setSelectionTouched] = useState(false)
-  const [bulkOpen, setBulkOpen] = useState(false)
-  const [bulkCountInput, setBulkCountInput] = useState(String(DEFAULT_WORD_LIMIT))
 
   const { data: srsData } = useProgress('vocab-srs')
   const cardIndex = useMemo(() => buildJmdictIdCardIndex(migrateProgress(srsData)), [srsData])
@@ -164,6 +155,30 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
   )
   const knownCount = useMemo(() => candidateRows.filter(r => r.status === 'young' || r.status === 'mature').length, [candidateRows])
 
+  // The four filter checkboxes as one multi-select chip row — independent
+  // toggles, so the Set ChipSelector hands back on each click can be
+  // decomposed straight into the four booleans, no diffing needed (unlike
+  // MediaSearch's Difficulty row, which has its own "snap back to All when
+  // empty" behavior).
+  const filterOptions = [
+    { value: 'grammar', label: `Grammar words (${grammarCount})` },
+    { value: 'names', label: `Names (${namesCount})` },
+    { value: 'generic', label: `Very common words (${genericCount})` },
+    { value: 'known', label: `Known (${knownCount})` },
+  ]
+  const filterValue = new Set([
+    includeGrammar && 'grammar',
+    includeNames && 'names',
+    includeGeneric && 'generic',
+    includeKnown && 'known',
+  ].filter(Boolean))
+  function handleFilterChange(next) {
+    setIncludeGrammar(next.has('grammar'))
+    setIncludeNames(next.has('names'))
+    setIncludeGeneric(next.has('generic'))
+    setIncludeKnown(next.has('known'))
+  }
+
   const eligible = useMemo(() =>
     candidateRows
       .filter(r => includeGrammar || !r.is_grammar)
@@ -197,32 +212,6 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
       if (next.has(id)) next.delete(id); else next.add(id)
       return next
     })
-  }
-
-  const allEligibleSelected = eligible.length > 0 && eligible.every(r => selected.has(r.id))
-  const someEligibleSelected = eligible.some(r => selected.has(r.id))
-
-  function toggleSelectAll() {
-    setSelectionTouched(true)
-    setSelected(allEligibleSelected ? new Set() : new Set(eligible.map(r => r.id)))
-  }
-
-  function toggleBulkOpen() {
-    setBulkOpen(open => {
-      if (!open) setBulkCountInput(String(Math.max(1, selected.size || DEFAULT_WORD_LIMIT)))
-      return !open
-    })
-  }
-
-  function handleCancelBulk() {
-    setBulkOpen(false)
-  }
-
-  function handleConfirmBulk() {
-    const n = Math.max(1, Math.min(Number(bulkCountInput) || 1, eligible.length || 1))
-    setSelectionTouched(true)
-    setSelected(new Set(eligible.slice(0, n).map(r => r.id)))
-    setBulkOpen(false)
   }
 
   function handleStartDrill() {
@@ -267,138 +256,42 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
         </div>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 14, background: '#2A2A2A', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: '14px 16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: FS_LIST_TITLE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>Minimum JLPT level</span>
-          <DrawerSelect label="Minimum JLPT level" value={minJlptLevel} onChange={setMinJlptLevel} options={JLPT_LEVEL_OPTIONS} />
-        </div>
-        <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 12 }}>
-          <div style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 10 }}>
-            Filter words
+      <FilterCard>
+        <FilterRow key="jlpt" label="JLPT level">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <Chip label="Any level" active={minJlptLevel === 'any'} onClick={() => setMinJlptLevel('any')} />
+            <ChipSelector
+              options={JLPT_CHIP_OPTIONS}
+              value={minJlptLevel}
+              onChange={setMinJlptLevel}
+              mode="threshold"
+              thresholdDirection="forward"
+            />
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
-            {checkboxRow(`Grammar words (${grammarCount})`, includeGrammar, () => setIncludeGrammar(v => !v))}
-            {checkboxRow(`Names (${namesCount})`, includeNames, () => setIncludeNames(v => !v))}
-            {checkboxRow(`Very common words (${genericCount})`, includeGeneric, () => setIncludeGeneric(v => !v))}
-            {checkboxRow(`Known (${knownCount})`, includeKnown, () => setIncludeKnown(v => !v))}
-          </div>
-        </div>
-      </div>
+        </FilterRow>
+        <FilterRow key="filter" label="Filter">
+          <ChipSelector mode="multi" options={filterOptions} value={filterValue} onChange={handleFilterChange} />
+        </FilterRow>
+      </FilterCard>
 
-      <div style={{ background: '#2A2A2A', borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
-        <div style={{ padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-          <input
-            type="text"
-            value={lookupQuery}
-            onChange={e => setLookupQuery(e.target.value)}
-            placeholder="Look up a word from this episode..."
-            style={{
-              width: '100%', fontSize: FS_BASE, fontFamily: FONT, letterSpacing: 'normal',
-              background: 'transparent', border: 'none', color: TEXT, outline: 'none',
-            }}
-          />
-        </div>
-        {lookupQuery.trim() && displayedRows.length === 0 ? (
-          <div style={{ padding: '10px 14px', fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-            No match in this episode — try <a href="#/dictionary" style={{ color: ACCENT }}>the full dictionary search</a>.
-          </div>
-        ) : (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-            <SelectAllCheckbox checked={allEligibleSelected} indeterminate={!allEligibleSelected && someEligibleSelected} onChange={toggleSelectAll} />
-            <CaretButton open={bulkOpen} onClick={toggleBulkOpen} />
-            {!bulkOpen ? (
-              <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-                {selected.size} of {eligible.length} selected
-              </span>
-            ) : (
-              <>
-                <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>Select first</span>
-                <input
-                  type="number"
-                  min={1}
-                  max={Math.max(eligible.length, 1)}
-                  value={bulkCountInput}
-                  onChange={e => setBulkCountInput(e.target.value)}
-                  autoFocus
-                  style={{ width: 56, padding: '4px 8px', fontFamily: FONT, background: '#1E1E1E', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 4, color: TEXT }}
-                />
-                <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>words</span>
-                <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, flexShrink: 0 }}>
-                  <button
-                    onClick={handleCancelBulk}
-                    style={{ padding: '5px 14px', fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING, borderRadius: 6, cursor: 'pointer', background: 'rgba(255,255,255,0.06)', color: TEXT, border: 'none' }}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleConfirmBulk}
-                    style={{ padding: '5px 14px', fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING, borderRadius: 6, cursor: 'pointer', background: ACCENT, color: '#fff', border: 'none' }}
-                  >
-                    Confirm
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        )}
-        {displayedRows.map(row => (
-          <label
-            key={row.id}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px',
-              borderBottom: '1px solid rgba(255,255,255,0.05)', cursor: 'pointer', fontFamily: FONT, letterSpacing: TRACKING,
-            }}
-          >
-            <input type="checkbox" checked={selected.has(row.id)} onChange={() => toggleRow(row.id)} style={{ flexShrink: 0, width: 16, height: 16, accentColor: ACCENT }} />
-            <span style={{ fontSize: FS_LIST_TITLE, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, flexShrink: 0, minWidth: 90, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {row.displayForm}
-            </span>
-            <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0, flexShrink: 0, minWidth: 70, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {row.reading && row.reading !== row.displayForm ? row.reading : ''}
-            </span>
-            <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {row.gloss ?? (row.jmdict_id ? '' : '(no dictionary match)')}
-            </span>
-            {row.jlptLevel && (
-              <span
-                style={{ fontSize: FS_BADGE, color: '#3ABDA4', fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0, opacity: row.jlptLevelInferred ? 0.55 : 1 }}
-                title={row.jlptLevelInferred ? 'Approximate — inferred from a related word, not directly sourced' : undefined}
-              >
-                {row.jlptLevelInferred ? `~${row.jlptLevel}` : row.jlptLevel}
-              </span>
-            )}
-            {row.is_grammar && <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>grammar</span>}
-            {row.is_name && <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>name</span>}
-            {STATUS_LABEL[row.status] && (
-              <span style={{ fontSize: FS_BADGE, color: STATUS_COLOR[row.status], fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0 }}>{STATUS_LABEL[row.status]}</span>
-            )}
-            <span style={{ fontSize: FS_BADGE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, flexShrink: 0, minWidth: 28, textAlign: 'right' }}>
-              {row.occurrence_count ?? ''}
-            </span>
-          </label>
-        ))}
-      </div>
+      <DataList
+        columns={WORD_COLUMNS}
+        rows={displayedRows}
+        selection={{ selected, onToggle: toggleRow, bulkHeader: { selectFirst: true } }}
+        search={{ value: lookupQuery, onChange: setLookupQuery, placeholder: 'Look up a word from this episode...' }}
+        emptyMessage={
+          lookupQuery.trim()
+            ? <>No match in this episode — try <a href="#/dictionary" style={{ color: ACCENT }}>the full dictionary search</a>.</>
+            : 'No words match these filters.'
+        }
+        maxWidth="100%"
+      />
 
-      <div style={{
-        position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 20,
-        background: '#1E1E1E', borderTop: '1px solid rgba(255,255,255,0.08)', padding: '12px 24px',
-      }}>
-        <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex', justifyContent: 'flex-end' }}>
-          <button
-            onClick={handleStartDrill}
-            disabled={selected.size === 0}
-            style={{
-              padding: '10px 24px', fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING, borderRadius: 8,
-              cursor: selected.size > 0 ? 'pointer' : 'not-allowed',
-              background: selected.size > 0 ? ACCENT : 'rgba(255,255,255,0.05)',
-              color: selected.size > 0 ? '#fff' : 'rgba(255,255,255,0.3)',
-              border: 'none',
-            }}
-          >
-            Start Drill ({selected.size})
-          </button>
-        </div>
-      </div>
+      <ActionBar>
+        <Button variant="primary" size="xl" onClick={handleStartDrill} disabled={selected.size === 0}>
+          Start Drill ({selected.size})
+        </Button>
+      </ActionBar>
     </div>
   )
 }
