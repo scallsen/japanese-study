@@ -522,3 +522,19 @@ rebuilt around the chosen book) and the end-of-lesson "send to SRS" prompt.
   (a) — nothing is hidden, no new affordance to learn, and the cards get a
   near-square ratio back (≈480×440 at 820–1040px). (b) is the fallback if
   you want the stats visible beside the cards at every width.
+
+### Home redesign — card state lab
+
+`#/dev/home-cards` renders both primary cards in every state (8 New, 7
+Review) plus three realistic pairs, with a column-width picker for the
+real layout bands. `NewCard`/`ReviewCard` moved out of `DashboardPage`
+into `src/pages/homeCards.jsx` so the lab exercises the real components
+rather than a copy that would drift.
+
+- **[INPUT] The lab's first finding: the bottom-alignment promise only
+  half holds.** When the New card shows both Start-next and Continue, the
+  two lg buttons wrap onto two rows at 400–480px, so its *last* row lines
+  up with Review's primary but its own primary sits a row higher. Options:
+  keep both as buttons and accept the offset; make Continue a quiet link
+  in the links row (one lg button per card, guaranteed alignment); or make
+  the pair a single split control. Left as is pending your call.
