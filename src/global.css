@@ -442,15 +442,15 @@ button, input, select, textarea {
 .tb-row {
   transition: background 120ms, color 120ms, border-left-color 120ms;
 }
-.tb-row:hover:not(.tb-row--selected) {
+.tb-row:hover:not(.tb-row--selected):not(.tb-row--disabled) {
   background: rgba(255,255,255,0.05) !important;
   color: #E8E8E8 !important;
   border-left-color: var(--tb-accent-dim, transparent) !important;
 }
-.tb-row--selected:hover {
+.tb-row--selected:hover:not(.tb-row--disabled) {
   background: rgba(255,255,255,0.08) !important;
 }
-.tb-row:active {
+.tb-row:active:not(.tb-row--disabled) {
   background: rgba(255,255,255,0.09) !important;
 }
 .tb-row:focus-visible {

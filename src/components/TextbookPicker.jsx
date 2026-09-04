@@ -14,6 +14,17 @@ const HAIRLINE = 'rgba(255,255,255,0.08)'
 const SURFACE = '#2A2A2A'
 const LIST_WIDTH = 200
 
+// Temporary: most books have no bundled word data yet (see textbooks.js) —
+// gate selection on it rather than letting someone pick a book the New card
+// can only show "No words for this book yet." for.
+function hasWords(book, wordCountFor) {
+  return book.chapters.some(ch => (wordCountFor?.(ch.id) ?? 0) > 0)
+}
+
+function firstAvailable(wordCountFor) {
+  return TEXTBOOKS.find(b => hasWords(b, wordCountFor)) ?? TEXTBOOKS[0]
+}
+
 // The "Change textbook" surface. Picking a book replaces the current one —
 // the app is built around studying one textbook at a time, so this is a
 // deliberate swap action, not a multi-select.
@@ -29,17 +40,23 @@ const LIST_WIDTH = 200
 // its own child.
 export default function TextbookPicker({ open, onClose, currentId, onSelect, wordCountFor }) {
   const isMobile = useIsMobile()
-  const [selectedId, setSelectedId] = useState(currentId ?? TEXTBOOKS[0].id)
+  const [selectedId, setSelectedId] = useState(currentId ?? firstAvailable(wordCountFor).id)
 
   // Reopening should present the book in use, not wherever browsing stopped
   // last time.
   useEffect(() => {
-    if (open) setSelectedId(currentId ?? TEXTBOOKS[0].id)
-  }, [open, currentId])
+    if (open) setSelectedId(currentId ?? firstAvailable(wordCountFor).id)
+  }, [open, currentId, wordCountFor])
 
   const selected = TEXTBOOKS.find(b => b.id === selectedId) ?? TEXTBOOKS[0]
   const confirm = (
-    <ConfirmButton selected={selected} currentId={currentId} onChoose={() => { onSelect(selected.id); onClose() }} withTitle={isMobile} />
+    <ConfirmButton
+      selected={selected}
+      currentId={currentId}
+      onChoose={() => { onSelect(selected.id); onClose() }}
+      withTitle={isMobile}
+      available={hasWords(selected, wordCountFor)}
+    />
   )
 
   return (
@@ -65,11 +82,16 @@ export default function TextbookPicker({ open, onClose, currentId, onSelect, wor
   )
 }
 
-export function ConfirmButton({ selected, currentId, onChoose, withTitle = false }) {
+export function ConfirmButton({ selected, currentId, onChoose, withTitle = false, available = true }) {
   const isCurrent = selected.id === currentId
+  const label = isCurrent
+    ? 'In use'
+    : !available
+      ? 'Unavailable'
+      : withTitle ? `Use ${selected.title}` : 'Use this textbook'
   return (
-    <Button fullWidth disabled={isCurrent} onClick={onChoose}>
-      {isCurrent ? 'In use' : withTitle ? `Use ${selected.title}` : 'Use this textbook'}
+    <Button fullWidth disabled={isCurrent || !available} onClick={onChoose}>
+      {label}
     </Button>
   )
 }
@@ -96,8 +118,7 @@ export function TextbookBrowser({
   const accent = useAccent()
   const selected = TEXTBOOKS.find(b => b.id === selectedId) ?? TEXTBOOKS[0]
   const isCurrent = selected.id === currentId
-
-  const hasWords = book => book.chapters.some(ch => (wordCountFor?.(ch.id) ?? 0) > 0)
+  const selectedAvailable = hasWords(selected, wordCountFor)
 
   const detail = (
     <div style={{
@@ -116,9 +137,13 @@ export function TextbookBrowser({
           <div style={{ fontSize: FS_LIST_TITLE, color: TEXT }}>{selected.title}</div>
           <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: SPACE_4 }}>
             {selected.chapters.length} chapters · {selected.publisher}
-            {!hasWords(selected) && ' · no words yet'}
           </div>
-          {isCurrent && <div style={{ marginTop: SPACE_8 }}><Badge tone="accent">Current</Badge></div>}
+          {(isCurrent || !selectedAvailable) && (
+            <div style={{ marginTop: SPACE_8, display: 'flex', gap: SPACE_8 }}>
+              {isCurrent && <Badge tone="accent">Current</Badge>}
+              {!selectedAvailable && <Badge tone="neutral">Unavailable</Badge>}
+            </div>
+          )}
         </div>
       </div>
 
@@ -150,7 +175,7 @@ export function TextbookBrowser({
       {showConfirm && (
         <>
           {!stacked && <div style={{ flex: 1, minHeight: SPACE_8 }} />}
-          <ConfirmButton selected={selected} currentId={currentId} onChoose={() => onChoose(selected.id)} withTitle={stacked} />
+          <ConfirmButton selected={selected} currentId={currentId} onChoose={() => onChoose(selected.id)} withTitle={stacked} available={selectedAvailable} />
         </>
       )}
     </div>
@@ -166,21 +191,28 @@ export function TextbookBrowser({
     }}>
       {TEXTBOOKS.map(book => {
         const isSelected = book.id === selected.id
+        const available = hasWords(book, wordCountFor)
         return (
           <button
             key={book.id}
             type="button"
-            className={isSelected ? 'tb-row tb-row--selected' : 'tb-row'}
-            onClick={() => onSelectedChange(book.id)}
+            disabled={!available}
+            className={[
+              'tb-row',
+              isSelected ? 'tb-row--selected' : '',
+              !available ? 'tb-row--disabled' : '',
+            ].filter(Boolean).join(' ')}
+            onClick={() => available && onSelectedChange(book.id)}
             style={{
               display: 'flex', alignItems: 'center', gap: SPACE_8,
-              width: '100%', textAlign: 'left', cursor: 'pointer',
+              width: '100%', textAlign: 'left', cursor: available ? 'pointer' : 'not-allowed',
               padding: stacked ? `${SPACE_8}px ${SPACE_12}px` : `10px ${SPACE_12}px`,
               border: 'none',
               borderLeft: `2px solid ${isSelected ? accent : 'transparent'}`,
               background: isSelected ? 'rgba(255,255,255,0.05)' : 'none',
               fontFamily: FONT, letterSpacing: TRACKING, fontSize: FS_CAPTION,
               color: isSelected ? TEXT : 'rgba(255,255,255,0.7)',
+              opacity: available ? 1 : 0.5,
               // The hover rule needs the module accent, and a CSS class can't
               // read a prop — so it travels as a custom property, the same way
               // TokenizedBody and TextInput pass theirs (settled decision #10).
@@ -189,6 +221,7 @@ export function TextbookBrowser({
           >
             {stacked && <Cover book={book} size={28} accent={accent} />}
             <span style={{ flex: 1, minWidth: 0 }}>{book.title}</span>
+            {!available && <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>Unavailable</span>}
             {book.id === currentId && <span style={{ color: accent }}>•</span>}
           </button>
         )
