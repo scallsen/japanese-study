@@ -100,9 +100,9 @@ function TextbookCover({ icon, accent, onChangeTextbook }) {
       }}
     >
       {icon ? (
-        <img src={icon} alt="" style={{ width: '100%', height: '100%', imageRendering: 'pixelated' }} />
+        <img className="textbook-cover__art" src={icon} alt="" style={{ width: '100%', height: '100%', imageRendering: 'pixelated' }} />
       ) : (
-        <div style={{
+        <div className="textbook-cover__art" style={{
           width: '100%', height: '100%',
           background: 'rgba(255,255,255,0.04)',
           border: `1px solid ${HAIRLINE}`,
@@ -122,8 +122,9 @@ function TextbookCover({ icon, accent, onChangeTextbook }) {
           alignItems: 'center',
           justifyContent: 'center',
           padding: `0 ${SPACE_4}px`,
-          background: 'rgba(16,16,16,0.9)',
-          borderRadius: 4,
+          // No scrim — the artwork itself fades on hover (.textbook-cover__art
+          // in global.css), which reads cleaner than a panel that can only ever
+          // cover the artwork's own bounds and not the canvas around it.
           // A cover is only ~71px of artwork wide, so the label wraps to two
           // lines — FS_BADGE keeps those two lines comfortably inside it.
           fontSize: FS_BADGE,
@@ -150,13 +151,23 @@ function TextbookCarousel() {
       className="textbook-marquee"
       style={{ overflow: 'hidden', maskImage: fade, WebkitMaskImage: fade }}
     >
-      <div className="textbook-marquee__track" style={{ display: 'flex', gap: SPACE_16, width: 'max-content' }}>
+      {/* Covers ride at their true size, and each one absorbs a gutter's worth
+          of the next one's transparent margin so the artwork sits close
+          together. Every item is treated identically, so the -50% loop still
+          lands seamlessly. */}
+      <div className="textbook-marquee__track" style={{ display: 'flex', gap: 0, width: 'max-content' }}>
         {[...covers, ...covers].map((book, i) => (
           <img
             key={`${book.id}-${i}`}
             src={book.icon}
             alt=""
-            style={{ width: 52, height: 52, flexShrink: 0, imageRendering: 'pixelated' }}
+            style={{
+              width: COVER_SIZE,
+              height: COVER_SIZE,
+              marginRight: -COVER_GUTTER,
+              flexShrink: 0,
+              imageRendering: 'pixelated',
+            }}
           />
         ))}
       </div>

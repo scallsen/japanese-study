@@ -20,7 +20,10 @@ export const MODULES = [
     stats: null,
     href: '#/vocab-srs',
     external: false,
-    accent: '#3ABDA4',
+    // Green, not the old core teal — reviews read as "green light to study".
+    // #27AE60 is an existing app green (DRILL_COLORS' correct, minus its
+    // alpha) rather than a new hue, so nothing new enters the palette.
+    accent: '#27AE60',
     requiresAuth: true,
   },
   {
