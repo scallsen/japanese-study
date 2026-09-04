@@ -6,7 +6,7 @@ import Button from '../components/Button.jsx'
 import Badge from '../components/Badge.jsx'
 import TextInput from '../components/TextInput.jsx'
 import Modal from '../components/Modal.jsx'
-import { TextbookBrowser } from '../components/TextbookPicker.jsx'
+import { TextbookBrowser, ConfirmButton } from '../components/TextbookPicker.jsx'
 import { ModuleThemeProvider } from '../context/ModuleThemeContext.jsx'
 import { useIsMobile } from '../hooks/useIsMobile.js'
 import { TEXTBOOKS } from '../data/textbooks.js'
@@ -177,16 +177,36 @@ function MockPanel({ width, children }) {
 function PickerBody(props) {
   if (props.layout === 'gallery') return <GalleryLayout {...props} />
   // The real component, so the bench can't drift from what ships.
-  if (props.layout === 'split') return (
-    <TextbookBrowser
-      currentId={props.currentId}
-      onChoose={props.onChoose}
-      wordCountFor={id => WORD_COUNTS[id] ?? 0}
-      stacked={props.width < 560}
-    />
-  )
+  if (props.layout === 'split') return <SplitPreview {...props} />
   if (props.layout === 'spotlight') return <SpotlightLayout {...props} />
   return <RowsLayout {...props} />
+}
+
+// Mirrors what TextbookPicker does around the browser: owns the selection,
+// and below 560px renders the confirm button as a pinned footer the way
+// Modal's own footer slot does on mobile.
+function SplitPreview({ currentId, onChoose, width }) {
+  const [selectedId, setSelectedId] = useState(currentId ?? TEXTBOOKS[0].id)
+  const stacked = width < 560
+  const selected = TEXTBOOKS.find(b => b.id === selectedId) ?? TEXTBOOKS[0]
+  return (
+    <div>
+      <TextbookBrowser
+        currentId={currentId}
+        selectedId={selectedId}
+        onSelectedChange={setSelectedId}
+        onChoose={onChoose}
+        wordCountFor={id => WORD_COUNTS[id] ?? 0}
+        stacked={stacked}
+        showConfirm={!stacked}
+      />
+      {stacked && (
+        <div style={{ padding: `14px ${SPACE_16}px`, borderTop: `1px solid ${HAIRLINE}` }}>
+          <ConfirmButton selected={selected} currentId={currentId} onChoose={() => onChoose(selected.id)} withTitle />
+        </div>
+      )}
+    </div>
+  )
 }
 
 // ── Shared pieces ─────────────────────────────────────────────────────────────
