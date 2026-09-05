@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import PageHeader from '../components/PageHeader.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
 import Button from '../components/Button.jsx'
+import TextInput from '../components/TextInput.jsx'
 import DataList from '../components/DataList.jsx'
 import ConfirmDialog from '../components/ConfirmDialog.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
@@ -22,14 +23,49 @@ import {
 
 const COLUMN_WIDTH = 640
 
+// functions.invoke only ever reports a generic "non-2xx status code"; the real
+// reason is in the response body, and these are all actions where the user
+// needs to know why they were refused.
+async function callFunction(name, body) {
+  const { data, error } = await supabase.functions.invoke(name, body ? { body } : undefined)
+  if (error || data?.error) {
+    let message = data?.error ?? error?.message
+    try {
+      const payload = await error?.context?.json()
+      if (payload?.error) message = payload.error
+    } catch { /* keep the generic message */ }
+    throw new Error(message || `${name} failed`)
+  }
+  return data
+}
+
 export default function AccountPage() {
   const { user, loading, signIn, signOut, linkProvider, unlinkProvider, refreshUser } = useAuth()
   const [error, setError] = useState(null)
   const [busy, setBusy] = useState(false)
   const [confirmingDelete, setConfirmingDelete] = useState(false)
+  const [keyHint, setKeyHint] = useState(null)
+  const [keyInput, setKeyInput] = useState('')
+  const [keyLoading, setKeyLoading] = useState(true)
+
   // Above the early returns below — hooks can't run conditionally.
   const { usage } = useAiUsage()
   const { data: srsRaw } = useProgress('vocab-srs')
+
+  // Only ever the last four characters come back; the key itself is not
+  // readable by the client, by design.
+  useEffect(() => {
+    if (!user || !supabase) {
+      setKeyLoading(false)
+      return
+    }
+    let cancelled = false
+    callFunction('user-api-key', { action: 'status' })
+      .then(data => { if (!cancelled) setKeyHint(data?.hint ?? null) })
+      .catch(() => { /* leave the section in its "no key" state */ })
+      .finally(() => { if (!cancelled) setKeyLoading(false) })
+    return () => { cancelled = true }
+  }, [user])
 
   const shell = {
     height: '100%',
@@ -104,22 +140,39 @@ export default function AccountPage() {
     setBusy(false)
   }
 
+  async function saveApiKey() {
+    setError(null)
+    setBusy(true)
+    try {
+      const data = await callFunction('user-api-key', { action: 'save', apiKey: keyInput.trim() })
+      setKeyHint(data.hint)
+      setKeyInput('')
+    } catch (err) {
+      setError(err.message)
+    }
+    setBusy(false)
+  }
+
+  async function removeApiKey() {
+    setError(null)
+    setBusy(true)
+    try {
+      await callFunction('user-api-key', { action: 'remove' })
+      setKeyHint(null)
+    } catch (err) {
+      setError(err.message)
+    }
+    setBusy(false)
+  }
+
   async function handleDelete() {
     setConfirmingDelete(false)
     setError(null)
     setBusy(true)
-    const { data, error: err } = await supabase.functions.invoke('delete-account')
-    if (err || data?.error) {
-      // functions.invoke only ever reports a generic "non-2xx status code";
-      // the actual reason is in the response body, and for a destructive
-      // action the user needs to see why it refused. Same unwrapping the
-      // module api.js wrappers do.
-      let message = data?.error ?? err?.message
-      try {
-        const payload = await err?.context?.json()
-        if (payload?.error) message = payload.error
-      } catch { /* keep the generic message */ }
-      setError(message || 'Account deletion failed')
+    try {
+      await callFunction('delete-account')
+    } catch (err) {
+      setError(err.message)
       setBusy(false)
       return
     }
@@ -247,7 +300,40 @@ export default function AccountPage() {
               maxWidth={COLUMN_WIDTH}
             />
             <div style={{ color: TEXT_MUTED, fontSize: FS_SM, marginTop: SPACE_12, lineHeight: 1.5 }}>
-              Resets at 00:00 UTC. Generating a story and reading words from a photo both call Claude, so they&rsquo;re capped per day.
+              {keyHint
+                ? 'Not counted while your own API key is set — that usage is billed to your Anthropic account.'
+                : 'Resets at 00:00 UTC. Generating a story and reading words from a photo both call Claude, so they’re capped per day.'}
+            </div>
+          </section>
+
+          <section>
+            <SectionHeader title="Your Anthropic API key" />
+            {keyLoading ? (
+              <div style={{ color: TEXT_MUTED, fontSize: FS_SM }}>Loading&hellip;</div>
+            ) : keyHint ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: SPACE_12, flexWrap: 'wrap' }}>
+                <span style={{ fontSize: FS_BASE }}>sk-ant-&hellip;{keyHint}</span>
+                <Button variant="ghost-muted" size="sm" disabled={busy} onClick={removeApiKey}>Remove</Button>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', gap: SPACE_8, flexWrap: 'wrap', alignItems: 'center' }}>
+                <TextInput
+                  type="password"
+                  value={keyInput}
+                  onChange={setKeyInput}
+                  placeholder="sk-ant-..."
+                  disabled={busy}
+                  autoComplete="off"
+                  fullWidth={false}
+                  style={{ flex: 1, minWidth: 240 }}
+                />
+                <Button disabled={busy || !keyInput.trim()} onClick={saveApiKey}>Save</Button>
+              </div>
+            )}
+            <div style={{ color: TEXT_MUTED, fontSize: FS_SM, marginTop: SPACE_12, lineHeight: 1.5 }}>
+              Optional. With your own key the daily limits above don&rsquo;t apply and usage is billed to
+              your Anthropic account. It&rsquo;s stored encrypted and never shown again &mdash; only the
+              last four characters come back.
             </div>
           </section>
 

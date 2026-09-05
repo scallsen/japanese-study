@@ -2,6 +2,7 @@ import Anthropic from 'npm:@anthropic-ai/sdk@0.104.1'
 import * as kuromoji from 'npm:@patdx/kuromoji@1.0.4'
 import { requireUser, authErrorResponse } from '../_shared/auth.ts'
 import { consumeQuota, refundQuota, quotaErrorResponse } from '../_shared/quota.ts'
+import { getUserApiKey } from '../_shared/userKey.ts'
 
 const DEFAULT_MODEL = Deno.env.get('STORY_MODEL') || 'claude-sonnet-5'
 
@@ -141,11 +142,14 @@ Deno.serve(async (req) => {
       return jsonResponse({ error: 'basedOn is required when mode is "based-on"' }, 400)
     }
 
-    // Like requireUser, this has to precede the stream: once it opens the
-    // response is committed to 200 and a 429 is no longer expressible.
-    await consumeQuota(user.id, 'story-generate')
+    // A user on their own key pays Anthropic directly, so there is nothing to
+    // meter. Like requireUser, the quota check has to precede the stream: once
+    // that opens the response is committed to 200 and a 429 is no longer
+    // expressible.
+    const userKey = await getUserApiKey(user.id)
+    if (!userKey) await consumeQuota(user.id, 'story-generate')
 
-    const client = new Anthropic({ apiKey: Deno.env.get('ANTHROPIC_API_KEY') })
+    const client = new Anthropic({ apiKey: userKey ?? Deno.env.get('ANTHROPIC_API_KEY') })
 
     const request = [
       `Write ${FORMAT_HINTS[format] || FORMAT_HINTS.story}, ${LENGTH_HINTS[length] || LENGTH_HINTS.short}.`,
@@ -214,7 +218,7 @@ Deno.serve(async (req) => {
           // The quota was taken before the stream opened, so a failure here
           // would otherwise cost one of the day's few generations for a story
           // the user never received.
-          await refundQuota(user.id, 'story-generate')
+          if (!userKey) await refundQuota(user.id, 'story-generate')
           controller.enqueue(encoder.encode('\n' + JSON.stringify({ error: err?.message || 'Generation failed' })))
         } finally {
           clearInterval(heartbeat)

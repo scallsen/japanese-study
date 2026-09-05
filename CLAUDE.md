@@ -1136,6 +1136,29 @@ grant execute on function refund_ai_quota(uuid, text) to service_role;
 
 `ai_usage.user_id` cascades on delete, so account deletion needs no change to `delete-account` — unlike `progress` and `stories`, which don't cascade and must be deleted explicitly there. Prefer the cascade for any new user-scoped table.
 
+### Bring your own API key
+
+A user can supply their own Anthropic key, in which case they are **not metered**: `getUserApiKey(user.id)` (`supabase/functions/_shared/userKey.ts`) runs before `consumeQuota`, and a key present means the quota call — and its refund — are skipped entirely, with the key passed to `new Anthropic({ apiKey })` instead of the app's own. That branch is the whole integration; it is deliberately one `if` at each of the three call sites rather than a wrapper.
+
+**The key is never readable by the client — including by its owner.** That is structural, not a promise: `user_api_keys` has RLS enabled and **no policy and no grant for `anon`/`authenticated` at all**, so PostgREST cannot return it to anybody. Every access goes through an edge function on the service role, and the only thing any response ever carries is `key_hint`, the last four characters. Don't add a select policy "for convenience" — there is no client-side use for the key.
+
+It's also encrypted at rest on top of the platform's own encryption (AES-GCM, fresh IV per write, secret in `API_KEY_ENCRYPTION_SECRET`), so a leaked database dump alone doesn't yield working keys. A row that fails to decrypt — rotated secret, corruption — falls back to the app key and quota rather than failing the request. On save the key is checked against Anthropic's `/v1/models` (which costs no tokens) so a typo fails at the point of entry rather than silently breaking the next generation.
+
+```sql
+create table if not exists user_api_keys (
+  user_id uuid primary key references auth.users on delete cascade,
+  encrypted_key text not null,
+  key_hint text not null,   -- last 4 chars; the only part ever returned
+  created_at timestamptz not null default now()
+);
+
+alter table user_api_keys enable row level security;
+-- No policy and no grant for anon/authenticated, deliberately: see above.
+grant all on user_api_keys to service_role;
+```
+
+Needs `supabase secrets set API_KEY_ENCRYPTION_SECRET=...` (generate with `openssl rand -base64 32`). **Rotating that secret orphans every stored key** — users would silently fall back to the shared quota and have to re-enter theirs.
+
 Client side, `useAiUsage()` (`src/hooks/useAiUsage.js`) returns today's counts keyed by feature, plus a `refresh` for callers that just spent quota. `AccountPage` lists every feature; `StoryModule` shows `QuotaPips` — one pip per daily generation, filled while unspent, coloured by the module accent — and **disables Generate at zero rather than letting the server 429**, so an exhausted quota reads as a visibly disabled button instead of a wasted round trip and a raw error. Both read `AI_DAILY_LIMITS` (`src/data/aiLimits.js`), the hand-synced mirror of the server's table; the server stays authoritative, so drift shows a wrong number rather than letting anyone past a limit.
 
 Deploy (one-time setup):

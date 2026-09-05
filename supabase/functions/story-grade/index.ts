@@ -1,6 +1,7 @@
 import Anthropic from 'npm:@anthropic-ai/sdk@0.104.1'
 import { requireUser, authErrorResponse } from '../_shared/auth.ts'
 import { consumeQuota, quotaErrorResponse } from '../_shared/quota.ts'
+import { getUserApiKey } from '../_shared/userKey.ts'
 
 const DEFAULT_MODEL = Deno.env.get('GRADE_MODEL') || 'claude-haiku-4-5'
 
@@ -52,12 +53,14 @@ Deno.serve(async (req) => {
       return jsonResponse({ error: 'question, correctAnswer, and userAnswer are required' }, 400)
     }
 
-    // After validation, so a malformed request costs nothing. No refund path
-    // here: grading is cheap, and its usual failure is a model refusal, which
-    // did consume a real API call.
-    await consumeQuota(user.id, 'story-grade')
+    // A user on their own key pays Anthropic directly, so there is nothing to
+    // meter. Either way this sits after validation, so a malformed request
+    // costs nothing. No refund path here: grading is cheap, and its usual
+    // failure is a model refusal, which did consume a real API call.
+    const userKey = await getUserApiKey(user.id)
+    if (!userKey) await consumeQuota(user.id, 'story-grade')
 
-    const client = new Anthropic({ apiKey: Deno.env.get('ANTHROPIC_API_KEY') })
+    const client = new Anthropic({ apiKey: userKey ?? Deno.env.get('ANTHROPIC_API_KEY') })
 
     const response = await client.messages.create({
       model,

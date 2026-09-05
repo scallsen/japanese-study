@@ -3,6 +3,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 import * as kuromoji from 'npm:@patdx/kuromoji@1.0.4'
 import { requireUser, authErrorResponse } from '../_shared/auth.ts'
 import { consumeQuota, refundQuota, quotaErrorResponse } from '../_shared/quota.ts'
+import { getUserApiKey } from '../_shared/userKey.ts'
 
 const DEFAULT_MODEL = Deno.env.get('WORD_IMPORT_MODEL') || 'claude-sonnet-5'
 const MAX_WORDS = 60
@@ -158,12 +159,14 @@ Deno.serve(async (req) => {
       }
       // Image mode only. Text mode below makes no Anthropic call at all, so
       // charging it would be charging for Kuromoji and a dictionary lookup.
-      await consumeQuota(user.id, 'word-import-image')
-      const client = new Anthropic({ apiKey: Deno.env.get('ANTHROPIC_API_KEY') })
+      // A user on their own key pays Anthropic directly and isn't metered.
+      const userKey = await getUserApiKey(user.id)
+      if (!userKey) await consumeQuota(user.id, 'word-import-image')
+      const client = new Anthropic({ apiKey: userKey ?? Deno.env.get('ANTHROPIC_API_KEY') })
       try {
         sourceText = await ocrImage(client, image, mediaType, model)
       } catch (err) {
-        await refundQuota(user.id, 'word-import-image')
+        if (!userKey) await refundQuota(user.id, 'word-import-image')
         throw err
       }
     } else if (mode === 'text') {
