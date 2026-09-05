@@ -172,8 +172,36 @@ button, input, select, textarea {
   transition: background 120ms;
 }
 
+/* !important: the row sets background:transparent inline, and inline beats a
+   class — without this the rule never applied at all. Same trap documented for
+   .btn-neutral / .chip--off / .track-toggle. */
 .option-picker-row:hover {
-  background: rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.06) !important;
+}
+
+/* Avatar trigger — brightness rather than a background shift, the same idiom
+   .btn-tint uses, because Avatar sets its own tinted background inline and an
+   inline background would beat a class-level one. */
+.avatar-trigger {
+  transition: filter 120ms;
+}
+
+.avatar-trigger:hover {
+  filter: brightness(1.3);
+}
+
+.avatar-trigger:active {
+  filter: brightness(0.95);
+}
+
+/* Menu rows — same treatment as .option-picker-row above, kept separate so
+   neither component is renamed into the other's meaning. */
+.menu-item {
+  transition: background 120ms;
+}
+
+.menu-item:hover {
+  background: rgba(255,255,255,0.06) !important;
 }
 
 /* Modal */

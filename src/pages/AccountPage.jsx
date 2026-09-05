@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import PageHeader from '../components/PageHeader.jsx'
+import AuthSlot from '../components/AuthSlot.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
 import Button from '../components/Button.jsx'
 import TextInput from '../components/TextInput.jsx'
@@ -68,13 +69,13 @@ export default function AccountPage() {
   const crumbs = [{ label: 'Japanese Study', href: '#/' }, { label: 'Account' }]
 
   if (loading) {
-    return <div style={shell}><PageHeader crumbs={crumbs} /></div>
+    return <div style={shell}><PageHeader crumbs={crumbs} rightSlot={<AuthSlot />} /></div>
   }
 
   if (!user) {
     return (
       <div style={shell}>
-        <PageHeader crumbs={crumbs} />
+        <PageHeader crumbs={crumbs} rightSlot={<AuthSlot />} />
         <div style={scroll}>
           <div style={{ ...column, alignItems: 'center', gap: SPACE_16 }}>
             <div style={{ fontSize: FS_CONTENT_HEADING }}>Sign in to manage your account</div>
@@ -244,7 +245,7 @@ export default function AccountPage() {
 
   return (
     <div style={shell}>
-      <PageHeader crumbs={crumbs} />
+      <PageHeader crumbs={crumbs} rightSlot={<AuthSlot />} />
       <div style={scroll}>
         <div style={column}>
 
