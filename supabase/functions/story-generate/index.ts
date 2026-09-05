@@ -1,7 +1,7 @@
 import Anthropic from 'npm:@anthropic-ai/sdk@0.104.1'
 import * as kuromoji from 'npm:@patdx/kuromoji@1.0.4'
 import { requireUser, authErrorResponse } from '../_shared/auth.ts'
-import { consumeQuota, recordUsage, refundQuota, quotaErrorResponse } from '../_shared/quota.ts'
+import { consumeAiBudget, refundAiBudget, quotaErrorResponse } from '../_shared/quota.ts'
 import { getUserApiKey } from '../_shared/userKey.ts'
 
 const DEFAULT_MODEL = Deno.env.get('STORY_MODEL') || 'claude-sonnet-5'
@@ -131,8 +131,7 @@ Deno.serve(async (req) => {
     // that opens the response is committed to 200 and a 429 is no longer
     // expressible.
     const userKey = await getUserApiKey(user.id)
-    if (userKey) await recordUsage(user.id, 'story-generate')
-    else await consumeQuota(user.id, 'story-generate')
+    await consumeAiBudget(user.id, 'story-generate', Boolean(userKey))
 
     const client = new Anthropic({ apiKey: userKey ?? Deno.env.get('ANTHROPIC_API_KEY') })
 
@@ -202,7 +201,7 @@ Deno.serve(async (req) => {
           // The quota was taken before the stream opened, so a failure here
           // would otherwise cost one of the day's few generations for a story
           // the user never received.
-          await refundQuota(user.id, 'story-generate')
+          await refundAiBudget(user.id, 'story-generate', Boolean(userKey))
           controller.enqueue(encoder.encode('\n' + JSON.stringify({ error: err?.message || 'Generation failed' })))
         } finally {
           clearInterval(heartbeat)

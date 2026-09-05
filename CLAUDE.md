@@ -1246,6 +1246,53 @@ end $$;
 
 revoke execute on function consume_rate_limit(text, text, text, int, int, timestamptz) from public, anon, authenticated;
 grant execute on function consume_rate_limit(text, text, text, int, int, timestamptz) to service_role;
+
+-- Releases a reserved unit when the work that took it failed. Unconditional
+-- arithmetic, so unlike consume_rate_limit it needs no atomicity guard; the
+-- greatest() floor stops a double refund pushing the counter negative.
+create or replace function refund_rate_limit(
+  p_bucket text, p_feature text, p_window_key text, p_cost int
+) returns void language sql as $$
+  update rate_limit set count = greatest(0, count - p_cost)
+  where bucket = p_bucket and feature = p_feature and window_key = p_window_key;
+$$;
+
+revoke execute on function refund_rate_limit(text, text, text, int) from public, anon, authenticated;
+grant execute on function refund_rate_limit(text, text, text, int) to service_role;
+```
+
+### App-wide AI ceiling (`bucket = 'global'`)
+
+Per-user quotas bound what one person can spend; nothing bounded the *sum*, so N users × 5 stories was unbounded in N. `GLOBAL_DAILY_LIMITS` in `_shared/quota.ts` adds a ceiling across all users combined, reusing the `rate_limit` table above with the bucket literal `'global'` rather than introducing a second mechanism. The spend limit set on the Anthropic key itself is the backstop *behind* this — the difference is that hitting the app's ceiling produces "AI generation is temporarily unavailable", whereas hitting Anthropic's produces a raw provider error.
+
+`consumeAiBudget(userId, feature, ownKey)` is the single entry point and encodes the ordering, which is easy to get wrong in a way nothing surfaces: **charge the user first, then the global pool, refunding the user if the pool is full.** The other order charges the app for a request the user's own limit then rejects. A user on their own key skips the ceiling entirely — they aren't spending the app's budget — and only has their usage recorded. `refundAiBudget` is the matching release for a generation that fails after being charged.
+
+**The banner.** `rate_limit` is service_role-only and must stay that way, so the client can't read the counters directly. `ai_availability()` is the one narrow read-only window: today's global counters plus whether the caller is on their own key. It deliberately returns **raw counts, not a ready-made boolean**, so the limits themselves stay out of SQL — there are two copies to keep in step (`GLOBAL_DAILY_LIMITS` server-side, `GLOBAL_AI_DAILY_LIMITS` in `src/data/aiLimits.js`) rather than three. `useAiAvailability(feature)` compares them and **fails open**, returning available on any error, missing function, or signed-out visitor, matching the edge function's own fail-open behaviour so the two can't disagree in the direction that blocks someone unnecessarily.
+
+```sql
+create or replace function ai_availability()
+returns jsonb
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select jsonb_build_object(
+    'usage', coalesce((
+      select jsonb_object_agg(feature, count)
+      from rate_limit
+      where bucket = 'global'
+        and window_key = 'day:' || to_char(timezone('utc', now())::date, 'YYYY-MM-DD')
+    ), '{}'::jsonb),
+    -- Only ever a boolean about the caller's own row, keyed on auth.uid().
+    'ownKey', auth.uid() is not null
+              and exists (select 1 from user_api_keys where user_id = auth.uid())
+  );
+$$;
+
+-- EXECUTE defaults to PUBLIC, so this revoke is not redundant.
+revoke execute on function ai_availability() from public;
+grant execute on function ai_availability() to anon, authenticated;
 ```
 
 Deploy (one-time setup):

@@ -104,6 +104,9 @@ export async function refundQuota(userId: string, feature: string) {
 //
 // Skipped entirely for a user on their own API key: they aren't spending our
 // budget, so they shouldn't be stopped when it runs out.
+//
+// Call this AFTER consumeQuota, refunding the user if it throws. The other
+// order would charge the app for a request the user's own limit then rejected.
 export async function consumeGlobalQuota(feature: string) {
   const limit = GLOBAL_DAILY_LIMITS[feature]
   if (!admin || !limit) return
@@ -130,6 +133,44 @@ export async function consumeGlobalQuota(feature: string) {
       'global',
     )
   }
+}
+
+// Mirror of refundQuota for the app-wide pool: releases the unit when the work
+// itself failed, so a model error doesn't permanently eat into the day's budget.
+export async function refundGlobalQuota(feature: string) {
+  if (!admin || !GLOBAL_DAILY_LIMITS[feature]) return
+  const { error } = await admin.rpc('refund_rate_limit', {
+    p_bucket: 'global',
+    p_feature: feature,
+    p_window_key: `day:${new Date().toISOString().slice(0, 10)}`,
+    p_cost: 1,
+  })
+  if (error) console.error('[quota] global refund failed', feature, error.message)
+}
+
+// Charges the user's own allowance and the app-wide pool together, picking the
+// right path for a user on their own key. Both AI functions need this exact
+// sequence, and getting the order or the refund wrong is silent (a user loses a
+// generation, or the app over-counts), so it lives in one place.
+export async function consumeAiBudget(userId: string, feature: string, ownKey: boolean) {
+  if (ownKey) {
+    await recordUsage(userId, feature)
+    return
+  }
+  await consumeQuota(userId, feature)
+  try {
+    await consumeGlobalQuota(feature)
+  } catch (err) {
+    await refundQuota(userId, feature)
+    throw err
+  }
+}
+
+// The matching release for consumeAiBudget, for when generation fails after
+// being charged. recordUsage's counter is refunded by refundQuota too.
+export async function refundAiBudget(userId: string, feature: string, ownKey: boolean) {
+  await refundQuota(userId, feature)
+  if (!ownKey) await refundGlobalQuota(feature)
 }
 
 export function quotaErrorResponse(err: unknown, jsonResponse: (body: unknown, status?: number) => Response) {

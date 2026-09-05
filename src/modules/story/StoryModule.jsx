@@ -16,6 +16,8 @@ import { ModuleThemeProvider, useAccent } from '../../context/ModuleThemeContext
 import { AI_DAILY_LIMITS } from '../../data/aiLimits.js'
 import { useAiUsage } from '../../hooks/useAiUsage.js'
 import { useApiKeyStatus } from '../../hooks/useApiKeyStatus.js'
+import { useAiAvailability } from '../../hooks/useAiAvailability.js'
+import Notice from '../../components/Notice.jsx'
 import { WORD_SOURCES } from '../../data/wordLists.js'
 import { buildLearnerContext, MATURITY_LEVELS, GRAMMAR_LEVELS } from '../../lib/learnerContext.js'
 import { resolveCard } from '../vocab-srs/srs.js'
@@ -129,6 +131,7 @@ function StoryGenerator() {
 
   const { usage: aiUsage, refresh: refreshUsage } = useAiUsage()
   const { hasKey: usingOwnKey, loading: apiKeyLoading } = useApiKeyStatus()
+  const aiAvailable = useAiAvailability('story-generate')
   const storyRemaining = Math.max(0, STORY_LIMIT - (aiUsage.today['story-generate'] ?? 0))
 
   const [myStories, setMyStories] = useState([])
@@ -227,7 +230,9 @@ function StoryGenerator() {
   // Someone on their own key isn't metered at all, so the daily count must not
   // gate them — otherwise a spent quota would lock out a user who isn't
   // spending ours.
-  const canGenerate = user && context && context.wordCount > 0 && !generating
+  // The server is what actually enforces this; disabling the button just avoids
+  // sending a request that can only come back as a 429.
+  const canGenerate = user && context && context.wordCount > 0 && !generating && aiAvailable
     && (usingOwnKey || storyRemaining > 0)
 
   const generate = async () => {
@@ -298,6 +303,12 @@ function StoryGenerator() {
             </FilterRow>
           </FilterCard>
 
+          {!aiAvailable && (
+            <Notice style={{ marginTop: 14 }} title="AI generation is temporarily unavailable">
+              The app has reached its daily limit for AI generation. It resets tomorrow.
+              You can generate without limit by adding your own Anthropic API key on your account page.
+            </Notice>
+          )}
           {error && <div style={{ marginTop: 14, fontSize: FS_CAPTION, color: DANGER }}>{error}</div>}
           <ActionBar
             maxWidth={760}
