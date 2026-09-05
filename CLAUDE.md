@@ -1118,6 +1118,18 @@ returns int language sql as $$
   returning count;
 $$;
 
+-- Counts without capping: the path for a user on their own key. They aren't
+-- metered, but their usage is still shown back to them, and recording it here
+-- means "today" and "lifetime" come from one table for everyone.
+create or replace function record_ai_usage(p_user uuid, p_feature text)
+returns int language sql as $$
+  insert into ai_usage (user_id, feature, day, count)
+  values (p_user, p_feature, (now() at time zone 'utc')::date, 1)
+  on conflict (user_id, feature, day) do update
+    set count = ai_usage.count + 1
+  returning count;
+$$;
+
 create or replace function refund_ai_quota(p_user uuid, p_feature text)
 returns void language sql as $$
   update ai_usage set count = greatest(count - 1, 0)
@@ -1130,8 +1142,10 @@ $$;
 -- PostgREST's /rpc/ endpoint and hand themselves unlimited usage.
 revoke execute on function consume_ai_quota(uuid, text, int) from public, anon, authenticated;
 revoke execute on function refund_ai_quota(uuid, text) from public, anon, authenticated;
+revoke execute on function record_ai_usage(uuid, text) from public, anon, authenticated;
 grant execute on function consume_ai_quota(uuid, text, int) to service_role;
 grant execute on function refund_ai_quota(uuid, text) to service_role;
+grant execute on function record_ai_usage(uuid, text) to service_role;
 ```
 
 `ai_usage.user_id` cascades on delete, so account deletion needs no change to `delete-account` — unlike `progress` and `stories`, which don't cascade and must be deleted explicitly there. Prefer the cascade for any new user-scoped table.
