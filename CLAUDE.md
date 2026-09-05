@@ -619,11 +619,13 @@ Each entry in a `decks/*.json` file (also the shape `resolveCard` returns for a 
 
 ### Audio playback
 
-Audio files live in Supabase Storage bucket `audio/imported/`. URL pattern:
+Recorded audio files live in Supabase Storage under `audio/imported/`. URL pattern:
 
 ```
 ${VITE_SUPABASE_URL}/storage/v1/object/public/audio/imported/${filename}
 ```
+
+**That prefix is currently empty.** Its only occupant was Core 2000's 3,970 recordings, deleted when that deck was retired — checked first against every still-live reference, which found zero overlap because no surviving deck uses recorded audio at all (imported cards get Voicevox, under `audio/voicevox/`). The path and `AUDIO_BASE` stay because an imported Anki deck carrying its own `[sound:…]` media would land here again; a card simply falls through to Voicevox or browser TTS when it has no `wordAudio`/`sentenceAudio`.
 
 ### Word import (text / OCR)
 
