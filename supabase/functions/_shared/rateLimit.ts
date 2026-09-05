@@ -28,13 +28,35 @@ const admin = SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
  * note on vocab-sync below.
  */
 
-// Upstream limits, for the ANONYMOUS bucket (per jitenClient.js):
-//   ~300 req/min general, ~10 req/min on the vocabulary endpoint.
+// Upstream limits, read from Jiten's own source (Jiten.Api/Program.cs, named
+// ASP.NET rate-limiter policies; github.com/Sirush/Jiten):
 //
-// Those are OUR limits: JITEN_API_KEY is not set on the project, so the
-// X-Api-Key header is never sent and every call goes out anonymously. A key
-// would move us to a higher bucket — worth getting, since one episode sync
-// alone nearly exhausts the anonymous vocabulary budget for a whole minute.
+//   fixed     300/min  — get-media-decks, {id}/detail, {id}/vocabulary.
+//                        ALL three endpoints we use are on this policy.
+//   download   10/min  — deck downloads, frequency lists, custom-deck parser.
+//                        We call NONE of these.
+//   heavy      20/min anonymous, 45 keyed — search-by-description, example
+//                        sentences. We call none of these either.
+//
+// So our real ceiling is 300/min, not the ~10/min this codebase previously
+// believed for the vocabulary endpoint — that figure was the `download`
+// policy, misattributed (jitenClient.js's comment has been corrected too).
+//
+// The number is not what a key buys us. Jiten partitions by
+// `user:{userId}` when a key or JWT is present and `ip:{clientIp}` otherwise,
+// and `fixed` is 300/min either way. Since JITEN_API_KEY is unset, every one
+// of our users currently shares ONE partition keyed on Supabase's egress IP —
+// possibly with unrelated Supabase tenants on the same address. A key buys an
+// isolated partition, which for a server-side proxy is worth far more than a
+// bigger number would be.
+//
+// Two runtime behaviours worth knowing: a 429 body is text/plain, not JSON
+// (every call site checks the status before parsing, so this is safe), and
+// small overshoots QUEUE rather than reject, surfacing as a request that
+// hangs for up to a minute.
+//
+// Per-user limits below are a fraction of the 300 shared ceiling, so one
+// active user can't consume the whole app's budget.
 //
 //   feature           cost per call          why this limit
 //   ----------------- ---------------------- --------------------------------
@@ -53,14 +75,10 @@ const admin = SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
 //                                            headroom than its raw fan-out
 //                                            suggests.
 export const ANIME_LIMITS: Record<string, { perMinute: number; perDay: number }> = {
-  'anime-browse': { perMinute: 30, perDay: 500 },
+  'anime-browse': { perMinute: 20, perDay: 500 },
   'anime-lookup': { perMinute: 60, perDay: 240 },
-  'anime-select': { perMinute: 30, perDay: 200 },
-  // 10/min = ONE sync per minute, because one sync is already ~10 vocabulary
-  // requests and Jiten's anonymous budget for that endpoint is ~10/min. We
-  // send no API key (JITEN_API_KEY is unset), so the anonymous figures are
-  // simply our figures — an earlier 30 here was 3x over Jiten's own limit.
-  'anime-vocab-sync': { perMinute: 10, perDay: 300 },
+  'anime-select': { perMinute: 15, perDay: 200 },
+  'anime-vocab-sync': { perMinute: 30, perDay: 300 },
 }
 
 // Charged up front for a sync, since the page count isn't known until the
