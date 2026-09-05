@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ModuleCard from '../components/ModuleCard.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
 import PageHeader from '../components/PageHeader.jsx'
@@ -7,6 +7,7 @@ import SectionLabel from '../components/SectionLabel.jsx'
 import TextbookPicker from '../components/TextbookPicker.jsx'
 import { NewCard, ReviewCard } from './homeCards.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
+import { useToast } from '../context/ToastContext.jsx'
 import { ModuleThemeProvider } from '../context/ModuleThemeContext.jsx'
 import { useProgress } from '../hooks/useProgress.js'
 import { useIsMobile } from '../hooks/useIsMobile.js'
@@ -17,6 +18,7 @@ import { migrateProgress } from '../modules/vocab-srs/migrate.js'
 import { getGlobalStats, getStateDistribution, getTodaysQueue } from '../modules/vocab-srs/srs.js'
 import { STATE_SEGMENTS } from '../modules/vocab-srs/cardStates.js'
 import { safeLocalStorageGet } from '../utils/storage.js'
+import { takePendingToast } from '../utils/pendingToast.js'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE,
   SPACE_4, SPACE_12, SPACE_16, SPACE_24,
@@ -86,6 +88,15 @@ export default function DashboardPage() {
   const { data: animeTracking } = useProgress('anime-vocab-tracking')
 
   const [pickerOpen, setPickerOpen] = useState(false)
+
+  // Shows a toast handed over by a page that redirected here and then
+  // unmounted — currently account deletion. Reading clears it, so StrictMode's
+  // double-invoke shows it once.
+  const { showToast } = useToast()
+  useEffect(() => {
+    const message = takePendingToast()
+    if (message) showToast({ message })
+  }, [showToast])
 
   const textbookState = vocabLoading ? null : resolveTextbookState(vocabProgress, wordCountFor)
   const srs = user && !srsLoading && srsRaw ? summariseSrs(srsRaw) : null

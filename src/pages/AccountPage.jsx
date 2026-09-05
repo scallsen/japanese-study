@@ -6,6 +6,7 @@ import DataList from '../components/DataList.jsx'
 import ConfirmDialog from '../components/ConfirmDialog.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { supabase } from '../lib/supabase.js'
+import { setPendingToast } from '../utils/pendingToast.js'
 import { AUTH_PROVIDERS, EMAIL_PROVIDER, providerLabel } from '../data/authProviders.js'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, DANGER,
@@ -113,6 +114,9 @@ export default function AccountPage() {
       setBusy(false)
       return
     }
+    // Handed to the destination rather than shown here: this page unmounts a
+    // moment later, which would eat most of the toast's duration.
+    setPendingToast('Account deleted')
     await signOut()
     window.location.hash = '#/'
   }
