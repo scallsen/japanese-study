@@ -367,7 +367,9 @@ export default function AccountPage() {
 
   const providerColumns = [
     { key: 'label', width: 150 },
-    { key: 'control', flex: 1, render: row => row.control },
+    // wrap: DataList cells are nowrap by default, which let a long validation
+    // message push the column wider than the table instead of wrapping inside it.
+    { key: 'control', flex: 1, wrap: true, render: row => row.control },
   ]
 
   const usingOwnKey = provider === 'own' && !!keyHint
