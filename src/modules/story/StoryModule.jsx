@@ -129,7 +129,7 @@ function StoryGenerator() {
 
   const { usage: aiUsage, refresh: refreshUsage } = useAiUsage()
   const { hasKey: usingOwnKey, loading: apiKeyLoading } = useApiKeyStatus()
-  const storyRemaining = Math.max(0, STORY_LIMIT - (aiUsage['story-generate'] ?? 0))
+  const storyRemaining = Math.max(0, STORY_LIMIT - (aiUsage.today['story-generate'] ?? 0))
 
   const [myStories, setMyStories] = useState([])
   const [exampleStories, setExampleStories] = useState([])

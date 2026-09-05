@@ -2,7 +2,7 @@ import Anthropic from 'npm:@anthropic-ai/sdk@0.104.1'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import * as kuromoji from 'npm:@patdx/kuromoji@1.0.4'
 import { requireUser, authErrorResponse } from '../_shared/auth.ts'
-import { consumeQuota, refundQuota, quotaErrorResponse } from '../_shared/quota.ts'
+import { consumeQuota, recordUsage, refundQuota, quotaErrorResponse } from '../_shared/quota.ts'
 import { getUserApiKey } from '../_shared/userKey.ts'
 
 const DEFAULT_MODEL = Deno.env.get('WORD_IMPORT_MODEL') || 'claude-sonnet-5'
@@ -161,12 +161,13 @@ Deno.serve(async (req) => {
       // charging it would be charging for Kuromoji and a dictionary lookup.
       // A user on their own key pays Anthropic directly and isn't metered.
       const userKey = await getUserApiKey(user.id)
-      if (!userKey) await consumeQuota(user.id, 'word-import-image')
+      if (userKey) await recordUsage(user.id, 'word-import-image')
+      else await consumeQuota(user.id, 'word-import-image')
       const client = new Anthropic({ apiKey: userKey ?? Deno.env.get('ANTHROPIC_API_KEY') })
       try {
         sourceText = await ocrImage(client, image, mediaType, model)
       } catch (err) {
-        if (!userKey) await refundQuota(user.id, 'word-import-image')
+        await refundQuota(user.id, 'word-import-image')
         throw err
       }
     } else if (mode === 'text') {

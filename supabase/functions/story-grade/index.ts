@@ -1,6 +1,6 @@
 import Anthropic from 'npm:@anthropic-ai/sdk@0.104.1'
 import { requireUser, authErrorResponse } from '../_shared/auth.ts'
-import { consumeQuota, quotaErrorResponse } from '../_shared/quota.ts'
+import { consumeQuota, recordUsage, quotaErrorResponse } from '../_shared/quota.ts'
 import { getUserApiKey } from '../_shared/userKey.ts'
 
 const DEFAULT_MODEL = Deno.env.get('GRADE_MODEL') || 'claude-haiku-4-5'
@@ -58,7 +58,8 @@ Deno.serve(async (req) => {
     // costs nothing. No refund path here: grading is cheap, and its usual
     // failure is a model refusal, which did consume a real API call.
     const userKey = await getUserApiKey(user.id)
-    if (!userKey) await consumeQuota(user.id, 'story-grade')
+    if (userKey) await recordUsage(user.id, 'story-grade')
+    else await consumeQuota(user.id, 'story-grade')
 
     const client = new Anthropic({ apiKey: userKey ?? Deno.env.get('ANTHROPIC_API_KEY') })
 

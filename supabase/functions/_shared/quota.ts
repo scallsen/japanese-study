@@ -53,10 +53,21 @@ export async function consumeQuota(userId: string, feature: string) {
   return { used: data as number, limit }
 }
 
-// Called when the work fails after the quota was taken, so a model error or a
-// timeout doesn't cost the user one of their few daily runs. Best effort: if
-// the refund itself fails there is nothing useful to tell the caller, whose
-// request already failed for its own reasons.
+// Counts a call without capping it — the path for a user on their own key.
+// They aren't metered, but their usage is still worth showing back to them, and
+// recording it here means "today" and "lifetime" come from one table for
+// everyone rather than two code paths that could disagree.
+export async function recordUsage(userId: string, feature: string) {
+  if (!admin) throw new Error('Server misconfigured: missing Supabase service role credentials')
+  const { error } = await admin.rpc('record_ai_usage', { p_user: userId, p_feature: feature })
+  if (error) console.error('[quota] record failed', feature, error.message)
+}
+
+// Called when the work fails after the call was counted, so a model error or a
+// timeout doesn't cost the user one of their few daily runs — or inflate the
+// lifetime total of someone on their own key. Best effort: if the refund itself
+// fails there is nothing useful to tell the caller, whose request already
+// failed for its own reasons.
 export async function refundQuota(userId: string, feature: string) {
   if (!admin) return
   const { error } = await admin.rpc('refund_ai_quota', { p_user: userId, p_feature: feature })

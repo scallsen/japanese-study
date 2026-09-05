@@ -13,21 +13,31 @@ import { supabase } from '../lib/supabase.js'
 // should be able to update the display without a reload.
 export function useAiUsage() {
   const { user } = useAuth()
-  const [usage, setUsage] = useState({})
+  const [usage, setUsage] = useState({ today: {}, lifetime: {} })
   const [loading, setLoading] = useState(true)
 
   const load = useCallback(async () => {
     if (!user || !supabase) {
-      setUsage({})
+      setUsage({ today: {}, lifetime: {} })
       setLoading(false)
       return
     }
+    // Every row, then summed here rather than in SQL: an aggregate would need
+    // its own RPC executable by `authenticated`, and this is a handful of rows
+    // per feature per day for one user.
     const { data } = await supabase
       .from('ai_usage')
-      .select('feature, count')
+      .select('feature, count, day')
       .eq('user_id', user.id)
-      .eq('day', new Date().toISOString().slice(0, 10))
-    setUsage(Object.fromEntries((data ?? []).map(r => [r.feature, r.count])))
+
+    const todayStr = new Date().toISOString().slice(0, 10)
+    const today = {}
+    const lifetime = {}
+    for (const row of data ?? []) {
+      lifetime[row.feature] = (lifetime[row.feature] ?? 0) + row.count
+      if (row.day === todayStr) today[row.feature] = (today[row.feature] ?? 0) + row.count
+    }
+    setUsage({ today, lifetime })
     setLoading(false)
   }, [user])
 

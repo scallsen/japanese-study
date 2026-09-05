@@ -4,8 +4,15 @@ import AuthSlot from '../components/AuthSlot.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
 import Button from '../components/Button.jsx'
 import TextInput from '../components/TextInput.jsx'
+import Select from '../components/Select.jsx'
 import DataList from '../components/DataList.jsx'
 import ConfirmDialog from '../components/ConfirmDialog.jsx'
+import Modal from '../components/Modal.jsx'
+import Markdown from '../components/Markdown.jsx'
+// Inlined at build time by Vite, so the modal always shows the committed file
+// rather than a copy that drifts from it.
+import PRIVACY_MD from '../../PRIVACY.md?raw'
+import { useIsMobile } from '../hooks/useIsMobile.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { supabase } from '../lib/supabase.js'
 import { setPendingToast } from '../utils/pendingToast.js'
@@ -32,6 +39,11 @@ export default function AccountPage() {
   const [busy, setBusy] = useState(false)
   const [confirmingDelete, setConfirmingDelete] = useState(false)
   const [keyInput, setKeyInput] = useState('')
+  // null until the user picks one, so the control reflects whether a key is
+  // actually stored — and lets them choose "own" before entering one.
+  const [providerChoice, setProviderChoice] = useState(null)
+  const [privacyOpen, setPrivacyOpen] = useState(false)
+  const isMobile = useIsMobile()
 
   // Above the early returns below — hooks can't run conditionally.
   const { usage } = useAiUsage()
@@ -238,9 +250,78 @@ export default function AccountPage() {
     },
   ]
 
+  // Selecting "free" while a key is stored has to actually remove it — the
+  // server decides which key it uses by whether one exists, so leaving it
+  // behind would make this control lie about what's happening.
+  const provider = providerChoice ?? (keyHint ? 'own' : 'free')
+
+  function handleProviderChange(next) {
+    setProviderChoice(next)
+    if (next === 'free' && keyHint) removeApiKey()
+  }
+
+  const providerRows = [
+    {
+      id: 'provider',
+      label: 'Provider',
+      control: (
+        <Select
+          value={provider}
+          onChange={handleProviderChange}
+          disabled={busy || keyLoading}
+          options={[
+            { value: 'free', label: 'Free limited usage' },
+            { value: 'own', label: 'Your own account' },
+          ]}
+        />
+      ),
+    },
+    ...(provider === 'own' ? [{
+      id: 'key',
+      label: 'Anthropic API key',
+      control: keyLoading ? (
+        <span style={{ color: TEXT_MUTED, fontSize: FS_SM }}>Loading&hellip;</span>
+      ) : keyHint ? (
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: SPACE_8 }}>
+          <span style={{ fontSize: FS_BASE }}>sk-ant-&hellip;{keyHint}</span>
+          <Button variant="ghost-muted" size="sm" disabled={busy} onClick={removeApiKey}>Remove</Button>
+        </span>
+      ) : (
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: SPACE_8, width: '100%' }}>
+          <TextInput
+            type="password"
+            value={keyInput}
+            onChange={setKeyInput}
+            placeholder="sk-ant-..."
+            disabled={busy}
+            autoComplete="off"
+            style={{ flex: 1, minWidth: 120 }}
+          />
+          <Button size="sm" disabled={busy || !keyInput.trim()} onClick={saveApiKey}>Save</Button>
+        </span>
+      ),
+    }] : []),
+  ]
+
+  const providerColumns = [
+    { key: 'label', width: 150 },
+    { key: 'control', flex: 1, render: row => row.control },
+  ]
+
+  const usingOwnKey = provider === 'own' && !!keyHint
+
   const usageColumns = [
     { key: 'label', width: 220 },
-    { key: 'used', flex: 1, tone: 'muted', render: row => `${usage[row.feature] ?? 0} of ${row.limit}` },
+    {
+      key: 'used',
+      flex: 1,
+      tone: 'muted',
+      // On their own key there is no cap to count against, so the useful
+      // figure is what they've actually spent rather than what's left.
+      render: row => (usingOwnKey
+        ? `${usage.today[row.feature] ?? 0} today (${usage.lifetime[row.feature] ?? 0} lifetime)`
+        : `${usage.today[row.feature] ?? 0} of ${row.limit}`),
+    },
   ]
 
   return (
@@ -255,56 +336,32 @@ export default function AccountPage() {
           </section>
 
           <section>
-            <SectionHeader title="Linked accounts" />
+            <SectionHeader title="Sign-in method" />
             <DataList columns={accountColumns} rows={accountRows} maxWidth={COLUMN_WIDTH} />
             <div style={{ color: TEXT_MUTED, fontSize: FS_SM, marginTop: SPACE_12, lineHeight: 1.5 }}>
-              Linking a second account lets you sign in either way. You can&rsquo;t remove your only sign-in method.
+              You need at least one sign-in method linked.
             </div>
           </section>
 
           <section>
-            <SectionHeader title="AI usage today" />
-            <DataList
-              columns={usageColumns}
-              rows={AI_DAILY_LIMITS}
-              rowKey={row => row.feature}
-              maxWidth={COLUMN_WIDTH}
-            />
+            <SectionHeader title="AI usage" />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE_16 }}>
+              <DataList
+                columns={providerColumns}
+                rows={providerRows}
+                maxWidth={COLUMN_WIDTH}
+              />
+              <DataList
+                columns={usageColumns}
+                rows={AI_DAILY_LIMITS}
+                rowKey={row => row.feature}
+                maxWidth={COLUMN_WIDTH}
+              />
+            </div>
             <div style={{ color: TEXT_MUTED, fontSize: FS_SM, marginTop: SPACE_12, lineHeight: 1.5 }}>
-              {keyHint
-                ? 'Not counted while your own API key is set — that usage is billed to your Anthropic account.'
+              {usingOwnKey
+                ? 'Billed to your Anthropic account. Your key is stored encrypted and never shown again — only the last four characters come back.'
                 : 'Resets at 00:00 UTC. Generating a story and reading words from a photo both call Claude, so they’re capped per day.'}
-            </div>
-          </section>
-
-          <section>
-            <SectionHeader title="Your Anthropic API key" />
-            {keyLoading ? (
-              <div style={{ color: TEXT_MUTED, fontSize: FS_SM }}>Loading&hellip;</div>
-            ) : keyHint ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: SPACE_12, flexWrap: 'wrap' }}>
-                <span style={{ fontSize: FS_BASE }}>sk-ant-&hellip;{keyHint}</span>
-                <Button variant="ghost-muted" size="sm" disabled={busy} onClick={removeApiKey}>Remove</Button>
-              </div>
-            ) : (
-              <div style={{ display: 'flex', gap: SPACE_8, flexWrap: 'wrap', alignItems: 'center' }}>
-                <TextInput
-                  type="password"
-                  value={keyInput}
-                  onChange={setKeyInput}
-                  placeholder="sk-ant-..."
-                  disabled={busy}
-                  autoComplete="off"
-                  fullWidth={false}
-                  style={{ flex: 1, minWidth: 240 }}
-                />
-                <Button disabled={busy || !keyInput.trim()} onClick={saveApiKey}>Save</Button>
-              </div>
-            )}
-            <div style={{ color: TEXT_MUTED, fontSize: FS_SM, marginTop: SPACE_12, lineHeight: 1.5 }}>
-              Optional. With your own key the daily limits above don&rsquo;t apply and usage is billed to
-              your Anthropic account. It&rsquo;s stored encrypted and never shown again &mdash; only the
-              last four characters come back.
             </div>
           </section>
 
@@ -319,35 +376,42 @@ export default function AccountPage() {
                   ? `Export ${exportableCards.length} cards for Anki`
                   : 'No cards to export'}
               </Button>
+              <Button variant="danger-outline" disabled={busy} onClick={() => setConfirmingDelete(true)}>
+                Delete account
+              </Button>
             </div>
-            <div style={{ color: TEXT_MUTED, fontSize: FS_SM, marginTop: SPACE_12, lineHeight: 1.5 }}>
-              The JSON backup holds everything tied to your account, including review scheduling.
-              The Anki file holds card content only &mdash; Anki&rsquo;s text importer can&rsquo;t accept
-              review scheduling, so your progress stays here. Audio isn&rsquo;t included either.
-            </div>
-          </section>
-
-          <section>
-            <SectionHeader title="Session" />
-            <Button variant="neutral" onClick={signOut}>Sign out</Button>
-          </section>
-
-          <section>
-            <SectionHeader title="Danger zone" />
-            <div style={{ color: TEXT_MUTED, fontSize: FS_SM, marginBottom: SPACE_12, lineHeight: 1.5 }}>
-              Deleting your account permanently removes your review progress, decks, and the
-              stories you generated. This cannot be undone.
-            </div>
-            <Button variant="danger-outline" disabled={busy} onClick={() => setConfirmingDelete(true)}>
-              Delete account
-            </Button>
           </section>
 
           {error && (
             <div style={{ color: DANGER, fontSize: FS_BASE, lineHeight: 1.5 }}>{error}</div>
           )}
+
+          <div>
+            <button
+              onClick={() => setPrivacyOpen(true)}
+              className="muted-link"
+              style={{
+                background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+                fontFamily: FONT, fontSize: FS_SM, letterSpacing: TRACKING, color: TEXT_MUTED,
+              }}
+            >
+              Privacy policy
+            </button>
+          </div>
         </div>
       </div>
+
+      <Modal
+        open={privacyOpen}
+        onClose={() => setPrivacyOpen(false)}
+        title="Privacy policy"
+        size="lg"
+        isMobile={isMobile}
+      >
+        {/* The document keeps its own H1 so it reads properly as a file on
+            GitHub; here the modal header already carries the title. */}
+        <Markdown source={PRIVACY_MD.replace(/^#\s+.*\n+/, '')} />
+      </Modal>
 
       <ConfirmDialog
         open={confirmingDelete}
