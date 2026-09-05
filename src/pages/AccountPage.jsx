@@ -30,7 +30,7 @@ import { buildAnkiTsv, buildBackupJson, downloadFile, timestampedName } from '..
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, DANGER,
   FS_BASE, FS_SM, FS_CONTENT_HEADING,
-  SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32,
+  SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32,
 } from '../data/theme.js'
 
 const COLUMN_WIDTH = 640
@@ -47,6 +47,8 @@ export default function AccountPage() {
   const [providerChoice, setProviderChoice] = useState(null)
   const [privacyOpen, setPrivacyOpen] = useState(false)
   const [confirmingKeyRemoval, setConfirmingKeyRemoval] = useState(false)
+  const [keyChecking, setKeyChecking] = useState(false)
+  const [keyError, setKeyError] = useState(null)
   const isMobile = useIsMobile()
   const accent = useAccent()
 
@@ -128,17 +130,21 @@ export default function AccountPage() {
     setBusy(false)
   }
 
+  // Reported next to the field rather than through the page-level error: this
+  // is feedback on something the user just typed, and at the foot of a long
+  // page it reads as unrelated.
   async function saveApiKey() {
     setError(null)
-    setBusy(true)
+    setKeyError(null)
+    setKeyChecking(true)
     try {
       await callFunction('user-api-key', { action: 'save', apiKey: keyInput.trim() })
       setKeyInput('')
       await refreshKey()
     } catch (err) {
-      setError(err.message)
+      setKeyError(err.message)
     }
-    setBusy(false)
+    setKeyChecking(false)
   }
 
   async function removeApiKey() {
@@ -280,7 +286,14 @@ export default function AccountPage() {
   // its row, so a button beside it either stretched the row or shrank out of
   // proportion to it. Enter blurs, which routes to the same path.
   function handleKeyFieldBlur() {
-    if (keyInput.trim() && !busy) saveApiKey()
+    if (keyInput.trim() && !busy && !keyChecking) saveApiKey()
+  }
+
+  // Clearing on edit rather than leaving a stale complaint sitting under a key
+  // the user is already fixing.
+  function handleKeyInputChange(next) {
+    setKeyInput(next)
+    if (keyError) setKeyError(null)
   }
 
   const providerRows = [
@@ -313,19 +326,29 @@ export default function AccountPage() {
           <Button variant="ghost-muted" size="sm" disabled={busy} onClick={removeApiKey}>Remove</Button>
         </span>
       ) : (
-        <TextInput
-          type="password"
-          value={keyInput}
-          onChange={setKeyInput}
-          placeholder="sk-ant-..."
-          disabled={busy}
-          autoComplete="off"
-          // sm keeps the field within the row's own line height, so adding it
-          // doesn't make this row taller than the one above.
-          size="sm"
-          onBlur={handleKeyFieldBlur}
-          onKeyDown={e => { if (e.key === 'Enter') e.currentTarget.blur() }}
-        />
+        <span style={{ display: 'flex', flexDirection: 'column', gap: SPACE_4 }}>
+          <TextInput
+            type="password"
+            value={keyInput}
+            onChange={handleKeyInputChange}
+            placeholder="sk-ant-..."
+            disabled={busy || keyChecking}
+            autoComplete="off"
+            // sm keeps the field within the row's own line height, so adding it
+            // doesn't make this row taller than the one above.
+            size="sm"
+            onBlur={handleKeyFieldBlur}
+            onKeyDown={e => { if (e.key === 'Enter') e.currentTarget.blur() }}
+          />
+          {/* Only ever one of these, and only while something needs saying —
+              the row keeps its original height in the resting state. */}
+          {keyChecking && (
+            <span style={{ color: TEXT_MUTED, fontSize: FS_SM }}>Checking with Anthropic&hellip;</span>
+          )}
+          {keyError && !keyChecking && (
+            <span style={{ color: DANGER, fontSize: FS_SM, lineHeight: 1.4 }}>{keyError}</span>
+          )}
+        </span>
       ),
     }] : []),
   ]

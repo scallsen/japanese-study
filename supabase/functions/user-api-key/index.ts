@@ -51,11 +51,29 @@ Deno.serve(async (req) => {
       // Check the key actually works before storing it, so a typo fails here
       // rather than silently breaking the next generation. Listing models
       // costs no tokens.
-      const probe = await fetch('https://api.anthropic.com/v1/models?limit=1', {
-        headers: { 'x-api-key': trimmed, 'anthropic-version': '2023-06-01' },
-      })
+      //
+      // The failure modes are told apart deliberately: "we couldn't reach
+      // Anthropic" and "Anthropic says this key is no good" call for opposite
+      // reactions from the user, and collapsing them into one message sends
+      // people hunting for a typo in a key that was fine.
+      let probe: Response
+      try {
+        probe = await fetch('https://api.anthropic.com/v1/models?limit=1', {
+          headers: { 'x-api-key': trimmed, 'anthropic-version': '2023-06-01' },
+          signal: AbortSignal.timeout(10_000),
+        })
+      } catch {
+        return jsonResponse({ error: 'Could not reach Anthropic to check that key. Try again in a moment.' }, 502)
+      }
+
+      if (probe.status === 401 || probe.status === 403) {
+        return jsonResponse({ error: 'Anthropic rejected that key — it may be mistyped, revoked, or expired.' }, 400)
+      }
+      if (probe.status === 429) {
+        return jsonResponse({ error: 'Anthropic rate-limited the check. Try again in a moment.' }, 429)
+      }
       if (!probe.ok) {
-        return jsonResponse({ error: 'Anthropic rejected that key. Check it and try again.' }, 400)
+        return jsonResponse({ error: `Anthropic returned ${probe.status} when checking that key. Try again in a moment.` }, 502)
       }
 
       const { error } = await admin.from('user_api_keys').upsert({
