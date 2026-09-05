@@ -2,8 +2,10 @@
 
 Last updated 5 September 2026.
 
-This is a plain-language description of what Japanese Study actually stores and
-who it talks to. It is not legal advice and has not been reviewed by a lawyer.
+This is a plain-language description of what Japanese Study
+(https://japanese-study.scallsen.ca) actually stores and who it talks to. It is
+a personal, non-commercial project. This is not legal advice and has not been
+reviewed by a lawyer.
 
 ## What is stored
 
@@ -55,11 +57,17 @@ account as a JSON file, and export your cards as an Anki-compatible file.
 
 **Deletion.** Deleting your account permanently removes your progress, decks,
 stories, usage counts, and stored API key. It cannot be undone, and there is no
-backup from which it can be restored.
+backup from which it can be restored. If you would rather it be done for you,
+email **simon.callsen@gmail.com**.
 
 **Retention.** Data is kept until you delete your account.
 
+## Changes to this policy
+
+This is a small, personal project maintained by one person. If this policy
+changes, the updated version will be posted here with a new "last updated" date.
+
 ## Contact
 
-This is a personal project. Questions and requests can be raised as an issue on
-the project's GitHub repository.
+Questions about this policy or your data: **simon.callsen@gmail.com**, or raise
+an issue on the project's GitHub repository.
