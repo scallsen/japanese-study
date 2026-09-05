@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import PageHeader from '../components/PageHeader.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
 import Button from '../components/Button.jsx'
@@ -11,6 +11,8 @@ import { setPendingToast } from '../utils/pendingToast.js'
 import { AUTH_PROVIDERS, EMAIL_PROVIDER, providerLabel } from '../data/authProviders.js'
 import { AI_DAILY_LIMITS } from '../data/aiLimits.js'
 import { useAiUsage } from '../hooks/useAiUsage.js'
+import { useApiKeyStatus } from '../hooks/useApiKeyStatus.js'
+import { callFunction } from '../lib/functionsClient.js'
 import { useProgress } from '../hooks/useProgress.js'
 import { migrateProgress } from '../modules/vocab-srs/migrate.js'
 import { resolveCard } from '../modules/vocab-srs/srs.js'
@@ -23,49 +25,17 @@ import {
 
 const COLUMN_WIDTH = 640
 
-// functions.invoke only ever reports a generic "non-2xx status code"; the real
-// reason is in the response body, and these are all actions where the user
-// needs to know why they were refused.
-async function callFunction(name, body) {
-  const { data, error } = await supabase.functions.invoke(name, body ? { body } : undefined)
-  if (error || data?.error) {
-    let message = data?.error ?? error?.message
-    try {
-      const payload = await error?.context?.json()
-      if (payload?.error) message = payload.error
-    } catch { /* keep the generic message */ }
-    throw new Error(message || `${name} failed`)
-  }
-  return data
-}
-
 export default function AccountPage() {
   const { user, loading, signIn, signOut, linkProvider, unlinkProvider, refreshUser } = useAuth()
   const [error, setError] = useState(null)
   const [busy, setBusy] = useState(false)
   const [confirmingDelete, setConfirmingDelete] = useState(false)
-  const [keyHint, setKeyHint] = useState(null)
   const [keyInput, setKeyInput] = useState('')
-  const [keyLoading, setKeyLoading] = useState(true)
 
   // Above the early returns below — hooks can't run conditionally.
   const { usage } = useAiUsage()
+  const { hint: keyHint, loading: keyLoading, refresh: refreshKey } = useApiKeyStatus()
   const { data: srsRaw } = useProgress('vocab-srs')
-
-  // Only ever the last four characters come back; the key itself is not
-  // readable by the client, by design.
-  useEffect(() => {
-    if (!user || !supabase) {
-      setKeyLoading(false)
-      return
-    }
-    let cancelled = false
-    callFunction('user-api-key', { action: 'status' })
-      .then(data => { if (!cancelled) setKeyHint(data?.hint ?? null) })
-      .catch(() => { /* leave the section in its "no key" state */ })
-      .finally(() => { if (!cancelled) setKeyLoading(false) })
-    return () => { cancelled = true }
-  }, [user])
 
   const shell = {
     height: '100%',
@@ -144,9 +114,9 @@ export default function AccountPage() {
     setError(null)
     setBusy(true)
     try {
-      const data = await callFunction('user-api-key', { action: 'save', apiKey: keyInput.trim() })
-      setKeyHint(data.hint)
+      await callFunction('user-api-key', { action: 'save', apiKey: keyInput.trim() })
       setKeyInput('')
+      await refreshKey()
     } catch (err) {
       setError(err.message)
     }
@@ -158,7 +128,7 @@ export default function AccountPage() {
     setBusy(true)
     try {
       await callFunction('user-api-key', { action: 'remove' })
-      setKeyHint(null)
+      await refreshKey()
     } catch (err) {
       setError(err.message)
     }

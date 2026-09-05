@@ -15,6 +15,7 @@ import { MODULES } from '../../data/modules.js'
 import { ModuleThemeProvider, useAccent } from '../../context/ModuleThemeContext.jsx'
 import { AI_DAILY_LIMITS } from '../../data/aiLimits.js'
 import { useAiUsage } from '../../hooks/useAiUsage.js'
+import { useApiKeyStatus } from '../../hooks/useApiKeyStatus.js'
 import { WORD_SOURCES } from '../../data/wordLists.js'
 import { buildLearnerContext, MATURITY_LEVELS, GRAMMAR_LEVELS } from '../../lib/learnerContext.js'
 import { resolveCard } from '../vocab-srs/srs.js'
@@ -127,6 +128,7 @@ function StoryGenerator() {
   const srsProgress = useMemo(() => (srsData ? migrateProgress(srsData) : null), [srsData])
 
   const { usage: aiUsage, refresh: refreshUsage } = useAiUsage()
+  const { hasKey: usingOwnKey, loading: apiKeyLoading } = useApiKeyStatus()
   const storyRemaining = Math.max(0, STORY_LIMIT - (aiUsage['story-generate'] ?? 0))
 
   const [myStories, setMyStories] = useState([])
@@ -222,7 +224,11 @@ function StoryGenerator() {
 
   // Blocking here rather than letting the server 429 turns a wasted round trip
   // and a raw error into a disabled button the user can see the reason for.
-  const canGenerate = user && context && context.wordCount > 0 && !generating && storyRemaining > 0
+  // Someone on their own key isn't metered at all, so the daily count must not
+  // gate them — otherwise a spent quota would lock out a user who isn't
+  // spending ours.
+  const canGenerate = user && context && context.wordCount > 0 && !generating
+    && (usingOwnKey || storyRemaining > 0)
 
   const generate = async () => {
     if (!canGenerate) return
@@ -308,7 +314,13 @@ function StoryGenerator() {
                         ? 'Loading SRS data…'
                         : 'No words available'}
                 </span>
-                {user && <QuotaPips remaining={storyRemaining} />}
+                {/* Held back until the key status resolves, so a user on their
+                    own key never sees a quota line flash first. */}
+                {user && !apiKeyLoading && (
+                  usingOwnKey
+                    ? <span>Using your own API key</span>
+                    : <QuotaPips remaining={storyRemaining} />
+                )}
               </span>
             )}
           >
