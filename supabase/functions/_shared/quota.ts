@@ -27,12 +27,30 @@ export const DAILY_LIMITS: Record<string, number> = {
   'key-validation': 10,
 }
 
+// Ceilings across ALL users combined, not per account. Per-user quotas bound
+// what one person can spend; nothing bounded the sum, so N users x 5 stories
+// was unbounded in N. This is the app's own brake — the spend limit on the
+// Anthropic key itself is the backstop behind it, and hitting THAT means
+// every AI feature fails with a raw provider error instead of a clear message.
+//
+// Sized to be comfortably above real use for a small user base and well below
+// anything alarming on the bill. Raise as the audience grows.
+export const GLOBAL_DAILY_LIMITS: Record<string, number> = {
+  'story-generate': 100,
+  'word-import-image': 200,
+}
+
 export class QuotaError extends Error {
   status: number
-  constructor(message: string) {
+  // 'user' — this person is out for today. 'global' — the whole app is,
+  // which the client turns into a banner rather than a personal message,
+  // because "you've used your 5" would be a lie.
+  scope: 'user' | 'global'
+  constructor(message: string, scope: 'user' | 'global' = 'user') {
     super(message)
     this.name = 'QuotaError'
     this.status = 429
+    this.scope = scope
   }
 }
 
@@ -80,7 +98,41 @@ export async function refundQuota(userId: string, feature: string) {
   if (error) console.error('[quota] refund failed', feature, error.message)
 }
 
+// Consumes one unit of the app-wide daily ceiling for a feature. Reuses the
+// rate_limit table and its atomic increment-and-check rather than adding a
+// second mechanism — the bucket is simply 'global' instead of a user or IP.
+//
+// Skipped entirely for a user on their own API key: they aren't spending our
+// budget, so they shouldn't be stopped when it runs out.
+export async function consumeGlobalQuota(feature: string) {
+  const limit = GLOBAL_DAILY_LIMITS[feature]
+  if (!admin || !limit) return
+
+  const now = new Date()
+  const { data, error } = await admin.rpc('consume_rate_limit', {
+    p_bucket: 'global',
+    p_feature: feature,
+    p_window_key: `day:${now.toISOString().slice(0, 10)}`,
+    p_limit: limit,
+    p_cost: 1,
+    // Kept two days so the client can still read today's row near midnight.
+    p_expires: new Date(now.getTime() + 172_800_000).toISOString(),
+  })
+  // Fails open: a broken limiter shouldn't take AI features down. The spend
+  // limit on the Anthropic key is the backstop for that case.
+  if (error) {
+    console.error('[quota] global check failed, allowing', feature, error.message)
+    return
+  }
+  if (data === null || data === undefined) {
+    throw new QuotaError(
+      'AI generation is temporarily unavailable — the app has reached its daily limit. Try again tomorrow, or add your own API key to bypass it.',
+      'global',
+    )
+  }
+}
+
 export function quotaErrorResponse(err: unknown, jsonResponse: (body: unknown, status?: number) => Response) {
-  if (err instanceof QuotaError) return jsonResponse({ error: err.message }, err.status)
+  if (err instanceof QuotaError) return jsonResponse({ error: err.message, scope: err.scope }, err.status)
   return null
 }
