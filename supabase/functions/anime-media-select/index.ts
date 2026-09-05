@@ -1,4 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
+import { enforceRateLimit, rateLimitErrorResponse } from '../_shared/rateLimit.ts'
 
 // Links a Jiten media-deck result the user picked (via anime-media-browse)
 // into `media`/`media_provider_ref`, and upserts its episode list into
@@ -98,6 +99,9 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS_HEADERS })
 
   try {
+    // Anonymous by design — bounded by IP rather than by account.
+    await enforceRateLimit(req, 'anime-select')
+
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
       return jsonResponse({ error: 'Server misconfigured: missing Supabase service role credentials' }, 500)
     }
@@ -187,6 +191,8 @@ Deno.serve(async (req) => {
 
     return jsonResponse({ mediaId, title, mediaType, coverUrl, difficulty, ...meta, episodes: savedEpisodes })
   } catch (err) {
+    const limited = rateLimitErrorResponse(err, jsonResponse)
+    if (limited) return limited
     console.error('[anime-media-select]', err)
     return jsonResponse({ error: err?.message || 'Linking media failed' }, 500)
   }

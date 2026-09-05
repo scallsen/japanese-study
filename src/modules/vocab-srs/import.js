@@ -13,7 +13,9 @@ function extractSound(field) {
 //
 // Supports two layouts:
 //   Simple (2 cols):  front \t back
-//   Core 2000 (18 cols): noteId \t kanji \t furigana \t kana \t english \t wordAudio \t pos \t
+//   Rich (18 cols) — the shape Core-2000-style Anki note types export; this app
+//   no longer ships that deck, but the layout is still accepted on import:
+//                        noteId \t kanji \t furigana \t kana \t english \t wordAudio \t pos \t
 //                        (empty) \t sentence \t sentence+furi \t kanaTranscript \t englishSentence \t
 //                        cloze \t sentenceAudio \t stepLabel \t pos \t n \t n
 //
@@ -31,7 +33,7 @@ export function parseAnkiExport(tsvString, existingIds = []) {
     let front, back, id, extras = {}
 
     if (cols.length >= 14) {
-      // Full Core 2000 layout
+      // Full 18-column layout
       const noteId = cols[0].trim()
       front = stripHtml(cols[1])
       const kana = stripHtml(cols[3])

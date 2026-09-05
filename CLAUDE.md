@@ -57,6 +57,7 @@ Two patterns for internal modules. Pick the right one before looking for code:
 | `#/vocab-srs` | `VocabSrsModule` | `src/modules/vocab-srs/VocabSrsModule.jsx` |
 | `#/immersion` | `ImmersionModule` | `src/modules/immersion/ImmersionModule.jsx` |
 | `#/grammar-map` | `GrammarMapModule` | `src/modules/grammar-map/GrammarMapModule.jsx` |
+| `#/account` | `AccountPage` | `src/pages/AccountPage.jsx` |
 | `#/dictionary` | `DictionaryPage` | `src/pages/DictionaryPage.jsx` |
 | `#/dictionary/entry/:id` | `DictionaryEntryPage` | `src/pages/DictionaryEntryPage.jsx` |
 | `#/story` | `StoryModule` | `src/modules/story/StoryModule.jsx` |
@@ -160,7 +161,7 @@ Living component library + progress tracker for the app-wide design-system conso
 13. **Cards are for content, lists are for data.** A `FeedCard` represents an actual thing to read (an article, a story); a `DataList` row is a record among records (a word, a card, a deck). Don't render word lists as cards or articles as list rows.
 14. **A screen's primary actions live in `ActionBar`**, the sticky bottom bar — Anime Vocab's Start Drill, Vocab Drill's Start review / Preview, Story's Generate. Consumers pad their scroll container by `ACTION_BAR_HEIGHT`. It's `position: fixed`, so with a settings sidebar open it spans under the sidebar column too (the pre-existing Anime Vocab behaviour) — a known imperfection, not a bug to fix per screen.
 15. **Module headers are the plain `PageHeader` + `AuthSlot`.** No per-module header buttons (the old `HeaderMenu` with Mute/Options is gone — audio lives in the settings sidebar). On mobile, screens with a `SettingsSidebar` add `SidebarHeaderToggle` after `AuthSlot`: a chevron in a rule-divided section, the header's counterpart of the desktop rail.
-16. **Comprehension checks are gone** from both the News reader and Story review (the data and the `story-grade` function remain; only the UI was dropped). The reader's "English summary" is a `Disclosure`.
+16. **Comprehension checks are gone for good** from both the News reader and Story review — UI, generation, storage, and the `story-grade` function. Stories no longer ask Claude for questions at all. Don't reinstate the data without a reader to display it: it was generated and stored for a long time after nothing rendered it, paying output tokens and latency on every generation for something no one saw.
 17. **A screen's `ActionBar` buttons are `size="xl"`**, one step up from the `lg` a bare primary CTA elsewhere in the app uses — the sticky bar is meant to read as *the* action for the whole screen, not one button among several. Every `ActionBar` consumer (Story's Generate, Vocab Drill's Start review, Anime Vocab's Start Drill) was moved up when `xl` was added; a future `ActionBar` consumer should default to it too.
 18. **`Select`'s `inline` variant is for a Select living inside a `FilterCard`/`FilterRow`** next to chip rows — no background/border, same height as a `sm` Chip, so it doesn't read as a different kind of control from its neighbours. The bordered `default` variant stays for settings drawers and any Select that's the only control in its row. `EpisodeVocabBrowser`'s filter block and its lookup/bulk-select header are the template for absorbing a module's remaining hand-rolled filter UI into `FilterCard` + `DataList`'s `search`/`bulkHeader` — look here first before hand-rolling either again.
 
@@ -333,7 +334,7 @@ create table if not exists sentences (
 create index sentences_dictionary_ids_gin on sentences using gin (dictionary_ids);
 grant select on sentences to anon, authenticated;
 grant all on sentences to service_role;
--- Supabase enables RLS on every new table by default — without a policy,
+-- RLS is enabled on every new table automatically — without a policy,
 -- anon/authenticated reads silently return zero rows (no error):
 alter table sentences enable row level security;
 create policy "public read" on sentences for select using (true);
@@ -355,7 +356,7 @@ Third-party data/asset credits (JMdict/EDICT, KANJIDIC2, Tanaka Corpus, Voicevox
 **Scripts:**
 | Script | Purpose |
 |---|---|
-| `scripts/backfill-vocab-jmdict.mjs` | One-off — matches every Vocab Drill word (`src/data/words/*.json`) and bundled SRS deck entry (`core2000.json`, `keigo.json`) against `dictionary`, writing `jmdictId` back into the JSON. Reading-verified (rejects a match if the candidate's `kana_forms` don't include the word's own reading) to avoid linking the wrong homograph — e.g. it deliberately leaves `する`/`ある` unmatched rather than guessing among 為る/刷る/剃る/擦る/掏る. Writes unmatched entries to `backfill-vocab-jmdict-report.json` for manual review; not all entries will ever auto-match (compound/decorated forms like `〇〇向き`, `正確（な）`). |
+| `scripts/backfill-vocab-jmdict.mjs` | One-off — matches every Vocab Drill word (`src/data/words/*.json`) and bundled SRS deck entry (`keigo.json`) against `dictionary`, writing `jmdictId` back into the JSON. Reading-verified (rejects a match if the candidate's `kana_forms` don't include the word's own reading) to avoid linking the wrong homograph — e.g. it deliberately leaves `する`/`ある` unmatched rather than guessing among 為る/刷る/剃る/擦る/掏る. Writes unmatched entries to `backfill-vocab-jmdict-report.json` for manual review; not all entries will ever auto-match (compound/decorated forms like `〇〇向き`, `正確（な）`). |
 | `scripts/import-tanaka.mjs` | Downloads/parses the Tanaka Corpus (`examples.utf.gz` from `https://www.edrdg.org/pub/Nihongo/examples.utf.gz` — the `ftp://` URL EDRDG's own docs reference isn't reachable from every network), resolves each sentence's per-word index tags to `dictionary.id`, populates `sentences`. Destructive full-refresh like `import-jmdict.mjs`. |
 
 `jmdictId` write sites for SRS cards (all pass it through `createCard`'s `extras`): `VocabPage.jsx`'s `handleAddToSrs`, `WordImportPanel.jsx`, `ImmersionReader.jsx`, `StoryReviewPage.jsx`. `IMPORTED_CONTENT_FIELDS` in `srs.js` includes `jmdictId` so it survives `resetCardProgress`.
@@ -379,7 +380,7 @@ All VocabPage settings are stored in localStorage with `vocab-` prefix (e.g. `vo
 
 ### Vocab audio (Voicevox)
 
-Word audio is pre-generated via [Voicevox](https://voicevox.hiroshiba.jp/) (neural Japanese TTS) rather than relying solely on the browser's Speech Synthesis API, which varies wildly in quality by OS/browser. This applies to the Vocab drill word lists and the `keigo` bundled SRS deck (see Vocab SRS section) — not to Core 2000 (already has real human-recorded Anki audio), Immersion, Story, or Dictionary (all dynamic/on-demand content a local Voicevox instance can't serve live).
+Word audio is pre-generated via [Voicevox](https://voicevox.hiroshiba.jp/) (neural Japanese TTS) rather than relying solely on the browser's Speech Synthesis API, which varies wildly in quality by OS/browser. This applies to the Vocab drill word lists and the `keigo` bundled SRS deck (see Vocab SRS section) — not to Immersion, Story, or Dictionary (all dynamic/on-demand content a local Voicevox instance can't serve live).
 
 **Voices** (`VOICEVOX_VOICES` in `src/utils/voicevoxAudio.js`, kept in sync with `VOICES` in `scripts/generate-audio.mjs`):
 - Speaker id `2` — 四国めたん (Shikoku Metan), Normal style
@@ -405,7 +406,7 @@ grant all on audio_generation_status to service_role;
 
 **Attribution**: Voicevox's license requires a discoverable text credit for each character voice used, and its own examples credit the Japanese character name (e.g. "VOICEVOX:四国めたん") — an intentional exception to the "no Japanese in the UI" convention. Each voice's credit segments (`ATTRIBUTIONS['voicevox-2']`/`['voicevox-11']` in `src/data/attributions.js`, e.g. "Text to speech powered by VOICEVOX (四国めたん)" with "VOICEVOX" linking to the project — see Attribution system section under Vocabulary Drill for the full segment/link mechanism) render as their own line directly below the "Text to speech" select (`getVoicevoxCredit(audioSource)` in `voicevoxAudio.js`, via `renderAttributionSegments`) — not as the select's `subtext` (that renders above the control, which would read as a field description rather than a credit) — and only while that voice is the selected option, hidden entirely when "Browser TTS" is selected. The same credit is also folded into the drill-screen `AttributionFooter` while that voice is actively speaking (see Attribution system section).
 
-**Playback priority** (both Vocab drill and Vocab SRS): recorded file audio (Core 2000's Anki audio, SRS-only) → Voicevox audio for the selected voice, if generated → browser TTS. The audio-source picker (`AUDIO_SOURCE_OPTIONS` in `src/utils/voicevoxAudio.js`, labeled "Text to speech" in both settings drawers) offers "Female (Shikoku Metan)", "Male (Kurono Takehiro)" (`DEFAULT_AUDIO_SOURCE`, `'voicevox-11'`), and "Browser TTS"; picking a Voicevox voice still silently falls back to browser TTS for any entry that voice hasn't been generated for yet.
+**Playback priority** (both Vocab drill and Vocab SRS): recorded file audio (an imported Anki deck's own recordings, SRS-only) → Voicevox audio for the selected voice, if generated → browser TTS. The audio-source picker (`AUDIO_SOURCE_OPTIONS` in `src/utils/voicevoxAudio.js`, labeled "Text to speech" in both settings drawers) offers "Female (Shikoku Metan)", "Male (Kurono Takehiro)" (`DEFAULT_AUDIO_SOURCE`, `'voicevox-11'`), and "Browser TTS"; picking a Voicevox voice still silently falls back to browser TTS for any entry that voice hasn't been generated for yet.
 
 **Audio preload** (Vocab drill only): a `useEffect` in `VocabPage.jsx` preloads the current card's Voicevox audio plus the next few upcoming cards (`AUDIO_PRELOAD_COUNT`) into an `Audio` object cache keyed by URL, so flipping to a card doesn't wait on a network fetch. The cache is trimmed to the current window (current + upcoming) on every card change/audio-source change.
 
@@ -414,16 +415,45 @@ grant all on audio_generation_status to service_role;
 - Mobile: full-screen overlay triggered by "Show options" button in header
 - `useIsMobile(768)` and `useIsShort(680)` hooks defined inline in `VocabPage.jsx`
 
+## Database safety net: `rls_auto_enable`
+
+An **event trigger** in the database enables row-level security on every table created in `public`, automatically. It exists only in the database — not in this repo, and not in any migration — so it is easy to be surprised by. It is why a freshly created table already has RLS on, and therefore why a new table returns **zero rows with no error** until you add a policy (the trap called out in the `sentences` schema above).
+
+Safe to leave alone: it `RETURNS event_trigger`, so it cannot be invoked directly even though `PUBLIC` holds EXECUTE on it; it is `SECURITY DEFINER` with `search_path` pinned to `pg_catalog`, which closes the usual escalation vector; and the most it can do is *enable* RLS, swallowing errors so it can never break a migration.
+
+An audit of `anon`/`authenticated` grants (2026-09-05) was otherwise clean: no write access to any reference table, RLS on across the board, and no EXECUTE on the quota functions. The only expected write grants are `progress` (INSERT/UPDATE) and `stories` (INSERT) for `authenticated`, both confined to the caller's own rows by RLS.
+
 ## Auth
 
-GitHub OAuth via Supabase. The auth layer is intentionally thin — no login page, no modal. The sign-in button in the dashboard header triggers the OAuth redirect directly.
+Multi-provider auth via Supabase: GitHub and Google OAuth, plus passwordless email magic link. There is deliberately **no password anywhere** — magic link instead, which avoids owning a password-reset flow.
+
+`signIn()` stays **parameterless** and opens `SignInDialog` rather than redirecting. With more than one provider available "Sign in" can no longer mean "go to GitHub", and keeping the signature meant the six existing call sites (`AuthSlot`, `VocabSrsModule`, `StoryModule`, `EpisodeDrill`, …) needed no change to gain the chooser. `signInWithProvider(id)` is the actual redirect.
 
 | File | Purpose |
 |---|---|
 | `src/lib/supabase.js` | Supabase client (reads `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`) |
-| `src/context/AuthContext.jsx` | `AuthProvider` + `useAuth()` — exposes `{ user, signIn, signOut, loading }` |
-| `src/components/AuthSlot.jsx` | Sign in / sign out control — used in dashboard header and module headers |
+| `src/context/AuthContext.jsx` | `AuthProvider` + `useAuth()` — exposes `{ user, loading, signIn, signInWithProvider, signInWithEmail, signOut, linkProvider, unlinkProvider, refreshUser }`; also renders `SignInDialog` |
+| `src/components/SignInDialog.jsx` | Provider chooser + magic-link field — composes `Modal`, opened by `signIn()` |
+| `src/data/authProviders.js` | `AUTH_PROVIDERS` — the one provider list shared by the dialog and the account page's linking UI |
+| `src/pages/AccountPage.jsx` | `#/account` — profile, linked accounts (link/unlink), sign out, delete account |
+| `supabase/functions/delete-account/index.ts` | Deletes the caller's rows then their auth user — see below |
+| `src/components/AuthSlot.jsx` | Sign in / sign out control; the initials link to `#/account` |
 | `src/hooks/useProgress.js` | `useProgress(namespace)` — Supabase-backed progress hook (see below) |
+
+**`refreshUser()` exists because `onAuthStateChange` deliberately keeps the previous user object when the id is unchanged** (to avoid a `useProgress` reload flash on every token refresh). Linking or unlinking an identity changes `user.identities` but *not* the id, so without an explicit refresh the account page would never re-render. Any future change to something inside the user object rather than the user itself needs the same call.
+
+**The account page is one centred column of `DataList`s**, not bespoke rows: profile details and linked accounts are both lists. The linked-accounts list has a row for *every* provider whether connected or not — a connected row offers `Unlink` (`ghost-muted`, the documented remove affordance: quiet until hovered, then red), an unconnected one `Link` (`neutral`). That way the list is also where you add a provider, instead of a separate button cluster below it. A magic-link `email` identity only appears once it exists, since it has no OAuth button to offer.
+
+**Account deletion goes through the `delete-account` edge function**, because `auth.admin.deleteUser` needs the service role and must never reach the browser. The function takes **no user id** — it resolves the caller from their own token via `requireUser`, so a caller can only ever delete themselves. `progress.user_id` and `stories.user_id` both reference `auth.users` with no cascade, so those rows are deleted first or the foreign key rejects the user delete; consequently **deleting an account also removes that user's public stories from everyone's feed**. Adding another user-scoped table means adding it to that function.
+
+**Data export** (`src/utils/exportData.js`, tested in `exportData.test.js`) offers two files from the account page's "Your data" section:
+
+- **`buildBackupJson`** — every `progress` row plus the user's `stories`, scheduling included. This is the lossless one, and the only one that can restore a user's state.
+- **`buildAnkiTsv`** — card content only, with the deck name as an Anki tag. **Scheduling is deliberately absent and cannot be added:** Anki's text importer only ever writes note fields and tags — never due dates, intervals, ease, or FSRS memory state — and a review card's due date is a day offset from the collection's creation day, which a browser cannot know. A real `.apkg` would need zip + a full SQLite collection in the browser and *still* wouldn't solve the creation-day problem. Don't accept a bug report asking for "full" Anki export without re-reading this. Audio is omitted too: an imported deck's recordings are third-party files, and Anki won't fetch a URL from a field.
+
+Both go through `downloadFile`, which revokes its blob URL on a later tick — revoking in the same tick cancels the download in some browsers. Fields are flattened with `cell()` before joining, since a tab or newline inside a field would silently shift every column after it and produce a file that imports without error and is quietly wrong.
+
+Adding a provider is: one entry in `AUTH_PROVIDERS` **and** enabling it in the Supabase dashboard. The code ships ahead of the dashboard toggle by design — an unconfigured provider's button simply errors, which is also the real launch gate for opening signups. Account linking additionally requires **Manual linking** to be enabled for the project.
 
 `AuthProvider` wraps the entire app in `main.jsx`. `loading` is true until the initial session resolves; the header auth slot renders nothing during this window to avoid a flash.
 
@@ -467,7 +497,9 @@ create policy "update own rows" on progress for update
   with check (auth.uid() = user_id);
 
 grant select, insert, update on progress to authenticated;
-grant select, update on progress to service_role;
+-- delete is for the delete-account edge function only; without it that
+-- function fails with 42501 and account deletion silently can't work.
+grant select, update, delete on progress to service_role;
 ```
 
 ## Vocab SRS (`#/vocab-srs`)
@@ -488,14 +520,11 @@ Anki-style spaced repetition using [ts-fsrs](https://github.com/open-spaced-repe
 | `src/modules/vocab-srs/WordImportPanel.jsx` | Modal UI for the "Import from text / image" flow — paste/image input, review checklist (editable surface/reading/meaning per row), confirm → `onConfirm(cards)` |
 | `src/modules/vocab-srs/VocabSrsModule.jsx` | Home screen + sidebar: deck management, stats, settings, Start Review |
 | `src/modules/vocab-srs/VocabSrsDrill.jsx` | Drill UI — FlipCard, rating buttons, audio, relearn countdown, session complete |
-| `src/modules/vocab-srs/decks/core2000.json` | Bundled deck — 2007 Core 2000 cards with word + sentence audio |
-| `src/modules/vocab-srs/decks/keigo.json` | Bundled deck — 30 keigo/formal-register words; audio generated via Voicevox (see Vocab audio section under Vocabulary Drill), no Anki recordings |
+| `src/modules/vocab-srs/decks/keigo.json` | Bundled deck — 30 keigo/formal-register words; audio generated via Voicevox (see Vocab audio section under Vocabulary Drill), no Anki recordings. **The only bundled deck.** |
 | `src/modules/vocab-srs/srs.test.js` | Vitest unit tests for srs.js |
 | `src/modules/vocab-srs/session.test.js` | Vitest unit tests for session.js |
 | `src/modules/vocab-srs/import.test.js` | Vitest unit tests for import.js |
-| `scripts/generate-deck-json.mjs` | One-off — converts an Anki Core 2000 TSV export to `decks/core2000.json` |
-| `scripts/upload-audio.mjs` | One-off — uploads Core 2000 Anki audio files to Supabase Storage `audio/imported/` |
-| `scripts/anki-sync.py` | One-off — exports FSRS scheduling state from a local Anki Core 2000 deck to a JSON file importable into this app's SRS module, for migrating existing Anki progress |
+| `src/modules/vocab-srs/migrate.test.js` | Vitest unit tests for migrate.js — chiefly the retired-deck filter |
 | `supabase/functions/word-import/index.ts` | Edge function backing "Import from text / image" — see Word import section below |
 
 **Note:** `config.js` exists in the directory but is not imported anywhere — it is vestigial and can be ignored.
@@ -575,31 +604,36 @@ Cards come from two sources:
 
 Both sources write to the same `cards{}` object, distinguished by `deckId`.
 
-### Core 2000 deck content format
+### Bundled deck content format
 
-Each entry in `core2000.json` (also the shape for `resolveCard` output for this deck):
+Each entry in a `decks/*.json` file (also the shape `resolveCard` returns for a bundled card). Only `id`, `front` and `back` are required; the rest are optional and `keigo.json` carries none of them:
 
 ```js
 {
-  "id": "anki-1",
-  "front": "それ",
-  "back": "that, that one",
-  "wordAudio": "8b0ee07c....mp3",        // Supabase Storage filename
-  "sentenceAudio": "c951babc....mp3",    // Supabase Storage filename
-  "sentence": "それはとってもいい話だ。",
-  "sentenceEnglish": "That's a really nice story."
+  "id": "keigo-001",
+  "front": "いただく",
+  "back": "to receive (humble)",
+  "kana": "いただく",                     // optional
+  "wordAudio": "8b0ee07c....mp3",        // optional — Supabase Storage filename
+  "sentenceAudio": "c951babc....mp3",    // optional — Supabase Storage filename
+  "sentence": "コーヒーをいただきます。",   // optional
+  "sentenceEnglish": "I'll have a coffee." // optional
 }
 ```
 
 `sentenceEnglish` is shown below the Japanese sentence on the card back (smaller font).
 
+**Retiring a bundled deck** — add its id to `RETIRED_DECKS` in `migrate.js` *and* delete its JSON, import, and `DECK_FILES`/`DECK_WORDS` entries. The `RETIRED_DECKS` filter is not optional tidying: a retired deck's cards keep their scheduling state in stored progress but can no longer resolve content, so without it they render as blank cards in the drill. `core3k` and `core2000` were both retired this way (the latter in favour of using Core 2000 in the real Anki app), and `migrate.test.js` covers the behaviour.
+
 ### Audio playback
 
-Audio files live in Supabase Storage bucket `audio/imported/`. URL pattern:
+Recorded audio files live in Supabase Storage under `audio/imported/`. URL pattern:
 
 ```
 ${VITE_SUPABASE_URL}/storage/v1/object/public/audio/imported/${filename}
 ```
+
+**That prefix is currently empty.** Its only occupant was Core 2000's 3,970 recordings, deleted when that deck was retired — checked first against every still-live reference, which found zero overlap because no surviving deck uses recorded audio at all (imported cards get Voicevox, under `audio/voicevox/`). The path and `AUDIO_BASE` stay because an imported Anki deck carrying its own `[sound:…]` media would land here again; a card simply falls through to Voicevox or browser TTS when it has no `wordAudio`/`sentenceAudio`.
 
 ### Word import (text / OCR)
 
@@ -964,7 +998,7 @@ Populated by `scripts/import-kanjidic2.mjs` (accepts raw XML zip or pre-converte
 
 ## Story generator (`#/story`, `#/story/:id`)
 
-**Self-contained module** — `src/modules/story/`. Generates original Japanese written content (stories, fake news articles, dialogue transcripts) constrained to vocabulary the learner already knows, with Japanese comprehension questions graded leniently by a second model call.
+**Self-contained module** — `src/modules/story/`. Generates original Japanese written content (stories, fake news articles, dialogue transcripts) constrained to vocabulary the learner already knows.
 
 Two routes, two components:
 - `#/story` → `StoryModule.jsx` — the overview: vocabulary source / format / length / grammar picker, "Generate", and a "Recent stories" section listing the most recently generated stories **across all users** (public feed, visible whether signed in or not).
@@ -986,7 +1020,9 @@ Two routes, two components:
 
 ### Supabase `stories` table
 
-Stories are **not** stored via `useProgress` — they're a shared, public resource (any visitor can read any story), unlike every other module's private per-user `progress` payload. Only the owner (`user_id`) can insert; there is no update/delete policy (no edit/delete UI).
+Stories are **not** stored via `useProgress` — they live in their own table, unlike every other module's private per-user `progress` payload. Only the owner (`user_id`) can insert; there is no update/delete policy (no edit/delete UI).
+
+**A story is private to its author unless `shared` is set.** This was not always so — the table originally had a `using (true)` select policy and the module showed one "Recent stories" feed of *everyone's* stories, which is wrong once the app has more than one user. `shared` is a curation flag, flipped by hand in the SQL editor on the handful of stories meant as public examples; there is deliberately no UI for it, since users are not publishing to each other. `StoryModule` renders the two groups separately ("Your stories" / "Examples") using two queries rather than one filtered client-side, so a long example list can't crowd out the user's own work. Signed-out visitors see only the examples, which RLS enforces on its own — the client does no filtering of its own for access.
 
 ```sql
 create table if not exists stories (
@@ -997,24 +1033,29 @@ create table if not exists stories (
   tokens jsonb,
   questions jsonb not null,
   format text not null,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  shared boolean not null default false  -- curated public examples only
 );
 
 alter table stories enable row level security;
 
-create policy "select all stories" on stories for select
-  using (true);
+create policy "select own or shared stories" on stories for select
+  using (shared or auth.uid() = user_id);
+
+create index if not exists stories_shared_idx on stories (shared) where shared;
 
 create policy "insert own stories" on stories for insert
   with check (auth.uid() = user_id);
 
 grant select on stories to anon, authenticated;
 grant insert on stories to authenticated;
+-- same reason as progress: the delete-account edge function needs both.
+grant select, delete on stories to service_role;
 
 create index if not exists stories_created_at_idx on stories (created_at desc);
 ```
 
-`StoryModule.jsx` fetches the newest `MAX_RECENT_STORIES` (20) rows (`id, title, format, created_at` only — full content is fetched lazily per-story by `StoryReviewPage`) ordered by `created_at desc`, mirroring the `articles` list-fetch pattern in `ImmersionModule.jsx`. Older stories are simply excluded from the feed, not deleted — there is no cleanup job (same reasoning as `articles`, see Immersion section).
+`StoryModule.jsx` runs two queries, each for the newest `MAX_RECENT_STORIES` (20) rows (`id, title, format, created_at` only — full content is fetched lazily per-story by `StoryReviewPage`) ordered by `created_at desc`: one filtered to `user_id`, one to `shared`. Older stories are simply excluded from the list, not deleted — there is no cleanup job (same reasoning as `articles`, see Immersion section).
 
 ### Key files
 
@@ -1027,7 +1068,7 @@ create index if not exists stories_created_at_idx on stories (created_at desc);
 | `src/modules/story/StoryReviewPage.jsx` | Review page — tokenized reader, format-specific layout, inline Q&A with grading, for one saved story looked up by id |
 | `src/modules/story/storyUI.jsx` | Shared visual primitives between the two pages — `Button`, `KANJI_FONT`, `ACCENT`, `BG`, `SURFACE` |
 | `src/modules/story/storyFieldStyles.js` | Shared `labelStyle` / `fieldStyle` / `selectFieldStyle` for form fields — matches the source-selector pattern established in `VocabPage.jsx` (custom appearance, chevron background-image). Kept out of `storyUI.jsx` (a `.jsx` file) to satisfy react-refresh lint, same reasoning as `vocabMap.js` below. |
-| `src/modules/story/api.js` | `generateStory()` / `gradeAnswer()` — wrappers over `supabase.functions.invoke` |
+| `src/modules/story/api.js` | `generateStory()` — wrapper over `supabase.functions.invoke` |
 | `src/modules/story/lookupVocabulary.js` | Client-side JMdict lookup for clicked words — two-stage `dictionary` table query (primary_form, then kana_forms overlap), returns `vocabulary_ja`-shaped entries keyed by surface form |
 | `src/components/JapaneseReader.jsx` | **Shared** `TokenizedBody` + `WordPopup` — extracted from ImmersionReader; both Immersion and Story use them (furigana toggle, clickable words, dictionary popup, Add to SRS) |
 | `src/utils/vocabMap.js` | Shared `buildVocabMap(vocabulary)` (kept out of the .jsx to satisfy react-refresh lint) |
@@ -1035,18 +1076,224 @@ create index if not exists stories_created_at_idx on stories (created_at desc);
 | `src/modules/story/parseDialogue.js` | Splits the flat token stream into 名前「セリフ」 speaker lines, preserving global token indices so popup/highlight indexing stays correct across bubbles |
 | `src/modules/story/parseDialogue.test.js` | Vitest unit tests for the dialogue parser |
 | `supabase/functions/story-generate/index.ts` | Edge function — story generation (default model `claude-sonnet-5`, override via `STORY_MODEL` secret or request `model`) |
-| `supabase/functions/story-grade/index.ts` | Edge function — lenient answer grading (default model `claude-haiku-4-5`, override via `GRADE_MODEL` secret) |
 
 ### learnerContext contract
 
 - `sourceType: 'vocab-list'` — `sourceId` is a `WORD_SOURCES` source id (expands to all sublists) or a single listKey. Reads bundled word JSON.
 - `sourceType: 'srs-deck'` — `sourceId` is a deckId. Caller must pass `options.cards` as **resolved** cards (run bundled cards through `resolveCard` first — scheduling-only state has no front/back). Options: `maturity: 'all' | 'seen' | 'graduated'`, `minStabilityDays`.
 - `options.grammarLevel` ('N5'–'N1', default 'N3') appends a grammar directive line; `null` omits it.
-- Output is dense one-word-per-line text (`魚 (さかな) — fish`) to control prompt token cost. Core 2000 / Keigo bundled decks have no kana field, so SRS-sourced lines are `front — back`.
+- Output is dense one-word-per-line text (`魚 (さかな) — fish`) to control prompt token cost. The Keigo bundled deck has no kana field, so SRS-sourced lines are `front — back`.
 
 ### Edge functions
 
 The Anthropic API key never reaches the client — all calls go through Supabase Edge Functions. The learner-context system block carries `cache_control: {type: 'ephemeral'}` so repeated generations in a session reuse the prompt cache (very small word lists may fall below the minimum cacheable prefix and silently not cache — harmless). Structured output via `output_config.format` json_schema — responses are parsed JSON, never prose.
+
+**Every function that spends money must call `requireUser(req)` first** (`supabase/functions/_shared/auth.ts`). The platform's `verify_jwt` is *not* an identity check: the anon key is itself a valid project JWT and ships in every browser bundle, so it clears the gateway and reaches the function body. `requireUser` resolves the bearer token to a real user via `auth.getUser()` and throws an `AuthError` otherwise; pair it with `authErrorResponse(err, jsonResponse)` in the function's `catch` so the rejection keeps that function's own error contract. In `story-generate` the call must stay **ahead of the ReadableStream** — once the stream opens the response is committed to `200 text/plain` and a real status code is no longer possible. This helper is deliberately shared rather than duplicated per function (the norm for the tokenizer setup below): an auth check that drifts between copies is worse than no check at all. Applied to `story-generate`, `word-import`, `user-api-key`, `delete-account`. The four `anime-*` functions work signed out by design and are rate-limited instead — see below.
+
+### AI usage quotas
+
+Requiring an account is **not** a cost control — once signups are open, an account is free and instant. `supabase/functions/_shared/quota.ts` is what actually caps the Anthropic bill: `consumeQuota(userId, feature)` before the model call, `refundQuota` if the work then fails, `quotaErrorResponse` in the `catch` (chain it after `authErrorResponse` with `??`). In `story-generate` the consume call has the same constraint as `requireUser` — it must precede the `ReadableStream`, or a 429 can't be expressed.
+
+`DAILY_LIMITS` is keyed by **unit of cost, not function name**: `story-generate` (5/day), `word-import-image` (10/day), plus a server-only `key-validation` (10/day) bucket. Per-feature rather than one shared pool because features differ in cost by more than an order of magnitude, and a single counter would let the expensive one silently eat the cheap one's budget. `word-import`'s **text** mode makes no Anthropic call and is deliberately absent from the table, so it is free.
+
+`story-generate` and `word-import`'s OCR refund on failure, because losing one of five daily generations to a server error is the difference between a limit and a punishment.
+
+```sql
+create table if not exists ai_usage (
+  user_id uuid references auth.users on delete cascade not null,
+  feature text not null,   -- a key of DAILY_LIMITS
+  day date not null,       -- UTC
+  count integer not null default 0,
+  primary key (user_id, feature, day)
+);
+
+alter table ai_usage enable row level security;
+create policy "read own usage" on ai_usage for select using (auth.uid() = user_id);
+grant select on ai_usage to authenticated;
+grant all on ai_usage to service_role;
+
+-- Increment and check in ONE statement. A read-then-write pair would let two
+-- concurrent requests both observe "under the limit" and both proceed.
+-- Returns the new count, or NULL when the user is already at the limit.
+create or replace function consume_ai_quota(p_user uuid, p_feature text, p_limit int)
+returns int language sql as $$
+  insert into ai_usage (user_id, feature, day, count)
+  values (p_user, p_feature, (now() at time zone 'utc')::date, 1)
+  on conflict (user_id, feature, day) do update
+    set count = ai_usage.count + 1
+    where ai_usage.count < p_limit
+  returning count;
+$$;
+
+-- Counts without capping: the path for a user on their own key. They aren't
+-- metered, but their usage is still shown back to them, and recording it here
+-- means "today" and "lifetime" come from one table for everyone.
+create or replace function record_ai_usage(p_user uuid, p_feature text)
+returns int language sql as $$
+  insert into ai_usage (user_id, feature, day, count)
+  values (p_user, p_feature, (now() at time zone 'utc')::date, 1)
+  on conflict (user_id, feature, day) do update
+    set count = ai_usage.count + 1
+  returning count;
+$$;
+
+create or replace function refund_ai_quota(p_user uuid, p_feature text)
+returns void language sql as $$
+  update ai_usage set count = greatest(count - 1, 0)
+  where user_id = p_user and feature = p_feature
+    and day = (now() at time zone 'utc')::date;
+$$;
+
+-- REQUIRED, not tidiness: Postgres grants EXECUTE on new functions to PUBLIC
+-- by default. Without this, any signed-in user could call refund_ai_quota over
+-- PostgREST's /rpc/ endpoint and hand themselves unlimited usage.
+revoke execute on function consume_ai_quota(uuid, text, int) from public, anon, authenticated;
+revoke execute on function refund_ai_quota(uuid, text) from public, anon, authenticated;
+revoke execute on function record_ai_usage(uuid, text) from public, anon, authenticated;
+grant execute on function consume_ai_quota(uuid, text, int) to service_role;
+grant execute on function refund_ai_quota(uuid, text) to service_role;
+grant execute on function record_ai_usage(uuid, text) to service_role;
+```
+
+`ai_usage.user_id` cascades on delete, so account deletion needs no change to `delete-account` — unlike `progress` and `stories`, which don't cascade and must be deleted explicitly there. Prefer the cascade for any new user-scoped table.
+
+### Bring your own API key
+
+A user can supply their own Anthropic key, in which case they are **not metered**: `getUserApiKey(user.id)` (`supabase/functions/_shared/userKey.ts`) runs before `consumeQuota`, and a key present means the quota call — and its refund — are skipped entirely, with the key passed to `new Anthropic({ apiKey })` instead of the app's own. That branch is the whole integration; it is deliberately one `if` at each of the three call sites rather than a wrapper.
+
+**The key is never readable by the client — including by its owner.** That is structural, not a promise: `user_api_keys` has RLS enabled and **no policy and no grant for `anon`/`authenticated` at all**, so PostgREST cannot return it to anybody. Every access goes through an edge function on the service role, and the only thing any response ever carries is `key_hint`, the last four characters. Don't add a select policy "for convenience" — there is no client-side use for the key.
+
+It's also encrypted at rest on top of the platform's own encryption (AES-GCM, fresh IV per write, secret in `API_KEY_ENCRYPTION_SECRET`), so a leaked database dump alone doesn't yield working keys. A row that fails to decrypt — rotated secret, corruption — falls back to the app key and quota rather than failing the request. On save the key is checked against Anthropic's `/v1/models` (which costs no tokens) so a typo fails at the point of entry rather than silently breaking the next generation.
+
+```sql
+create table if not exists user_api_keys (
+  user_id uuid primary key references auth.users on delete cascade,
+  encrypted_key text not null,
+  key_hint text not null,   -- last 4 chars; the only part ever returned
+  created_at timestamptz not null default now()
+);
+
+alter table user_api_keys enable row level security;
+-- No policy and no grant for anon/authenticated, deliberately: see above.
+grant all on user_api_keys to service_role;
+```
+
+Needs `supabase secrets set API_KEY_ENCRYPTION_SECRET=...` (generate with `openssl rand -base64 32`). **Rotating that secret orphans every stored key** — users would silently fall back to the shared quota and have to re-enter theirs.
+
+Client side, `useAiUsage()` (`src/hooks/useAiUsage.js`) returns today's counts keyed by feature, plus a `refresh` for callers that just spent quota. `AccountPage` lists every feature; `StoryModule` shows `QuotaPips` — one pip per daily generation, filled while unspent, coloured by the module accent — and **disables Generate at zero rather than letting the server 429**, so an exhausted quota reads as a visibly disabled button instead of a wasted round trip and a raw error. Both read `AI_DAILY_LIMITS` (`src/data/aiLimits.js`), the hand-synced mirror of the server's table; the server stays authoritative, so drift shows a wrong number rather than letting anyone past a limit.
+
+### Rate limiting the anonymous anime endpoints
+
+The four `anime-*` functions **work signed out on purpose** — only following a series and sending words to SRS need an account — so per-user quotas don't apply to them. What still needs bounding is that they proxy Jiten with *our* `JITEN_API_KEY`: unmetered, a scraper spends our private Jiten allowance (rate-limiting our own users, since an anonymous caller would otherwise only burn Jiten's shared pool) and our **Supabase invocation quota**, which is shared with every other function including the AI ones. That second one is the real reason this exists — sustained spam against an anime endpoint could degrade the whole app.
+
+`enforceRateLimit(req, feature, { cost })` (`supabase/functions/_shared/rateLimit.ts`) applies **two windows, and neither substitutes for the other**: per-minute stops a burst or a runaway client loop; per-day stops the patient scraper who stays under the minute limit forever.
+
+**Limits are denominated in Jiten requests, not in calls to us**, which is the only unit comparable to Jiten's own published numbers. One call fans out to a variable number of upstream requests, so counting invocations gave figures that looked safe and weren't — a cap of "10 syncs a minute" is really up to 100 upstream requests a minute against an endpoint Jiten caps at ~10/min anonymously. Each call declares its `cost`: `anime-lookup` charges `externalIds.length` (one upstream request per id, issued in parallel, and the array is capped at `MAX_LOOKUP_IDS` since otherwise one request becomes arbitrarily many), `anime-vocab-sync` charges `VOCAB_SYNC_COST` as a worst-case page count, and the rest charge 1.
+
+**`anime-browse` gets the tightest limit, which is the opposite of what raw fan-out suggests.** It is a live, uncached search that fires as the user types, and the only one of the four whose load grows with the number of users. `anime-vocab-sync` looks alarming — 200-row pages, 10+ upstream calls — but is idempotent: it early-returns on `episode.synced_at`, so an episode is fetched from Jiten **exactly once ever, across all users**, and repeat requests cost nothing upstream. Caching, not rate limiting, is what keeps total Jiten traffic flat as the user base grows.
+
+**Jiten's actual limits**, read from their source (`Jiten.Api/Program.cs`, [github.com/Sirush/Jiten](https://github.com/Sirush/Jiten)) rather than inferred: named ASP.NET policies, all 60-second windows. `fixed` = **300/min** and covers **every endpoint we call** (`get-media-decks`, `{id}/detail`, `{id}/vocabulary`). `download` = 10/min and covers deck downloads, frequency lists and the custom-deck parser — **none of which we call**. `heavy` = 20/min anonymous, 45 keyed, for search-by-description and example sentences — also not ours.
+
+**Correcting a belief that was wrong here for a long time:** this codebase recorded "~10 req/min for the vocabulary endpoint". That was the `download` policy misattributed. Vocabulary inherits `fixed` at 300/min, so the real ceiling is 30× what was assumed.
+
+**`JITEN_API_KEY` is not set**, and the functions only attach `X-Api-Key` when it is. That matters less for the *number* than for the *partition*: Jiten keys its buckets on `user:{userId}` when a key or JWT is present and `ip:{clientIp}` otherwise, and `fixed` is 300/min either way. So today **every one of our users shares one partition keyed on Supabase's egress IP** — possibly alongside unrelated Supabase tenants on the same address. A key buys an isolated partition, which for a server-side proxy is worth considerably more than a larger number would be.
+
+**What the limiter achieves and what it doesn't.** It stops one caller monopolising the allowance, and the per-user numbers are a fraction of 300 so no single user can drain it. It does **not** bound the total, because Jiten meters our egress rather than our users. A global ceiling is the only mechanism that would. Mitigating that today: sync is idempotent (each episode fetched once ever), and a Jiten 429 surfaces as a clean error — note its body is `text/plain`, not JSON, and every call site checks the status before parsing. Small overshoots **queue rather than reject**, so the symptom is a request hanging for up to a minute rather than a visible error.
+
+The bucket is `user:<id>` when signed in, otherwise `ip:<salted hash>`. **The hash is salted deliberately:** an unsalted hash of an IPv4 is trivially reversible, so it would still be personal data — salting with a secret the database never sees keeps the stored value non-identifying, which is also why PRIVACY.md doesn't have to claim we store IP addresses. The salt is derived from `API_KEY_ENCRYPTION_SECRET` with a purpose string rather than reusing it directly.
+
+**It fails open.** If the limiter itself errors, the request proceeds — anime browsing staying up matters more than protecting a third-party rate limit. That also means deploying before the SQL below exists is safe; it simply doesn't limit yet.
+
+```sql
+create table if not exists rate_limit (
+  bucket text not null,       -- 'user:<uuid>' or 'ip:<salted hash>'
+  feature text not null,
+  window_key text not null,   -- 'min:2026-09-05T18:32' | 'day:2026-09-05'
+  count integer not null default 0,
+  expires_at timestamptz not null,
+  primary key (bucket, feature, window_key)
+);
+create index if not exists rate_limit_expires_idx on rate_limit (expires_at);
+
+alter table rate_limit enable row level security;
+-- No policy and no grant for anon/authenticated: only edge functions touch it.
+grant all on rate_limit to service_role;
+
+-- Increment and check in one statement, same reason as consume_ai_quota.
+-- Returns the new count, or NULL when that window is already full.
+create or replace function consume_rate_limit(
+  p_bucket text, p_feature text, p_window_key text,
+  p_limit int, p_cost int, p_expires timestamptz
+) returns int language plpgsql as $$
+declare v_count int;
+begin
+  -- A single call whose cost exceeds the whole window can never fit, and
+  -- without this the first insert would let it through.
+  if p_cost > p_limit then return null; end if;
+
+  -- Opportunistic cleanup, scoped to this bucket so it stays cheap.
+  delete from rate_limit where bucket = p_bucket and expires_at < now();
+
+  insert into rate_limit (bucket, feature, window_key, count, expires_at)
+  values (p_bucket, p_feature, p_window_key, p_cost, p_expires)
+  on conflict (bucket, feature, window_key) do update
+    set count = rate_limit.count + p_cost
+    where rate_limit.count + p_cost <= p_limit
+  returning count into v_count;
+
+  return v_count;
+end $$;
+
+revoke execute on function consume_rate_limit(text, text, text, int, int, timestamptz) from public, anon, authenticated;
+grant execute on function consume_rate_limit(text, text, text, int, int, timestamptz) to service_role;
+
+-- Releases a reserved unit when the work that took it failed. Unconditional
+-- arithmetic, so unlike consume_rate_limit it needs no atomicity guard; the
+-- greatest() floor stops a double refund pushing the counter negative.
+create or replace function refund_rate_limit(
+  p_bucket text, p_feature text, p_window_key text, p_cost int
+) returns void language sql as $$
+  update rate_limit set count = greatest(0, count - p_cost)
+  where bucket = p_bucket and feature = p_feature and window_key = p_window_key;
+$$;
+
+revoke execute on function refund_rate_limit(text, text, text, int) from public, anon, authenticated;
+grant execute on function refund_rate_limit(text, text, text, int) to service_role;
+```
+
+### App-wide AI ceiling (`bucket = 'global'`)
+
+Per-user quotas bound what one person can spend; nothing bounded the *sum*, so N users × 5 stories was unbounded in N. `GLOBAL_DAILY_LIMITS` in `_shared/quota.ts` adds a ceiling across all users combined, reusing the `rate_limit` table above with the bucket literal `'global'` rather than introducing a second mechanism. The spend limit set on the Anthropic key itself is the backstop *behind* this — the difference is that hitting the app's ceiling produces "AI generation is temporarily unavailable", whereas hitting Anthropic's produces a raw provider error.
+
+`consumeAiBudget(userId, feature, ownKey)` is the single entry point and encodes the ordering, which is easy to get wrong in a way nothing surfaces: **charge the user first, then the global pool, refunding the user if the pool is full.** The other order charges the app for a request the user's own limit then rejects. A user on their own key skips the ceiling entirely — they aren't spending the app's budget — and only has their usage recorded. `refundAiBudget` is the matching release for a generation that fails after being charged.
+
+**The banner.** `rate_limit` is service_role-only and must stay that way, so the client can't read the counters directly. `ai_availability()` is the one narrow read-only window: today's global counters plus whether the caller is on their own key. It deliberately returns **raw counts, not a ready-made boolean**, so the limits themselves stay out of SQL — there are two copies to keep in step (`GLOBAL_DAILY_LIMITS` server-side, `GLOBAL_AI_DAILY_LIMITS` in `src/data/aiLimits.js`) rather than three. `useAiAvailability(feature)` compares them and **fails open**, returning available on any error, missing function, or signed-out visitor, matching the edge function's own fail-open behaviour so the two can't disagree in the direction that blocks someone unnecessarily.
+
+```sql
+create or replace function ai_availability()
+returns jsonb
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select jsonb_build_object(
+    'usage', coalesce((
+      select jsonb_object_agg(feature, count)
+      from rate_limit
+      where bucket = 'global'
+        and window_key = 'day:' || to_char(timezone('utc', now())::date, 'YYYY-MM-DD')
+    ), '{}'::jsonb),
+    -- Only ever a boolean about the caller's own row, keyed on auth.uid().
+    'ownKey', auth.uid() is not null
+              and exists (select 1 from user_api_keys where user_id = auth.uid())
+  );
+$$;
+
+-- EXECUTE defaults to PUBLIC, so this revoke is not redundant.
+revoke execute on function ai_availability() from public;
+grant execute on function ai_availability() to anon, authenticated;
+```
 
 Deploy (one-time setup):
 
@@ -1055,7 +1302,7 @@ brew install supabase/tap/supabase
 supabase login
 supabase link --project-ref <project-ref>   # ref is in the Supabase dashboard URL
 supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
-supabase functions deploy story-generate story-grade
+supabase functions deploy story-generate word-import
 ```
 
 Generation response shape: `{ title, story, tokens, questions: [{ id, question, correct_answer, acceptable_variations }] }`. Grading: `{ pass, feedback }` — questions and answers are in Japanese; feedback is English.
@@ -1064,7 +1311,7 @@ Generation is **streamed** server-side (`client.messages.stream` + `finalMessage
 
 **Kuromoji in the edge function:** `npm:@patdx/kuromoji` (ESM fork with a fetch-based custom loader) reading uncompressed dictionary files from jsDelivr (`@aiktb/kuromoji@1.0.2/dict/`, ~18 MB) at cold start, cached per warm instance. The tokenizer build starts before the Claude call, so the dictionary download overlaps generation and adds no latency. The token mapping mirrors `tokenizeTextRich` in `scripts/fetch-nhk.mjs`, except `r` is set only for tokens containing kanji (no redundant furigana over kana-only words) and `b` is null for w:false tokens. Tokenization failure is non-fatal: `tokens` comes back null and the reader falls back to a plain text block.
 
-**story-generate response is a heartbeat stream, not plain JSON.** The edge gateway kills any request that sends no bytes for 150s (IDLE_TIMEOUT), so the function returns `text/plain` and streams a space every 10s while Claude works, then the JSON payload as the final line. Typical generations now finish in ~20-40s, but the heartbeat stays as insurance. Consequences: HTTP status is 200 even for post-header failures (errors arrive as `{ error }` in the payload), and `generateStory()` in `api.js` trims the heartbeats and parses the text — keep both sides in sync if the wire format changes. story-grade is fast and stays plain JSON.
+**story-generate response is a heartbeat stream, not plain JSON.** The edge gateway kills any request that sends no bytes for 150s (IDLE_TIMEOUT), so the function returns `text/plain` and streams a space every 10s while Claude works, then the JSON payload as the final line. Typical generations now finish in ~20-40s, but the heartbeat stays as insurance. Consequences: HTTP status is 200 even for post-header failures (errors arrive as `{ error }` in the payload), and `generateStory()` in `api.js` trims the heartbeats and parses the text — keep both sides in sync if the wire format changes.
 
 `tokens` is Kuromoji segmentation: `[{ t, r, w, b }]` — surface, hiragana reading (kanji tokens only, else null), content-word flag, and dictionary base form (e.g. 向かいました → 向かう; null for w:false). Newlines are their own tokens (required by `parseDialogue`). Concatenated `t` values reproduce `story` exactly. The reader renders tokens through the shared `TokenizedBody` (now themeable: `vocabHighlight`, `hoverBg`, `rtColor` props — needed for the light newspaper background); clicking a word looks up its base form via `lookupVocabulary` and shows the JMdict gloss in `WordPopup`. The reading layout switches on the generation format: `news` → NewspaperLayout, `dialogue` → ChatLayout, anything else (or missing tokens) → plain text block. Hover/focus styles for Story buttons, fields, and recent-story cards live in `global.css` (`.story-btn`, `.story-field`, `.story-recent-card`) per the no-useState-hover rule. "Add to SRS" writes to a `story-words` imported deck in the vocab-srs namespace (second cross-module write, same pattern as immersion-words).
 

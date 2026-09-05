@@ -143,7 +143,7 @@ const HEADING_TYPE_TOKENS = [
 ]
 
 const CONTENT_TYPE_TOKENS = [
-  { names: ['FS_LIST_TITLE'], px: FS_LIST_TITLE, watch: 'promote if FeedCard reuses this for its title', usage: 'article card title in list view', sample: 'Core 2000' },
+  { names: ['FS_LIST_TITLE'], px: FS_LIST_TITLE, watch: 'promote if FeedCard reuses this for its title', usage: 'article card title in list view', sample: 'Keigo' },
   { names: ['FS_ENTRY_ALT'], px: FS_ENTRY_ALT, usage: 'dictionary entry page alternate word forms', sample: '為る' },
   { names: ['FS_ARTICLE_BODY'], px: FS_ARTICLE_BODY, usage: 'article body text (reading-optimised, do not normalise)', sample: '今日は天気がいいです。' },
   { names: ['FS_ENTRY_WORD'], px: FS_ENTRY_WORD, usage: 'word form in dictionary results & word popup', sample: '世界' },
@@ -439,7 +439,7 @@ function CardDemo() {
   const [padding, setPadding] = useState(SPACE_16)
   const preview = (
     <Card padding={padding} style={{ width: 320 }}>
-      <div style={{ fontSize: FS_BASE, color: TEXT, marginBottom: SPACE_4 }}>Core 2000</div>
+      <div style={{ fontSize: FS_BASE, color: TEXT, marginBottom: SPACE_4 }}>Keigo</div>
       <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>2,007 cards · bundled deck</div>
     </Card>
   )
@@ -987,7 +987,7 @@ const SELECT_SIZE_OPTIONS = ['sm', 'md'].map(v => ({ value: v, label: v }))
 const SELECT_VARIANT_OPTIONS = ['default', 'inline'].map(v => ({ value: v, label: v }))
 const SELECT_DEMO_OPTIONS = [
   { label: 'Nihongo So-Matome N3', options: [{ value: 'all', label: 'All lists' }, { value: 'w1d1', label: 'Week 1, Day 1' }] },
-  { label: 'SRS decks', options: [{ value: 'core', label: 'Core 2000' }] },
+  { label: 'SRS decks', options: [{ value: 'core', label: 'Keigo' }] },
 ]
 
 function SelectDemo() {

@@ -1,9 +1,15 @@
 import Anthropic from 'npm:@anthropic-ai/sdk@0.104.1'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import * as kuromoji from 'npm:@patdx/kuromoji@1.0.4'
+import { requireUser, authErrorResponse } from '../_shared/auth.ts'
+import { consumeAiBudget, refundAiBudget, quotaErrorResponse } from '../_shared/quota.ts'
+import { getUserApiKey } from '../_shared/userKey.ts'
 
 const DEFAULT_MODEL = Deno.env.get('WORD_IMPORT_MODEL') || 'claude-sonnet-5'
 const MAX_WORDS = 60
+// The client sends a camera photo as-is with no resize, and image bytes are
+// billed as input tokens, so an unbounded upload is an unbounded bill.
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -135,6 +141,8 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS_HEADERS })
 
   try {
+    const user = await requireUser(req)
+
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
       return jsonResponse({ error: 'Server misconfigured: missing Supabase service role credentials' }, 500)
     }
@@ -144,8 +152,23 @@ Deno.serve(async (req) => {
     let sourceText: string
     if (mode === 'image') {
       if (!image || !mediaType) return jsonResponse({ error: 'image and mediaType are required for mode "image"' }, 400)
-      const client = new Anthropic({ apiKey: Deno.env.get('ANTHROPIC_API_KEY') })
-      sourceText = await ocrImage(client, image, mediaType, model)
+      // base64 encodes 3 bytes as 4 chars; padding makes this a slight
+      // over-estimate of the decoded size, which is the safe direction.
+      if (Math.floor(image.length * 3 / 4) > MAX_IMAGE_BYTES) {
+        return jsonResponse({ error: 'Image is too large. Please use an image under 5 MB.' }, 413)
+      }
+      // Image mode only. Text mode below makes no Anthropic call at all, so
+      // charging it would be charging for Kuromoji and a dictionary lookup.
+      // A user on their own key pays Anthropic directly and isn't metered.
+      const userKey = await getUserApiKey(user.id)
+      await consumeAiBudget(user.id, 'word-import-image', Boolean(userKey))
+      const client = new Anthropic({ apiKey: userKey ?? Deno.env.get('ANTHROPIC_API_KEY') })
+      try {
+        sourceText = await ocrImage(client, image, mediaType, model)
+      } catch (err) {
+        await refundAiBudget(user.id, 'word-import-image', Boolean(userKey))
+        throw err
+      }
     } else if (mode === 'text') {
       if (!text || typeof text !== 'string') return jsonResponse({ error: 'text is required for mode "text"' }, 400)
       sourceText = text
@@ -175,6 +198,8 @@ Deno.serve(async (req) => {
 
     return jsonResponse({ words, truncated })
   } catch (err) {
+    const denied = authErrorResponse(err, jsonResponse) ?? quotaErrorResponse(err, jsonResponse)
+    if (denied) return denied
     console.error('[word-import]', err)
     return jsonResponse({ error: err?.message || 'Word extraction failed' }, 500)
   }

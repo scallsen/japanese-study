@@ -175,7 +175,6 @@ function VocabSrsHome() {
   // session consume the day's new-card allowance without any card being studied.
   const sessionNewCardsRef = useRef(null)
   const [importMsg, setImportMsg] = useState(null)
-  const [ankiSyncMsg, setAnkiSyncMsg] = useState(null)
   const [showWordImport, setShowWordImport] = useState(false)
   const [advanceDays, setAdvanceDays] = useState(3)
   const [showOptions, setShowOptions] = useState(() => window.innerWidth > 768)
@@ -490,41 +489,6 @@ function VocabSrsHome() {
     save(newProgress)
   }
 
-  async function handleAnkiSyncFileChange(file) {
-    let syncCards
-    try {
-      syncCards = JSON.parse(await file.text())
-    } catch {
-      setAnkiSyncMsg('Invalid JSON file')
-      return
-    }
-
-    if (typeof syncCards !== 'object' || Array.isArray(syncCards)) {
-      setAnkiSyncMsg('Expected a JSON object')
-      return
-    }
-
-    // Ensure all core2000 cards exist as New before overwriting reviewed ones
-    let newProgress = progress
-    const hasCore2000Cards = Object.values(cardsObj).some(c => c.deckId === 'core2000')
-    if (!hasCore2000Cards) {
-      newProgress = initializeDeckCards(newProgress, 'core2000')
-    }
-
-    const newCardsObj = { ...newProgress.cards }
-    let count = 0
-    for (const [id, cardState] of Object.entries(syncCards)) {
-      if (typeof cardState !== 'object' || !cardState.id || !cardState.deckId) continue
-      newCardsObj[id] = cardState
-      count++
-    }
-
-    const merged = { ...newProgress, cards: newCardsObj }
-    setProgress(merged)
-    await save(merged)
-    setAnkiSyncMsg(`${count} card${count === 1 ? '' : 's'} synced`)
-  }
-
   function renderPanelContent(paddingH) {
     const hairline = { height: 1, background: 'rgba(255,255,255,0.08)', margin: '20px 0' }
     return (
@@ -834,12 +798,6 @@ function VocabSrsHome() {
                           <FileButton accept=".txt" onFile={handleFileChange}>Choose .txt file</FileButton>
                           {importMsg && (
                             <span style={{ fontSize: FS_BASE, color: SUCCESS }}>{importMsg}</span>
-                          )}
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-                          <FileButton accept=".json" onFile={handleAnkiSyncFileChange}>Sync from Anki (.json)</FileButton>
-                          {ankiSyncMsg && (
-                            <span style={{ fontSize: FS_BASE, color: SUCCESS }}>{ankiSyncMsg}</span>
                           )}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>

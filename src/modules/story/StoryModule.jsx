@@ -12,7 +12,12 @@ import ActionBar, { ACTION_BAR_HEIGHT } from '../../components/ActionBar.jsx'
 import { BG } from './storyUI.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_CAPTION, FS_HEADING, DANGER } from '../../data/theme.js'
 import { MODULES } from '../../data/modules.js'
-import { ModuleThemeProvider } from '../../context/ModuleThemeContext.jsx'
+import { ModuleThemeProvider, useAccent } from '../../context/ModuleThemeContext.jsx'
+import { AI_DAILY_LIMITS } from '../../data/aiLimits.js'
+import { useAiUsage } from '../../hooks/useAiUsage.js'
+import { useApiKeyStatus } from '../../hooks/useApiKeyStatus.js'
+import { useAiAvailability } from '../../hooks/useAiAvailability.js'
+import Notice from '../../components/Notice.jsx'
 import { WORD_SOURCES } from '../../data/wordLists.js'
 import { buildLearnerContext, MATURITY_LEVELS, GRAMMAR_LEVELS } from '../../lib/learnerContext.js'
 import { resolveCard } from '../vocab-srs/srs.js'
@@ -65,6 +70,51 @@ function RecentCard({ entry, onClick }) {
   )
 }
 
+const STORY_LIMIT = AI_DAILY_LIMITS.find(l => l.feature === 'story-generate')?.limit ?? 0
+
+// One pip per daily generation, filled while unspent. At five items a row of
+// pips reads at a glance in a way "1 of 5" doesn't — and unlike a progress bar
+// it shows the unit, which is what the user is actually rationing.
+function QuotaPips({ remaining }) {
+  const accent = useAccent()
+  const out = remaining === 0
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>
+      <span style={{ display: 'inline-flex', gap: 3 }}>
+        {Array.from({ length: STORY_LIMIT }, (_, i) => (
+          <span
+            key={i}
+            style={{
+              width: 6, height: 6, borderRadius: 2,
+              background: i < remaining ? accent : 'rgba(255,255,255,0.18)',
+            }}
+          />
+        ))}
+      </span>
+      <span style={{ color: out ? DANGER : TEXT_MUTED }}>
+        {out ? 'No generations left today' : `${remaining} of ${STORY_LIMIT} left today`}
+      </span>
+    </span>
+  )
+}
+
+function StoryList({ title, stories, empty }) {
+  return (
+    <div>
+      <div style={{ fontSize: FS_HEADING, color: TEXT_MUTED, marginBottom: 12 }}>{title}</div>
+      {stories.length > 0 ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {stories.map(entry => (
+            <RecentCard key={entry.id} entry={entry} onClick={() => { window.location.hash = `#/story/${entry.id}` }} />
+          ))}
+        </div>
+      ) : empty ? (
+        <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>{empty}</div>
+      ) : null}
+    </div>
+  )
+}
+
 export default function StoryModule() {
   return (
     <ModuleThemeProvider accent={STORY_ACCENT}>
@@ -79,30 +129,51 @@ function StoryGenerator() {
   const { data: srsData, loading: srsLoading } = useProgress('vocab-srs')
   const srsProgress = useMemo(() => (srsData ? migrateProgress(srsData) : null), [srsData])
 
-  const [recentStories, setRecentStories] = useState([])
+  const { usage: aiUsage, refresh: refreshUsage } = useAiUsage()
+  const { hasKey: usingOwnKey, loading: apiKeyLoading } = useApiKeyStatus()
+  const aiAvailable = useAiAvailability('story-generate')
+  const storyRemaining = Math.max(0, STORY_LIMIT - (aiUsage.today['story-generate'] ?? 0))
+
+  const [myStories, setMyStories] = useState([])
+  const [exampleStories, setExampleStories] = useState([])
   const [recentLoading, setRecentLoading] = useState(true)
   const [recentError, setRecentError] = useState(null)
 
+  // Two queries rather than one filtered client-side: a single limited query
+  // would let a long list of examples crowd out the user's own stories.
+  // RLS already restricts reads to own + shared, so this only shapes the split.
   useEffect(() => {
     if (!supabase) {
       setRecentError('Supabase not configured.')
       setRecentLoading(false)
       return
     }
-    supabase
-      .from('stories')
-      .select('id, title, format, created_at')
-      .order('created_at', { ascending: false })
-      .limit(MAX_RECENT_STORIES)
-      .then(({ data, error: err }) => {
-        if (err) {
-          setRecentError(err.message)
-        } else {
-          setRecentStories((data ?? []).map(row => ({ id: row.id, title: row.title, format: row.format, createdAt: row.created_at })))
-        }
-        setRecentLoading(false)
-      })
-  }, [])
+    let cancelled = false
+    setRecentLoading(true)
+
+    const COLUMNS = 'id, title, format, created_at'
+    const mapRow = row => ({ id: row.id, title: row.title, format: row.format, createdAt: row.created_at })
+    const query = () => supabase.from('stories').select(COLUMNS).order('created_at', { ascending: false }).limit(MAX_RECENT_STORIES)
+
+    const mine = user ? query().eq('user_id', user.id) : Promise.resolve({ data: [], error: null })
+    const examples = query().eq('shared', true)
+
+    Promise.all([mine, examples]).then(([m, e]) => {
+      if (cancelled) return
+      const err = m.error || e.error
+      if (err) {
+        setRecentError(err.message)
+      } else {
+        const own = (m.data ?? []).map(mapRow)
+        const ownIds = new Set(own.map(s => s.id))
+        setMyStories(own)
+        setExampleStories((e.data ?? []).map(mapRow).filter(s => !ownIds.has(s.id)))
+      }
+      setRecentLoading(false)
+    })
+
+    return () => { cancelled = true }
+  }, [user])
 
   const [source, setSourceRaw] = useState(() => safeLocalStorageGet('story-source') ?? `vocab:${WORD_SOURCES[0].id}`)
   const [maturity, setMaturityRaw] = useState(() => safeLocalStorageGet('story-maturity') ?? 'seen')
@@ -154,7 +225,15 @@ function StoryGenerator() {
     }
   }, [source, maturity, grammarLevel, srsProgress])
 
-  const canGenerate = user && context && context.wordCount > 0 && !generating
+  // Blocking here rather than letting the server 429 turns a wasted round trip
+  // and a raw error into a disabled button the user can see the reason for.
+  // Someone on their own key isn't metered at all, so the daily count must not
+  // gate them — otherwise a spent quota would lock out a user who isn't
+  // spending ours.
+  // The server is what actually enforces this; disabling the button just avoids
+  // sending a request that can only come back as a 429.
+  const canGenerate = user && context && context.wordCount > 0 && !generating && aiAvailable
+    && (usingOwnKey || storyRemaining > 0)
 
   const generate = async () => {
     if (!canGenerate) return
@@ -169,7 +248,6 @@ function StoryGenerator() {
         basedOn: '',
         format,
         length,
-        questionCount: 3,
       })
       const id = crypto.randomUUID()
       const createdAt = new Date().toISOString()
@@ -179,12 +257,12 @@ function StoryGenerator() {
         title: data.title,
         story: data.story,
         tokens: data.tokens,
-        questions: data.questions,
         format,
         created_at: createdAt,
       })
       if (insertError) throw new Error(insertError.message)
-      setRecentStories(prev => [{ id, title: data.title, format, createdAt }, ...prev].slice(0, MAX_RECENT_STORIES))
+      setMyStories(prev => [{ id, title: data.title, format, createdAt }, ...prev].slice(0, MAX_RECENT_STORIES))
+      refreshUsage()
       window.location.hash = `#/story/${id}`
     } catch (err) {
       setError(err.message)
@@ -225,18 +303,33 @@ function StoryGenerator() {
             </FilterRow>
           </FilterCard>
 
+          {!aiAvailable && (
+            <Notice style={{ marginTop: 14 }} title="AI generation is temporarily unavailable">
+              The app has reached its daily limit for AI generation. It resets tomorrow.
+              You can generate without limit by adding your own Anthropic API key on your account page.
+            </Notice>
+          )}
           {error && <div style={{ marginTop: 14, fontSize: FS_CAPTION, color: DANGER }}>{error}</div>}
           <ActionBar
             maxWidth={760}
             leading={(
-              <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>
-                {!user
-                  ? 'Sign in to generate stories'
-                  : context
-                    ? `${context.wordCount} words in context`
-                    : isSrsSource && srsLoading
-                      ? 'Loading SRS data…'
-                      : 'No words available'}
+              <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, display: 'flex', flexDirection: 'column', gap: 5 }}>
+                <span>
+                  {!user
+                    ? 'Sign in to generate stories'
+                    : context
+                      ? `${context.wordCount} words in context`
+                      : isSrsSource && srsLoading
+                        ? 'Loading SRS data…'
+                        : 'No words available'}
+                </span>
+                {/* Held back until the key status resolves, so a user on their
+                    own key never sees a quota line flash first. */}
+                {user && !apiKeyLoading && (
+                  usingOwnKey
+                    ? <span>Using your own API key</span>
+                    : <QuotaPips remaining={storyRemaining} />
+                )}
               </span>
             )}
           >
@@ -246,19 +339,23 @@ function StoryGenerator() {
           </ActionBar>
 
           <div style={{ marginTop: 36 }}>
-            <div style={{ fontSize: FS_HEADING, color: TEXT_MUTED, marginBottom: 12 }}>Recent stories</div>
             {recentLoading ? (
               <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>Loading…</div>
             ) : recentError ? (
               <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>{recentError}</div>
-            ) : recentStories.length > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {recentStories.map(entry => (
-                  <RecentCard key={entry.id} entry={entry} onClick={() => { window.location.hash = `#/story/${entry.id}` }} />
-                ))}
-              </div>
             ) : (
-              <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>No stories generated yet.</div>
+              <>
+                <StoryList
+                  title="Your stories"
+                  stories={myStories}
+                  empty={user ? 'No stories generated yet.' : 'Sign in to generate and keep your own stories.'}
+                />
+                {exampleStories.length > 0 && (
+                  <div style={{ marginTop: 28 }}>
+                    <StoryList title="Examples" stories={exampleStories} empty={null} />
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

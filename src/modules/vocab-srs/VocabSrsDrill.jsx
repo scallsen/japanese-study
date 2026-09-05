@@ -253,7 +253,7 @@ export default function VocabSrsDrill({
   const tts = useTTS(ttsVoice)
   const sfx = useSFX()
 
-  // Priority: real recorded audio (Core 2000) > generated Voicevox audio > browser TTS.
+  // Priority: real recorded audio (imported Anki decks) > generated Voicevox audio > browser TTS.
   function resolveAudioUrl(card) {
     if (!card) return { word: null, sentence: null }
     if (card.wordAudio) return { word: getAudioUrl(card.wordAudio), sentence: getAudioUrl(card.sentenceAudio) }

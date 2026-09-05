@@ -1,48 +1,73 @@
-# Privacy Policy
+# Privacy policy
 
-**Japanese Study** (https://japanese-study.scallsen.ca) is a personal, non-commercial Japanese-learning
-application. This policy explains what data it collects and how it's used.
+Last updated 5 September 2026.
 
-_Last updated: 2026-09-05_
+This is a plain-language description of what Japanese Study
+(https://japanese-study.scallsen.ca) actually stores and who it talks to. It is
+a personal, non-commercial project. This is not legal advice and has not been
+reviewed by a lawyer.
 
-## What we collect
+## What is stored
 
-When you sign in (via GitHub or Google), the app receives basic profile information from that
-provider: your email address, display name, and avatar image. We don't collect anything beyond
-what the sign-in provider shares.
+**Your account.** When you sign in with GitHub or Google, we receive your email
+address and display name from that provider. We never see your password for it.
 
-Once signed in, the app stores your own learning/study data against your account — for example,
-spaced-repetition card progress, vocabulary decks, reading history, and generated study content
-you've created. This data exists to make the app work (syncing your progress across devices) and
-for no other purpose.
+**Your study progress.** Review scheduling for your cards, which decks you have,
+which articles you have read, which series you track, and your drill settings.
 
-## What we don't do
+**Content you generate.** Stories you create are **private to your account** and
+are not visible to other users. A small number are hand-picked as public
+examples; nothing of yours becomes an example unless it is deliberately marked.
 
-- We don't sell or share your data with third parties.
-- We don't use your data for advertising.
-- We don't track you across other sites or apps.
+**AI usage counts.** A per-day tally of how many times you used each AI feature.
+This is a number only — the text of what you generated is not kept alongside it.
 
-## Third-party services
+**An Anthropic API key, if you choose to add one.** It is encrypted before being
+stored, and it is never readable by the app in your browser — not even by you.
+Only its last four characters are ever shown back.
 
-The app is built on:
-- **Supabase** — hosts the database and handles authentication. Your account data and study
-  progress are stored there.
-- **GitHub** and **Google** — OAuth sign-in providers. We only receive the basic profile
-  information described above.
-- **Anthropic** — powers optional AI-generated study content (e.g. custom reading passages).
-  Text you submit to these features is sent to Anthropic's API to generate a response; it is not
-  used to identify you and is not linked back to your account by Anthropic.
+## What is not done
 
-## Data retention & deletion
+There is no advertising, no third-party analytics, no tracking pixels, and no
+selling or sharing of your data with anyone for marketing. There are no cookies
+beyond the session cookie that keeps you signed in.
 
-Your data is kept for as long as your account exists. If you'd like your account and associated
-data deleted, email **simon.callsen@gmail.com** and it will be removed.
+## Who else sees your data
+
+**Supabase** hosts the database, authentication, and file storage.
+
+**Anthropic** receives the text you submit to AI features — the vocabulary list
+used to generate a story, an answer you are having graded, or a photo you upload
+for word extraction. If you supply your own API key, those requests are billed to
+your own Anthropic account and are subject to Anthropic's terms rather than ours.
+
+**GitHub or Google** handle sign-in only, and learn nothing about how you use the
+app afterwards.
+
+**Jiten** is queried for anime vocabulary lists. No personal information is sent.
+
+Dictionary, kanji, and example-sentence data comes from open datasets (JMdict,
+KANJIDIC2, the Tanaka Corpus) that are bundled or stored locally. Looking a word
+up sends nothing to their maintainers.
+
+## Your controls
+
+**Export.** From your account page you can download everything tied to your
+account as a JSON file, and export your cards as an Anki-compatible file.
+
+**Deletion.** Deleting your account permanently removes your progress, decks,
+stories, usage counts, and stored API key. It cannot be undone, and there is no
+backup from which it can be restored. If you would rather it be done for you,
+email **simon.callsen@gmail.com**.
+
+**Retention.** Data is kept until you delete your account.
 
 ## Changes to this policy
 
-This is a small, personal project maintained by one person. If this policy changes, the updated
-version will be posted here with a new "last updated" date.
+This is a small, personal project maintained by one person. If this policy
+changes, the updated version will be posted here with a new "last updated" date.
 
 ## Contact
 
-Questions about this policy or your data: **simon.callsen@gmail.com**
+Questions about this policy or your data: **simon.callsen@gmail.com**, or raise
+an issue on the project's GitHub repository.

@@ -1,4 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
+import { enforceRateLimit, rateLimitErrorResponse, MAX_LOOKUP_IDS } from '../_shared/rateLimit.ts'
 
 // Fetches live cover/difficulty details for a fixed set of Jiten deck ids —
 // used by the curated "recommended for beginners" list
@@ -64,6 +65,16 @@ Deno.serve(async (req) => {
     }
     const { externalIds } = await req.json()
     if (!Array.isArray(externalIds) || externalIds.length === 0) return jsonResponse({ results: [] })
+    // Capped independently of the rate limit: the fetch below issues one
+    // upstream request per id in parallel, so an unbounded array turns one
+    // request into arbitrarily many.
+    if (externalIds.length > MAX_LOOKUP_IDS) {
+      return jsonResponse({ error: `Too many ids — ${MAX_LOOKUP_IDS} maximum per request.` }, 400)
+    }
+
+    // Anonymous by design — bounded by IP rather than account. The cost is the
+    // batch size, since that is how many upstream requests this will make.
+    await enforceRateLimit(req, 'anime-lookup', { cost: externalIds.length })
 
     const summaries = (await Promise.all(externalIds.map((id: unknown) => fetchSummary(String(id))))).filter(Boolean) as any[]
 
@@ -77,6 +88,8 @@ Deno.serve(async (req) => {
 
     return jsonResponse({ results: summaries.map(s => ({ ...s, mediaId: linkedByExternalId.get(s.externalId) ?? null })) })
   } catch (err) {
+    const limited = rateLimitErrorResponse(err, jsonResponse)
+    if (limited) return limited
     console.error('[anime-media-lookup]', err)
     return jsonResponse({ error: err?.message || 'Lookup failed' }, 500)
   }

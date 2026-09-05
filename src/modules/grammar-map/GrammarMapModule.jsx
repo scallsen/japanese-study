@@ -157,7 +157,7 @@ export default function GrammarMapModule() {
             onClick={signIn}
             style={{ padding: '10px 24px', background: ACCENT, border: 'none', borderRadius: 8, color: '#fff', fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING, cursor: 'pointer' }}
           >
-            Sign in with GitHub
+            Sign in
           </button>
         </div>
       </div>

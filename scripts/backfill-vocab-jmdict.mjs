@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Backfills a `jmdictId` field onto every Vocab Drill word (src/data/words/*.json)
- * and bundled SRS deck entry (core2000.json, keigo.json) by matching it against
+ * and bundled SRS deck entry (keigo.json) by matching it against
  * the Supabase `dictionary` table. This is the linkage that lets the app treat
  * `dictionary` as the source of truth for definitions/readings.
  *
@@ -39,7 +39,6 @@ const TARGETS = [
   { path: 'src/data/words/nsm_n3_i4_vocab.json', formField: 'kanji', kanaField: 'kana' },
   { path: 'src/data/words/nsm_n3_i5_vocab.json', formField: 'kanji', kanaField: 'kana' },
   { path: 'src/data/words/nsm_n2_a1_vocab.json', formField: 'kanji', kanaField: 'kana' },
-  { path: 'src/modules/vocab-srs/decks/core2000.json', formField: 'front', kanaField: 'kana' },
   { path: 'src/modules/vocab-srs/decks/keigo.json', formField: 'front', kanaField: null },
 ]
 
@@ -48,9 +47,9 @@ async function processTarget(target, report) {
   const entries = JSON.parse(readFileSync(target.path, 'utf8'))
 
   // When there's no separate reading field, the form itself is already kana
-  // (e.g. Core 2000's `front: "する"` has no `kana` — see CLAUDE.md's "use kana
-  // if no kanji form" convention). keigo.json has no reading concept at all
-  // (kanaField: null), so its matches skip reading verification entirely.
+  // (see CLAUDE.md's "use kana if no kanji form" convention). keigo.json has no
+  // reading concept at all (kanaField: null), so its matches skip reading
+  // verification entirely.
   const words = entries.map(e => ({
     form: e[target.formField],
     kana: target.kanaField ? (e[target.kanaField] ?? e[target.formField]) : null,
