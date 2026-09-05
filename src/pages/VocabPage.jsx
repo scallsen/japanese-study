@@ -2,7 +2,6 @@ import { useState, useMemo, useEffect, useRef, Component } from 'react'
 import VocabCard from '../components/VocabCard.jsx'
 import DrillHUD from '../components/DrillHUD.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
-import SectionLabel from '../components/SectionLabel.jsx'
 import ChipSelector from '../components/Chip.jsx'
 import Checkbox from '../components/Checkbox.jsx'
 import Select from '../components/Select.jsx'
@@ -657,7 +656,7 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
     <div style={{ width: '100%', maxWidth: 680, margin: '0 auto', padding: '32px 24px 48px' }}>
       {grouped.map(group => (
         <div key={group.listId} style={{ marginBottom: 40 }}>
-          <SectionLabel label={group.label} />
+          <SectionHeader title={group.label} />
           <DataList
             columns={columns}
             rows={group.words}

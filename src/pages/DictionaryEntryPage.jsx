@@ -16,7 +16,8 @@ import CenteredLoadingMessage from '../components/CenteredLoadingMessage.jsx'
 import DataList from '../components/DataList.jsx'
 import { MODULES } from '../data/modules.js'
 import { ModuleThemeProvider } from '../context/ModuleThemeContext.jsx'
-import { SectionLabel, KanjiBreakdownEntry } from './dictionaryShared.jsx'
+import SectionHeader from '../components/SectionHeader.jsx'
+import { KanjiBreakdownEntry } from './dictionaryShared.jsx'
 
 const BG = '#1E1E1E'
 const DICTIONARY_ACCENT = MODULES.find(m => m.id === 'dictionary').accent
@@ -334,7 +335,7 @@ export default function DictionaryEntryPage({ entryId }) {
               {/* Your decks */}
               {showDecksSection && (
                 <>
-                  <SectionLabel label="Your Decks" marginTop={28} />
+                  <SectionHeader title="Your Decks" marginTop={28} />
                   {deckRows.length > 0 && (
                     <DataList
                       columns={DECK_ROW_COLUMNS}
@@ -356,7 +357,7 @@ export default function DictionaryEntryPage({ entryId }) {
               {/* Kanji breakdown */}
               {kanjiDetails.length > 0 && (
                 <>
-                  <SectionLabel label="Kanji" marginTop={28} />
+                  <SectionHeader title="Kanji" marginTop={28} />
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {kanjiDetails.map(k => <KanjiCard key={k.literal} entry={k} />)}
                   </div>
@@ -366,7 +367,7 @@ export default function DictionaryEntryPage({ entryId }) {
               {/* Example sentences */}
               {sentences.length > 0 && (
                 <>
-                  <SectionLabel label="Example Sentences" marginTop={28} />
+                  <SectionHeader title="Example Sentences" marginTop={28} />
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {sentences.map(s => <SentenceCard key={s.id} sentence={s} />)}
                   </div>

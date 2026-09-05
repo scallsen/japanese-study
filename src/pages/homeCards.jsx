@@ -3,7 +3,7 @@ import Button from '../components/Button.jsx'
 import { ModuleThemeProvider } from '../context/ModuleThemeContext.jsx'
 import { useIsMobile } from '../hooks/useIsMobile.js'
 import { MODULES } from '../data/modules.js'
-import { TEXTBOOKS } from '../data/textbooks.js'
+import { TEXTBOOKS, COVER_GUTTER_FRACTION } from '../data/textbooks.js'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_BADGE, FS_BASE, FS_CAPTION, FS_CONTENT_HEADING, FS_STAT_VALUE,
   SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24,
@@ -20,11 +20,10 @@ const SRS_MODULE = MODULES.find(m => m.id === 'vocab-srs')
 const HAIRLINE = 'rgba(255,255,255,0.08)'
 
 const COVER_SIZE = 104
-// Every cover is a 32×32 pixel-art canvas whose artwork occupies x 5–27, so
-// 5/32 of each side is transparent gutter. Pulling that much off the right
-// margin sits the artwork's own edge against the card's padding instead of
-// leaving a phantom 16px gap the eye reads as misalignment.
-const COVER_GUTTER = (5 / 32) * COVER_SIZE
+// Pulling the cover's transparent gutter (see COVER_GUTTER_FRACTION) off the
+// right margin sits the artwork's own edge against the card's padding instead
+// of leaving a phantom 16px gap the eye reads as misalignment.
+const COVER_GUTTER = COVER_GUTTER_FRACTION * COVER_SIZE
 // Button's `sm` horizontal padding. Shifting the quiet link row left by it
 // lines the first link's *text* up with the primary button's box edge below.
 const GHOST_TEXT_INSET = 14
@@ -206,7 +205,7 @@ export function NewCard({ loading, state, onStart, onChangeTextbook }) {
     return (
       <PrimaryCard
         accent={accent}
-        title="Choose your textbook"
+        title="Practice"
         actions={<CardActions><Button size="lg" onClick={onChangeTextbook}>Choose textbook</Button></CardActions>}
       >
         <TextbookCarousel />
@@ -278,7 +277,7 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
     return (
       <PrimaryCard
         accent={accent}
-        title="Reviews"
+        title="Review"
         subtitle="Spaced repetition for the words you've studied. Sign in to sync your decks across devices."
         actions={<CardActions><Button size="lg" onClick={onSignIn}>Create account</Button></CardActions>}
       />
@@ -289,7 +288,7 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
     return (
       <PrimaryCard
         accent={accent}
-        title="Reviews"
+        title="Review"
         subtitle="No cards yet. Finish a chapter and send its words here."
         actions={
           <CardActions>
