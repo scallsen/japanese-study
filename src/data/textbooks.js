@@ -28,6 +28,12 @@ function weekDays(prefix, weeks, days = 3) {
 
 const ICONS = '/placeholder-svg'
 
+// Every cover is a 32×32 pixel-art canvas whose artwork occupies x 5–27, so
+// 5/32 of each side is transparent gutter. Anything laying a cover out has to
+// pull that off the margin, or the eye reads the phantom space as
+// misalignment. Recheck this if a new cover is drawn to different bounds.
+export const COVER_GUTTER_FRACTION = 5 / 32
+
 // Retailer *search* links, not product pages: a search URL keeps working
 // where a hardcoded product id rots as soon as an edition changes. Swap in
 // real product links per book if you'd rather point at exact editions.

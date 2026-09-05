@@ -1,8 +1,6 @@
 import Badge from '../components/Badge.jsx'
 import { FONT, KANJI_FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_ENTRY_KANJI } from '../data/theme.js'
 
-export { default as SectionLabel } from '../components/SectionLabel.jsx'
-
 function kanjiGradeLabel(grade) {
   if (!grade) return null
   if (grade <= 6) return `G${grade}`

@@ -18,7 +18,6 @@ import DrillHUD from '../components/DrillHUD.jsx'
 import Select from '../components/Select.jsx'
 import Checkbox from '../components/Checkbox.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
-import SectionLabel from '../components/SectionLabel.jsx'
 import FileButton from '../components/FileButton.jsx'
 import DeckComboBox from '../components/DeckComboBox.jsx'
 import SignInGate from '../components/SignInGate.jsx'
@@ -65,7 +64,6 @@ const NAV = [
     section: 'Layout',
     items: [
       { key: 'section-header', label: 'Section Header', built: true },
-      { key: 'section-label', label: 'Section Label', built: true },
       { key: 'sign-in-gate', label: 'Sign-in Gate', built: true },
     ],
   },
@@ -113,8 +111,7 @@ const DESCRIPTIONS = {
   'number-field': 'A small bounded number — a count, a threshold, a day offset.',
   select: 'A native select with the app’s chrome. `sm` is the settings-drawer row it was extracted from; `md` lines up with a TextInput in a form. Options can be grouped ({ label, options }) → native optgroups.',
   'file-button': 'A Button that opens a file picker. Keeps the hidden input, shows the real Button; `accept` and `capture` pass through. Replaced two label-wrapping-an-input helpers.',
-  'section-header': 'Uppercase section title with an optional control on the right — settings drawers, done screens. `action` takes any node; the older Deselect-all pair still works.',
-  'section-label': 'Small uppercase label with a trailing hairline — separates groups inside page content (Dictionary’s Kanji / Words, Vocab Drill’s preview groups). Distinct from Section Header, which is the bigger heading with an action slot.',
+  'section-header': 'The one section heading — settings drawers, done screens, and the in-page group dividers the retired Section Label used to draw (Dictionary’s Kanji / Words, Vocab Drill’s preview groups, the home page’s stats rail). `action` takes any node; `marginTop` separates stacked groups; the older Deselect-all pair still works.',
   'sign-in-gate': 'Full-page "sign in to use this" screen for modules whose progress lives only in Supabase. The Module and Browse page each hand-rolled it.',
   chip: 'Pick one, several, or a threshold from a small visible set. Three selection models, not three styles — threshold is cumulative because "N3 and above" genuinely means N3/N2/N1, and rendering only N3 as active would misrepresent the filter.',
   'data-list': 'Every list in the app. Columns are configured per call site; selection, row-click, search, and footer are independent opt-in slots. A read-only list is just this with none of them — which is why there is no separate InfoRow component.',
@@ -1029,23 +1026,13 @@ function SectionHeaderDemo() {
   const preview = (
     <div style={{ width: 360 }}>
       <SectionHeader title="Review words" action={withAction ? <Button variant="accent-outline" size="sm">Add 2 to SRS</Button> : undefined} />
-      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>…section content…</div>
+      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: SPACE_16 }}>…section content…</div>
+      <SectionHeader title="Kanji" marginTop={28} />
+      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>…the next group…</div>
     </div>
   )
   const controls = <Checkbox checked={withAction} onChange={() => setWithAction(v => !v)} label="With action" />
   return <ComponentPage title="Section Header" description={DESCRIPTIONS['section-header']} built preview={preview} controls={controls} />
-}
-
-function SectionLabelDemo() {
-  const preview = (
-    <div style={{ width: 360 }}>
-      <SectionLabel label="Kanji" />
-      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: SPACE_16 }}>…a list…</div>
-      <SectionLabel label="Words" marginTop={28} />
-      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>…another list…</div>
-    </div>
-  )
-  return <ComponentPage title="Section Label" description={DESCRIPTIONS['section-label']} built preview={preview} />
 }
 
 function SignInGateDemo() {
@@ -1069,7 +1056,6 @@ const PAGES = {
   select: SelectDemo,
   'file-button': FileButtonDemo,
   'section-header': SectionHeaderDemo,
-  'section-label': SectionLabelDemo,
   'sign-in-gate': SignInGateDemo,
   chip: ChipDemo,
   'data-list': DataListDemo,

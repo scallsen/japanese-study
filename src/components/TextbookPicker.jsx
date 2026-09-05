@@ -4,7 +4,7 @@ import Button from './Button.jsx'
 import Badge from './Badge.jsx'
 import { useIsMobile } from '../hooks/useIsMobile.js'
 import { useAccent } from '../context/ModuleThemeContext.jsx'
-import { TEXTBOOKS } from '../data/textbooks.js'
+import { TEXTBOOKS, COVER_GUTTER_FRACTION } from '../data/textbooks.js'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_CAPTION, FS_LIST_TITLE,
   SPACE_4, SPACE_8, SPACE_12, SPACE_16,
@@ -257,5 +257,25 @@ function Cover({ book, size, accent }) {
       }} />
     )
   }
-  return <img src={book.icon} alt="" style={{ width: size, height: size, flexShrink: 0, imageRendering: 'pixelated' }} />
+  // Negative margins on both sides pull the artwork's own edges onto the
+  // box's, so the cover lines up with the text below it and the only gap
+  // beside it is the flex `gap` its row already asks for. The transparent
+  // gutter overflows into the surrounding padding, which is wider than it on
+  // the left and is the row's own gap on the right. The spine placeholder
+  // above fills its box, so it needs no correction to match.
+  const gutter = COVER_GUTTER_FRACTION * size
+  return (
+    <img
+      src={book.icon}
+      alt=""
+      style={{
+        width: size,
+        height: size,
+        marginLeft: -gutter,
+        marginRight: -gutter,
+        flexShrink: 0,
+        imageRendering: 'pixelated',
+      }}
+    />
+  )
 }

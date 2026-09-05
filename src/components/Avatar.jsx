@@ -1,5 +1,11 @@
 import { FONT, TRACKING } from '../data/theme.js'
-import { useAccent } from '../context/ModuleThemeContext.jsx'
+
+// Fixed, not the ambient module accent. The avatar sits in the header on every
+// route, so reading the accent recoloured it on each navigation — teal on the
+// dashboard, pink in anime vocab, red in the news reader — which reads as a
+// different control rather than as one identity. What it stands for is the
+// user, and that doesn't change with the page.
+const AVATAR_COLOR = '#3A7FEF'
 
 // Up to two initials from a display name, falling back to the first letter of
 // an email's local part. A single "?" rather than an empty circle when there's
@@ -17,12 +23,12 @@ function initialsFrom(name) {
  * be clickable wraps it in its own button, which is also what keeps the
  * anchor ref for a popover on the caller's element rather than in here.
  *
- * Tinted with the ambient module accent using the same recipe as `Button`'s
- * accent-outline variant, so it picks up a module's colour when used inside
- * one and the core teal on the dashboard.
+ * Tinted with the same recipe as `Button`'s accent-outline variant, but
+ * against a fixed colour (see AVATAR_COLOR) rather than the ambient module
+ * accent. `accent` stays as an explicit per-instance override.
  */
 export default function Avatar({ name, size = 34, accent }) {
-  const resolved = useAccent(accent)
+  const resolved = accent ?? AVATAR_COLOR
   return (
     <span
       aria-hidden="true"

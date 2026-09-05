@@ -16,7 +16,8 @@ import Button from '../components/Button.jsx'
 import DataList from '../components/DataList.jsx'
 import { MODULES } from '../data/modules.js'
 import { ModuleThemeProvider, useAccent } from '../context/ModuleThemeContext.jsx'
-import { SectionLabel, KanjiBreakdownEntry } from './dictionaryShared.jsx'
+import SectionHeader from '../components/SectionHeader.jsx'
+import { KanjiBreakdownEntry } from './dictionaryShared.jsx'
 
 const BG = '#1E1E1E'
 const DICTIONARY_ACCENT = MODULES.find(m => m.id === 'dictionary').accent
@@ -231,7 +232,7 @@ function KanjiSection({ entries, hasWords }) {
 
   return (
     <>
-      <SectionLabel label="Kanji" />
+      <SectionHeader title="Kanji" />
       <Card padding={0} style={{ overflow: expanded ? 'hidden' : 'visible', marginBottom: hasWords ? 20 : 0 }}>
         {!expanded ? (
           <div
@@ -516,7 +517,7 @@ export default function DictionaryPage() {
 
           {showResults && !loading && (
             <>
-              {kanjiResults.length > 0 && <SectionLabel label="Words" />}
+              {kanjiResults.length > 0 && <SectionHeader title="Words" />}
               <DataList
                 columns={ENTRY_ROW_COLUMNS}
                 rows={results}

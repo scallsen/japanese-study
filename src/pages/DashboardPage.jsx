@@ -3,7 +3,7 @@ import ModuleCard from '../components/ModuleCard.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import DistributionBar from '../components/DistributionBar.jsx'
-import SectionLabel from '../components/SectionLabel.jsx'
+import SectionHeader from '../components/SectionHeader.jsx'
 import TextbookPicker from '../components/TextbookPicker.jsx'
 import { NewCard, ReviewCard } from './homeCards.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
@@ -174,7 +174,7 @@ export default function DashboardPage() {
               {sidebarBelow && stats}
 
               <div>
-                <SectionLabel label="More tools" />
+                <SectionHeader title="More tools" />
                 <div style={{
                   display: 'grid',
                   gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(240px, 1fr))',
@@ -223,7 +223,7 @@ function StatsPanel({ columns, textbookState, signedOut, srs, articlesRead, seri
       minWidth: 0,
     }}>
       <div>
-        <SectionLabel label="Textbook" />
+        <SectionHeader title="Textbook" />
         {textbookState ? (
           <>
             <StatRow label="Chapters done" value={`${textbookState.doneCount} / ${textbookState.chapters.length}`} />
@@ -236,7 +236,7 @@ function StatsPanel({ columns, textbookState, signedOut, srs, articlesRead, seri
       </div>
 
       <div>
-        <SectionLabel label="Reviews" />
+        <SectionHeader title="Reviews" />
         {signedOut ? (
           <Muted>Sign in to see review stats.</Muted>
         ) : srs && srs.totalCards > 0 ? (
@@ -254,7 +254,7 @@ function StatsPanel({ columns, textbookState, signedOut, srs, articlesRead, seri
       </div>
 
       <div>
-        <SectionLabel label="Reading" />
+        <SectionHeader title="Reading" />
         <StatRow label="Articles read" value={articlesRead} />
         <StatRow label="Series tracked" value={seriesTracked} />
       </div>

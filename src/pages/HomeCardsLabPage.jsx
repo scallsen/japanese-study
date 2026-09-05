@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import PageHeader from '../components/PageHeader.jsx'
-import SectionLabel from '../components/SectionLabel.jsx'
+import SectionHeader from '../components/SectionHeader.jsx'
 import ChipSelector from '../components/Chip.jsx'
 import { NewCard, ReviewCard } from './homeCards.jsx'
 import { resolveTextbookState } from '../lib/textbookProgress.js'
@@ -203,7 +203,7 @@ export default function HomeCardsLabPage() {
           />
 
           <div style={{ marginTop: SPACE_32 }}>
-            <SectionLabel label="Pairs — as they sit on the home page" />
+            <SectionHeader title="Pairs — as they sit on the home page" />
             <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE_24 }}>
               {PAIRS.map(pair => (
                 <div key={pair.key}>
@@ -233,7 +233,7 @@ export default function HomeCardsLabPage() {
 function StateGrid({ title, width, states, render }) {
   return (
     <div style={{ marginTop: SPACE_32 }}>
-      <SectionLabel label={title} />
+      <SectionHeader title={title} />
       {/* flex-start, not the default stretch: a stretched cell would make the
           card's own height: 100% resolve against a box that includes this
           caption, and the card would overflow it. Equal heights are what the

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import PageHeader from '../components/PageHeader.jsx'
-import SectionLabel from '../components/SectionLabel.jsx'
+import SectionHeader from '../components/SectionHeader.jsx'
 import ChipSelector from '../components/Chip.jsx'
 import Button from '../components/Button.jsx'
 import Badge from '../components/Badge.jsx'
@@ -122,11 +122,11 @@ export default function TextbookPickerLabPage() {
               {active.blurb}
             </div>
 
-            <SectionLabel label="Preview" />
+            <SectionHeader title="Preview" />
             <MockPanel width={width}>{body}</MockPanel>
 
             <div style={{ marginTop: SPACE_32 }}>
-              <SectionLabel label="Trade-offs" />
+              <SectionHeader title="Trade-offs" />
               <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, minmax(0, 1fr))', gap: SPACE_16 }}>
                 {LAYOUTS.map(l => (
                   <div key={l.value} style={{ background: SURFACE, border: `1px solid ${HAIRLINE}`, borderRadius: 8, padding: SPACE_16 }}>
