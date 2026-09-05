@@ -28,11 +28,13 @@ const admin = SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
  * note on vocab-sync below.
  */
 
-// Known upstream limits, for the ANONYMOUS bucket (per jitenClient.js):
+// Upstream limits, for the ANONYMOUS bucket (per jitenClient.js):
 //   ~300 req/min general, ~10 req/min on the vocabulary endpoint.
-// A key moves us to a higher bucket whose numbers we do not know. These sit
-// below the anonymous figures on purpose, so they stay safe under the only
-// numbers we can actually check.
+//
+// Those are OUR limits: JITEN_API_KEY is not set on the project, so the
+// X-Api-Key header is never sent and every call goes out anonymously. A key
+// would move us to a higher bucket — worth getting, since one episode sync
+// alone nearly exhausts the anonymous vocabulary budget for a whole minute.
 //
 //   feature           cost per call          why this limit
 //   ----------------- ---------------------- --------------------------------
@@ -54,7 +56,11 @@ export const ANIME_LIMITS: Record<string, { perMinute: number; perDay: number }>
   'anime-browse': { perMinute: 30, perDay: 500 },
   'anime-lookup': { perMinute: 60, perDay: 240 },
   'anime-select': { perMinute: 30, perDay: 200 },
-  'anime-vocab-sync': { perMinute: 30, perDay: 300 },
+  // 10/min = ONE sync per minute, because one sync is already ~10 vocabulary
+  // requests and Jiten's anonymous budget for that endpoint is ~10/min. We
+  // send no API key (JITEN_API_KEY is unset), so the anonymous figures are
+  // simply our figures — an earlier 30 here was 3x over Jiten's own limit.
+  'anime-vocab-sync': { perMinute: 10, perDay: 300 },
 }
 
 // Charged up front for a sync, since the page count isn't known until the
