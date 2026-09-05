@@ -30,7 +30,9 @@ export default function AuthSlot() {
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-      <span style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>{initials}</span>
+      <a href="#/account" className="muted-link" style={{ fontSize: FS_BASE, color: TEXT_MUTED }} title="Account">
+        {initials}
+      </a>
       <button onClick={signOut} style={btnStyle}>Sign out</button>
     </div>
   )

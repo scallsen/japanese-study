@@ -57,6 +57,7 @@ Two patterns for internal modules. Pick the right one before looking for code:
 | `#/vocab-srs` | `VocabSrsModule` | `src/modules/vocab-srs/VocabSrsModule.jsx` |
 | `#/immersion` | `ImmersionModule` | `src/modules/immersion/ImmersionModule.jsx` |
 | `#/grammar-map` | `GrammarMapModule` | `src/modules/grammar-map/GrammarMapModule.jsx` |
+| `#/account` | `AccountPage` | `src/pages/AccountPage.jsx` |
 | `#/dictionary` | `DictionaryPage` | `src/pages/DictionaryPage.jsx` |
 | `#/dictionary/entry/:id` | `DictionaryEntryPage` | `src/pages/DictionaryEntryPage.jsx` |
 | `#/story` | `StoryModule` | `src/modules/story/StoryModule.jsx` |
@@ -416,14 +417,23 @@ grant all on audio_generation_status to service_role;
 
 ## Auth
 
-GitHub OAuth via Supabase. The auth layer is intentionally thin — no login page, no modal. The sign-in button in the dashboard header triggers the OAuth redirect directly.
+Multi-provider auth via Supabase: GitHub and Google OAuth, plus passwordless email magic link. There is deliberately **no password anywhere** — magic link instead, which avoids owning a password-reset flow.
+
+`signIn()` stays **parameterless** and opens `SignInDialog` rather than redirecting. With more than one provider available "Sign in" can no longer mean "go to GitHub", and keeping the signature meant the six existing call sites (`AuthSlot`, `VocabSrsModule`, `StoryModule`, `EpisodeDrill`, …) needed no change to gain the chooser. `signInWithProvider(id)` is the actual redirect.
 
 | File | Purpose |
 |---|---|
 | `src/lib/supabase.js` | Supabase client (reads `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`) |
-| `src/context/AuthContext.jsx` | `AuthProvider` + `useAuth()` — exposes `{ user, signIn, signOut, loading }` |
-| `src/components/AuthSlot.jsx` | Sign in / sign out control — used in dashboard header and module headers |
+| `src/context/AuthContext.jsx` | `AuthProvider` + `useAuth()` — exposes `{ user, loading, signIn, signInWithProvider, signInWithEmail, signOut, linkProvider, unlinkProvider, refreshUser }`; also renders `SignInDialog` |
+| `src/components/SignInDialog.jsx` | Provider chooser + magic-link field — composes `Modal`, opened by `signIn()` |
+| `src/data/authProviders.js` | `AUTH_PROVIDERS` — the one provider list shared by the dialog and the account page's linking UI |
+| `src/pages/AccountPage.jsx` | `#/account` — profile, linked accounts (link/unlink), sign out |
+| `src/components/AuthSlot.jsx` | Sign in / sign out control; the initials link to `#/account` |
 | `src/hooks/useProgress.js` | `useProgress(namespace)` — Supabase-backed progress hook (see below) |
+
+**`refreshUser()` exists because `onAuthStateChange` deliberately keeps the previous user object when the id is unchanged** (to avoid a `useProgress` reload flash on every token refresh). Linking or unlinking an identity changes `user.identities` but *not* the id, so without an explicit refresh the account page would never re-render. Any future change to something inside the user object rather than the user itself needs the same call.
+
+Adding a provider is: one entry in `AUTH_PROVIDERS` **and** enabling it in the Supabase dashboard. The code ships ahead of the dashboard toggle by design — an unconfigured provider's button simply errors, which is also the real launch gate for opening signups. Account linking additionally requires **Manual linking** to be enabled for the project.
 
 `AuthProvider` wraps the entire app in `main.jsx`. `loading` is true until the initial session resolves; the header auth slot renders nothing during this window to avoid a flash.
 

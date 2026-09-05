@@ -185,6 +185,18 @@ button, input, select, textarea {
   color: #E8E8E8;
 }
 
+/* Muted text that brightens on hover — the header's account link. Same
+   treatment as .modal-close-btn, kept separate so neither is renamed into
+   the other's meaning. */
+.muted-link {
+  transition: color 120ms;
+  text-decoration: none;
+}
+
+.muted-link:hover {
+  color: #E8E8E8;
+}
+
 /* Toast card variants fill the viewport on phones — a 420px card floating in
    the middle of a narrow screen wastes the space and reads as misaligned.
    Widening (rather than repositioning to left/right: 0) keeps the existing

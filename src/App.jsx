@@ -7,6 +7,7 @@ import ImmersionModule from './modules/immersion/ImmersionModule.jsx'
 import GrammarMapModule from './modules/grammar-map/GrammarMapModule.jsx'
 import StoryModule from './modules/story/StoryModule.jsx'
 import StoryReviewPage from './modules/story/StoryReviewPage.jsx'
+import AccountPage from './pages/AccountPage.jsx'
 import DictionaryPage from './pages/DictionaryPage.jsx'
 import DictionaryEntryPage from './pages/DictionaryEntryPage.jsx'
 import AnimeVocabModule from './modules/anime-vocab/AnimeVocabModule.jsx'
@@ -47,6 +48,7 @@ export default function App() {
   if (route === '/grammar-map') return <GrammarMapModule />
   if (route === '/story') return <StoryModule />
   if (route.startsWith('/story/')) return <StoryReviewPage storyId={route.slice('/story/'.length)} />
+  if (route === '/account') return <AccountPage />
   if (route === '/dictionary') return <DictionaryPage />
   if (route.startsWith('/dictionary/entry/')) return <DictionaryEntryPage entryId={route.slice('/dictionary/entry/'.length)} />
   if (route === '/anime-vocab') return <AnimeVocabModule />
