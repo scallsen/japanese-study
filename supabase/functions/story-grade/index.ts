@@ -1,5 +1,6 @@
 import Anthropic from 'npm:@anthropic-ai/sdk@0.104.1'
 import { requireUser, authErrorResponse } from '../_shared/auth.ts'
+import { consumeQuota, quotaErrorResponse } from '../_shared/quota.ts'
 
 const DEFAULT_MODEL = Deno.env.get('GRADE_MODEL') || 'claude-haiku-4-5'
 
@@ -37,7 +38,7 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS_HEADERS })
 
   try {
-    await requireUser(req)
+    const user = await requireUser(req)
 
     const {
       question,
@@ -50,6 +51,11 @@ Deno.serve(async (req) => {
     if (!question || !correctAnswer || !userAnswer) {
       return jsonResponse({ error: 'question, correctAnswer, and userAnswer are required' }, 400)
     }
+
+    // After validation, so a malformed request costs nothing. No refund path
+    // here: grading is cheap, and its usual failure is a model refusal, which
+    // did consume a real API call.
+    await consumeQuota(user.id, 'story-grade')
 
     const client = new Anthropic({ apiKey: Deno.env.get('ANTHROPIC_API_KEY') })
 
@@ -81,7 +87,7 @@ Deno.serve(async (req) => {
     const result = JSON.parse(textBlock.text)
     return jsonResponse({ ...result, model: response.model })
   } catch (err) {
-    const denied = authErrorResponse(err, jsonResponse)
+    const denied = authErrorResponse(err, jsonResponse) ?? quotaErrorResponse(err, jsonResponse)
     if (denied) return denied
     console.error('[story-grade]', err)
     return jsonResponse({ error: err?.message || 'Grading failed' }, 500)

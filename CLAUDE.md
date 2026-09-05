@@ -1074,6 +1074,59 @@ The Anthropic API key never reaches the client — all calls go through Supabase
 
 **Every function that spends money must call `requireUser(req)` first** (`supabase/functions/_shared/auth.ts`). The platform's `verify_jwt` is *not* an identity check: the anon key is itself a valid project JWT and ships in every browser bundle, so it clears the gateway and reaches the function body. `requireUser` resolves the bearer token to a real user via `auth.getUser()` and throws an `AuthError` otherwise; pair it with `authErrorResponse(err, jsonResponse)` in the function's `catch` so the rejection keeps that function's own error contract. In `story-generate` the call must stay **ahead of the ReadableStream** — once the stream opens the response is committed to `200 text/plain` and a real status code is no longer possible. This helper is deliberately shared rather than duplicated per function (the norm for the tokenizer setup below): an auth check that drifts between copies is worse than no check at all. Currently applied to `story-generate`, `story-grade`, `word-import`; the four `anime-*` functions proxy the keyed Jiten API and are still open — see the accounts work before relying on that.
 
+### AI usage quotas
+
+Requiring an account is **not** a cost control — once signups are open, an account is free and instant. `supabase/functions/_shared/quota.ts` is what actually caps the Anthropic bill: `consumeQuota(userId, feature)` before the model call, `refundQuota` if the work then fails, `quotaErrorResponse` in the `catch` (chain it after `authErrorResponse` with `??`). In `story-generate` the consume call has the same constraint as `requireUser` — it must precede the `ReadableStream`, or a 429 can't be expressed.
+
+`DAILY_LIMITS` is keyed by **unit of cost, not function name**: `story-generate` (5/day), `word-import-image` (10/day), `story-grade` (30/day). Per-feature rather than one shared pool because a Sonnet generation and a Haiku grading differ in cost by more than an order of magnitude, and a single counter would let the expensive one silently eat the cheap one's budget. `word-import`'s **text** mode makes no Anthropic call and is deliberately absent from the table, so it is free.
+
+Refunds are deliberate but not universal: `story-generate` and `word-import`'s OCR refund on failure, because losing one of five daily generations to a server error is the difference between a limit and a punishment. `story-grade` does not — it's cheap, and its usual failure is a model refusal that did consume a real API call.
+
+```sql
+create table if not exists ai_usage (
+  user_id uuid references auth.users on delete cascade not null,
+  feature text not null,   -- a key of DAILY_LIMITS
+  day date not null,       -- UTC
+  count integer not null default 0,
+  primary key (user_id, feature, day)
+);
+
+alter table ai_usage enable row level security;
+create policy "read own usage" on ai_usage for select using (auth.uid() = user_id);
+grant select on ai_usage to authenticated;
+grant all on ai_usage to service_role;
+
+-- Increment and check in ONE statement. A read-then-write pair would let two
+-- concurrent requests both observe "under the limit" and both proceed.
+-- Returns the new count, or NULL when the user is already at the limit.
+create or replace function consume_ai_quota(p_user uuid, p_feature text, p_limit int)
+returns int language sql as $$
+  insert into ai_usage (user_id, feature, day, count)
+  values (p_user, p_feature, (now() at time zone 'utc')::date, 1)
+  on conflict (user_id, feature, day) do update
+    set count = ai_usage.count + 1
+    where ai_usage.count < p_limit
+  returning count;
+$$;
+
+create or replace function refund_ai_quota(p_user uuid, p_feature text)
+returns void language sql as $$
+  update ai_usage set count = greatest(count - 1, 0)
+  where user_id = p_user and feature = p_feature
+    and day = (now() at time zone 'utc')::date;
+$$;
+
+-- REQUIRED, not tidiness: Postgres grants EXECUTE on new functions to PUBLIC
+-- by default. Without this, any signed-in user could call refund_ai_quota over
+-- PostgREST's /rpc/ endpoint and hand themselves unlimited usage.
+revoke execute on function consume_ai_quota(uuid, text, int) from public, anon, authenticated;
+revoke execute on function refund_ai_quota(uuid, text) from public, anon, authenticated;
+grant execute on function consume_ai_quota(uuid, text, int) to service_role;
+grant execute on function refund_ai_quota(uuid, text) to service_role;
+```
+
+`ai_usage.user_id` cascades on delete, so account deletion needs no change to `delete-account` — unlike `progress` and `stories`, which don't cascade and must be deleted explicitly there. Prefer the cascade for any new user-scoped table.
+
 Deploy (one-time setup):
 
 ```

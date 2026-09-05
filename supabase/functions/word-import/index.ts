@@ -2,6 +2,7 @@ import Anthropic from 'npm:@anthropic-ai/sdk@0.104.1'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import * as kuromoji from 'npm:@patdx/kuromoji@1.0.4'
 import { requireUser, authErrorResponse } from '../_shared/auth.ts'
+import { consumeQuota, refundQuota, quotaErrorResponse } from '../_shared/quota.ts'
 
 const DEFAULT_MODEL = Deno.env.get('WORD_IMPORT_MODEL') || 'claude-sonnet-5'
 const MAX_WORDS = 60
@@ -139,7 +140,7 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS_HEADERS })
 
   try {
-    await requireUser(req)
+    const user = await requireUser(req)
 
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
       return jsonResponse({ error: 'Server misconfigured: missing Supabase service role credentials' }, 500)
@@ -155,8 +156,16 @@ Deno.serve(async (req) => {
       if (Math.floor(image.length * 3 / 4) > MAX_IMAGE_BYTES) {
         return jsonResponse({ error: 'Image is too large. Please use an image under 5 MB.' }, 413)
       }
+      // Image mode only. Text mode below makes no Anthropic call at all, so
+      // charging it would be charging for Kuromoji and a dictionary lookup.
+      await consumeQuota(user.id, 'word-import-image')
       const client = new Anthropic({ apiKey: Deno.env.get('ANTHROPIC_API_KEY') })
-      sourceText = await ocrImage(client, image, mediaType, model)
+      try {
+        sourceText = await ocrImage(client, image, mediaType, model)
+      } catch (err) {
+        await refundQuota(user.id, 'word-import-image')
+        throw err
+      }
     } else if (mode === 'text') {
       if (!text || typeof text !== 'string') return jsonResponse({ error: 'text is required for mode "text"' }, 400)
       sourceText = text
@@ -186,7 +195,7 @@ Deno.serve(async (req) => {
 
     return jsonResponse({ words, truncated })
   } catch (err) {
-    const denied = authErrorResponse(err, jsonResponse)
+    const denied = authErrorResponse(err, jsonResponse) ?? quotaErrorResponse(err, jsonResponse)
     if (denied) return denied
     console.error('[word-import]', err)
     return jsonResponse({ error: err?.message || 'Word extraction failed' }, 500)

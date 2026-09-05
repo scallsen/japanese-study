@@ -1,6 +1,7 @@
 import Anthropic from 'npm:@anthropic-ai/sdk@0.104.1'
 import * as kuromoji from 'npm:@patdx/kuromoji@1.0.4'
 import { requireUser, authErrorResponse } from '../_shared/auth.ts'
+import { consumeQuota, refundQuota, quotaErrorResponse } from '../_shared/quota.ts'
 
 const DEFAULT_MODEL = Deno.env.get('STORY_MODEL') || 'claude-sonnet-5'
 
@@ -121,7 +122,7 @@ Deno.serve(async (req) => {
     // Must stay ahead of the ReadableStream below: once the stream opens the
     // response is committed to 200 text/plain, and a rejection could only be
     // smuggled into the payload instead of being a real status code.
-    await requireUser(req)
+    const user = await requireUser(req)
 
     const {
       learnerContext,
@@ -139,6 +140,10 @@ Deno.serve(async (req) => {
     if (mode === 'based-on' && !basedOn.trim()) {
       return jsonResponse({ error: 'basedOn is required when mode is "based-on"' }, 400)
     }
+
+    // Like requireUser, this has to precede the stream: once it opens the
+    // response is committed to 200 and a 429 is no longer expressible.
+    await consumeQuota(user.id, 'story-generate')
 
     const client = new Anthropic({ apiKey: Deno.env.get('ANTHROPIC_API_KEY') })
 
@@ -206,6 +211,10 @@ Deno.serve(async (req) => {
           controller.enqueue(encoder.encode('\n' + JSON.stringify(payload)))
         } catch (err) {
           console.error('[story-generate]', err)
+          // The quota was taken before the stream opened, so a failure here
+          // would otherwise cost one of the day's few generations for a story
+          // the user never received.
+          await refundQuota(user.id, 'story-generate')
           controller.enqueue(encoder.encode('\n' + JSON.stringify({ error: err?.message || 'Generation failed' })))
         } finally {
           clearInterval(heartbeat)
@@ -218,7 +227,7 @@ Deno.serve(async (req) => {
       headers: { ...CORS_HEADERS, 'Content-Type': 'text/plain; charset=utf-8' },
     })
   } catch (err) {
-    const denied = authErrorResponse(err, jsonResponse)
+    const denied = authErrorResponse(err, jsonResponse) ?? quotaErrorResponse(err, jsonResponse)
     if (denied) return denied
     console.error('[story-generate]', err)
     return jsonResponse({ error: err?.message || 'Generation failed' }, 500)
