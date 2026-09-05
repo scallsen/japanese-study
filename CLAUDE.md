@@ -334,7 +334,7 @@ create table if not exists sentences (
 create index sentences_dictionary_ids_gin on sentences using gin (dictionary_ids);
 grant select on sentences to anon, authenticated;
 grant all on sentences to service_role;
--- Supabase enables RLS on every new table by default — without a policy,
+-- RLS is enabled on every new table automatically — without a policy,
 -- anon/authenticated reads silently return zero rows (no error):
 alter table sentences enable row level security;
 create policy "public read" on sentences for select using (true);
@@ -414,6 +414,14 @@ grant all on audio_generation_status to service_role;
 - Desktop: main content area + chevron toggle + collapsible sidebar (420px wide)
 - Mobile: full-screen overlay triggered by "Show options" button in header
 - `useIsMobile(768)` and `useIsShort(680)` hooks defined inline in `VocabPage.jsx`
+
+## Database safety net: `rls_auto_enable`
+
+An **event trigger** in the database enables row-level security on every table created in `public`, automatically. It exists only in the database — not in this repo, and not in any migration — so it is easy to be surprised by. It is why a freshly created table already has RLS on, and therefore why a new table returns **zero rows with no error** until you add a policy (the trap called out in the `sentences` schema above).
+
+Safe to leave alone: it `RETURNS event_trigger`, so it cannot be invoked directly even though `PUBLIC` holds EXECUTE on it; it is `SECURITY DEFINER` with `search_path` pinned to `pg_catalog`, which closes the usual escalation vector; and the most it can do is *enable* RLS, swallowing errors so it can never break a migration.
+
+An audit of `anon`/`authenticated` grants (2026-09-05) was otherwise clean: no write access to any reference table, RLS on across the board, and no EXECUTE on the quota functions. The only expected write grants are `progress` (INSERT/UPDATE) and `stories` (INSERT) for `authenticated`, both confined to the caller's own rows by RLS.
 
 ## Auth
 
