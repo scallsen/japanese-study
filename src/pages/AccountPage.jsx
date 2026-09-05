@@ -9,6 +9,8 @@ import DataList from '../components/DataList.jsx'
 import ConfirmDialog from '../components/ConfirmDialog.jsx'
 import Modal from '../components/Modal.jsx'
 import Markdown from '../components/Markdown.jsx'
+import TopProgressBar from '../components/TopProgressBar.jsx'
+import { useAccent } from '../context/ModuleThemeContext.jsx'
 // Inlined at build time by Vite, so the modal always shows the committed file
 // rather than a copy that drifts from it.
 import PRIVACY_MD from '../../PRIVACY.md?raw'
@@ -32,6 +34,7 @@ import {
 } from '../data/theme.js'
 
 const COLUMN_WIDTH = 640
+const USAGE_BAR_WIDTH = 120
 
 export default function AccountPage() {
   const { user, loading, signIn, signOut, linkProvider, unlinkProvider, refreshUser } = useAuth()
@@ -43,7 +46,9 @@ export default function AccountPage() {
   // actually stored — and lets them choose "own" before entering one.
   const [providerChoice, setProviderChoice] = useState(null)
   const [privacyOpen, setPrivacyOpen] = useState(false)
+  const [confirmingKeyRemoval, setConfirmingKeyRemoval] = useState(false)
   const isMobile = useIsMobile()
+  const accent = useAccent()
 
   // Above the early returns below — hooks can't run conditionally.
   const { usage } = useAiUsage()
@@ -252,12 +257,30 @@ export default function AccountPage() {
 
   // Selecting "free" while a key is stored has to actually remove it — the
   // server decides which key it uses by whether one exists, so leaving it
-  // behind would make this control lie about what's happening.
+  // behind would make this control lie about what's happening. Which is
+  // exactly why it asks first: the key can't be shown again, so re-entering
+  // means fetching it from Anthropic.
   const provider = providerChoice ?? (keyHint ? 'own' : 'free')
 
   function handleProviderChange(next) {
+    if (next === 'free' && keyHint) {
+      setConfirmingKeyRemoval(true)
+      return
+    }
     setProviderChoice(next)
-    if (next === 'free' && keyHint) removeApiKey()
+  }
+
+  async function confirmKeyRemoval() {
+    setConfirmingKeyRemoval(false)
+    setProviderChoice('free')
+    await removeApiKey()
+  }
+
+  // Saving on blur rather than behind a button: the field is the only thing in
+  // its row, so a button beside it either stretched the row or shrank out of
+  // proportion to it. Enter blurs, which routes to the same path.
+  function handleKeyFieldBlur() {
+    if (keyInput.trim() && !busy) saveApiKey()
   }
 
   const providerRows = [
@@ -269,6 +292,9 @@ export default function AccountPage() {
           value={provider}
           onChange={handleProviderChange}
           disabled={busy || keyLoading}
+          // Same treatment as the Story generator's Format picker: text and a
+          // chevron, no field box, since the row already reads as a row.
+          variant="inline"
           options={[
             { value: 'free', label: 'Free limited usage' },
             { value: 'own', label: 'Your own account' },
@@ -287,18 +313,19 @@ export default function AccountPage() {
           <Button variant="ghost-muted" size="sm" disabled={busy} onClick={removeApiKey}>Remove</Button>
         </span>
       ) : (
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: SPACE_8, width: '100%' }}>
-          <TextInput
-            type="password"
-            value={keyInput}
-            onChange={setKeyInput}
-            placeholder="sk-ant-..."
-            disabled={busy}
-            autoComplete="off"
-            style={{ flex: 1, minWidth: 120 }}
-          />
-          <Button size="sm" disabled={busy || !keyInput.trim()} onClick={saveApiKey}>Save</Button>
-        </span>
+        <TextInput
+          type="password"
+          value={keyInput}
+          onChange={setKeyInput}
+          placeholder="sk-ant-..."
+          disabled={busy}
+          autoComplete="off"
+          // sm keeps the field within the row's own line height, so adding it
+          // doesn't make this row taller than the one above.
+          size="sm"
+          onBlur={handleKeyFieldBlur}
+          onKeyDown={e => { if (e.key === 'Enter') e.currentTarget.blur() }}
+        />
       ),
     }] : []),
   ]
@@ -311,10 +338,26 @@ export default function AccountPage() {
   const usingOwnKey = provider === 'own' && !!keyHint
 
   const usageColumns = [
-    { key: 'label', width: 220 },
+    { key: 'label', flex: 1 },
+    // Free only: a meter of the day's allowance. Fixed width rather than
+    // flexed, so every row's bar is the same length and they read as
+    // comparable rather than as three different scales.
+    ...(usingOwnKey ? [] : [{
+      key: 'meter',
+      width: USAGE_BAR_WIDTH,
+      render: row => (
+        <span style={{ display: 'block', width: USAGE_BAR_WIDTH }}>
+          <TopProgressBar
+            progress={Math.min(1, (usage.today[row.feature] ?? 0) / row.limit)}
+            color={accent}
+          />
+        </span>
+      ),
+    }]),
     {
       key: 'used',
-      flex: 1,
+      width: usingOwnKey ? 210 : 90,
+      align: 'right',
       tone: 'muted',
       // On their own key there is no cap to count against, so the useful
       // figure is what they've actually spent rather than what's left.
@@ -386,13 +429,21 @@ export default function AccountPage() {
             <div style={{ color: DANGER, fontSize: FS_BASE, lineHeight: 1.5 }}>{error}</div>
           )}
 
-          <div>
+          {/* Matches AttributionFooter's treatment — centred, muted, and using
+              the same .attribution-link class so the hover behaves identically.
+              Not literally that component: it renders from the static
+              ATTRIBUTIONS registry as <a href> only, and this opens a modal. */}
+          <div style={{
+            textAlign: 'center', paddingTop: SPACE_8,
+            fontSize: FS_SM, color: TEXT_MUTED, opacity: 0.55, lineHeight: 1.6,
+          }}>
             <button
               onClick={() => setPrivacyOpen(true)}
-              className="muted-link"
+              className="attribution-link"
               style={{
                 background: 'none', border: 'none', padding: 0, cursor: 'pointer',
-                fontFamily: FONT, fontSize: FS_SM, letterSpacing: TRACKING, color: TEXT_MUTED,
+                fontFamily: FONT, fontSize: FS_SM, letterSpacing: TRACKING,
+                textDecoration: 'underline', textDecorationColor: 'rgba(255,255,255,0.3)',
               }}
             >
               Privacy policy
@@ -412,6 +463,15 @@ export default function AccountPage() {
             GitHub; here the modal header already carries the title. */}
         <Markdown source={PRIVACY_MD.replace(/^#\s+.*\n+/, '')} />
       </Modal>
+
+      <ConfirmDialog
+        open={confirmingKeyRemoval}
+        title="Switch to free usage?"
+        message="This deletes your stored Anthropic API key. It can't be shown again, so you'd need to fetch it from Anthropic to re-enter it."
+        confirmLabel="Delete key"
+        onConfirm={confirmKeyRemoval}
+        onCancel={() => setConfirmingKeyRemoval(false)}
+      />
 
       <ConfirmDialog
         open={confirmingDelete}

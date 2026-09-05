@@ -4,7 +4,7 @@ import Menu from './Menu.jsx'
 import Popover from './Popover.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useIsMobile } from '../hooks/useIsMobile.js'
-import { FONT, TRACKING, TEXT_MUTED, FS_BASE } from '../data/theme.js'
+import { FONT, TRACKING, FS_BASE } from '../data/theme.js'
 
 const MENU_ITEMS = [
   { id: 'account', label: 'Manage account' },
@@ -25,9 +25,10 @@ export default function AuthSlot() {
         onClick={signIn}
         className="muted-link"
         style={{
+          // No colour here — .muted-link owns it so its :hover can win.
           background: 'none', border: 'none', padding: 0, cursor: 'pointer',
           fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING,
-          color: TEXT_MUTED, height: 34,
+          height: 34,
         }}
       >
         Sign in

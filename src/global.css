@@ -213,10 +213,12 @@ button, input, select, textarea {
   color: #E8E8E8;
 }
 
-/* Muted text that brightens on hover — the header's account link. Same
-   treatment as .modal-close-btn, kept separate so neither is renamed into
-   the other's meaning. */
+/* Muted text that brightens on hover. The colour lives HERE rather than on the
+   caller's inline style: an inline colour always beats a class's :hover, which
+   is the same trap attributionSegments.jsx documents and the reason this rule
+   silently did nothing at first. */
 .muted-link {
+  color: #888888;
   transition: color 120ms;
   text-decoration: none;
 }
