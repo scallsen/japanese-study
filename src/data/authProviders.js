@@ -13,6 +13,15 @@ export const AUTH_PROVIDERS = [
 // rather than being a bare string in three places.
 export const EMAIL_PROVIDER = 'email'
 
+// Magic-link sign-in is built and working, but hidden: Supabase's built-in SMTP
+// is rate-limited and on newer projects only delivers to members of the project's
+// own org, so a link sent to a real user would simply never arrive. Unlike the
+// OAuth buttons — which may ship ahead of their dashboard toggle because a
+// misconfigured one fails loudly and immediately — a magic link fails *silently*,
+// leaving the user staring at "check your email" forever. Flip this to true once
+// custom SMTP is configured and the Email provider is enabled.
+export const EMAIL_SIGN_IN_ENABLED = false
+
 export function providerLabel(id) {
   if (id === EMAIL_PROVIDER) return 'Email'
   return AUTH_PROVIDERS.find(p => p.id === id)?.label ?? id
