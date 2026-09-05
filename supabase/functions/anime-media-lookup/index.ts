@@ -1,5 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
-import { enforceRateLimit, rateLimitErrorResponse } from '../_shared/rateLimit.ts'
+import { enforceRateLimit, rateLimitErrorResponse, MAX_LOOKUP_IDS } from '../_shared/rateLimit.ts'
 
 // Fetches live cover/difficulty details for a fixed set of Jiten deck ids —
 // used by the curated "recommended for beginners" list
@@ -60,14 +60,21 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS_HEADERS })
 
   try {
-    // Anonymous by design — bounded by IP rather than by account.
-    await enforceRateLimit(req, 'anime-lookup')
-
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
       return jsonResponse({ error: 'Server misconfigured: missing Supabase service role credentials' }, 500)
     }
     const { externalIds } = await req.json()
     if (!Array.isArray(externalIds) || externalIds.length === 0) return jsonResponse({ results: [] })
+    // Capped independently of the rate limit: the fetch below issues one
+    // upstream request per id in parallel, so an unbounded array turns one
+    // request into arbitrarily many.
+    if (externalIds.length > MAX_LOOKUP_IDS) {
+      return jsonResponse({ error: `Too many ids — ${MAX_LOOKUP_IDS} maximum per request.` }, 400)
+    }
+
+    // Anonymous by design — bounded by IP rather than account. The cost is the
+    // batch size, since that is how many upstream requests this will make.
+    await enforceRateLimit(req, 'anime-lookup', { cost: externalIds.length })
 
     const summaries = (await Promise.all(externalIds.map((id: unknown) => fetchSummary(String(id))))).filter(Boolean) as any[]
 

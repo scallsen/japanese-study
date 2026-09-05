@@ -9,34 +9,63 @@ const admin = SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
   : null
 
 /**
- * Two-window rate limiting for endpoints that can't require a login.
+ * Two-window rate limiting for the anime endpoints, which work signed out by
+ * design and so can't be bounded per account.
  *
- * The anime module works signed out by design, so per-user quotas don't apply.
- * What still needs bounding is that these functions proxy Jiten with *our* API
- * key: unmetered, a scraper spends our private allowance (rate-limiting our own
- * users) and our Supabase invocation quota, which is shared with every other
- * function including the AI ones.
+ * **Limits are denominated in Jiten requests, not in calls to us.** One call to
+ * us fans out to a variable number of upstream requests, so counting our own
+ * invocations produced numbers that couldn't be compared to Jiten's published
+ * ones at all — a limit of 10 syncs/minute is really up to 100 upstream
+ * requests/minute against an endpoint Jiten caps at ~10/minute anonymously.
+ * Each call therefore declares its `cost`.
  *
- * Both windows matter and neither substitutes for the other. The per-minute
- * window stops a burst — a runaway client loop, or a scraper going flat out.
- * The daily cap stops the patient version: someone crawling all of Jiten
- * slowly enough to stay under the minute limit forever.
- *
- * Limits are derived from what one interaction actually costs (see
- * ANIME_LIMITS) rather than picked round, and sit far enough above real use
- * that a person will never meet one.
+ * What this does and does not achieve, because the two are easy to conflate:
+ * it stops ONE caller monopolising the allowance. It does NOT bound the total,
+ * since Jiten limits our key across all users at once and ten well-behaved
+ * users still sum to ten times one user. A global ceiling would be a separate
+ * mechanism, and sizing one needs the real limit for our key, which is not
+ * documented anywhere. Caching is what actually keeps the total low — see the
+ * note on vocab-sync below.
  */
 
-// Per feature: { perMinute, perDay }. A single human session browsing hard
-// might reach a few dozen searches a minute at the very top end; syncing an
-// episode is rare and expensive (that one call fans out to 10+ Jiten requests
-// at 200 vocabulary rows a page), which is why its numbers are far lower.
+// Known upstream limits, for the ANONYMOUS bucket (per jitenClient.js):
+//   ~300 req/min general, ~10 req/min on the vocabulary endpoint.
+// A key moves us to a higher bucket whose numbers we do not know. These sit
+// below the anonymous figures on purpose, so they stay safe under the only
+// numbers we can actually check.
+//
+//   feature           cost per call          why this limit
+//   ----------------- ---------------------- --------------------------------
+//   anime-browse      1 (up to ~4 paging)    Live search, uncached, fires as
+//                                            you type — the ONLY endpoint whose
+//                                            load grows with user count, so it
+//                                            gets the tightest treatment.
+//   anime-lookup      externalIds.length     Client-side cached; one batch of
+//                                            12 curated titles per page load.
+//   anime-select      1 (~2-5 paging)        Once per series a user links.
+//   anime-vocab-sync  VOCAB_SYNC_COST        Fans out over 200-row pages, but
+//                                            is idempotent: an episode is
+//                                            fetched from Jiten exactly once
+//                                            ever, across all users. Naturally
+//                                            bounded, so it can afford more
+//                                            headroom than its raw fan-out
+//                                            suggests.
 export const ANIME_LIMITS: Record<string, { perMinute: number; perDay: number }> = {
-  'anime-browse': { perMinute: 40, perDay: 600 },
-  'anime-lookup': { perMinute: 40, perDay: 600 },
-  'anime-select': { perMinute: 15, perDay: 150 },
-  'anime-vocab-sync': { perMinute: 10, perDay: 60 },
+  'anime-browse': { perMinute: 30, perDay: 500 },
+  'anime-lookup': { perMinute: 60, perDay: 240 },
+  'anime-select': { perMinute: 30, perDay: 200 },
+  'anime-vocab-sync': { perMinute: 30, perDay: 300 },
 }
+
+// Charged up front for a sync, since the page count isn't known until the
+// pagination finishes. Deliberately the worst case rather than an average:
+// over-charging a short episode is the safe direction.
+export const VOCAB_SYNC_COST = 10
+
+// An oversized array is its own amplification vector — one request becoming
+// hundreds of upstream ones — so the batch is capped independently of the
+// rate limit.
+export const MAX_LOOKUP_IDS = 24
 
 export class RateLimitError extends Error {
   status: number
@@ -50,12 +79,10 @@ export class RateLimitError extends Error {
 // A salted hash, never the address itself. An unsalted hash of an IPv4 is
 // trivially reversible (there are only ~4 billion), so it would still be
 // personal data; salting with a secret the database never sees makes the
-// stored value non-identifying, which is also why the privacy policy doesn't
-// have to claim we store IP addresses.
-//
-// The salt is derived from an existing secret with a purpose string rather
-// than reusing it directly, so this can't be used to attack the encryption
-// key and doesn't add another secret to manage.
+// stored value non-identifying, which is also why PRIVACY.md doesn't have to
+// claim we store IP addresses. The salt derives from an existing secret with a
+// purpose string rather than reusing it directly, so this can't be used to
+// attack the encryption key and adds no new secret to manage.
 async function bucketFor(req: Request, userId: string | null) {
   if (userId) return `user:${userId}`
   const ip = (req.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() || 'unknown'
@@ -65,33 +92,40 @@ async function bucketFor(req: Request, userId: string | null) {
   return `ip:${hex.slice(0, 32)}`
 }
 
-function windowKeys(now: Date) {
+function windowsFor(now: Date) {
   const iso = now.toISOString()
   return [
-    { key: `min:${iso.slice(0, 16)}`, expires: new Date(now.getTime() + 120_000) },
-    { key: `day:${iso.slice(0, 10)}`, expires: new Date(now.getTime() + 172_800_000) },
+    { key: `min:${iso.slice(0, 16)}`, expires: new Date(now.getTime() + 120_000), burst: true },
+    { key: `day:${iso.slice(0, 10)}`, expires: new Date(now.getTime() + 172_800_000), burst: false },
   ]
 }
 
 /**
- * Throws RateLimitError when either window is exhausted. Fails **open**: if the
- * limiter itself is broken or unreachable, anime browsing keeps working rather
- * than the whole module going down to protect a third-party rate limit.
+ * Throws RateLimitError when either window can't absorb `cost`.
+ *
+ * Fails **open**: if the limiter itself is broken or unreachable the request
+ * proceeds, because anime browsing staying up matters more than protecting a
+ * third-party rate limit. That also means deploying ahead of the SQL is safe.
  */
-export async function enforceRateLimit(req: Request, feature: string, userId: string | null = null) {
+export async function enforceRateLimit(
+  req: Request,
+  feature: string,
+  { cost = 1, userId = null }: { cost?: number; userId?: string | null } = {},
+) {
   const limits = ANIME_LIMITS[feature]
   if (!admin || !limits) return
 
   const bucket = await bucketFor(req, userId)
   const now = new Date()
-  const [minute, day] = windowKeys(now)
 
-  for (const [window, limit] of [[minute, limits.perMinute], [day, limits.perDay]] as const) {
+  for (const window of windowsFor(now)) {
+    const limit = window.burst ? limits.perMinute : limits.perDay
     const { data, error } = await admin.rpc('consume_rate_limit', {
       p_bucket: bucket,
       p_feature: feature,
       p_window_key: window.key,
       p_limit: limit,
+      p_cost: cost,
       p_expires: window.expires.toISOString(),
     })
     if (error) {
@@ -100,7 +134,7 @@ export async function enforceRateLimit(req: Request, feature: string, userId: st
     }
     if (data === null || data === undefined) {
       throw new RateLimitError(
-        window.key.startsWith('min:')
+        window.burst
           ? 'Too many requests just now. Wait a moment and try again.'
           : 'Daily limit reached for this feature. Try again tomorrow.',
       )

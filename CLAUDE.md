@@ -1187,7 +1187,13 @@ Client side, `useAiUsage()` (`src/hooks/useAiUsage.js`) returns today's counts k
 
 The four `anime-*` functions **work signed out on purpose** — only following a series and sending words to SRS need an account — so per-user quotas don't apply to them. What still needs bounding is that they proxy Jiten with *our* `JITEN_API_KEY`: unmetered, a scraper spends our private Jiten allowance (rate-limiting our own users, since an anonymous caller would otherwise only burn Jiten's shared pool) and our **Supabase invocation quota**, which is shared with every other function including the AI ones. That second one is the real reason this exists — sustained spam against an anime endpoint could degrade the whole app.
 
-`enforceRateLimit(req, feature)` (`supabase/functions/_shared/rateLimit.ts`) applies **two windows, and neither substitutes for the other**: per-minute stops a burst or a runaway client loop; per-day stops the patient scraper who stays under the minute limit forever. Limits in `ANIME_LIMITS` are derived from what one interaction actually costs, not picked round — `anime-vocab-sync` is far lower because a single call fans out to 10+ Jiten requests at 200 vocabulary rows a page.
+`enforceRateLimit(req, feature, { cost })` (`supabase/functions/_shared/rateLimit.ts`) applies **two windows, and neither substitutes for the other**: per-minute stops a burst or a runaway client loop; per-day stops the patient scraper who stays under the minute limit forever.
+
+**Limits are denominated in Jiten requests, not in calls to us**, which is the only unit comparable to Jiten's own published numbers. One call fans out to a variable number of upstream requests, so counting invocations gave figures that looked safe and weren't — a cap of "10 syncs a minute" is really up to 100 upstream requests a minute against an endpoint Jiten caps at ~10/min anonymously. Each call declares its `cost`: `anime-lookup` charges `externalIds.length` (one upstream request per id, issued in parallel, and the array is capped at `MAX_LOOKUP_IDS` since otherwise one request becomes arbitrarily many), `anime-vocab-sync` charges `VOCAB_SYNC_COST` as a worst-case page count, and the rest charge 1.
+
+**`anime-browse` gets the tightest limit, which is the opposite of what raw fan-out suggests.** It is a live, uncached search that fires as the user types, and the only one of the four whose load grows with the number of users. `anime-vocab-sync` looks alarming — 200-row pages, 10+ upstream calls — but is idempotent: it early-returns on `episode.synced_at`, so an episode is fetched from Jiten **exactly once ever, across all users**, and repeat requests cost nothing upstream. Caching, not rate limiting, is what keeps total Jiten traffic flat as the user base grows.
+
+**What this achieves and what it doesn't.** It stops one caller monopolising the allowance. It does **not** bound the total: Jiten limits our key across all users at once, and ten well-behaved users still sum to ten times one user. A global ceiling would be a separate mechanism, and sizing one requires the real limit for our key — which is documented nowhere, so only the anonymous figures (~300 req/min general, ~10 req/min vocabulary) are known. These limits sit below those on purpose, so they stay safe against the only numbers that can actually be checked.
 
 The bucket is `user:<id>` when signed in, otherwise `ip:<salted hash>`. **The hash is salted deliberately:** an unsalted hash of an IPv4 is trivially reversible, so it would still be personal data — salting with a secret the database never sees keeps the stored value non-identifying, which is also why PRIVACY.md doesn't have to claim we store IP addresses. The salt is derived from `API_KEY_ENCRYPTION_SECRET` with a purpose string rather than reusing it directly.
 
@@ -1212,25 +1218,29 @@ grant all on rate_limit to service_role;
 -- Returns the new count, or NULL when that window is already full.
 create or replace function consume_rate_limit(
   p_bucket text, p_feature text, p_window_key text,
-  p_limit int, p_expires timestamptz
+  p_limit int, p_cost int, p_expires timestamptz
 ) returns int language plpgsql as $$
 declare v_count int;
 begin
+  -- A single call whose cost exceeds the whole window can never fit, and
+  -- without this the first insert would let it through.
+  if p_cost > p_limit then return null; end if;
+
   -- Opportunistic cleanup, scoped to this bucket so it stays cheap.
   delete from rate_limit where bucket = p_bucket and expires_at < now();
 
   insert into rate_limit (bucket, feature, window_key, count, expires_at)
-  values (p_bucket, p_feature, p_window_key, 1, p_expires)
+  values (p_bucket, p_feature, p_window_key, p_cost, p_expires)
   on conflict (bucket, feature, window_key) do update
-    set count = rate_limit.count + 1
-    where rate_limit.count < p_limit
+    set count = rate_limit.count + p_cost
+    where rate_limit.count + p_cost <= p_limit
   returning count into v_count;
 
   return v_count;
 end $$;
 
-revoke execute on function consume_rate_limit(text, text, text, int, timestamptz) from public, anon, authenticated;
-grant execute on function consume_rate_limit(text, text, text, int, timestamptz) to service_role;
+revoke execute on function consume_rate_limit(text, text, text, int, int, timestamptz) from public, anon, authenticated;
+grant execute on function consume_rate_limit(text, text, text, int, int, timestamptz) to service_role;
 ```
 
 Deploy (one-time setup):

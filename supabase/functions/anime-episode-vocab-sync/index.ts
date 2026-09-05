@@ -1,5 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
-import { enforceRateLimit, rateLimitErrorResponse } from '../_shared/rateLimit.ts'
+import { enforceRateLimit, rateLimitErrorResponse, VOCAB_SYNC_COST } from '../_shared/rateLimit.ts'
 
 // On-demand sync: fetches one episode's vocabulary from Jiten.moe, resolves
 // each word to a `dictionary.id` (JMdict), and upserts into
@@ -173,9 +173,11 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS_HEADERS })
 
   try {
-    // The expensive one: a single call fans out to 10+ Jiten requests at 200
-    // vocabulary rows a page, which is why its limits are the tightest.
-    await enforceRateLimit(req, 'anime-vocab-sync')
+    // Charged the worst-case page count, since the real one isn't known until
+    // pagination finishes. Note this runs before the already-synced check
+    // below, so a repeat request for a cached episode is charged for work it
+    // won't do — the safe direction, and cheap given the early return.
+    await enforceRateLimit(req, 'anime-vocab-sync', { cost: VOCAB_SYNC_COST })
 
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
       return jsonResponse({ error: 'Server misconfigured: missing Supabase service role credentials' }, 500)
