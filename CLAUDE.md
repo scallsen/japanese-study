@@ -1001,7 +1001,9 @@ Two routes, two components:
 
 ### Supabase `stories` table
 
-Stories are **not** stored via `useProgress` — they're a shared, public resource (any visitor can read any story), unlike every other module's private per-user `progress` payload. Only the owner (`user_id`) can insert; there is no update/delete policy (no edit/delete UI).
+Stories are **not** stored via `useProgress` — they live in their own table, unlike every other module's private per-user `progress` payload. Only the owner (`user_id`) can insert; there is no update/delete policy (no edit/delete UI).
+
+**A story is private to its author unless `shared` is set.** This was not always so — the table originally had a `using (true)` select policy and the module showed one "Recent stories" feed of *everyone's* stories, which is wrong once the app has more than one user. `shared` is a curation flag, flipped by hand in the SQL editor on the handful of stories meant as public examples; there is deliberately no UI for it, since users are not publishing to each other. `StoryModule` renders the two groups separately ("Your stories" / "Examples") using two queries rather than one filtered client-side, so a long example list can't crowd out the user's own work. Signed-out visitors see only the examples, which RLS enforces on its own — the client does no filtering of its own for access.
 
 ```sql
 create table if not exists stories (
@@ -1012,13 +1014,16 @@ create table if not exists stories (
   tokens jsonb,
   questions jsonb not null,
   format text not null,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  shared boolean not null default false  -- curated public examples only
 );
 
 alter table stories enable row level security;
 
-create policy "select all stories" on stories for select
-  using (true);
+create policy "select own or shared stories" on stories for select
+  using (shared or auth.uid() = user_id);
+
+create index if not exists stories_shared_idx on stories (shared) where shared;
 
 create policy "insert own stories" on stories for insert
   with check (auth.uid() = user_id);
@@ -1029,7 +1034,7 @@ grant insert on stories to authenticated;
 create index if not exists stories_created_at_idx on stories (created_at desc);
 ```
 
-`StoryModule.jsx` fetches the newest `MAX_RECENT_STORIES` (20) rows (`id, title, format, created_at` only — full content is fetched lazily per-story by `StoryReviewPage`) ordered by `created_at desc`, mirroring the `articles` list-fetch pattern in `ImmersionModule.jsx`. Older stories are simply excluded from the feed, not deleted — there is no cleanup job (same reasoning as `articles`, see Immersion section).
+`StoryModule.jsx` runs two queries, each for the newest `MAX_RECENT_STORIES` (20) rows (`id, title, format, created_at` only — full content is fetched lazily per-story by `StoryReviewPage`) ordered by `created_at desc`: one filtered to `user_id`, one to `shared`. Older stories are simply excluded from the list, not deleted — there is no cleanup job (same reasoning as `articles`, see Immersion section).
 
 ### Key files
 

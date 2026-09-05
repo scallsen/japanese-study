@@ -182,7 +182,7 @@ export default function AccountPage() {
           <section>
             <SectionHeader title="Danger zone" />
             <div style={{ color: TEXT_MUTED, fontSize: FS_SM, marginBottom: SPACE_12, lineHeight: 1.5 }}>
-              Deleting your account permanently removes your review progress, decks, and any
+              Deleting your account permanently removes your review progress, decks, and the
               stories you generated. This cannot be undone.
             </div>
             <Button variant="danger-outline" disabled={busy} onClick={() => setConfirmingDelete(true)}>
@@ -199,7 +199,7 @@ export default function AccountPage() {
       <ConfirmDialog
         open={confirmingDelete}
         title="Delete account?"
-        message="This permanently deletes your review progress, decks, and generated stories. Your published stories will disappear for everyone. This cannot be undone."
+        message="This permanently deletes your review progress, decks, and generated stories. This cannot be undone."
         confirmLabel="Delete account"
         onConfirm={handleDelete}
         onCancel={() => setConfirmingDelete(false)}

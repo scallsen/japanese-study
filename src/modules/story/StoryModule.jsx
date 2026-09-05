@@ -65,6 +65,23 @@ function RecentCard({ entry, onClick }) {
   )
 }
 
+function StoryList({ title, stories, empty }) {
+  return (
+    <div>
+      <div style={{ fontSize: FS_HEADING, color: TEXT_MUTED, marginBottom: 12 }}>{title}</div>
+      {stories.length > 0 ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {stories.map(entry => (
+            <RecentCard key={entry.id} entry={entry} onClick={() => { window.location.hash = `#/story/${entry.id}` }} />
+          ))}
+        </div>
+      ) : empty ? (
+        <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>{empty}</div>
+      ) : null}
+    </div>
+  )
+}
+
 export default function StoryModule() {
   return (
     <ModuleThemeProvider accent={STORY_ACCENT}>
@@ -79,30 +96,46 @@ function StoryGenerator() {
   const { data: srsData, loading: srsLoading } = useProgress('vocab-srs')
   const srsProgress = useMemo(() => (srsData ? migrateProgress(srsData) : null), [srsData])
 
-  const [recentStories, setRecentStories] = useState([])
+  const [myStories, setMyStories] = useState([])
+  const [exampleStories, setExampleStories] = useState([])
   const [recentLoading, setRecentLoading] = useState(true)
   const [recentError, setRecentError] = useState(null)
 
+  // Two queries rather than one filtered client-side: a single limited query
+  // would let a long list of examples crowd out the user's own stories.
+  // RLS already restricts reads to own + shared, so this only shapes the split.
   useEffect(() => {
     if (!supabase) {
       setRecentError('Supabase not configured.')
       setRecentLoading(false)
       return
     }
-    supabase
-      .from('stories')
-      .select('id, title, format, created_at')
-      .order('created_at', { ascending: false })
-      .limit(MAX_RECENT_STORIES)
-      .then(({ data, error: err }) => {
-        if (err) {
-          setRecentError(err.message)
-        } else {
-          setRecentStories((data ?? []).map(row => ({ id: row.id, title: row.title, format: row.format, createdAt: row.created_at })))
-        }
-        setRecentLoading(false)
-      })
-  }, [])
+    let cancelled = false
+    setRecentLoading(true)
+
+    const COLUMNS = 'id, title, format, created_at'
+    const mapRow = row => ({ id: row.id, title: row.title, format: row.format, createdAt: row.created_at })
+    const query = () => supabase.from('stories').select(COLUMNS).order('created_at', { ascending: false }).limit(MAX_RECENT_STORIES)
+
+    const mine = user ? query().eq('user_id', user.id) : Promise.resolve({ data: [], error: null })
+    const examples = query().eq('shared', true)
+
+    Promise.all([mine, examples]).then(([m, e]) => {
+      if (cancelled) return
+      const err = m.error || e.error
+      if (err) {
+        setRecentError(err.message)
+      } else {
+        const own = (m.data ?? []).map(mapRow)
+        const ownIds = new Set(own.map(s => s.id))
+        setMyStories(own)
+        setExampleStories((e.data ?? []).map(mapRow).filter(s => !ownIds.has(s.id)))
+      }
+      setRecentLoading(false)
+    })
+
+    return () => { cancelled = true }
+  }, [user])
 
   const [source, setSourceRaw] = useState(() => safeLocalStorageGet('story-source') ?? `vocab:${WORD_SOURCES[0].id}`)
   const [maturity, setMaturityRaw] = useState(() => safeLocalStorageGet('story-maturity') ?? 'seen')
@@ -184,7 +217,7 @@ function StoryGenerator() {
         created_at: createdAt,
       })
       if (insertError) throw new Error(insertError.message)
-      setRecentStories(prev => [{ id, title: data.title, format, createdAt }, ...prev].slice(0, MAX_RECENT_STORIES))
+      setMyStories(prev => [{ id, title: data.title, format, createdAt }, ...prev].slice(0, MAX_RECENT_STORIES))
       window.location.hash = `#/story/${id}`
     } catch (err) {
       setError(err.message)
@@ -246,19 +279,23 @@ function StoryGenerator() {
           </ActionBar>
 
           <div style={{ marginTop: 36 }}>
-            <div style={{ fontSize: FS_HEADING, color: TEXT_MUTED, marginBottom: 12 }}>Recent stories</div>
             {recentLoading ? (
               <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>Loading…</div>
             ) : recentError ? (
               <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>{recentError}</div>
-            ) : recentStories.length > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {recentStories.map(entry => (
-                  <RecentCard key={entry.id} entry={entry} onClick={() => { window.location.hash = `#/story/${entry.id}` }} />
-                ))}
-              </div>
             ) : (
-              <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>No stories generated yet.</div>
+              <>
+                <StoryList
+                  title="Your stories"
+                  stories={myStories}
+                  empty={user ? 'No stories generated yet.' : 'Sign in to generate and keep your own stories.'}
+                />
+                {exampleStories.length > 0 && (
+                  <div style={{ marginTop: 28 }}>
+                    <StoryList title="Examples" stories={exampleStories} empty={null} />
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
