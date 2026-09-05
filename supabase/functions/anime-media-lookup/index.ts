@@ -1,4 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
+import { enforceRateLimit, rateLimitErrorResponse } from '../_shared/rateLimit.ts'
 
 // Fetches live cover/difficulty details for a fixed set of Jiten deck ids —
 // used by the curated "recommended for beginners" list
@@ -59,6 +60,9 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS_HEADERS })
 
   try {
+    // Anonymous by design — bounded by IP rather than by account.
+    await enforceRateLimit(req, 'anime-lookup')
+
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
       return jsonResponse({ error: 'Server misconfigured: missing Supabase service role credentials' }, 500)
     }
@@ -77,6 +81,8 @@ Deno.serve(async (req) => {
 
     return jsonResponse({ results: summaries.map(s => ({ ...s, mediaId: linkedByExternalId.get(s.externalId) ?? null })) })
   } catch (err) {
+    const limited = rateLimitErrorResponse(err, jsonResponse)
+    if (limited) return limited
     console.error('[anime-media-lookup]', err)
     return jsonResponse({ error: err?.message || 'Lookup failed' }, 500)
   }

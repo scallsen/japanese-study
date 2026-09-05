@@ -1183,6 +1183,56 @@ Needs `supabase secrets set API_KEY_ENCRYPTION_SECRET=...` (generate with `opens
 
 Client side, `useAiUsage()` (`src/hooks/useAiUsage.js`) returns today's counts keyed by feature, plus a `refresh` for callers that just spent quota. `AccountPage` lists every feature; `StoryModule` shows `QuotaPips` — one pip per daily generation, filled while unspent, coloured by the module accent — and **disables Generate at zero rather than letting the server 429**, so an exhausted quota reads as a visibly disabled button instead of a wasted round trip and a raw error. Both read `AI_DAILY_LIMITS` (`src/data/aiLimits.js`), the hand-synced mirror of the server's table; the server stays authoritative, so drift shows a wrong number rather than letting anyone past a limit.
 
+### Rate limiting the anonymous anime endpoints
+
+The four `anime-*` functions **work signed out on purpose** — only following a series and sending words to SRS need an account — so per-user quotas don't apply to them. What still needs bounding is that they proxy Jiten with *our* `JITEN_API_KEY`: unmetered, a scraper spends our private Jiten allowance (rate-limiting our own users, since an anonymous caller would otherwise only burn Jiten's shared pool) and our **Supabase invocation quota**, which is shared with every other function including the AI ones. That second one is the real reason this exists — sustained spam against an anime endpoint could degrade the whole app.
+
+`enforceRateLimit(req, feature)` (`supabase/functions/_shared/rateLimit.ts`) applies **two windows, and neither substitutes for the other**: per-minute stops a burst or a runaway client loop; per-day stops the patient scraper who stays under the minute limit forever. Limits in `ANIME_LIMITS` are derived from what one interaction actually costs, not picked round — `anime-vocab-sync` is far lower because a single call fans out to 10+ Jiten requests at 200 vocabulary rows a page.
+
+The bucket is `user:<id>` when signed in, otherwise `ip:<salted hash>`. **The hash is salted deliberately:** an unsalted hash of an IPv4 is trivially reversible, so it would still be personal data — salting with a secret the database never sees keeps the stored value non-identifying, which is also why PRIVACY.md doesn't have to claim we store IP addresses. The salt is derived from `API_KEY_ENCRYPTION_SECRET` with a purpose string rather than reusing it directly.
+
+**It fails open.** If the limiter itself errors, the request proceeds — anime browsing staying up matters more than protecting a third-party rate limit. That also means deploying before the SQL below exists is safe; it simply doesn't limit yet.
+
+```sql
+create table if not exists rate_limit (
+  bucket text not null,       -- 'user:<uuid>' or 'ip:<salted hash>'
+  feature text not null,
+  window_key text not null,   -- 'min:2026-09-05T18:32' | 'day:2026-09-05'
+  count integer not null default 0,
+  expires_at timestamptz not null,
+  primary key (bucket, feature, window_key)
+);
+create index if not exists rate_limit_expires_idx on rate_limit (expires_at);
+
+alter table rate_limit enable row level security;
+-- No policy and no grant for anon/authenticated: only edge functions touch it.
+grant all on rate_limit to service_role;
+
+-- Increment and check in one statement, same reason as consume_ai_quota.
+-- Returns the new count, or NULL when that window is already full.
+create or replace function consume_rate_limit(
+  p_bucket text, p_feature text, p_window_key text,
+  p_limit int, p_expires timestamptz
+) returns int language plpgsql as $$
+declare v_count int;
+begin
+  -- Opportunistic cleanup, scoped to this bucket so it stays cheap.
+  delete from rate_limit where bucket = p_bucket and expires_at < now();
+
+  insert into rate_limit (bucket, feature, window_key, count, expires_at)
+  values (p_bucket, p_feature, p_window_key, 1, p_expires)
+  on conflict (bucket, feature, window_key) do update
+    set count = rate_limit.count + 1
+    where rate_limit.count < p_limit
+  returning count into v_count;
+
+  return v_count;
+end $$;
+
+revoke execute on function consume_rate_limit(text, text, text, int, timestamptz) from public, anon, authenticated;
+grant execute on function consume_rate_limit(text, text, text, int, timestamptz) to service_role;
+```
+
 Deploy (one-time setup):
 
 ```

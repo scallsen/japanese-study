@@ -1,4 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
+import { enforceRateLimit, rateLimitErrorResponse } from '../_shared/rateLimit.ts'
 
 // Browse/filter/search the show-level catalog (GET /api/media-deck/get-media-decks)
 // — backs the Anime Vocab search screen (text query + media-type/difficulty/
@@ -244,6 +245,9 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS_HEADERS })
 
   try {
+    // Anonymous by design — bounded by IP rather than by account.
+    await enforceRateLimit(req, 'anime-browse')
+
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
       return jsonResponse({ error: 'Server misconfigured: missing Supabase service role credentials' }, 500)
     }
@@ -264,6 +268,8 @@ Deno.serve(async (req) => {
       nextCursor,
     })
   } catch (err) {
+    const limited = rateLimitErrorResponse(err, jsonResponse)
+    if (limited) return limited
     console.error('[anime-media-browse]', err)
     return jsonResponse({ error: err?.message || 'Browse failed' }, 500)
   }
