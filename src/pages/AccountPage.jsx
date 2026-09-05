@@ -10,10 +10,14 @@ import { setPendingToast } from '../utils/pendingToast.js'
 import { AUTH_PROVIDERS, EMAIL_PROVIDER, providerLabel } from '../data/authProviders.js'
 import { AI_DAILY_LIMITS } from '../data/aiLimits.js'
 import { useAiUsage } from '../hooks/useAiUsage.js'
+import { useProgress } from '../hooks/useProgress.js'
+import { migrateProgress } from '../modules/vocab-srs/migrate.js'
+import { resolveCard } from '../modules/vocab-srs/srs.js'
+import { buildAnkiTsv, buildBackupJson, downloadFile, timestampedName } from '../utils/exportData.js'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, DANGER,
   FS_BASE, FS_SM, FS_CONTENT_HEADING,
-  SPACE_12, SPACE_16, SPACE_24, SPACE_32,
+  SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32,
 } from '../data/theme.js'
 
 const COLUMN_WIDTH = 640
@@ -25,6 +29,7 @@ export default function AccountPage() {
   const [confirmingDelete, setConfirmingDelete] = useState(false)
   // Above the early returns below — hooks can't run conditionally.
   const { usage } = useAiUsage()
+  const { data: srsRaw } = useProgress('vocab-srs')
 
   const shell = {
     height: '100%',
@@ -125,6 +130,43 @@ export default function AccountPage() {
     window.location.hash = '#/'
   }
 
+  // migrateProgress is safe on null (fresh install) and normalises old shapes.
+  const srsProgress = migrateProgress(srsRaw)
+  const srsCards = Object.values(srsProgress.cards ?? {}).map(card => resolveCard(card))
+  const deckNames = Object.fromEntries(
+    Object.entries(srsProgress.decks ?? {}).map(([id, deck]) => [id, deck.name])
+  )
+  const exportableCards = srsCards.filter(card => card.front && card.back)
+
+  function exportAnki() {
+    downloadFile(
+      timestampedName('japanese-study-anki', 'tsv'),
+      buildAnkiTsv(srsCards, deckNames),
+      'text/tab-separated-values',
+    )
+  }
+
+  async function exportBackup() {
+    setError(null)
+    setBusy(true)
+    const [progressRes, storiesRes] = await Promise.all([
+      supabase.from('progress').select('namespace, payload, updated_at').eq('user_id', user.id),
+      supabase.from('stories').select('*').eq('user_id', user.id),
+    ])
+    const failure = progressRes.error || storiesRes.error
+    if (failure) {
+      setError(`Could not build backup: ${failure.message}`)
+      setBusy(false)
+      return
+    }
+    downloadFile(
+      timestampedName('japanese-study-backup', 'json'),
+      buildBackupJson({ progress: progressRes.data ?? [], stories: storiesRes.data ?? [] }),
+      'application/json',
+    )
+    setBusy(false)
+  }
+
   const meta = user.user_metadata ?? {}
   const profileRows = [
     { id: 'email', label: 'Email', value: user.email ?? 'Not set' },
@@ -206,6 +248,25 @@ export default function AccountPage() {
             />
             <div style={{ color: TEXT_MUTED, fontSize: FS_SM, marginTop: SPACE_12, lineHeight: 1.5 }}>
               Resets at 00:00 UTC. Generating a story and reading words from a photo both call Claude, so they&rsquo;re capped per day.
+            </div>
+          </section>
+
+          <section>
+            <SectionHeader title="Your data" />
+            <div style={{ display: 'flex', gap: SPACE_8, flexWrap: 'wrap' }}>
+              <Button variant="neutral" disabled={busy} onClick={exportBackup}>
+                Download all data (JSON)
+              </Button>
+              <Button variant="neutral" disabled={busy || exportableCards.length === 0} onClick={exportAnki}>
+                {exportableCards.length > 0
+                  ? `Export ${exportableCards.length} cards for Anki`
+                  : 'No cards to export'}
+              </Button>
+            </div>
+            <div style={{ color: TEXT_MUTED, fontSize: FS_SM, marginTop: SPACE_12, lineHeight: 1.5 }}>
+              The JSON backup holds everything tied to your account, including review scheduling.
+              The Anki file holds card content only &mdash; Anki&rsquo;s text importer can&rsquo;t accept
+              review scheduling, so your progress stays here. Audio isn&rsquo;t included either.
             </div>
           </section>
 

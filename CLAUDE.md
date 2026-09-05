@@ -438,6 +438,13 @@ Multi-provider auth via Supabase: GitHub and Google OAuth, plus passwordless ema
 
 **Account deletion goes through the `delete-account` edge function**, because `auth.admin.deleteUser` needs the service role and must never reach the browser. The function takes **no user id** — it resolves the caller from their own token via `requireUser`, so a caller can only ever delete themselves. `progress.user_id` and `stories.user_id` both reference `auth.users` with no cascade, so those rows are deleted first or the foreign key rejects the user delete; consequently **deleting an account also removes that user's public stories from everyone's feed**. Adding another user-scoped table means adding it to that function.
 
+**Data export** (`src/utils/exportData.js`, tested in `exportData.test.js`) offers two files from the account page's "Your data" section:
+
+- **`buildBackupJson`** — every `progress` row plus the user's `stories`, scheduling included. This is the lossless one, and the only one that can restore a user's state.
+- **`buildAnkiTsv`** — card content only, with the deck name as an Anki tag. **Scheduling is deliberately absent and cannot be added:** Anki's text importer only ever writes note fields and tags — never due dates, intervals, ease, or FSRS memory state — and a review card's due date is a day offset from the collection's creation day, which a browser cannot know. A real `.apkg` would need zip + a full SQLite collection in the browser and *still* wouldn't solve the creation-day problem. Don't accept a bug report asking for "full" Anki export without re-reading this. Audio is omitted too: Core 2000's files are third-party Anki recordings, and Anki won't fetch a URL from a field.
+
+Both go through `downloadFile`, which revokes its blob URL on a later tick — revoking in the same tick cancels the download in some browsers. Fields are flattened with `cell()` before joining, since a tab or newline inside a field would silently shift every column after it and produce a file that imports without error and is quietly wrong.
+
 Adding a provider is: one entry in `AUTH_PROVIDERS` **and** enabling it in the Supabase dashboard. The code ships ahead of the dashboard toggle by design — an unconfigured provider's button simply errors, which is also the real launch gate for opening signups. Account linking additionally requires **Manual linking** to be enabled for the project.
 
 `AuthProvider` wraps the entire app in `main.jsx`. `loading` is true until the initial session resolves; the header auth slot renders nothing during this window to avoid a flash.
