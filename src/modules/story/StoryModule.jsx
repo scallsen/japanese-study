@@ -243,7 +243,6 @@ function StoryGenerator() {
         basedOn: '',
         format,
         length,
-        questionCount: 3,
       })
       const id = crypto.randomUUID()
       const createdAt = new Date().toISOString()
@@ -253,7 +252,6 @@ function StoryGenerator() {
         title: data.title,
         story: data.story,
         tokens: data.tokens,
-        questions: data.questions,
         format,
         created_at: createdAt,
       })

@@ -62,34 +62,19 @@ Hard constraints:
 - Write the content in Japanese, using ONLY vocabulary from the learner's known-word list, plus: particles, pronouns, numbers, common greetings, proper nouns, and basic grammatical function words (including です/ます, する, ある, いる, なる and their conjugations).
 - Keep grammar at or below the learner's stated JLPT level.
 - Reuse the learner's words often — the goal is reading practice that reinforces them.
-- The content must be ORIGINAL. When the request says it should be inspired by an existing work, setting, or style, write an original piece that evokes that setting or style — never a retelling, adaptation, or reproduction of an existing copyrighted plot, characters, or text.
-
-Comprehension questions:
-- Write the questions in Japanese, using the same vocabulary constraints, answerable from the content alone.
-- correct_answer is the ideal answer in Japanese (a short phrase or sentence).
-- acceptable_variations lists 2-4 alternative correct phrasings (kana-only versions, shorter forms, synonyms from the known-word list).`
+- The content must be ORIGINAL. When the request says it should be inspired by an existing work, setting, or style, write an original piece that evokes that setting or style — never a retelling, adaptation, or reproduction of an existing copyrighted plot, characters, or text.`
 
 const STORY_SCHEMA = {
   type: 'object',
   properties: {
     title: { type: 'string', description: 'Short Japanese title' },
     story: { type: 'string', description: 'The full Japanese content, with paragraph breaks as \\n\\n' },
-    questions: {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          id: { type: 'string' },
-          question: { type: 'string' },
-          correct_answer: { type: 'string' },
-          acceptable_variations: { type: 'array', items: { type: 'string' } },
-        },
-        required: ['id', 'question', 'correct_answer', 'acceptable_variations'],
-        additionalProperties: false,
-      },
-    },
   },
-  required: ['title', 'story', 'questions'],
+  // Comprehension questions were removed along with the UI that showed them.
+  // They were still being generated and stored long after nothing rendered
+  // them — paying output tokens and latency on every generation for data no
+  // one saw. Don't add them back without a reader to display them.
+  required: ['title', 'story'],
   additionalProperties: false,
 }
 
@@ -131,7 +116,6 @@ Deno.serve(async (req) => {
       basedOn = '',
       format = 'story',
       length = 'short',
-      questionCount = 3,
       model = DEFAULT_MODEL,
     } = await req.json()
 
@@ -157,7 +141,6 @@ Deno.serve(async (req) => {
       mode === 'based-on'
         ? `It should be an original piece inspired by the following theme, setting, or style: ${basedOn.trim()}`
         : 'Choose any theme that works well with the learner\'s vocabulary.',
-      `Include ${questionCount} comprehension questions.`,
     ].join('\n')
 
     // Generation can exceed the edge gateway's 150s idle limit (IDLE_TIMEOUT

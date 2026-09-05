@@ -7,5 +7,4 @@
 export const AI_DAILY_LIMITS = [
   { feature: 'story-generate', label: 'Story generation', limit: 5 },
   { feature: 'word-import-image', label: 'Word import from a photo', limit: 10 },
-  { feature: 'story-grade', label: 'Answer checking', limit: 30 },
 ]

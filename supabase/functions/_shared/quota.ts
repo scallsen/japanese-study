@@ -18,7 +18,6 @@ const admin = SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
 export const DAILY_LIMITS: Record<string, number> = {
   'story-generate': 5,
   'word-import-image': 10,
-  'story-grade': 30,
   // Not an AI feature and deliberately absent from the client's AI_DAILY_LIMITS
   // display list. It bounds how many times one account can ask us to check a
   // key against Anthropic: without it, this endpoint is a validation oracle —

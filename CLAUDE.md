@@ -161,7 +161,7 @@ Living component library + progress tracker for the app-wide design-system conso
 13. **Cards are for content, lists are for data.** A `FeedCard` represents an actual thing to read (an article, a story); a `DataList` row is a record among records (a word, a card, a deck). Don't render word lists as cards or articles as list rows.
 14. **A screen's primary actions live in `ActionBar`**, the sticky bottom bar — Anime Vocab's Start Drill, Vocab Drill's Start review / Preview, Story's Generate. Consumers pad their scroll container by `ACTION_BAR_HEIGHT`. It's `position: fixed`, so with a settings sidebar open it spans under the sidebar column too (the pre-existing Anime Vocab behaviour) — a known imperfection, not a bug to fix per screen.
 15. **Module headers are the plain `PageHeader` + `AuthSlot`.** No per-module header buttons (the old `HeaderMenu` with Mute/Options is gone — audio lives in the settings sidebar). On mobile, screens with a `SettingsSidebar` add `SidebarHeaderToggle` after `AuthSlot`: a chevron in a rule-divided section, the header's counterpart of the desktop rail.
-16. **Comprehension checks are gone** from both the News reader and Story review (the data and the `story-grade` function remain; only the UI was dropped). The reader's "English summary" is a `Disclosure`.
+16. **Comprehension checks are gone for good** from both the News reader and Story review — UI, generation, storage, and the `story-grade` function. Stories no longer ask Claude for questions at all. Don't reinstate the data without a reader to display it: it was generated and stored for a long time after nothing rendered it, paying output tokens and latency on every generation for something no one saw.
 17. **A screen's `ActionBar` buttons are `size="xl"`**, one step up from the `lg` a bare primary CTA elsewhere in the app uses — the sticky bar is meant to read as *the* action for the whole screen, not one button among several. Every `ActionBar` consumer (Story's Generate, Vocab Drill's Start review, Anime Vocab's Start Drill) was moved up when `xl` was added; a future `ActionBar` consumer should default to it too.
 18. **`Select`'s `inline` variant is for a Select living inside a `FilterCard`/`FilterRow`** next to chip rows — no background/border, same height as a `sm` Chip, so it doesn't read as a different kind of control from its neighbours. The bordered `default` variant stays for settings drawers and any Select that's the only control in its row. `EpisodeVocabBrowser`'s filter block and its lookup/bulk-select header are the template for absorbing a module's remaining hand-rolled filter UI into `FilterCard` + `DataList`'s `search`/`bulkHeader` — look here first before hand-rolling either again.
 
@@ -998,7 +998,7 @@ Populated by `scripts/import-kanjidic2.mjs` (accepts raw XML zip or pre-converte
 
 ## Story generator (`#/story`, `#/story/:id`)
 
-**Self-contained module** — `src/modules/story/`. Generates original Japanese written content (stories, fake news articles, dialogue transcripts) constrained to vocabulary the learner already knows, with Japanese comprehension questions graded leniently by a second model call.
+**Self-contained module** — `src/modules/story/`. Generates original Japanese written content (stories, fake news articles, dialogue transcripts) constrained to vocabulary the learner already knows.
 
 Two routes, two components:
 - `#/story` → `StoryModule.jsx` — the overview: vocabulary source / format / length / grammar picker, "Generate", and a "Recent stories" section listing the most recently generated stories **across all users** (public feed, visible whether signed in or not).
@@ -1068,7 +1068,7 @@ create index if not exists stories_created_at_idx on stories (created_at desc);
 | `src/modules/story/StoryReviewPage.jsx` | Review page — tokenized reader, format-specific layout, inline Q&A with grading, for one saved story looked up by id |
 | `src/modules/story/storyUI.jsx` | Shared visual primitives between the two pages — `Button`, `KANJI_FONT`, `ACCENT`, `BG`, `SURFACE` |
 | `src/modules/story/storyFieldStyles.js` | Shared `labelStyle` / `fieldStyle` / `selectFieldStyle` for form fields — matches the source-selector pattern established in `VocabPage.jsx` (custom appearance, chevron background-image). Kept out of `storyUI.jsx` (a `.jsx` file) to satisfy react-refresh lint, same reasoning as `vocabMap.js` below. |
-| `src/modules/story/api.js` | `generateStory()` / `gradeAnswer()` — wrappers over `supabase.functions.invoke` |
+| `src/modules/story/api.js` | `generateStory()` — wrapper over `supabase.functions.invoke` |
 | `src/modules/story/lookupVocabulary.js` | Client-side JMdict lookup for clicked words — two-stage `dictionary` table query (primary_form, then kana_forms overlap), returns `vocabulary_ja`-shaped entries keyed by surface form |
 | `src/components/JapaneseReader.jsx` | **Shared** `TokenizedBody` + `WordPopup` — extracted from ImmersionReader; both Immersion and Story use them (furigana toggle, clickable words, dictionary popup, Add to SRS) |
 | `src/utils/vocabMap.js` | Shared `buildVocabMap(vocabulary)` (kept out of the .jsx to satisfy react-refresh lint) |
@@ -1076,7 +1076,6 @@ create index if not exists stories_created_at_idx on stories (created_at desc);
 | `src/modules/story/parseDialogue.js` | Splits the flat token stream into 名前「セリフ」 speaker lines, preserving global token indices so popup/highlight indexing stays correct across bubbles |
 | `src/modules/story/parseDialogue.test.js` | Vitest unit tests for the dialogue parser |
 | `supabase/functions/story-generate/index.ts` | Edge function — story generation (default model `claude-sonnet-5`, override via `STORY_MODEL` secret or request `model`) |
-| `supabase/functions/story-grade/index.ts` | Edge function — lenient answer grading (default model `claude-haiku-4-5`, override via `GRADE_MODEL` secret) |
 
 ### learnerContext contract
 
@@ -1089,15 +1088,15 @@ create index if not exists stories_created_at_idx on stories (created_at desc);
 
 The Anthropic API key never reaches the client — all calls go through Supabase Edge Functions. The learner-context system block carries `cache_control: {type: 'ephemeral'}` so repeated generations in a session reuse the prompt cache (very small word lists may fall below the minimum cacheable prefix and silently not cache — harmless). Structured output via `output_config.format` json_schema — responses are parsed JSON, never prose.
 
-**Every function that spends money must call `requireUser(req)` first** (`supabase/functions/_shared/auth.ts`). The platform's `verify_jwt` is *not* an identity check: the anon key is itself a valid project JWT and ships in every browser bundle, so it clears the gateway and reaches the function body. `requireUser` resolves the bearer token to a real user via `auth.getUser()` and throws an `AuthError` otherwise; pair it with `authErrorResponse(err, jsonResponse)` in the function's `catch` so the rejection keeps that function's own error contract. In `story-generate` the call must stay **ahead of the ReadableStream** — once the stream opens the response is committed to `200 text/plain` and a real status code is no longer possible. This helper is deliberately shared rather than duplicated per function (the norm for the tokenizer setup below): an auth check that drifts between copies is worse than no check at all. Currently applied to `story-generate`, `story-grade`, `word-import`; the four `anime-*` functions proxy the keyed Jiten API and are still open — see the accounts work before relying on that.
+**Every function that spends money must call `requireUser(req)` first** (`supabase/functions/_shared/auth.ts`). The platform's `verify_jwt` is *not* an identity check: the anon key is itself a valid project JWT and ships in every browser bundle, so it clears the gateway and reaches the function body. `requireUser` resolves the bearer token to a real user via `auth.getUser()` and throws an `AuthError` otherwise; pair it with `authErrorResponse(err, jsonResponse)` in the function's `catch` so the rejection keeps that function's own error contract. In `story-generate` the call must stay **ahead of the ReadableStream** — once the stream opens the response is committed to `200 text/plain` and a real status code is no longer possible. This helper is deliberately shared rather than duplicated per function (the norm for the tokenizer setup below): an auth check that drifts between copies is worse than no check at all. Applied to `story-generate`, `word-import`, `user-api-key`, `delete-account`. The four `anime-*` functions work signed out by design and are rate-limited instead — see below.
 
 ### AI usage quotas
 
 Requiring an account is **not** a cost control — once signups are open, an account is free and instant. `supabase/functions/_shared/quota.ts` is what actually caps the Anthropic bill: `consumeQuota(userId, feature)` before the model call, `refundQuota` if the work then fails, `quotaErrorResponse` in the `catch` (chain it after `authErrorResponse` with `??`). In `story-generate` the consume call has the same constraint as `requireUser` — it must precede the `ReadableStream`, or a 429 can't be expressed.
 
-`DAILY_LIMITS` is keyed by **unit of cost, not function name**: `story-generate` (5/day), `word-import-image` (10/day), `story-grade` (30/day). Per-feature rather than one shared pool because a Sonnet generation and a Haiku grading differ in cost by more than an order of magnitude, and a single counter would let the expensive one silently eat the cheap one's budget. `word-import`'s **text** mode makes no Anthropic call and is deliberately absent from the table, so it is free.
+`DAILY_LIMITS` is keyed by **unit of cost, not function name**: `story-generate` (5/day), `word-import-image` (10/day), plus a server-only `key-validation` (10/day) bucket. Per-feature rather than one shared pool because features differ in cost by more than an order of magnitude, and a single counter would let the expensive one silently eat the cheap one's budget. `word-import`'s **text** mode makes no Anthropic call and is deliberately absent from the table, so it is free.
 
-Refunds are deliberate but not universal: `story-generate` and `word-import`'s OCR refund on failure, because losing one of five daily generations to a server error is the difference between a limit and a punishment. `story-grade` does not — it's cheap, and its usual failure is a model refusal that did consume a real API call.
+`story-generate` and `word-import`'s OCR refund on failure, because losing one of five daily generations to a server error is the difference between a limit and a punishment.
 
 ```sql
 create table if not exists ai_usage (
@@ -1250,7 +1249,7 @@ brew install supabase/tap/supabase
 supabase login
 supabase link --project-ref <project-ref>   # ref is in the Supabase dashboard URL
 supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
-supabase functions deploy story-generate story-grade
+supabase functions deploy story-generate word-import
 ```
 
 Generation response shape: `{ title, story, tokens, questions: [{ id, question, correct_answer, acceptable_variations }] }`. Grading: `{ pass, feedback }` — questions and answers are in Japanese; feedback is English.
@@ -1259,7 +1258,7 @@ Generation is **streamed** server-side (`client.messages.stream` + `finalMessage
 
 **Kuromoji in the edge function:** `npm:@patdx/kuromoji` (ESM fork with a fetch-based custom loader) reading uncompressed dictionary files from jsDelivr (`@aiktb/kuromoji@1.0.2/dict/`, ~18 MB) at cold start, cached per warm instance. The tokenizer build starts before the Claude call, so the dictionary download overlaps generation and adds no latency. The token mapping mirrors `tokenizeTextRich` in `scripts/fetch-nhk.mjs`, except `r` is set only for tokens containing kanji (no redundant furigana over kana-only words) and `b` is null for w:false tokens. Tokenization failure is non-fatal: `tokens` comes back null and the reader falls back to a plain text block.
 
-**story-generate response is a heartbeat stream, not plain JSON.** The edge gateway kills any request that sends no bytes for 150s (IDLE_TIMEOUT), so the function returns `text/plain` and streams a space every 10s while Claude works, then the JSON payload as the final line. Typical generations now finish in ~20-40s, but the heartbeat stays as insurance. Consequences: HTTP status is 200 even for post-header failures (errors arrive as `{ error }` in the payload), and `generateStory()` in `api.js` trims the heartbeats and parses the text — keep both sides in sync if the wire format changes. story-grade is fast and stays plain JSON.
+**story-generate response is a heartbeat stream, not plain JSON.** The edge gateway kills any request that sends no bytes for 150s (IDLE_TIMEOUT), so the function returns `text/plain` and streams a space every 10s while Claude works, then the JSON payload as the final line. Typical generations now finish in ~20-40s, but the heartbeat stays as insurance. Consequences: HTTP status is 200 even for post-header failures (errors arrive as `{ error }` in the payload), and `generateStory()` in `api.js` trims the heartbeats and parses the text — keep both sides in sync if the wire format changes.
 
 `tokens` is Kuromoji segmentation: `[{ t, r, w, b }]` — surface, hiragana reading (kanji tokens only, else null), content-word flag, and dictionary base form (e.g. 向かいました → 向かう; null for w:false). Newlines are their own tokens (required by `parseDialogue`). Concatenated `t` values reproduce `story` exactly. The reader renders tokens through the shared `TokenizedBody` (now themeable: `vocabHighlight`, `hoverBg`, `rtColor` props — needed for the light newspaper background); clicking a word looks up its base form via `lookupVocabulary` and shows the JMdict gloss in `WordPopup`. The reading layout switches on the generation format: `news` → NewspaperLayout, `dialogue` → ChatLayout, anything else (or missing tokens) → plain text block. Hover/focus styles for Story buttons, fields, and recent-story cards live in `global.css` (`.story-btn`, `.story-field`, `.story-recent-card`) per the no-useState-hover rule. "Add to SRS" writes to a `story-words` imported deck in the vocab-srs namespace (second cross-module write, same pattern as immersion-words).
 
