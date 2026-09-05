@@ -1,5 +1,6 @@
 import Anthropic from 'npm:@anthropic-ai/sdk@0.104.1'
 import * as kuromoji from 'npm:@patdx/kuromoji@1.0.4'
+import { requireUser, authErrorResponse } from '../_shared/auth.ts'
 
 const DEFAULT_MODEL = Deno.env.get('STORY_MODEL') || 'claude-sonnet-5'
 
@@ -117,6 +118,11 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS_HEADERS })
 
   try {
+    // Must stay ahead of the ReadableStream below: once the stream opens the
+    // response is committed to 200 text/plain, and a rejection could only be
+    // smuggled into the payload instead of being a real status code.
+    await requireUser(req)
+
     const {
       learnerContext,
       mode = 'new',
@@ -212,6 +218,8 @@ Deno.serve(async (req) => {
       headers: { ...CORS_HEADERS, 'Content-Type': 'text/plain; charset=utf-8' },
     })
   } catch (err) {
+    const denied = authErrorResponse(err, jsonResponse)
+    if (denied) return denied
     console.error('[story-generate]', err)
     return jsonResponse({ error: err?.message || 'Generation failed' }, 500)
   }

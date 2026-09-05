@@ -1048,6 +1048,8 @@ create index if not exists stories_created_at_idx on stories (created_at desc);
 
 The Anthropic API key never reaches the client — all calls go through Supabase Edge Functions. The learner-context system block carries `cache_control: {type: 'ephemeral'}` so repeated generations in a session reuse the prompt cache (very small word lists may fall below the minimum cacheable prefix and silently not cache — harmless). Structured output via `output_config.format` json_schema — responses are parsed JSON, never prose.
 
+**Every function that spends money must call `requireUser(req)` first** (`supabase/functions/_shared/auth.ts`). The platform's `verify_jwt` is *not* an identity check: the anon key is itself a valid project JWT and ships in every browser bundle, so it clears the gateway and reaches the function body. `requireUser` resolves the bearer token to a real user via `auth.getUser()` and throws an `AuthError` otherwise; pair it with `authErrorResponse(err, jsonResponse)` in the function's `catch` so the rejection keeps that function's own error contract. In `story-generate` the call must stay **ahead of the ReadableStream** — once the stream opens the response is committed to `200 text/plain` and a real status code is no longer possible. This helper is deliberately shared rather than duplicated per function (the norm for the tokenizer setup below): an auth check that drifts between copies is worse than no check at all. Currently applied to `story-generate`, `story-grade`, `word-import`; the four `anime-*` functions proxy the keyed Jiten API and are still open — see the accounts work before relying on that.
+
 Deploy (one-time setup):
 
 ```

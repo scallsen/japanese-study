@@ -1,4 +1,5 @@
 import Anthropic from 'npm:@anthropic-ai/sdk@0.104.1'
+import { requireUser, authErrorResponse } from '../_shared/auth.ts'
 
 const DEFAULT_MODEL = Deno.env.get('GRADE_MODEL') || 'claude-haiku-4-5'
 
@@ -36,6 +37,8 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS_HEADERS })
 
   try {
+    await requireUser(req)
+
     const {
       question,
       correctAnswer,
@@ -78,6 +81,8 @@ Deno.serve(async (req) => {
     const result = JSON.parse(textBlock.text)
     return jsonResponse({ ...result, model: response.model })
   } catch (err) {
+    const denied = authErrorResponse(err, jsonResponse)
+    if (denied) return denied
     console.error('[story-grade]', err)
     return jsonResponse({ error: err?.message || 'Grading failed' }, 500)
   }
