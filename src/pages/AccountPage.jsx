@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import PageHeader from '../components/PageHeader.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
 import Button from '../components/Button.jsx'
@@ -9,6 +9,7 @@ import { supabase } from '../lib/supabase.js'
 import { setPendingToast } from '../utils/pendingToast.js'
 import { AUTH_PROVIDERS, EMAIL_PROVIDER, providerLabel } from '../data/authProviders.js'
 import { AI_DAILY_LIMITS } from '../data/aiLimits.js'
+import { useAiUsage } from '../hooks/useAiUsage.js'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, DANGER,
   FS_BASE, FS_SM, FS_CONTENT_HEADING,
@@ -22,23 +23,8 @@ export default function AccountPage() {
   const [error, setError] = useState(null)
   const [busy, setBusy] = useState(false)
   const [confirmingDelete, setConfirmingDelete] = useState(false)
-  const [usage, setUsage] = useState({})
-
-  // Must sit above the early returns below — hooks can't run conditionally.
-  // `day` is a UTC date server-side, so this compares against a UTC date too.
-  useEffect(() => {
-    if (!user || !supabase) return
-    let cancelled = false
-    supabase
-      .from('ai_usage')
-      .select('feature, count')
-      .eq('user_id', user.id)
-      .eq('day', new Date().toISOString().slice(0, 10))
-      .then(({ data }) => {
-        if (!cancelled) setUsage(Object.fromEntries((data ?? []).map(r => [r.feature, r.count])))
-      })
-    return () => { cancelled = true }
-  }, [user])
+  // Above the early returns below — hooks can't run conditionally.
+  const { usage } = useAiUsage()
 
   const shell = {
     height: '100%',

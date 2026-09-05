@@ -1127,6 +1127,8 @@ grant execute on function refund_ai_quota(uuid, text) to service_role;
 
 `ai_usage.user_id` cascades on delete, so account deletion needs no change to `delete-account` — unlike `progress` and `stories`, which don't cascade and must be deleted explicitly there. Prefer the cascade for any new user-scoped table.
 
+Client side, `useAiUsage()` (`src/hooks/useAiUsage.js`) returns today's counts keyed by feature, plus a `refresh` for callers that just spent quota. `AccountPage` lists every feature; `StoryModule` shows `QuotaPips` — one pip per daily generation, filled while unspent, coloured by the module accent — and **disables Generate at zero rather than letting the server 429**, so an exhausted quota reads as a visibly disabled button instead of a wasted round trip and a raw error. Both read `AI_DAILY_LIMITS` (`src/data/aiLimits.js`), the hand-synced mirror of the server's table; the server stays authoritative, so drift shows a wrong number rather than letting anyone past a limit.
+
 Deploy (one-time setup):
 
 ```

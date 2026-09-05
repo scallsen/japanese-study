@@ -12,7 +12,9 @@ import ActionBar, { ACTION_BAR_HEIGHT } from '../../components/ActionBar.jsx'
 import { BG } from './storyUI.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_CAPTION, FS_HEADING, DANGER } from '../../data/theme.js'
 import { MODULES } from '../../data/modules.js'
-import { ModuleThemeProvider } from '../../context/ModuleThemeContext.jsx'
+import { ModuleThemeProvider, useAccent } from '../../context/ModuleThemeContext.jsx'
+import { AI_DAILY_LIMITS } from '../../data/aiLimits.js'
+import { useAiUsage } from '../../hooks/useAiUsage.js'
 import { WORD_SOURCES } from '../../data/wordLists.js'
 import { buildLearnerContext, MATURITY_LEVELS, GRAMMAR_LEVELS } from '../../lib/learnerContext.js'
 import { resolveCard } from '../vocab-srs/srs.js'
@@ -65,6 +67,34 @@ function RecentCard({ entry, onClick }) {
   )
 }
 
+const STORY_LIMIT = AI_DAILY_LIMITS.find(l => l.feature === 'story-generate')?.limit ?? 0
+
+// One pip per daily generation, filled while unspent. At five items a row of
+// pips reads at a glance in a way "1 of 5" doesn't — and unlike a progress bar
+// it shows the unit, which is what the user is actually rationing.
+function QuotaPips({ remaining }) {
+  const accent = useAccent()
+  const out = remaining === 0
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>
+      <span style={{ display: 'inline-flex', gap: 3 }}>
+        {Array.from({ length: STORY_LIMIT }, (_, i) => (
+          <span
+            key={i}
+            style={{
+              width: 6, height: 6, borderRadius: 2,
+              background: i < remaining ? accent : 'rgba(255,255,255,0.18)',
+            }}
+          />
+        ))}
+      </span>
+      <span style={{ color: out ? DANGER : TEXT_MUTED }}>
+        {out ? 'No generations left today' : `${remaining} of ${STORY_LIMIT} left today`}
+      </span>
+    </span>
+  )
+}
+
 function StoryList({ title, stories, empty }) {
   return (
     <div>
@@ -95,6 +125,9 @@ function StoryGenerator() {
   const isMobile = useIsMobile()
   const { data: srsData, loading: srsLoading } = useProgress('vocab-srs')
   const srsProgress = useMemo(() => (srsData ? migrateProgress(srsData) : null), [srsData])
+
+  const { usage: aiUsage, refresh: refreshUsage } = useAiUsage()
+  const storyRemaining = Math.max(0, STORY_LIMIT - (aiUsage['story-generate'] ?? 0))
 
   const [myStories, setMyStories] = useState([])
   const [exampleStories, setExampleStories] = useState([])
@@ -187,7 +220,9 @@ function StoryGenerator() {
     }
   }, [source, maturity, grammarLevel, srsProgress])
 
-  const canGenerate = user && context && context.wordCount > 0 && !generating
+  // Blocking here rather than letting the server 429 turns a wasted round trip
+  // and a raw error into a disabled button the user can see the reason for.
+  const canGenerate = user && context && context.wordCount > 0 && !generating && storyRemaining > 0
 
   const generate = async () => {
     if (!canGenerate) return
@@ -218,6 +253,7 @@ function StoryGenerator() {
       })
       if (insertError) throw new Error(insertError.message)
       setMyStories(prev => [{ id, title: data.title, format, createdAt }, ...prev].slice(0, MAX_RECENT_STORIES))
+      refreshUsage()
       window.location.hash = `#/story/${id}`
     } catch (err) {
       setError(err.message)
@@ -262,14 +298,17 @@ function StoryGenerator() {
           <ActionBar
             maxWidth={760}
             leading={(
-              <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>
-                {!user
-                  ? 'Sign in to generate stories'
-                  : context
-                    ? `${context.wordCount} words in context`
-                    : isSrsSource && srsLoading
-                      ? 'Loading SRS data…'
-                      : 'No words available'}
+              <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, display: 'flex', flexDirection: 'column', gap: 5 }}>
+                <span>
+                  {!user
+                    ? 'Sign in to generate stories'
+                    : context
+                      ? `${context.wordCount} words in context`
+                      : isSrsSource && srsLoading
+                        ? 'Loading SRS data…'
+                        : 'No words available'}
+                </span>
+                {user && <QuotaPips remaining={storyRemaining} />}
               </span>
             )}
           >
