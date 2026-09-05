@@ -36,6 +36,12 @@ import {
 const COLUMN_WIDTH = 640
 const USAGE_BAR_WIDTH = 120
 
+// Mirrors looksLikeAnthropicKey in supabase/functions/_shared/userKey.ts. The
+// server still checks — this copy only spares an obviously-wrong paste a round
+// trip, and spares the user's daily key-check allowance for real attempts.
+const ANTHROPIC_KEY_RE = /^sk-ant-[A-Za-z0-9_-]{20,}$/
+const KEY_FORMAT_MESSAGE = 'That doesn’t look like an Anthropic API key — they start with “sk-ant-”.'
+
 export default function AccountPage() {
   const { user, loading, signIn, signOut, linkProvider, unlinkProvider, refreshUser } = useAuth()
   const [error, setError] = useState(null)
@@ -286,7 +292,13 @@ export default function AccountPage() {
   // its row, so a button beside it either stretched the row or shrank out of
   // proportion to it. Enter blurs, which routes to the same path.
   function handleKeyFieldBlur() {
-    if (keyInput.trim() && !busy && !keyChecking) saveApiKey()
+    const trimmed = keyInput.trim()
+    if (!trimmed || busy || keyChecking) return
+    if (!ANTHROPIC_KEY_RE.test(trimmed)) {
+      setKeyError(KEY_FORMAT_MESSAGE)
+      return
+    }
+    saveApiKey()
   }
 
   // Clearing on edit rather than leaving a stale complaint sitting under a key

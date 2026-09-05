@@ -1,5 +1,6 @@
 import { requireUser, authErrorResponse } from '../_shared/auth.ts'
 import { encryptSecret, keyHint, looksLikeAnthropicKey, adminClient } from '../_shared/userKey.ts'
+import { consumeQuota, quotaErrorResponse } from '../_shared/quota.ts'
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -56,6 +57,11 @@ Deno.serve(async (req) => {
       // Anthropic" and "Anthropic says this key is no good" call for opposite
       // reactions from the user, and collapsing them into one message sends
       // people hunting for a typo in a key that was fine.
+      // After the format check, so obviously-malformed input costs nothing,
+      // and before the probe, so it is the outbound Anthropic requests that
+      // are bounded rather than the successes.
+      await consumeQuota(user.id, 'key-validation')
+
       let probe: Response
       try {
         probe = await fetch('https://api.anthropic.com/v1/models?limit=1', {
@@ -89,7 +95,7 @@ Deno.serve(async (req) => {
 
     return jsonResponse({ error: 'action must be "status", "save" or "remove"' }, 400)
   } catch (err) {
-    const denied = authErrorResponse(err, jsonResponse)
+    const denied = authErrorResponse(err, jsonResponse) ?? quotaErrorResponse(err, jsonResponse)
     if (denied) return denied
     // Deliberately not logging err verbatim anywhere a key could appear in it.
     console.error('[user-api-key] request failed')

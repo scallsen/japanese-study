@@ -19,6 +19,13 @@ export const DAILY_LIMITS: Record<string, number> = {
   'story-generate': 5,
   'word-import-image': 10,
   'story-grade': 30,
+  // Not an AI feature and deliberately absent from the client's AI_DAILY_LIMITS
+  // display list. It bounds how many times one account can ask us to check a
+  // key against Anthropic: without it, this endpoint is a validation oracle —
+  // someone holding leaked sk-ant- keys could discover which are live from our
+  // IP rather than their own. Generous for the real case (a user saves a key
+  // once, maybe a few times after a typo) and tight for that one.
+  'key-validation': 10,
 }
 
 export class QuotaError extends Error {
