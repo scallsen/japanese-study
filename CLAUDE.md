@@ -427,11 +427,16 @@ Multi-provider auth via Supabase: GitHub and Google OAuth, plus passwordless ema
 | `src/context/AuthContext.jsx` | `AuthProvider` + `useAuth()` — exposes `{ user, loading, signIn, signInWithProvider, signInWithEmail, signOut, linkProvider, unlinkProvider, refreshUser }`; also renders `SignInDialog` |
 | `src/components/SignInDialog.jsx` | Provider chooser + magic-link field — composes `Modal`, opened by `signIn()` |
 | `src/data/authProviders.js` | `AUTH_PROVIDERS` — the one provider list shared by the dialog and the account page's linking UI |
-| `src/pages/AccountPage.jsx` | `#/account` — profile, linked accounts (link/unlink), sign out |
+| `src/pages/AccountPage.jsx` | `#/account` — profile, linked accounts (link/unlink), sign out, delete account |
+| `supabase/functions/delete-account/index.ts` | Deletes the caller's rows then their auth user — see below |
 | `src/components/AuthSlot.jsx` | Sign in / sign out control; the initials link to `#/account` |
 | `src/hooks/useProgress.js` | `useProgress(namespace)` — Supabase-backed progress hook (see below) |
 
 **`refreshUser()` exists because `onAuthStateChange` deliberately keeps the previous user object when the id is unchanged** (to avoid a `useProgress` reload flash on every token refresh). Linking or unlinking an identity changes `user.identities` but *not* the id, so without an explicit refresh the account page would never re-render. Any future change to something inside the user object rather than the user itself needs the same call.
+
+**The account page is one centred column of `DataList`s**, not bespoke rows: profile details and linked accounts are both lists. The linked-accounts list has a row for *every* provider whether connected or not — a connected row offers `Unlink` (`ghost-muted`, the documented remove affordance: quiet until hovered, then red), an unconnected one `Link` (`neutral`). That way the list is also where you add a provider, instead of a separate button cluster below it. A magic-link `email` identity only appears once it exists, since it has no OAuth button to offer.
+
+**Account deletion goes through the `delete-account` edge function**, because `auth.admin.deleteUser` needs the service role and must never reach the browser. The function takes **no user id** — it resolves the caller from their own token via `requireUser`, so a caller can only ever delete themselves. `progress.user_id` and `stories.user_id` both reference `auth.users` with no cascade, so those rows are deleted first or the foreign key rejects the user delete; consequently **deleting an account also removes that user's public stories from everyone's feed**. Adding another user-scoped table means adding it to that function.
 
 Adding a provider is: one entry in `AUTH_PROVIDERS` **and** enabling it in the Supabase dashboard. The code ships ahead of the dashboard toggle by design — an unconfigured provider's button simply errors, which is also the real launch gate for opening signups. Account linking additionally requires **Manual linking** to be enabled for the project.
 
