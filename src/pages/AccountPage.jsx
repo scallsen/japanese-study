@@ -100,7 +100,16 @@ export default function AccountPage() {
     setBusy(true)
     const { data, error: err } = await supabase.functions.invoke('delete-account')
     if (err || data?.error) {
-      setError(data?.error ?? err.message)
+      // functions.invoke only ever reports a generic "non-2xx status code";
+      // the actual reason is in the response body, and for a destructive
+      // action the user needs to see why it refused. Same unwrapping the
+      // module api.js wrappers do.
+      let message = data?.error ?? err?.message
+      try {
+        const payload = await err?.context?.json()
+        if (payload?.error) message = payload.error
+      } catch { /* keep the generic message */ }
+      setError(message || 'Account deletion failed')
       setBusy(false)
       return
     }

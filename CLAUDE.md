@@ -482,7 +482,9 @@ create policy "update own rows" on progress for update
   with check (auth.uid() = user_id);
 
 grant select, insert, update on progress to authenticated;
-grant select, update on progress to service_role;
+-- delete is for the delete-account edge function only; without it that
+-- function fails with 42501 and account deletion silently can't work.
+grant select, update, delete on progress to service_role;
 ```
 
 ## Vocab SRS (`#/vocab-srs`)
@@ -1030,6 +1032,8 @@ create policy "insert own stories" on stories for insert
 
 grant select on stories to anon, authenticated;
 grant insert on stories to authenticated;
+-- same reason as progress: the delete-account edge function needs both.
+grant select, delete on stories to service_role;
 
 create index if not exists stories_created_at_idx on stories (created_at desc);
 ```
