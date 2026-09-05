@@ -4,7 +4,7 @@ import { buildAnkiTsv, buildBackupJson } from './exportData.js'
 const card = (over = {}) => ({
   front: '魚', back: 'fish', kana: 'さかな',
   sentence: '魚を食べる。', sentenceEnglish: 'I eat fish.',
-  deckId: 'core2000', ...over,
+  deckId: 'keigo', ...over,
 })
 
 describe('buildAnkiTsv', () => {
@@ -17,8 +17,8 @@ describe('buildAnkiTsv', () => {
   })
 
   it('writes content columns in order, with the deck as the trailing tag', () => {
-    const row = buildAnkiTsv([card()], { core2000: 'Core 2000' }).split('\n')[3]
-    expect(row.split('\t')).toEqual(['魚', 'fish', 'さかな', '魚を食べる。', 'I eat fish.', 'Core-2000'])
+    const row = buildAnkiTsv([card()], { keigo: 'Keigo Deck' }).split('\n')[3]
+    expect(row.split('\t')).toEqual(['魚', 'fish', 'さかな', '魚を食べる。', 'I eat fish.', 'Keigo-Deck'])
   })
 
   it('flattens tabs and newlines so they cannot shift later columns', () => {
@@ -38,14 +38,14 @@ describe('buildAnkiTsv', () => {
   })
 
   it('drops cards with no resolved content rather than exporting blank notes', () => {
-    const rows = buildAnkiTsv([card(), { front: '', back: '', deckId: 'core2000' }])
+    const rows = buildAnkiTsv([card(), { front: '', back: '', deckId: 'keigo' }])
       .trim().split('\n').slice(3)
     expect(rows).toHaveLength(1)
   })
 
   it('leaves missing optional fields empty without collapsing the row', () => {
-    const row = buildAnkiTsv([{ front: 'それ', back: 'that', deckId: 'core2000' }]).split('\n')[3]
-    expect(row.split('\t')).toEqual(['それ', 'that', '', '', '', 'core2000'])
+    const row = buildAnkiTsv([{ front: 'それ', back: 'that', deckId: 'keigo' }]).split('\n')[3]
+    expect(row.split('\t')).toEqual(['それ', 'that', '', '', '', 'keigo'])
   })
 })
 

@@ -9,10 +9,10 @@ const WORD_DATA = [
 ]
 
 const CARDS = [
-  { id: 'c1', deckId: 'core2000', front: '走る', kana: 'はしる', back: 'to run', state: State.Review, stability: 30 },
-  { id: 'c2', deckId: 'core2000', front: '青い', back: 'blue', state: State.Learning, stability: 2 },
-  { id: 'c3', deckId: 'core2000', front: '新しい', back: 'new', state: State.New, stability: 0 },
-  { id: 'c4', deckId: 'core2000', front: '古い', back: 'old', state: State.Review, stability: 5, suspended: true },
+  { id: 'c1', deckId: 'imported', front: '走る', kana: 'はしる', back: 'to run', state: State.Review, stability: 30 },
+  { id: 'c2', deckId: 'imported', front: '青い', back: 'blue', state: State.Learning, stability: 2 },
+  { id: 'c3', deckId: 'imported', front: '新しい', back: 'new', state: State.New, stability: 0 },
+  { id: 'c4', deckId: 'imported', front: '古い', back: 'old', state: State.Review, stability: 5, suspended: true },
   { id: 'c5', deckId: 'keigo', front: 'いただく', back: 'to receive (humble)', state: State.Review, stability: 40 },
 ]
 
@@ -50,46 +50,46 @@ describe('buildLearnerContext — vocab-list', () => {
 
 describe('buildLearnerContext — srs-deck', () => {
   it('filters by deckId and skips suspended cards', () => {
-    const ctx = buildLearnerContext('srs-deck', 'core2000', { cards: CARDS })
+    const ctx = buildLearnerContext('srs-deck', 'imported', { cards: CARDS })
     expect(ctx.wordCount).toBe(3)
     expect(ctx.text).not.toContain('古い')
     expect(ctx.text).not.toContain('いただく')
   })
 
   it('maturity "seen" excludes New cards', () => {
-    const ctx = buildLearnerContext('srs-deck', 'core2000', { cards: CARDS, maturity: 'seen' })
+    const ctx = buildLearnerContext('srs-deck', 'imported', { cards: CARDS, maturity: 'seen' })
     expect(ctx.wordCount).toBe(2)
     expect(ctx.text).not.toContain('新しい')
   })
 
   it('maturity "graduated" keeps only Review-state cards', () => {
-    const ctx = buildLearnerContext('srs-deck', 'core2000', { cards: CARDS, maturity: 'graduated' })
+    const ctx = buildLearnerContext('srs-deck', 'imported', { cards: CARDS, maturity: 'graduated' })
     expect(ctx.wordCount).toBe(1)
     expect(ctx.text).toContain('走る (はしる) — to run')
   })
 
   it('applies a minimum stability floor', () => {
-    const ctx = buildLearnerContext('srs-deck', 'core2000', { cards: CARDS, maturity: 'all', minStabilityDays: 10 })
+    const ctx = buildLearnerContext('srs-deck', 'imported', { cards: CARDS, maturity: 'all', minStabilityDays: 10 })
     expect(ctx.wordCount).toBe(1)
     expect(ctx.text).toContain('走る')
   })
 
   it('uses the kana field as reading when present', () => {
-    const ctx = buildLearnerContext('srs-deck', 'core2000', { cards: CARDS })
+    const ctx = buildLearnerContext('srs-deck', 'imported', { cards: CARDS })
     expect(ctx.text).toContain('走る (はしる) — to run')
     expect(ctx.text).toContain('青い — blue')
   })
 
   it('skips cards without resolved content', () => {
-    const cards = [...CARDS, { id: 'c6', deckId: 'core2000', state: State.New }]
-    const ctx = buildLearnerContext('srs-deck', 'core2000', { cards })
+    const cards = [...CARDS, { id: 'c6', deckId: 'imported', state: State.New }]
+    const ctx = buildLearnerContext('srs-deck', 'imported', { cards })
     expect(ctx.wordCount).toBe(3)
   })
 })
 
 describe('buildLearnerContext — general', () => {
   it('caps the list with maxWords', () => {
-    const ctx = buildLearnerContext('srs-deck', 'core2000', { cards: CARDS, maxWords: 1 })
+    const ctx = buildLearnerContext('srs-deck', 'imported', { cards: CARDS, maxWords: 1 })
     expect(ctx.wordCount).toBe(1)
     expect(ctx.text).toContain('(1 words)')
   })

@@ -356,7 +356,7 @@ Third-party data/asset credits (JMdict/EDICT, KANJIDIC2, Tanaka Corpus, Voicevox
 **Scripts:**
 | Script | Purpose |
 |---|---|
-| `scripts/backfill-vocab-jmdict.mjs` | One-off — matches every Vocab Drill word (`src/data/words/*.json`) and bundled SRS deck entry (`core2000.json`, `keigo.json`) against `dictionary`, writing `jmdictId` back into the JSON. Reading-verified (rejects a match if the candidate's `kana_forms` don't include the word's own reading) to avoid linking the wrong homograph — e.g. it deliberately leaves `する`/`ある` unmatched rather than guessing among 為る/刷る/剃る/擦る/掏る. Writes unmatched entries to `backfill-vocab-jmdict-report.json` for manual review; not all entries will ever auto-match (compound/decorated forms like `〇〇向き`, `正確（な）`). |
+| `scripts/backfill-vocab-jmdict.mjs` | One-off — matches every Vocab Drill word (`src/data/words/*.json`) and bundled SRS deck entry (`keigo.json`) against `dictionary`, writing `jmdictId` back into the JSON. Reading-verified (rejects a match if the candidate's `kana_forms` don't include the word's own reading) to avoid linking the wrong homograph — e.g. it deliberately leaves `する`/`ある` unmatched rather than guessing among 為る/刷る/剃る/擦る/掏る. Writes unmatched entries to `backfill-vocab-jmdict-report.json` for manual review; not all entries will ever auto-match (compound/decorated forms like `〇〇向き`, `正確（な）`). |
 | `scripts/import-tanaka.mjs` | Downloads/parses the Tanaka Corpus (`examples.utf.gz` from `https://www.edrdg.org/pub/Nihongo/examples.utf.gz` — the `ftp://` URL EDRDG's own docs reference isn't reachable from every network), resolves each sentence's per-word index tags to `dictionary.id`, populates `sentences`. Destructive full-refresh like `import-jmdict.mjs`. |
 
 `jmdictId` write sites for SRS cards (all pass it through `createCard`'s `extras`): `VocabPage.jsx`'s `handleAddToSrs`, `WordImportPanel.jsx`, `ImmersionReader.jsx`, `StoryReviewPage.jsx`. `IMPORTED_CONTENT_FIELDS` in `srs.js` includes `jmdictId` so it survives `resetCardProgress`.
@@ -380,7 +380,7 @@ All VocabPage settings are stored in localStorage with `vocab-` prefix (e.g. `vo
 
 ### Vocab audio (Voicevox)
 
-Word audio is pre-generated via [Voicevox](https://voicevox.hiroshiba.jp/) (neural Japanese TTS) rather than relying solely on the browser's Speech Synthesis API, which varies wildly in quality by OS/browser. This applies to the Vocab drill word lists and the `keigo` bundled SRS deck (see Vocab SRS section) — not to Core 2000 (already has real human-recorded Anki audio), Immersion, Story, or Dictionary (all dynamic/on-demand content a local Voicevox instance can't serve live).
+Word audio is pre-generated via [Voicevox](https://voicevox.hiroshiba.jp/) (neural Japanese TTS) rather than relying solely on the browser's Speech Synthesis API, which varies wildly in quality by OS/browser. This applies to the Vocab drill word lists and the `keigo` bundled SRS deck (see Vocab SRS section) — not to Immersion, Story, or Dictionary (all dynamic/on-demand content a local Voicevox instance can't serve live).
 
 **Voices** (`VOICEVOX_VOICES` in `src/utils/voicevoxAudio.js`, kept in sync with `VOICES` in `scripts/generate-audio.mjs`):
 - Speaker id `2` — 四国めたん (Shikoku Metan), Normal style
@@ -406,7 +406,7 @@ grant all on audio_generation_status to service_role;
 
 **Attribution**: Voicevox's license requires a discoverable text credit for each character voice used, and its own examples credit the Japanese character name (e.g. "VOICEVOX:四国めたん") — an intentional exception to the "no Japanese in the UI" convention. Each voice's credit segments (`ATTRIBUTIONS['voicevox-2']`/`['voicevox-11']` in `src/data/attributions.js`, e.g. "Text to speech powered by VOICEVOX (四国めたん)" with "VOICEVOX" linking to the project — see Attribution system section under Vocabulary Drill for the full segment/link mechanism) render as their own line directly below the "Text to speech" select (`getVoicevoxCredit(audioSource)` in `voicevoxAudio.js`, via `renderAttributionSegments`) — not as the select's `subtext` (that renders above the control, which would read as a field description rather than a credit) — and only while that voice is the selected option, hidden entirely when "Browser TTS" is selected. The same credit is also folded into the drill-screen `AttributionFooter` while that voice is actively speaking (see Attribution system section).
 
-**Playback priority** (both Vocab drill and Vocab SRS): recorded file audio (Core 2000's Anki audio, SRS-only) → Voicevox audio for the selected voice, if generated → browser TTS. The audio-source picker (`AUDIO_SOURCE_OPTIONS` in `src/utils/voicevoxAudio.js`, labeled "Text to speech" in both settings drawers) offers "Female (Shikoku Metan)", "Male (Kurono Takehiro)" (`DEFAULT_AUDIO_SOURCE`, `'voicevox-11'`), and "Browser TTS"; picking a Voicevox voice still silently falls back to browser TTS for any entry that voice hasn't been generated for yet.
+**Playback priority** (both Vocab drill and Vocab SRS): recorded file audio (an imported Anki deck's own recordings, SRS-only) → Voicevox audio for the selected voice, if generated → browser TTS. The audio-source picker (`AUDIO_SOURCE_OPTIONS` in `src/utils/voicevoxAudio.js`, labeled "Text to speech" in both settings drawers) offers "Female (Shikoku Metan)", "Male (Kurono Takehiro)" (`DEFAULT_AUDIO_SOURCE`, `'voicevox-11'`), and "Browser TTS"; picking a Voicevox voice still silently falls back to browser TTS for any entry that voice hasn't been generated for yet.
 
 **Audio preload** (Vocab drill only): a `useEffect` in `VocabPage.jsx` preloads the current card's Voicevox audio plus the next few upcoming cards (`AUDIO_PRELOAD_COUNT`) into an `Audio` object cache keyed by URL, so flipping to a card doesn't wait on a network fetch. The cache is trimmed to the current window (current + upcoming) on every card change/audio-source change.
 
@@ -441,7 +441,7 @@ Multi-provider auth via Supabase: GitHub and Google OAuth, plus passwordless ema
 **Data export** (`src/utils/exportData.js`, tested in `exportData.test.js`) offers two files from the account page's "Your data" section:
 
 - **`buildBackupJson`** — every `progress` row plus the user's `stories`, scheduling included. This is the lossless one, and the only one that can restore a user's state.
-- **`buildAnkiTsv`** — card content only, with the deck name as an Anki tag. **Scheduling is deliberately absent and cannot be added:** Anki's text importer only ever writes note fields and tags — never due dates, intervals, ease, or FSRS memory state — and a review card's due date is a day offset from the collection's creation day, which a browser cannot know. A real `.apkg` would need zip + a full SQLite collection in the browser and *still* wouldn't solve the creation-day problem. Don't accept a bug report asking for "full" Anki export without re-reading this. Audio is omitted too: Core 2000's files are third-party Anki recordings, and Anki won't fetch a URL from a field.
+- **`buildAnkiTsv`** — card content only, with the deck name as an Anki tag. **Scheduling is deliberately absent and cannot be added:** Anki's text importer only ever writes note fields and tags — never due dates, intervals, ease, or FSRS memory state — and a review card's due date is a day offset from the collection's creation day, which a browser cannot know. A real `.apkg` would need zip + a full SQLite collection in the browser and *still* wouldn't solve the creation-day problem. Don't accept a bug report asking for "full" Anki export without re-reading this. Audio is omitted too: an imported deck's recordings are third-party files, and Anki won't fetch a URL from a field.
 
 Both go through `downloadFile`, which revokes its blob URL on a later tick — revoking in the same tick cancels the download in some browsers. Fields are flattened with `cell()` before joining, since a tab or newline inside a field would silently shift every column after it and produce a file that imports without error and is quietly wrong.
 
@@ -512,14 +512,11 @@ Anki-style spaced repetition using [ts-fsrs](https://github.com/open-spaced-repe
 | `src/modules/vocab-srs/WordImportPanel.jsx` | Modal UI for the "Import from text / image" flow — paste/image input, review checklist (editable surface/reading/meaning per row), confirm → `onConfirm(cards)` |
 | `src/modules/vocab-srs/VocabSrsModule.jsx` | Home screen + sidebar: deck management, stats, settings, Start Review |
 | `src/modules/vocab-srs/VocabSrsDrill.jsx` | Drill UI — FlipCard, rating buttons, audio, relearn countdown, session complete |
-| `src/modules/vocab-srs/decks/core2000.json` | Bundled deck — 2007 Core 2000 cards with word + sentence audio |
-| `src/modules/vocab-srs/decks/keigo.json` | Bundled deck — 30 keigo/formal-register words; audio generated via Voicevox (see Vocab audio section under Vocabulary Drill), no Anki recordings |
+| `src/modules/vocab-srs/decks/keigo.json` | Bundled deck — 30 keigo/formal-register words; audio generated via Voicevox (see Vocab audio section under Vocabulary Drill), no Anki recordings. **The only bundled deck.** |
 | `src/modules/vocab-srs/srs.test.js` | Vitest unit tests for srs.js |
 | `src/modules/vocab-srs/session.test.js` | Vitest unit tests for session.js |
 | `src/modules/vocab-srs/import.test.js` | Vitest unit tests for import.js |
-| `scripts/generate-deck-json.mjs` | One-off — converts an Anki Core 2000 TSV export to `decks/core2000.json` |
-| `scripts/upload-audio.mjs` | One-off — uploads Core 2000 Anki audio files to Supabase Storage `audio/imported/` |
-| `scripts/anki-sync.py` | One-off — exports FSRS scheduling state from a local Anki Core 2000 deck to a JSON file importable into this app's SRS module, for migrating existing Anki progress |
+| `src/modules/vocab-srs/migrate.test.js` | Vitest unit tests for migrate.js — chiefly the retired-deck filter |
 | `supabase/functions/word-import/index.ts` | Edge function backing "Import from text / image" — see Word import section below |
 
 **Note:** `config.js` exists in the directory but is not imported anywhere — it is vestigial and can be ignored.
@@ -599,23 +596,26 @@ Cards come from two sources:
 
 Both sources write to the same `cards{}` object, distinguished by `deckId`.
 
-### Core 2000 deck content format
+### Bundled deck content format
 
-Each entry in `core2000.json` (also the shape for `resolveCard` output for this deck):
+Each entry in a `decks/*.json` file (also the shape `resolveCard` returns for a bundled card). Only `id`, `front` and `back` are required; the rest are optional and `keigo.json` carries none of them:
 
 ```js
 {
-  "id": "anki-1",
-  "front": "それ",
-  "back": "that, that one",
-  "wordAudio": "8b0ee07c....mp3",        // Supabase Storage filename
-  "sentenceAudio": "c951babc....mp3",    // Supabase Storage filename
-  "sentence": "それはとってもいい話だ。",
-  "sentenceEnglish": "That's a really nice story."
+  "id": "keigo-001",
+  "front": "いただく",
+  "back": "to receive (humble)",
+  "kana": "いただく",                     // optional
+  "wordAudio": "8b0ee07c....mp3",        // optional — Supabase Storage filename
+  "sentenceAudio": "c951babc....mp3",    // optional — Supabase Storage filename
+  "sentence": "コーヒーをいただきます。",   // optional
+  "sentenceEnglish": "I'll have a coffee." // optional
 }
 ```
 
 `sentenceEnglish` is shown below the Japanese sentence on the card back (smaller font).
+
+**Retiring a bundled deck** — add its id to `RETIRED_DECKS` in `migrate.js` *and* delete its JSON, import, and `DECK_FILES`/`DECK_WORDS` entries. The `RETIRED_DECKS` filter is not optional tidying: a retired deck's cards keep their scheduling state in stored progress but can no longer resolve content, so without it they render as blank cards in the drill. `core3k` and `core2000` were both retired this way (the latter in favour of using Core 2000 in the real Anki app), and `migrate.test.js` covers the behaviour.
 
 ### Audio playback
 
@@ -1073,7 +1073,7 @@ create index if not exists stories_created_at_idx on stories (created_at desc);
 - `sourceType: 'vocab-list'` — `sourceId` is a `WORD_SOURCES` source id (expands to all sublists) or a single listKey. Reads bundled word JSON.
 - `sourceType: 'srs-deck'` — `sourceId` is a deckId. Caller must pass `options.cards` as **resolved** cards (run bundled cards through `resolveCard` first — scheduling-only state has no front/back). Options: `maturity: 'all' | 'seen' | 'graduated'`, `minStabilityDays`.
 - `options.grammarLevel` ('N5'–'N1', default 'N3') appends a grammar directive line; `null` omits it.
-- Output is dense one-word-per-line text (`魚 (さかな) — fish`) to control prompt token cost. Core 2000 / Keigo bundled decks have no kana field, so SRS-sourced lines are `front — back`.
+- Output is dense one-word-per-line text (`魚 (さかな) — fish`) to control prompt token cost. The Keigo bundled deck has no kana field, so SRS-sourced lines are `front — back`.
 
 ### Edge functions
 
