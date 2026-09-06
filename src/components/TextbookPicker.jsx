@@ -22,7 +22,18 @@ function hasWords(book, wordCountFor) {
 }
 
 function firstAvailable(wordCountFor) {
-  return TEXTBOOKS.find(b => hasWords(b, wordCountFor)) ?? TEXTBOOKS[0]
+  return availableBooks(wordCountFor)[0] ?? TEXTBOOKS[0]
+}
+
+// Only books the viewer can actually study. A book with no words is not a
+// choice — picking one used to leave the New card saying "No words for this
+// book yet", so the row was rendered disabled. Showing a list mostly made of
+// things that cannot be picked is noise, so they are left out entirely; a book
+// reappears the moment it has words. Course material lives in the learner's
+// own account, so this is also what keeps one person's lists out of everyone
+// else's picker.
+function availableBooks(wordCountFor) {
+  return TEXTBOOKS.filter(b => hasWords(b, wordCountFor))
 }
 
 // The "Change textbook" surface. Picking a book replaces the current one —
@@ -189,14 +200,12 @@ export function TextbookBrowser({
         ? { borderTop: `1px solid ${HAIRLINE}` }
         : { width: LIST_WIDTH, flexShrink: 0, borderRight: `1px solid ${HAIRLINE}` }),
     }}>
-      {TEXTBOOKS.map(book => {
+      {availableBooks(wordCountFor).map(book => {
         const isSelected = book.id === selected.id
-        const available = hasWords(book, wordCountFor)
         return (
           <button
             key={book.id}
             type="button"
-            disabled={!available}
             className={[
               'tb-row',
               isSelected ? 'tb-row--selected' : '',
