@@ -102,7 +102,11 @@ const STOP = new Set(['to', 'a', 'an', 'the', 'of', 'be', 'is', 'are', 'in', 'on
 function toks(text, loose = false) {
   const words = (text ?? '')
     .toLowerCase()
-    .replace(/\[[^\]]*\]/gu, ' ')
+    // Brackets are delimiters, not noise. A textbook writes a grammatical gloss
+    // entirely inside them — "[counter for long objects]" — so deleting the
+    // contents left nothing to match on and every counter fell back to the
+    // entry's first sense: 本 the counter was glossed "book; volume; script".
+    .replace(/[[\]]/gu, ' ')
     .split(/[^a-z]+/u)
     .filter(Boolean)
   return new Set(loose ? words : words.filter(w => w.length > 1 && !STOP.has(w)))
@@ -397,14 +401,20 @@ for (const book of BOOKS) {
       // Together with the entry's reading this gives one card three possible
       // renderings — the book's spelling, JMdict's canonical form, and plain
       // kana — for a display setting to choose between.
+      // JMdict writes Latin letters full-width (Ｔシャツ) where a textbook uses
+      // ASCII (Tシャツ). Folding the width before comparing lets the book's
+      // spelling be recognised as the entry's own form rather than reported as
+      // a mismatch, and the book's version is what gets kept.
+      const fold = t => t.replace(/[Ａ-Ｚａ-ｚ０-９]/gu, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
       const forms = [...(entry.kanji_forms ?? []), ...(entry.kana_forms ?? [])]
+      const folded = new Set(forms.map(fold))
       // A する-verb is filed under its bare noun, so the book's full form is
       // never listed — but its stem usually is (勉強 for 勉強する, and けんか,
       // in kana, for けんかする). Keep that stem and record that する belongs
       // back on it, so the card drills the verb the book teaches rather than
       // the noun JMdict files it under.
       const stem = e.derivedSpelling || e.derivedReadings?.[0]
-      if (forms.includes(bookForm)) row.kanji = bookForm
+      if (forms.includes(bookForm) || folded.has(fold(bookForm))) row.kanji = bookForm
       else if (stem && forms.includes(stem)) { row.kanji = stem; row.suru = true }
       else {
         // The book often prints a word with the particle it is used with —

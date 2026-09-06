@@ -545,7 +545,8 @@
   {
     "id": "genki-2-l14-046",
     "listKey": "genki-2-l14",
-    "jmdictId": "1412560"
+    "jmdictId": "1412560",
+    "sense": 3
   },
   {
     "id": "genki-2-l14-047",
@@ -555,8 +556,8 @@
   {
     "id": "genki-2-l14-048",
     "listKey": "genki-2-l14",
-    "jmdictId": "1632650",
-    "modified": true
+    "jmdictId": "1522150",
+    "sense": 4
   },
   {
     "id": "genki-2-l15-001",

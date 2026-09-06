@@ -28,7 +28,7 @@ const ids = [...new Set(words.map(w => w.jmdictId))]
 const rows = new Map()
 for (let i = 0; i < ids.length; i += 200) {
   const { data, error } = await supabase.from('dictionary')
-    .select(`id, gloss_en, ${DISPLAY_FORM_COLUMNS}`)
+    .select(`id, gloss_en, senses, ${DISPLAY_FORM_COLUMNS}`)
     .in('id', ids.slice(i, i + 200))
   if (error) throw error
   for (const r of data ?? []) rows.set(r.id, r)
@@ -40,7 +40,12 @@ for (const w of words) {
   const r = rows.get(w.jmdictId)
   if (!r) { console.log(`  !! ${w.id}  jmdictId ${w.jmdictId} NOT FOUND in dictionary`); missing++; continue }
   const { form, reading } = cardFormOf(w, r)
-  const line = `${w.listKey.padEnd(12)} ${form.padEnd(10)} ${(reading ?? '').padEnd(12)} ${(r.gloss_en ?? '').slice(0, 52)}`
+  // Mirrors cardGloss: a word may name which sense its textbook teaches, and
+  // printing gloss_en here would show a definition the card never displays.
+  const gloss = w.sense != null
+    ? (r.senses?.[w.sense]?.gloss ?? []).join('; ')
+    : (r.gloss_en ?? '')
+  const line = `${w.listKey.padEnd(12)} ${form.padEnd(10)} ${(reading ?? '').padEnd(12)} ${gloss.slice(0, 52)}`
   if (filter && !line.includes(filter) && !w.id.includes(filter)) continue
   console.log(`  ${line}`)
   shown++
