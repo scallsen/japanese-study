@@ -25,6 +25,21 @@ describe('SettingsLabPage', () => {
     expect(html).toContain('Furigana')
   })
 
+  it('puts an audio row in both card faces and drops the autoplay row', () => {
+    const html = renderToStaticMarkup(<SettingsLabPage initialVariant="anatomy" />)
+    // Two rows (front + back) plus the group heading of the same name.
+    expect(html.match(/>Audio</g)).toHaveLength(3)
+    // The page's own copy still names the removed row, so match a row label.
+    expect(html).not.toContain('>Play automatically<')
+  })
+
+  it('drops the sentence row for a deck with no sentences', () => {
+    const withSentences = renderToStaticMarkup(<SettingsLabPage initialVariant="anatomy" initialContext="genki-1" />)
+    const without = renderToStaticMarkup(<SettingsLabPage initialVariant="anatomy" initialContext="word-import" />)
+    expect(withSentences).toContain('>Sentence<')
+    expect(without).not.toContain('>Sentence<')
+  })
+
   it('offers the backup voice row when the device has voices', () => {
     const html = renderToStaticMarkup(<SettingsLabPage initialVariant="anatomy" initialBrowserVoices />)
     expect(html).toContain('>Backup voice<')
