@@ -1,18 +1,24 @@
+import { useState, useRef } from 'react'
 import Card from '../components/Card.jsx'
 import Button from '../components/Button.jsx'
-import { ModuleThemeProvider } from '../context/ModuleThemeContext.jsx'
+import Popover from '../components/Popover.jsx'
+import Menu from '../components/Menu.jsx'
+import { ModuleThemeProvider, useAccent } from '../context/ModuleThemeContext.jsx'
 import { useIsMobile } from '../hooks/useIsMobile.js'
 import { MODULES } from '../data/modules.js'
 import { TEXTBOOKS, COVER_GUTTER_FRACTION } from '../data/textbooks.js'
+import { chapterPrimaryAction } from './chapterAction.jsx'
 import {
-  FONT, TRACKING, TEXT, TEXT_MUTED, FS_BADGE, FS_BASE, FS_CAPTION, FS_CONTENT_HEADING, FS_STAT_VALUE,
-  SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24,
+  FONT, TRACKING, TEXT, TEXT_MUTED, FS_BADGE, FS_BASE, FS_CAPTION, FS_CONTENT_HEADING,
+  SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32,
 } from '../data/theme.js'
 
-// The home page's two big cards. They live here rather than inside
-// DashboardPage so the dev lab at #/dev/home-cards can render every state
-// side by side against the exact same components the real page uses — a
-// copy in the lab would drift the moment either one is edited.
+// The home page's two big cards, plus SegmentedPrimary/ActionsRow/
+// chapterPrimaryAction, which the vocab training page's own header reuses —
+// they live here rather than inside DashboardPage so the dev lab at
+// #/dev/home-cards can render every state side by side against the exact
+// same components the real page uses, and so both pages show the same
+// primary action for the chapter under the tracker.
 
 const VOCAB_MODULE = MODULES.find(m => m.id === 'school-vocab')
 const SRS_MODULE = MODULES.find(m => m.id === 'vocab-srs')
@@ -20,13 +26,6 @@ const SRS_MODULE = MODULES.find(m => m.id === 'vocab-srs')
 const HAIRLINE = 'rgba(255,255,255,0.08)'
 
 const COVER_SIZE = 104
-// Pulling the cover's transparent gutter (see COVER_GUTTER_FRACTION) off the
-// right margin sits the artwork's own edge against the card's padding instead
-// of leaving a phantom 16px gap the eye reads as misalignment.
-const COVER_GUTTER = COVER_GUTTER_FRACTION * COVER_SIZE
-// Button's `sm` horizontal padding. Shifting the quiet link row left by it
-// lines the first link's *text* up with the primary button's box edge below.
-const GHOST_TEXT_INSET = 14
 
 function navigate(hash) {
   window.location.hash = hash
@@ -73,12 +72,15 @@ export function PrimaryCard({ accent, title, subtitle, cover, progress, actions,
   )
 }
 
-// The pixel-art cover, doubling as the change-textbook affordance: hovering
-// it reveals a link over the artwork (the reveal is `.textbook-cover` in
-// global.css — a useState hover would double-invoke under StrictMode).
-// Books with no art yet get a plain spine-and-cover placeholder, which is
-// drawn to fill its box and so takes no gutter correction.
-function TextbookCover({ icon, accent, onChangeTextbook }) {
+// The pixel-art cover, cropped to its true bounds (the 5/32 transparent
+// gutter each side is cut away, not just visually offset), doubling as the
+// change-textbook affordance: hovering it reveals a link over the artwork
+// (`.textbook-cover` in global.css — a useState hover would double-invoke
+// under StrictMode). Books with no art yet get a plain spine-and-cover
+// placeholder, which is drawn to fill its box and so takes no crop.
+export function TextbookCover({ icon, accent, onChangeTextbook }) {
+  const gutter = icon ? COVER_GUTTER_FRACTION * COVER_SIZE : 0
+  const width = COVER_SIZE - gutter * 2
   return (
     <button
       type="button"
@@ -86,20 +88,25 @@ function TextbookCover({ icon, accent, onChangeTextbook }) {
       onClick={onChangeTextbook}
       style={{
         position: 'relative',
-        width: COVER_SIZE,
+        width: icon ? width : COVER_SIZE,
         height: COVER_SIZE,
-        marginRight: icon ? -COVER_GUTTER : 0,
         flexShrink: 0,
         padding: 0,
         background: 'none',
         border: 'none',
         cursor: 'pointer',
+        overflow: 'hidden',
         fontFamily: FONT,
         letterSpacing: TRACKING,
       }}
     >
       {icon ? (
-        <img className="textbook-cover__art" src={icon} alt="" style={{ width: '100%', height: '100%', imageRendering: 'pixelated' }} />
+        <img
+          className="textbook-cover__art"
+          src={icon}
+          alt=""
+          style={{ width: COVER_SIZE, height: COVER_SIZE, marginLeft: -gutter, imageRendering: 'pixelated', display: 'block' }}
+        />
       ) : (
         <div className="textbook-cover__art" style={{
           width: '100%', height: '100%',
@@ -113,10 +120,7 @@ function TextbookCover({ icon, accent, onChangeTextbook }) {
         className="textbook-cover__label"
         style={{
           position: 'absolute',
-          top: 0,
-          bottom: 0,
-          left: icon ? COVER_GUTTER : 0,
-          right: icon ? COVER_GUTTER : 0,
+          inset: 0,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -124,10 +128,11 @@ function TextbookCover({ icon, accent, onChangeTextbook }) {
           // No scrim — the artwork itself fades on hover (.textbook-cover__art
           // in global.css), which reads cleaner than a panel that can only ever
           // cover the artwork's own bounds and not the canvas around it.
-          // A cover is only ~71px of artwork wide, so the label wraps to two
+          // A cropped cover is only ~71px wide, so the label wraps to two
           // lines — FS_BADGE keeps those two lines comfortably inside it.
           fontSize: FS_BADGE,
           lineHeight: 1.35,
+          textAlign: 'center',
           color: accent,
           textDecoration: 'underline',
         }}
@@ -166,7 +171,7 @@ function TextbookCarousel() {
             style={{
               width: COVER_SIZE,
               height: COVER_SIZE,
-              marginRight: -COVER_GUTTER,
+              marginRight: -(COVER_GUTTER_FRACTION * COVER_SIZE),
               flexShrink: 0,
               imageRendering: 'pixelated',
             }}
@@ -177,23 +182,69 @@ function TextbookCarousel() {
   )
 }
 
-function ButtonRow({ children, style }) {
-  return <div style={{ display: 'flex', flexWrap: 'wrap', gap: SPACE_8, alignItems: 'center', ...style }}>{children}</div>
+// Only ever two buttons on a card: the (possibly segmented) primary, then
+// one secondary action, side by side rather than a quiet link row above.
+export function ActionsRow({ children }) {
+  return <div style={{ display: 'flex', flexWrap: 'wrap', gap: SPACE_8, alignItems: 'center' }}>{children}</div>
 }
 
-// The bottom-pinned block. Quiet links go above the primary row so the
-// primary button is always the card's last element and lines up with the
-// other card's, whichever branch either one is rendering.
-function CardActions({ links, children }) {
+// A main action plus, when there's a real alternative (redo the current
+// chapter instead of advancing), a chevron that opens it in a popover menu
+// rather than surfacing it as a second visible button. Degrades to a plain
+// Button when there's nothing to put in the menu.
+export function SegmentedPrimary({ size = 'lg', label, onClick, menuItems = [] }) {
+  const accent = useAccent()
+  const [open, setOpen] = useState(false)
+  const chevronRef = useRef(null)
+
+  if (menuItems.length === 0) {
+    return <Button size={size} onClick={onClick}>{label}</Button>
+  }
+
+  const pad = size === 'xl' ? `${SPACE_12}px ${SPACE_32}px` : `10px ${SPACE_24}px`
+  // The chevron segment is a perfect square sized to the main button's own
+  // rendered height (2× its vertical padding + one line of FS_BASE text) —
+  // computed explicitly rather than via CSS aspect-ratio, which a flex row
+  // with align-items: stretch doesn't resolve reliably (the cross-axis size
+  // isn't "definite" yet when the aspect-ratio width would need it, so
+  // Chromium falls back to the glyph's own tiny content width instead).
+  const square = (size === 'xl' ? SPACE_12 : 10) * 2 + FS_BASE
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE_12 }}>
-      {links && <ButtonRow style={{ marginLeft: -GHOST_TEXT_INSET }}>{links}</ButtonRow>}
-      {children && <ButtonRow>{children}</ButtonRow>}
+    <div style={{ display: 'inline-flex', flexShrink: 0, alignItems: 'stretch', borderRadius: 6, overflow: 'hidden', boxSizing: 'border-box' }}>
+      <button
+        type="button"
+        className="btn btn-tint"
+        onClick={onClick}
+        style={{
+          background: accent, border: 'none', boxSizing: 'border-box', flexShrink: 0, whiteSpace: 'nowrap',
+          color: '#fff', padding: pad, fontFamily: FONT, letterSpacing: TRACKING, fontSize: FS_BASE, lineHeight: 1, cursor: 'pointer',
+        }}
+      >
+        {label}
+      </button>
+      <button
+        ref={chevronRef}
+        type="button"
+        className="btn btn-tint"
+        onClick={() => setOpen(o => !o)}
+        aria-label="More actions"
+        style={{
+          background: accent, border: 'none', borderLeft: '1px solid rgba(255,255,255,0.25)', boxSizing: 'border-box', flexShrink: 0,
+          color: '#fff', padding: 0, width: square, height: square, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontFamily: FONT, letterSpacing: TRACKING, fontSize: 20, lineHeight: 1, cursor: 'pointer',
+        }}
+      >
+        <span style={{ display: 'block', transform: 'translateY(-2px)' }}>▾</span>
+      </button>
+      <Popover open={open} onClose={() => setOpen(false)} anchorRef={chevronRef} align="end" width={200} bodyPadding={0}>
+        <Menu items={menuItems} onSelect={id => { setOpen(false); menuItems.find(i => i.id === id)?.onClick() }} />
+      </Popover>
     </div>
   )
 }
 
-export function NewCard({ loading, state, onStart, onChangeTextbook }) {
+export function NewCard({ loading, state, onStart, onAdvance, onChangeTextbook }) {
   const accent = VOCAB_MODULE.accent
 
   if (loading) {
@@ -209,58 +260,49 @@ export function NewCard({ loading, state, onStart, onChangeTextbook }) {
       <PrimaryCard
         accent={accent}
         title="Practice"
-        actions={<CardActions><Button size="lg" onClick={onChangeTextbook}>Choose textbook</Button></CardActions>}
+        actions={<ActionsRow><Button size="lg" onClick={onChangeTextbook}>Choose textbook</Button></ActionsRow>}
       >
         <TextbookCarousel />
       </PrimaryCard>
     )
   }
 
-  const { textbook, chapters, current, next, doneCount, hasWords } = state
+  const { textbook, chapters, doneCount, hasWords } = state
   const complete = doneCount === chapters.length
   const cover = <TextbookCover icon={textbook.icon} accent={accent} onChangeTextbook={onChangeTextbook} />
-  const viewAll = <Button variant="ghost" size="sm" onClick={() => navigate('#/vocab')}>View all chapters</Button>
+  const viewChapters = <Button variant="ghost" size="lg" onClick={() => navigate('#/vocab')}>View all chapters</Button>
 
-  // A finished book's one useful next step is a different book, so the CTA
-  // becomes that and the redundant "Change textbook" link drops away.
-  if (complete) {
+  if (!hasWords) {
     return (
       <PrimaryCard
         accent={accent}
         title={textbook.title}
-        subtitle="Book completed"
+        subtitle={`${doneCount} of ${chapters.length} chapters`}
         cover={cover}
-        progress={1}
-        actions={
-          <CardActions links={viewAll}>
-            <Button size="lg" onClick={onChangeTextbook}>Pick new textbook</Button>
-          </CardActions>
-        }
-      />
+        actions={<ActionsRow>{viewChapters}</ActionsRow>}
+      >
+        <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>No words for this book yet.</div>
+      </PrimaryCard>
     )
   }
+
+  const { label, onClick, menuItems, body } = chapterPrimaryAction(state, { onStart, onAdvance, onChangeTextbook })
 
   return (
     <PrimaryCard
       accent={accent}
       title={textbook.title}
-      subtitle={`${doneCount} of ${chapters.length} chapters`}
+      subtitle={complete ? 'Book completed' : `${doneCount} of ${chapters.length} chapters`}
       cover={cover}
-      progress={chapters.length ? doneCount / chapters.length : 0}
+      progress={complete ? 1 : (chapters.length ? doneCount / chapters.length : 0)}
       actions={
-        <CardActions links={viewAll}>
-          {hasWords && (current.drilled && next ? (
-            <>
-              <Button size="lg" onClick={() => onStart(next)}>Start {next.label}</Button>
-              <Button size="lg" variant="neutral" onClick={() => onStart(current)}>Continue {current.label}</Button>
-            </>
-          ) : (
-            <Button size="lg" onClick={() => onStart(current)}>Start {current.label}</Button>
-          ))}
-        </CardActions>
+        <ActionsRow>
+          <SegmentedPrimary size="lg" label={label} onClick={onClick} menuItems={menuItems} />
+          {viewChapters}
+        </ActionsRow>
       }
     >
-      {!hasWords && <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>No words for this book yet.</div>}
+      {body}
     </PrimaryCard>
   )
 }
@@ -282,7 +324,7 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
         accent={accent}
         title="Review"
         subtitle="Spaced repetition for the words you've studied. Sign in to sync your decks across devices."
-        actions={<CardActions><Button size="lg" onClick={onSignIn}>Create account</Button></CardActions>}
+        actions={<ActionsRow><Button size="lg" onClick={onSignIn}>Create account</Button></ActionsRow>}
       />
     )
   }
@@ -293,48 +335,30 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
         accent={accent}
         title="Review"
         subtitle="No cards yet. Finish a chapter and send its words here."
-        actions={
-          <CardActions>
-            <Button size="lg" variant="neutral" onClick={() => navigate('#/vocab-srs')}>Manage decks</Button>
-          </CardActions>
-        }
+        actions={<ActionsRow><Button size="lg" variant="neutral" onClick={() => navigate('#/vocab-srs')}>Manage decks</Button></ActionsRow>}
       />
     )
   }
 
-  const { due, newToday, newWaiting, totalCards, activeDecks, canStart } = summary
-  const caption = [
-    `${activeDecks} active ${activeDecks === 1 ? 'deck' : 'decks'}`,
-    `${totalCards} cards`,
-    newWaiting > 0 ? `${newWaiting} new waiting` : null,
-  ].filter(Boolean).join(' · ')
+  const { due, newToday, activeDecks, canStart, estimatedMinutes } = summary
+  const headline = canStart ? `${due} due · ${newToday} new · ~${estimatedMinutes} min` : 'Nothing due'
+  const caption = `${activeDecks} active ${activeDecks === 1 ? 'deck' : 'decks'}`
 
   return (
     <PrimaryCard
       accent={accent}
       title="Reviews"
-      subtitle={caption}
+      subtitle={headline}
       actions={
-        <CardActions links={<Button variant="ghost" size="sm" onClick={() => navigate('#/vocab-srs')}>Manage decks</Button>}>
+        <ActionsRow>
           <Button size="lg" disabled={!canStart} onClick={() => navigate('#/vocab-srs?start=1')}>
-            {canStart ? 'Start reviews' : 'Nothing due'}
+            {canStart ? `Review ${due + newToday} cards` : 'Nothing due'}
           </Button>
-        </CardActions>
+          <Button variant="ghost" size="lg" onClick={() => navigate('#/vocab-srs')}>Manage decks</Button>
+        </ActionsRow>
       }
     >
-      <div style={{ display: 'flex', gap: SPACE_24 }}>
-        <Stat value={due} label="Due" />
-        <Stat value={newToday} label="New today" />
-      </div>
+      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>{caption}</div>
     </PrimaryCard>
-  )
-}
-
-function Stat({ value, label }) {
-  return (
-    <div>
-      <div style={{ fontSize: FS_STAT_VALUE, color: TEXT, lineHeight: 1.1 }}>{value}</div>
-      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: SPACE_4 }}>{label}</div>
-    </div>
   )
 }
