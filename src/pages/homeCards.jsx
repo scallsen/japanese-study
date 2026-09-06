@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, Children, cloneElement, isValidElement } from 'react'
 import Card from '../components/Card.jsx'
 import Button from '../components/Button.jsx'
 import Popover from '../components/Popover.jsx'
@@ -183,22 +183,50 @@ function TextbookCarousel() {
 }
 
 // Only ever two buttons on a card: the (possibly segmented) primary, then
-// one secondary action, side by side rather than a quiet link row above.
+// one secondary action, side by side rather than a quiet link row above —
+// except on mobile, where the stacked card is already full device width and
+// a hug-content button next to it just reads as dead space. Below the
+// breakpoint the row becomes a column and every child is stretched to fill
+// it (`fullWidth` cloned onto each — both Button and SegmentedPrimary
+// support it), same shape as a modal's stacked primary/secondary actions.
+// The secondary (always the second child — a ghost Button, never
+// SegmentedPrimary) also drops to `size="md"`: stacked on its own row, its
+// own padding sits directly against the card's bottom padding, and being
+// transparent that padding reads as dead space rather than as a button —
+// shrinking it tightens that without shrinking the primary's tap target.
 export function ActionsRow({ children }) {
-  return <div style={{ display: 'flex', flexWrap: 'wrap', gap: SPACE_8, alignItems: 'center' }}>{children}</div>
+  const isMobile = useIsMobile()
+  const items = isMobile
+    ? Children.map(children, (child, i) => (
+        isValidElement(child)
+          ? cloneElement(child, { fullWidth: true, ...(i > 0 ? { size: 'md' } : {}) })
+          : child
+      ))
+    : children
+  return (
+    <div style={{
+      display: 'flex',
+      flexDirection: isMobile ? 'column' : 'row',
+      flexWrap: isMobile ? 'nowrap' : 'wrap',
+      alignItems: isMobile ? 'stretch' : 'center',
+      gap: SPACE_8,
+    }}>
+      {items}
+    </div>
+  )
 }
 
 // A main action plus, when there's a real alternative (redo the current
 // chapter instead of advancing), a chevron that opens it in a popover menu
 // rather than surfacing it as a second visible button. Degrades to a plain
 // Button when there's nothing to put in the menu.
-export function SegmentedPrimary({ size = 'lg', label, onClick, menuItems = [] }) {
+export function SegmentedPrimary({ size = 'lg', label, onClick, menuItems = [], fullWidth = false }) {
   const accent = useAccent()
   const [open, setOpen] = useState(false)
   const chevronRef = useRef(null)
 
   if (menuItems.length === 0) {
-    return <Button size={size} onClick={onClick}>{label}</Button>
+    return <Button size={size} onClick={onClick} fullWidth={fullWidth}>{label}</Button>
   }
 
   const pad = size === 'xl' ? `${SPACE_12}px ${SPACE_32}px` : `10px ${SPACE_24}px`
@@ -211,13 +239,20 @@ export function SegmentedPrimary({ size = 'lg', label, onClick, menuItems = [] }
   const square = (size === 'xl' ? SPACE_12 : 10) * 2 + FS_BASE
 
   return (
-    <div style={{ display: 'inline-flex', flexShrink: 0, alignItems: 'stretch', borderRadius: 6, overflow: 'hidden', boxSizing: 'border-box' }}>
+    <div style={{
+      display: fullWidth ? 'flex' : 'inline-flex',
+      width: fullWidth ? '100%' : undefined,
+      flexShrink: fullWidth ? undefined : 0,
+      alignItems: 'stretch', borderRadius: 6, overflow: 'hidden', boxSizing: 'border-box',
+    }}>
       <button
         type="button"
         className="btn btn-tint"
         onClick={onClick}
         style={{
-          background: accent, border: 'none', boxSizing: 'border-box', flexShrink: 0, whiteSpace: 'nowrap',
+          background: accent, border: 'none', boxSizing: 'border-box',
+          flex: fullWidth ? '1 1 auto' : '0 0 auto',
+          whiteSpace: 'nowrap', textAlign: 'center',
           color: '#fff', padding: pad, fontFamily: FONT, letterSpacing: TRACKING, fontSize: FS_BASE, lineHeight: 1, cursor: 'pointer',
         }}
       >
