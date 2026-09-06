@@ -105,17 +105,19 @@ export const TEXTBOOKS = [
     icon: `${ICONS}/marugoto-a1-katsudou.svg`,
     chapters: topics('marugoto-a1-katsudou', 9),
   },
-  // The two So-Matome entries are the only books with word data today — their
-  // chapter ids are the existing nsm-n3-* / n2-* listKeys.
+  // So-Matome N3 Kanji follows the book: 6 weeks of 6 vocabulary days. (The
+  // book's day 7 each week is review and introduces nothing, so it has no
+  // chapter.) It was rebuilt from a course's own re-chunking of the same book —
+  // see scripts/migrate-somatome-kanji.mjs.
   {
-    id: 'nsm-n3',
-    title: 'Nihongo So-Matome N3',
-    subtitle: 'Vocabulary · N3',
+    id: 'nsm-n3-kanji',
+    title: 'Nihongo So-Matome N3 Kanji',
+    subtitle: 'Kanji · N3',
     publisher: 'ASK Publishing',
-    description: 'JLPT N3 vocabulary drilling, split into short daily sets rather than long chapters. Built for a steady pace toward the test.',
-    purchase: storeLinks('Nihongo So-matome N3 vocabulary'),
+    description: 'JLPT N3 kanji in six weeks of short daily sets, each day built around a theme. The book\'s seventh day of each week is review and introduces no new words.',
+    purchase: storeLinks('Nihongo So-matome N3 kanji'),
     icon: `${ICONS}/nihongo-so-matome-kanji-n3.svg`,
-    chapters: weekDays('nsm-n3', 4),
+    chapters: weekDays('nsm-n3-kanji', 6, 6),
   },
   {
     id: 'nsm-n2',

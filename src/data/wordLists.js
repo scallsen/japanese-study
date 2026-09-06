@@ -14,11 +14,18 @@ function fromTextbook(id) {
   return { id: book.id, label: book.title, lists: book.chapters }
 }
 
+// A personal source is one learner's own course material — a class's
+// re-chunking of a textbook, with its own sentences and review markers. It is
+// theirs, not the app's, so it only appears for the account that owns it (see
+// visibleSources). The published book it was taken from lives alongside it as
+// an ordinary source.
 export const WORD_SOURCES = [
   fromTextbook('genki-1'),
   fromTextbook('genki-2'),
+  fromTextbook('nsm-n3-kanji'),
   {
     id: 'nsm-n3',
+    personal: true,
     label: 'Nihongo So-Matome N3 (I-3)',
     lists: [
       { id: 'nsm-n3-w1d1', label: 'Week 1, Day 1' },
@@ -37,6 +44,7 @@ export const WORD_SOURCES = [
   },
   {
     id: 'nsm-n3-i4',
+    personal: true,
     label: 'Nihongo So-Matome N3 (I-4)',
     lists: [
       { id: 'nsm-n3-i4-w1d1', label: 'Week 1, Day 1' },
@@ -55,6 +63,7 @@ export const WORD_SOURCES = [
   },
   {
     id: 'nsm-n3-i5',
+    personal: true,
     label: 'Nihongo So-Matome N3 (I-5)',
     lists: [
       { id: 'nsm-n3-i5-w1d1', label: 'Week 1, Day 1' },
@@ -73,6 +82,7 @@ export const WORD_SOURCES = [
   },
   {
     id: 'nsm-n2-a1',
+    personal: true,
     label: 'Nihongo So-Matome N2 (A-1)',
     lists: [
       { id: 'n2-w1d1', label: 'Week 1, Day 1' },
@@ -91,6 +101,7 @@ export const WORD_SOURCES = [
   },
   {
     id: 'nsm-n2-a2',
+    personal: true,
     label: 'Nihongo So-Matome N2 (A-2)',
     lists: [
       { id: 'n2-a2-w1d1', label: 'Week 1, Day 1' },
@@ -108,3 +119,14 @@ export const WORD_SOURCES = [
     ],
   },
 ]
+
+// Sources a given viewer should see. A personal source belongs to one account:
+// VITE_PERSONAL_USER_ID names it, and with that unset nobody sees them, which
+// is the right default for anyone else running this app.
+//
+// This governs what is OFFERED, not what is reachable — the word files ship in
+// the bundle like every other list. It declutters; it is not access control.
+export function visibleSources(userId) {
+  const owner = import.meta.env?.VITE_PERSONAL_USER_ID
+  return WORD_SOURCES.filter(s => !s.personal || (owner && userId === owner))
+}

@@ -16,7 +16,7 @@ import ActionBar, { ACTION_BAR_HEIGHT } from '../components/ActionBar.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_BADGE, FS_ENTRY_WORD, FS_STAT_VALUE, FS_DISPLAY_HEADING, KANJI_FONT, WARNING } from '../data/theme.js'
 import { MODULES } from '../data/modules.js'
 import { ModuleThemeProvider, useAccent } from '../context/ModuleThemeContext.jsx'
-import { WORD_SOURCES } from '../data/wordLists.js'
+import { WORD_SOURCES, visibleSources } from '../data/wordLists.js'
 import { SENTENCE_SOURCE_OPTIONS, DEFAULT_SENTENCE_SOURCE } from '../data/sentenceSource.js'
 import { useDrill } from '../hooks/useDrill.js'
 import { useTTS, useJaVoices } from '../hooks/useTTS.js'
@@ -28,6 +28,7 @@ import { useProgress } from '../hooks/useProgress.js'
 import { useAudioGenerationStatus } from '../hooks/useAudioGenerationStatus.js'
 import { useDictionaryEntries } from '../hooks/useDictionaryEntries.js'
 import { cardGloss } from '../utils/dictionaryEntryLookup.js'
+import { cardFormOf } from '../lib/displayForm.js'
 import { useSentencesForWords } from '../hooks/useSentenceForWord.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../utils/storage.js'
 import { supabase } from '../lib/supabase.js'
@@ -50,7 +51,6 @@ const REVIEW_MODE_OPTIONS = [
   { value: 'kanji-front', label: 'Japanese → English' },
   { value: 'meaning-front', label: 'English → Japanese' },
 ]
-const WORD_SOURCE_OPTIONS = WORD_SOURCES.map(source => ({ value: source.id, label: source.label }))
 
 function mistakeTier(count) {
   if (!count) return 'none'
@@ -673,7 +673,7 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
 
 // ── HomeScreen ────────────────────────────────────────────────────────────────
 
-function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selectedSubLists, onToggleSubList, wordCountByList, reviewWordCount, includeReview, onToggleIncludeReview, sentenceVocabWordCount, includeSentenceVocab, onToggleIncludeSentenceVocab, vocabProgress, reviewMode, onChangeReviewMode, onStart, onGlance }) {
+function HomeScreen({ sourceOptions, selectedSourceId, onSelectSource, availableSubLists, selectedSubLists, onToggleSubList, wordCountByList, reviewWordCount, includeReview, onToggleIncludeReview, sentenceVocabWordCount, includeSentenceVocab, onToggleIncludeSentenceVocab, vocabProgress, reviewMode, onChangeReviewMode, onStart, onGlance }) {
   const canStart = selectedSubLists.length > 0
 
   return (
@@ -700,7 +700,7 @@ function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selec
         <label style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, letterSpacing: '0.08em' }}>
           WORD LIST
         </label>
-      <Select value={selectedSourceId} onChange={onSelectSource} size="md" options={WORD_SOURCE_OPTIONS} />
+      <Select value={selectedSourceId} onChange={onSelectSource} size="md" options={sourceOptions} />
       {reviewWordCount > 0 && (
         <div style={{ marginTop: 4 }}>
           <Checkbox checked={includeReview} onChange={onToggleIncludeReview} label={`Include review words (${reviewWordCount})`} />
@@ -803,6 +803,12 @@ export default function VocabPage() {
 function VocabPageScreens() {
   const ACCENT = useAccent()
   const { user } = useAuth()
+  // A personal source belongs to one account, so the list of sources on offer
+  // depends on who is signed in.
+  const sourceOptions = useMemo(
+    () => visibleSources(user?.id).map(source => ({ value: source.id, label: source.label })),
+    [user],
+  )
   const { data: vocabProgress, save: saveVocabProgress } = useProgress('vocab-flashcard')
   const { data: srsData, save: saveSrs } = useProgress('vocab-srs')
 
@@ -1198,6 +1204,7 @@ function VocabPageScreens() {
               </GlanceErrorBoundary>
             ) : (
               <HomeScreen
+                sourceOptions={sourceOptions}
                 selectedSourceId={selectedSourceId}
                 onSelectSource={handleSelectSource}
                 availableSubLists={availableSubLists}

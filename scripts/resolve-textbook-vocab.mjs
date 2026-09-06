@@ -27,6 +27,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { readFileSync, writeFileSync, existsSync } from 'fs'
 import { displayFormOf } from '../src/lib/displayForm.js'
+import { chooseBookForm, normalise } from '../src/lib/textbookForm.js'
 
 const SUPABASE_URL = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -56,43 +57,6 @@ const BOOKS = [
 // anyway, so the reading index reaches all of them.
 const SELECT = 'id, primary_form, preferred_form, kanji_forms, kana_forms, gloss_en, common, senses, misc0:senses->0->misc'
 const BATCH = 50
-
-// --- normalisation -------------------------------------------------------
-// Each rule records itself when it fires, so the report can show exactly what
-// was rewritten before matching rather than silently altering the input.
-const RULES = [
-  ['na-suffix', s => s.replace(/[（(]な[）)]\s*$/u, '')],
-  ['wo-prefix', s => s.replace(/^[（(][〜~～]?を[）)]\s*/u, '')],
-  ['plus-negative', s => s.replace(/\s*[+＋]\s*negative\s*$/iu, '')],
-  ['tilde', s => s.replace(/[〜~～]/gu, '')],
-  ['paren', s => s.replace(/[（(][^）)]*[）)]/gu, '')],
-]
-
-function normalise(raw) {
-  let s = (raw ?? '').trim()
-  const applied = []
-  for (const [name, fn] of RULES) {
-    const next = fn(s)
-    if (next !== s) { applied.push(name); s = next }
-  }
-  s = s.replace(/[\s　]+/gu, '').trim()
-  // A slashed field lists alternative readings of one word (なん／なに).
-  const parts = s.split(/[／/]/u).map(p => p.trim()).filter(Boolean)
-  const forms = parts.length ? parts : [s]
-  return { forms, derived: derivedForms(forms), applied }
-}
-
-// JMdict stores a する-verb as its noun tagged `vs` (勉強 covers 勉強する), so the
-// full textbook form never matches but the stem does. Tried only after the form
-// as written fails, so a word that is genuinely its own entry still wins.
-function derivedForms(forms) {
-  const out = []
-  for (const f of forms) {
-    const m = f.match(/^(.{2,})(?:をする|する)$/u)
-    if (m) out.push(m[1])
-  }
-  return out
-}
 
 // --- gloss corroboration -------------------------------------------------
 const STOP = new Set(['to', 'a', 'an', 'the', 'of', 'be', 'is', 'are', 'in', 'on', 'at',
@@ -404,53 +368,15 @@ for (const book of BOOKS) {
     if (e.overrideForm) {
       row.kanji = e.overrideForm
       if (e.overrideReading) row.kana = e.overrideReading
-    } else if (bookForm && shown && bookForm !== shown) {
-      // JMdict lists several written forms for one word — のぼる is 上る/登る/昇る,
-      // 五日 is ５日/五日 — and a textbook teaches one of them. Where the book's
-      // spelling is one the entry itself lists, keep it: the card then matches
-      // the book while still pointing at the same entry for reading and
-      // meaning. This selects among JMdict's own forms rather than storing the
-      // textbook's text, and it is revalidated every run, so a form that later
-      // leaves JMdict stops being used instead of silently persisting.
-      //
-      // Together with the entry's reading this gives one card three possible
-      // renderings — the book's spelling, JMdict's canonical form, and plain
-      // kana — for a display setting to choose between.
-      // JMdict writes Latin letters full-width (Ｔシャツ) where a textbook uses
-      // ASCII (Tシャツ). Folding the width before comparing lets the book's
-      // spelling be recognised as the entry's own form rather than reported as
-      // a mismatch, and the book's version is what gets kept.
-      const fold = t => t.replace(/[Ａ-Ｚａ-ｚ０-９]/gu, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
-      const forms = [...(entry.kanji_forms ?? []), ...(entry.kana_forms ?? [])]
-      const folded = new Set(forms.map(fold))
-      // A する-verb is filed under its bare noun, so the book's full form is
-      // never listed — but its stem usually is (勉強 for 勉強する, and けんか,
-      // in kana, for けんかする). Keep that stem and record that する belongs
-      // back on it, so the card drills the verb the book teaches rather than
-      // the noun JMdict files it under.
-      const stem = e.derivedSpelling || e.derivedReadings?.[0]
-      if (forms.includes(bookForm) || folded.has(fold(bookForm))) row.kanji = bookForm
-      else if (stem && forms.includes(stem)) { row.kanji = stem; row.suru = true }
-      else {
-        // The book often prints a word with the particle it is used with —
-        // ほかの, 授業中に — which JMdict never includes in the entry. The entry
-        // is already settled by this point, so trimming the tail can only
-        // change how the card is written, never which word it is: keep the
-        // listed form and let `mark` put the tail back.
-        for (let n = 1; n <= 2 && !row.kanji; n++) {
-          const head = bookForm.slice(0, -n)
-          if (head.length >= 2 && forms.includes(head)) row.kanji = head
-        }
-      }
-      // Nothing the entry lists is written the way the book writes it: 歩いて
-      // against 歩く, or a spelling the book got wrong (風 for "cold"). Mark it,
-      // so the card can say the form differs rather than pretending otherwise.
-      if (!row.kanji) row.modified = true
-
-      // When the form kept is itself a kana form, it IS the reading. Leaving
-      // the reading to kana_forms[0] made みんなで read みなで, because 皆 lists
-      // both みな and みんな and the book uses the second.
-      if (row.kanji && (entry.kana_forms ?? []).includes(row.kanji)) row.kana = row.kanji
+    } else {
+      // The rules for which form a card shows are shared with every other
+      // textbook importer — see src/lib/textbookForm.js.
+      Object.assign(row, chooseBookForm({
+        entry,
+        bookForm,
+        rawBook: e.srcKanji?.trim() || e.srcKana?.trim() || '',
+        stem: e.derivedSpelling || e.derivedReadings?.[0],
+      }))
     }
 
     const sense = bestSense(e.gloss, entry)
@@ -460,23 +386,6 @@ for (const book of BOOKS) {
       // like any other decision rather than applied invisibly.
       e.senseGloss = (entry.senses?.[sense]?.gloss ?? []).join('; ')
     }
-    // A textbook decorates an entry to show how it is used — 〜枚 for a counter,
-    // そんな〜 for a prenominal, きれい（な） for a na-adjective. Matching has to
-    // strip that to find the word, but the card should print it, so the
-    // decoration is kept as a template around the form rather than as a set of
-    // per-shape flags: whatever was stripped, back where the book had it.
-    const rawBook = (e.srcKanji?.trim() || e.srcKana?.trim() || '')
-    // Compare against the form AFTER する is re-appended, or the する a `suru`
-    // word already carries is captured a second time and rendered twice.
-    const core = (row.kanji ?? bookForm) + (row.suru ? 'する' : '')
-    const at = core ? rawBook.indexOf(core) : -1
-    if (at >= 0 && rawBook !== core) {
-      const mark = `${rawBook.slice(0, at)}{}${rawBook.slice(at + core.length)}`
-      // 〜 and （な） are how the book writes the word; "+ negative" is an
-      // English note about how it is used, and does not belong on a card face.
-      if (!/[A-Za-z]/.test(mark)) row.mark = mark
-    }
-
     // What the card will actually render, for the audit — which otherwise
     // reports the dictionary's form and misses that the book's was kept.
     const rendered = (row.kanji ?? shown) + (row.suru ? 'する' : '')
