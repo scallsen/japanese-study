@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
+import Popover from '../../components/Popover.jsx'
+import Menu from '../../components/Menu.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useProgress } from '../../hooks/useProgress.js'
 import { getDeckStats, getGlobalStats, getStateDistribution, getTodaysQueue, resolveCard, resetCardProgress, createCard, State } from './srs.js'
@@ -10,24 +12,24 @@ import WordImportPanel from './WordImportPanel.jsx'
 import { ensureDeck, createDeck, renameDeck, deleteCards } from './deckUtils.js'
 import PageHeader from '../../components/PageHeader.jsx'
 import AuthSlot from '../../components/AuthSlot.jsx'
-import SettingsSidebar, { SidebarHeaderToggle } from '../../components/SettingsSidebar.jsx'
+import SettingsSidebar from '../../components/SettingsSidebar.jsx'
 import SignInGate from '../../components/SignInGate.jsx'
 import Button from '../../components/Button.jsx'
-import FileButton from '../../components/FileButton.jsx'
 import NumberField from '../../components/NumberField.jsx'
 import ToggleButton from '../../components/ToggleButton.jsx'
 import Badge from '../../components/Badge.jsx'
 import DistributionBar from '../../components/DistributionBar.jsx'
 import DataList from '../../components/DataList.jsx'
 import { useToast } from '../../context/ToastContext.jsx'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_NAV, SUBHEADING_STYLE, FS_CAPTION, FS_CONTENT_HEADING, SUCCESS } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_NAV, FS_CAPTION, FS_CONTENT_HEADING } from '../../data/theme.js'
 import { MODULES } from '../../data/modules.js'
 import { ModuleThemeProvider, useAccent } from '../../context/ModuleThemeContext.jsx'
 import { STATE_SEGMENTS, SUSPENDED_DESCRIPTION } from './cardStates.js'
 import SectionHeader from '../../components/SectionHeader.jsx'
-import DrillSettingsPanel from '../../components/DrillSettingsPanel.jsx'
+import DrillSettingsPanel, { Row as SettingsRow } from '../../components/DrillSettingsPanel.jsx'
+import FilterCard from '../../components/FilterCard.jsx'
+import Switch from '../../components/Switch.jsx'
 import { useDrillSettings, audioSourceForVoice } from '../../hooks/useDrillSettings.js'
-import Checkbox from '../../components/Checkbox.jsx'
 import { useJaVoices } from '../../hooks/useTTS.js'
 import { useAudioGenerationStatus } from '../../hooks/useAudioGenerationStatus.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
@@ -110,6 +112,43 @@ function DeckNameCell({ deck, stats, onRename }) {
   )
 }
 
+// A single "Import" trigger opening the two existing import flows in a
+// popover menu, rather than two separate buttons sitting side by side.
+// "Choose .txt file" still needs a real file picker, which a Menu item's
+// plain onClick can't open by itself — so this keeps its own hidden
+// <input type="file"> (the same pattern FileButton uses) and clicks it from
+// the menu selection instead of rendering FileButton inside the popover.
+function ImportMenuButton({ onFile, onOpenWordImport, isMobile }) {
+  const [open, setOpen] = useState(false)
+  const btnRef = useRef(null)
+  const inputRef = useRef(null)
+
+  const items = [
+    { id: 'txt', label: 'Choose .txt file', onClick: () => inputRef.current?.click() },
+    { id: 'text-image', label: 'Import from text / image', onClick: onOpenWordImport },
+  ]
+
+  return (
+    <>
+      <Button ref={btnRef} variant="neutral" onClick={() => setOpen(o => !o)}>Import ▾</Button>
+      <Popover open={open} onClose={() => setOpen(false)} anchorRef={btnRef} isMobile={isMobile} align="start" width={220} bodyPadding={0}>
+        <Menu items={items} onSelect={id => { setOpen(false); items.find(i => i.id === id)?.onClick() }} />
+      </Popover>
+      <input
+        ref={inputRef}
+        type="file"
+        accept=".txt"
+        style={{ display: 'none' }}
+        onChange={e => {
+          const file = e.target.files?.[0]
+          if (file) onFile(file)
+          e.target.value = ''
+        }}
+      />
+    </>
+  )
+}
+
 // Converts a resolved card array (from drill) back to the cards{} object format,
 // stripping front/back for bundled decks since their content lives in static JSON.
 function resolvedArrayToCardsObj(resolvedCards, decks) {
@@ -148,7 +187,6 @@ function VocabSrsHome() {
   // cards merely queued. Bumping the count at session start let an abandoned
   // session consume the day's new-card allowance without any card being studied.
   const sessionNewCardsRef = useRef(null)
-  const [importMsg, setImportMsg] = useState(null)
   const [showWordImport, setShowWordImport] = useState(false)
   const [advanceDays, setAdvanceDays] = useState(3)
   const [showOptions, setShowOptions] = useState(() => window.innerWidth > 768)
@@ -382,7 +420,7 @@ function VocabSrsHome() {
     const imported = parseAnkiExport(text, existingIds)
 
     if (imported.length === 0) {
-      setImportMsg('No new cards found')
+      showToast({ message: 'No new cards found' })
       return
     }
 
@@ -397,7 +435,7 @@ function VocabSrsHome() {
     const newProgress = { ...progress, decks: newDecks, cards: newCardsObj }
     setProgress(newProgress)
     await save(newProgress)
-    setImportMsg(`${imported.length} card${imported.length === 1 ? '' : 's'} imported`)
+    showToast({ message: `${imported.length} card${imported.length === 1 ? '' : 's'} imported` })
   }
 
   function buildWordImportCards(words, deckId) {
@@ -454,51 +492,45 @@ function VocabSrsHome() {
     save(newProgress)
   }
 
+  // Card front/back/audio/interface settings only mean something with a card
+  // actually on screen, so this is only ever mounted during an active
+  // session — see the sidebar's conditional render below. SRS Settings and
+  // Dev tools live inline in the overview's main content instead (see
+  // OverviewSettings), since there's no sidebar to put them in there.
   function renderPanelContent(paddingH) {
-    const hairline = { height: 1, background: 'rgba(255,255,255,0.08)', margin: '20px 0' }
     return (
       <div style={{ padding: `16px ${paddingH}px 16px` }}>
+        <DrillSettingsPanel
+          settings={settings}
+          onChange={setSetting}
+          backupVoices={jaVoices}
+          audioFootnote={audioFootnote}
+        />
+      </div>
+    )
+  }
 
-        {/* Deck stats/toggling/renaming live in the main content now (the
-            Decks list below the header) — the sidebar keeps only the
-            settings that don't have a natural home there. */}
+  function renderOverviewSettings() {
+    const hairline = { height: 1, background: 'rgba(255,255,255,0.08)', margin: '20px 0' }
+    return (
+      <div>
         <SectionHeader title="SRS Settings" />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Daily new cards</span>
-            <NumberField value={dailyNewCards} min={1} onChange={v => setDailyNewCards(Math.max(1, parseInt(v) || 1))} />
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>
-              Leech threshold
-              <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginLeft: 6 }}>lapses (0 = off)</span>
-            </span>
-            <NumberField value={leechThreshold} min={0} onChange={v => setLeechThreshold(Math.max(0, parseInt(v) || 0))} />
-          </div>
-          <Checkbox
-            checked={showHardEasy}
-            onChange={() => setShowHardEasy(v => !v)}
-            label="Show Hard / Easy buttons"
+        <FilterCard>
+          <SettingsRow
+            label="Daily new cards"
+            control={<NumberField value={dailyNewCards} min={1} onChange={v => setDailyNewCards(Math.max(1, parseInt(v) || 1))} />}
           />
-        </div>
+          <SettingsRow
+            label={<>Leech threshold<span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginLeft: 6 }}>lapses (0 = off)</span></>}
+            control={<NumberField value={leechThreshold} min={0} onChange={v => setLeechThreshold(Math.max(0, parseInt(v) || 0))} />}
+          />
+          <SettingsRow
+            label="Show Hard / Easy buttons"
+            onActivate={() => setShowHardEasy(v => !v)}
+            control={<Switch checked={showHardEasy} onChange={() => setShowHardEasy(v => !v)} label="Show Hard / Easy buttons" />}
+          />
+        </FilterCard>
 
-        {/* Card front/back/audio/interface settings only mean something with
-            a card actually on screen — shown here while reviewing, hidden on
-            the overview where there's nothing yet to preview them against
-            (the same settings are still reachable mid-session). */}
-        {session && (
-          <>
-            <div style={hairline} />
-            <DrillSettingsPanel
-              settings={settings}
-              onChange={setSetting}
-              backupVoices={jaVoices}
-              audioFootnote={audioFootnote}
-            />
-          </>
-        )}
-
-        {/* ── Dev (DEV only) ── */}
         {import.meta.env.DEV && globalStats.totalCards > 0 && (
           <>
             <div style={hairline} />
@@ -546,7 +578,6 @@ function VocabSrsHome() {
             </div>
           </>
         )}
-
       </div>
     )
   }
@@ -593,12 +624,7 @@ function VocabSrsHome() {
           <div style={{ height: '100%', display: 'flex', flexDirection: 'column', color: TEXT }}>
             <PageHeader
               crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'SRS' }]}
-              rightSlot={(
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <AuthSlot />
-                  {isMobile && <SidebarHeaderToggle onClick={() => setShowOptions(true)} />}
-                </div>
-              )}
+              rightSlot={<AuthSlot />}
             />
 
             <main style={{ flex: 1, overflowY: 'auto', padding: '28px 24px', display: 'flex', flexDirection: 'column' }}>
@@ -646,25 +672,15 @@ function VocabSrsHome() {
                     maxWidth="100%"
                     navigate={{ href: deck => `#/vocab-srs/browse?deck=${deck.id}` }}
                   />
-                  <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: 8 }}>
-                    Click a deck to browse its cards. Review settings (daily new, leech, Hard/Easy) stay in the settings sidebar.
-                  </div>
+                </div>
+
+                <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 20, marginBottom: 28 }}>
+                  {renderOverviewSettings()}
                 </div>
 
                 <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 20 }}>
-                  <div style={{ ...SUBHEADING_STYLE, color: TEXT_MUTED, marginBottom: 10 }}>
-                    Import
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-                      <FileButton accept=".txt" onFile={handleFileChange}>Choose .txt file</FileButton>
-                      {importMsg && (
-                        <span style={{ fontSize: FS_BASE, color: SUCCESS }}>{importMsg}</span>
-                      )}
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-                      <Button variant="neutral" onClick={() => setShowWordImport(true)}>Import from text / image</Button>
-                    </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                    <ImportMenuButton onFile={handleFileChange} onOpenWordImport={() => setShowWordImport(true)} isMobile={isMobile} />
                   </div>
                   <div style={{ marginTop: 8, fontSize: 12, color: 'rgba(255,255,255,0.2)' }}>
                     {Object.keys(cardsObj).length} total cards
@@ -683,14 +699,19 @@ function VocabSrsHome() {
         )}
       </div>
 
-      <SettingsSidebar
-        open={showOptions}
-        onToggle={() => setShowOptions(v => !v)}
-        onClose={() => setShowOptions(false)}
-        isMobile={isMobile}
-      >
-        {renderPanelContent}
-      </SettingsSidebar>
+      {/* Card front/back/audio/interface settings only mean something with a
+          card on screen — no sidebar at all on the overview; SRS Settings
+          and Dev tools live inline there instead (renderOverviewSettings). */}
+      {session && (
+        <SettingsSidebar
+          open={showOptions}
+          onToggle={() => setShowOptions(v => !v)}
+          onClose={() => setShowOptions(false)}
+          isMobile={isMobile}
+        >
+          {renderPanelContent}
+        </SettingsSidebar>
+      )}
 
       <WordImportPanel
         open={showWordImport}
