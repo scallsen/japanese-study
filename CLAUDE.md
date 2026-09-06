@@ -305,6 +305,18 @@ and `genki_2_vocab.json` are the reference examples; the older So-Matome files
 still carry the fuller shape below and are read the same way, since every field
 is an override with a dictionary fallback rather than a required value.
 
+An override in `scripts/textbook-vocab-overrides.json` may also carry `form`
+(and `reading`), which is the **only** way a form JMdict does not list reaches a
+card, and is deliberately human-only. JMdict files lexemes, so a textbook's
+歩いて or いらっしゃいます has no entry and never will — it does carry
+いらっしゃいませ and いらっしゃい, which have lexicalised, which is the line it
+draws. Supplementing `dictionary` instead was rejected twice over: a new row
+needs an invented id that leaks through `jmdictId` into SRS cards and
+`#/dictionary/entry/:id`, while widening `kana_forms` would redefine the column
+that `backfill-vocab-jmdict.mjs`, `resolveJmdictIds.js` and the story lookup all
+reading-verify against — and `import-jmdict.mjs` is a destructive full refresh,
+so either would vanish on the next import. Five cards use it.
+
 `sense` names which of the entry's senses the textbook teaches. JMdict orders
 senses by general prominence rather than by what a beginner course wants —
 あげる's "to give" is sense 5 of 上げる, behind "to raise; to elevate" — so the

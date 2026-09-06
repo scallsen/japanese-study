@@ -215,7 +215,8 @@
     "id": "genki-2-l13-042",
     "listKey": "genki-2-l13",
     "jmdictId": "1000940",
-    "modified": true
+    "kanji": "いらっしゃいます",
+    "kana": "いらっしゃいます"
   },
   {
     "id": "genki-2-l13-043",
@@ -1454,7 +1455,8 @@
     "id": "genki-2-l18-043",
     "listKey": "genki-2-l18",
     "jmdictId": "1002570",
-    "modified": true
+    "kanji": "お疲れ様でした",
+    "kana": "おつかれさまでした"
   },
   {
     "id": "genki-2-l18-044",
@@ -2786,6 +2788,7 @@
     "id": "genki-2-l23-040",
     "listKey": "genki-2-l23",
     "jmdictId": "1502630",
-    "modified": true
+    "kanji": "ものすごく",
+    "kana": "ものすごく"
   }
 ]

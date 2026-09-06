@@ -285,6 +285,18 @@ for (const e of entries) {
     // decision survives with the decision.
     const decision = overrides[key]
     e.jmdictId = (decision && typeof decision === 'object') ? decision.id : decision
+    // An override may also dictate how the card is written. This is the ONE
+    // way a form JMdict does not list can reach a card, and it is deliberately
+    // human-only: JMdict files lexemes, so a textbook's 歩いて or いらっしゃいます
+    // has no entry and never will. Adding them to `dictionary` would either
+    // invent ids that leak through jmdictId into SRS cards and entry links, or
+    // redefine kana_forms — which the reading verification in
+    // backfill-vocab-jmdict, resolveJmdictIds and the story lookup all depend
+    // on — and both die on the next destructive re-import anyway.
+    if (decision && typeof decision === 'object' && decision.form) {
+      e.overrideForm = decision.form
+      e.overrideReading = decision.reading ?? null
+    }
     e.tier = e.jmdictId ? 'override' : 'override-none'
     continue
   }
@@ -389,7 +401,10 @@ for (const book of BOOKS) {
       jmdictId: e.jmdictId,
     }
 
-    if (bookForm && shown && bookForm !== shown) {
+    if (e.overrideForm) {
+      row.kanji = e.overrideForm
+      if (e.overrideReading) row.kana = e.overrideReading
+    } else if (bookForm && shown && bookForm !== shown) {
       // JMdict lists several written forms for one word — のぼる is 上る/登る/昇る,
       // 五日 is ５日/五日 — and a textbook teaches one of them. Where the book's
       // spelling is one the entry itself lists, keep it: the card then matches
