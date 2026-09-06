@@ -136,12 +136,17 @@ async function setStatus(status) {
   if (error) console.warn(`Failed to set status to "${status}": ${error.message}`)
 }
 
+// Ids whose audio must survive though no list in this repo references them any
+// more — their words live in per-account storage. Reconciliation prunes by
+// absence, so without this it would delete every one of their files.
+const KEEP = new Set(JSON.parse(readFileSync('scripts/audio-keep.json', 'utf8')).ids)
+
 // Deletes any file under audio/voicevox/<speakerId>/ whose entry no longer exists
 // in the current source JSON — keeps storage in sync when words/cards are removed.
 async function reconcileVoice(speakerId, validEntryIds) {
   const { data, error } = await supabase.storage.from(BUCKET).list(`voicevox/${speakerId}`, { limit: 10000 })
   if (error) { console.warn(`  Failed to list voicevox/${speakerId}: ${error.message}`); return }
-  const expected = new Set([...validEntryIds].map(id => `${id}.mp3`))
+  const expected = new Set([...validEntryIds, ...KEEP].map(id => `${id}.mp3`))
   const orphans = (data ?? []).filter(f => !expected.has(f.name))
   for (const file of orphans) {
     console.log(`  Pruning orphaned voicevox/${speakerId}/${file.name}`)
