@@ -28,7 +28,7 @@ import { useProgress } from '../hooks/useProgress.js'
 import { useAudioGenerationStatus } from '../hooks/useAudioGenerationStatus.js'
 import { useDictionaryEntries } from '../hooks/useDictionaryEntries.js'
 import { cardGloss } from '../utils/dictionaryEntryLookup.js'
-import { cardFormOf } from '../lib/displayForm.js'
+import { cardFormOf, speechTextOf } from '../lib/displayForm.js'
 import { useSentencesForWords } from '../hooks/useSentenceForWord.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../utils/storage.js'
 import { supabase } from '../lib/supabase.js'
@@ -174,20 +174,28 @@ function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, rev
     return word.kana ?? (word.jmdictId ? nearbyDictEntries[word.jmdictId]?.kana_forms?.[0] : undefined)
   }
 
+  // A word no longer records which clips exist for it: the clip is keyed by
+  // what the card says, so the URL is derivable and a miss falls back to speech
+  // synthesis rather than being predicted in advance.
   function voicevoxUrlForWord(word) {
     const speakerId = speakerIdFromAudioSource(audioSource)
-    return speakerId && word.voicevoxVoices?.includes(speakerId) ? getVoicevoxAudioUrl(speakerId, word.id) : null
+    if (!speakerId) return null
+    const entry = word.jmdictId ? nearbyDictEntries[word.jmdictId] : null
+    return getVoicevoxAudioUrl(speakerId, speechTextOf(word, entry) ?? word.kana)
   }
 
-  function playWordAudio(word) {
+  function speakWord(word) {
+    const reading = resolveReading(word)
+    if (reading) tts.speak(reading)
+  }
+
+  async function playWordAudio(word) {
     voicevox.stop()
     const url = voicevoxUrlForWord(word)
-    if (url) {
-      voicevox.play(url)
-    } else if (audioSource === 'browser') {
-      const reading = resolveReading(word)
-      if (reading) tts.speak(reading)
-    }
+    if (!url) { if (audioSource === 'browser') speakWord(word); return }
+    // Falls through to speech synthesis when a clip has not been generated yet,
+    // which is what the old voicevoxVoices check was really guarding against.
+    if (!await voicevox.play(url)) speakWord(word)
   }
 
   function stopWordAudio() {
@@ -1005,10 +1013,6 @@ function VocabPageScreens() {
       if (kana) extras.kana = kana
       if (word.sentence) extras.sentence = word.sentence
       if (word.jmdictId) extras.jmdictId = word.jmdictId
-      if (word.voicevoxVoices?.length) {
-        extras.voicevoxVoices = word.voicevoxVoices
-        extras.voicevoxId = word.id
-      }
       newCards[cardId] = createCard(front, english, cardId, targetDeckId, extras)
       newCardIds.push(cardId)
     })

@@ -50,3 +50,43 @@ export function cardFormOf(word, entry) {
   const decorate = t => (t == null ? null : word?.mark ? word.mark.replace('{}', t + suffix) : t + suffix)
   return { form: decorate(form), reading: decorate(reading) }
 }
+
+// Decoration is display, not sound: 〜 in 〜枚 marks a counter and （な） marks a
+// na-adjective, and neither is spoken. する is, so it stays.
+const SPOKEN_DECORATION = /[〜~～（）()]/gu
+
+/** What a card's audio should actually say. */
+export function speechTextOf(word, entry) {
+  const { reading } = cardFormOf(word, entry)
+  return reading ? reading.replace(SPOKEN_DECORATION, '').trim() || null : null
+}
+
+/**
+ * Storage key for a clip of `text`.
+ *
+ * Audio is keyed by what is spoken rather than by which word wanted it, so one
+ * reading is stored once however many lists use it — 勉強 and 勉強する are
+ * different clips, while 〜枚 and 枚 are the same one.
+ *
+ * It is a hash because Supabase Storage rejects a non-ASCII object key, and
+ * percent-encoding does not help: the client decodes the escapes before
+ * validating. Two FNV-1a passes, forward and reverse with different offsets,
+ * give 64 bits — ample for a few thousand readings, and the generator asserts
+ * that no two readings collide rather than trusting that.
+ *
+ * Non-cryptographic on purpose: it must be computable synchronously while
+ * rendering a card, and crypto.subtle is async.
+ */
+export function audioKeyFor(text) {
+  if (!text) return null
+  const bytes = new TextEncoder().encode(text)
+  const fnv = (offset, reverse) => {
+    let h = offset
+    for (let i = 0; i < bytes.length; i++) {
+      h ^= bytes[reverse ? bytes.length - 1 - i : i]
+      h = Math.imul(h, 0x01000193) >>> 0
+    }
+    return h.toString(16).padStart(8, '0')
+  }
+  return fnv(0x811c9dc5, false) + fnv(0x9dc5811c, true)
+}

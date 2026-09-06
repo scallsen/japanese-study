@@ -1,9 +1,19 @@
 #!/usr/bin/env node
 /**
  * Generates Voicevox neural TTS audio for the vocab word lists and the keigo SRS
- * deck, uploads MP3s to Supabase Storage (audio/voicevox/<speakerId>/<entryId>.mp3),
- * writes the generated speaker ids back into each entry's `voicevoxVoices` array,
- * and prunes any stored audio whose entry no longer exists in the source JSON.
+ * deck, and uploads MP3s to Supabase Storage.
+ *
+ * A clip is stored under audio/voicevox/<speakerId>/<key>.mp3, where the key is
+ * a hash of THE TEXT SPOKEN rather than of the word that wanted it. One reading
+ * is therefore stored once however many lists teach it, while two cards of one
+ * dictionary entry that say different things (勉強, 勉強する) keep separate
+ * clips. Nothing is written back into the word files: whether a clip exists is
+ * a fact about a reading, and storage is where that fact lives — a card whose
+ * clip is missing simply falls back to browser speech synthesis.
+ *
+ * It also prunes clips no list speaks any more. Because the key is the reading,
+ * a word list leaving the repo cannot orphan a clip another list still uses,
+ * which is what the old per-list keep-list existed to prevent.
  *
  * Requires a running Voicevox engine (desktop app, or the headless
  * voicevox/voicevox_engine Docker image) reachable at VOICEVOX_URL.
@@ -19,6 +29,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js'
+import { audioKeyFor, speechTextOf } from '../src/lib/displayForm.js'
 import { readFileSync, writeFileSync, readdirSync } from 'fs'
 import { execFile } from 'child_process'
 import { promisify } from 'util'
@@ -103,8 +114,8 @@ async function wavToMp3(wavBuffer) {
   return readFileSync(mp3Path)
 }
 
-async function uploadAudio(speakerId, entryId, mp3Buffer) {
-  const path = `voicevox/${speakerId}/${entryId}.mp3`
+async function uploadAudio(speakerId, key, mp3Buffer) {
+  const path = `voicevox/${speakerId}/${key}.mp3`
   const { error } = await supabase.storage.from(BUCKET).upload(path, mp3Buffer, {
     upsert: true,
     contentType: 'audio/mpeg',
@@ -118,20 +129,37 @@ async function deleteAudio(speakerId, filename) {
   if (error) console.warn(`  Failed to delete ${path}: ${error.message}`)
 }
 
-// Vocab Drill word entries aren't required to carry their own `kana` once
-// they're linked to the dictionary (see CLAUDE.md's word data format) — fall
-// back to the dictionary's own reading so those entries still get audio.
-async function fetchReadingsByJmdictId(ids) {
+// Word entries aren't required to carry their own `kana` once they're linked to
+// the dictionary (see CLAUDE.md's word data format), and what a card SAYS also
+// depends on the entry — する is re-appended, decoration is not spoken. So the
+// whole row is needed, not just a reading.
+async function fetchEntries(ids) {
   const map = new Map()
-  const unique = [...new Set(ids)]
+  const unique = [...new Set(ids)].filter(Boolean)
   const BATCH = 200
   for (let i = 0; i < unique.length; i += BATCH) {
-    const chunk = unique.slice(i, i + BATCH)
-    const { data, error } = await supabase.from('dictionary').select('id, kana_forms').in('id', chunk)
+    const { data, error } = await supabase.from('dictionary')
+      .select('id, primary_form, preferred_form, kana_forms, misc0:senses->0->misc')
+      .in('id', unique.slice(i, i + BATCH))
     if (error) throw error
-    for (const row of data ?? []) map.set(row.id, row.kana_forms?.[0] ?? null)
+    for (const row of data ?? []) map.set(row.id, row)
   }
   return map
+}
+
+// Which clips already exist, so a run only makes what is missing. Replaces the
+// per-word voicevoxVoices bookkeeping: existence is a fact about a reading, and
+// storage is where that fact lives.
+async function listExistingKeys(speakerId) {
+  const keys = new Set()
+  for (let offset = 0; ; offset += 1000) {
+    const { data, error } = await supabase.storage.from(BUCKET)
+      .list(`voicevox/${speakerId}`, { limit: 1000, offset })
+    if (error) throw error
+    for (const f of data) keys.add(f.name.replace(/\.mp3$/, ''))
+    if (data.length < 1000) break
+  }
+  return keys
 }
 
 async function setStatus(status) {
@@ -141,17 +169,15 @@ async function setStatus(status) {
   if (error) console.warn(`Failed to set status to "${status}": ${error.message}`)
 }
 
-// Ids whose audio must survive though no list in this repo references them any
-// more — their words live in per-account storage. Reconciliation prunes by
-// absence, so without this it would delete every one of their files.
-const KEEP = new Set(JSON.parse(readFileSync('scripts/audio-keep.json', 'utf8')).ids)
-
-// Deletes any file under audio/voicevox/<speakerId>/ whose entry no longer exists
-// in the current source JSON — keeps storage in sync when words/cards are removed.
-async function reconcileVoice(speakerId, validEntryIds) {
+// Deletes any file under audio/voicevox/<speakerId>/ that no current word asks
+// for. Clips are keyed by what they say, so one is orphaned only when NO list
+// uses that reading any more — which is why per-list keep-lists are no longer
+// needed: a word list leaving the repo cannot orphan a reading another list
+// still speaks.
+async function reconcileVoice(speakerId, validKeys) {
   const { data, error } = await supabase.storage.from(BUCKET).list(`voicevox/${speakerId}`, { limit: 10000 })
   if (error) { console.warn(`  Failed to list voicevox/${speakerId}: ${error.message}`); return }
-  const expected = new Set([...validEntryIds, ...KEEP].map(id => `${id}.mp3`))
+  const expected = new Set([...validKeys].map(k => `${k}.mp3`))
   const orphans = (data ?? []).filter(f => !expected.has(f.name))
   for (const file of orphans) {
     console.log(`  Pruning orphaned voicevox/${speakerId}/${file.name}`)
@@ -175,65 +201,64 @@ async function inParallel(items, limit, worker) {
 async function generate() {
   await confirmSpeakers()
 
-  const allEntryIds = []
-
+  // One clip per distinct spoken text, not per word: several lists teach the
+  // same word, and what differs between two cards of one entry — 勉強 against
+  // 勉強する — is exactly what speechTextOf reflects. So keying on it keeps
+  // those apart while collapsing everything that genuinely sounds the same.
+  const entriesByPath = new Map()
+  const allIds = []
   for (const target of TARGETS) {
-    console.log(`\nProcessing ${target.path}`)
-    const entries = JSON.parse(readFileSync(target.path, 'utf8'))
-    let changed = false
+    const rows = JSON.parse(readFileSync(target.path, 'utf8'))
+    entriesByPath.set(target.path, rows)
+    allIds.push(...rows.map(e => e.jmdictId))
+  }
+  const dict = await fetchEntries(allIds)
 
-    const needsFallback = entries.filter(e => !e[target.textField] && e.jmdictId)
-    const readingByJmdictId = needsFallback.length
-      ? await fetchReadingsByJmdictId(needsFallback.map(e => e.jmdictId))
-      : new Map()
-
-    // Build the work list first, then run it with a few clips in flight.
-    // Synthesis is CPU-bound in the engine and the uploads are network round
-    // trips, so a strictly sequential loop leaves both idle in turn — which
-    // only became obvious with a few thousand clips to make rather than a few.
-    const jobs = []
-    for (const entry of entries) {
-      allEntryIds.push(entry.id)
-      const text = entry[target.textField] ?? (entry.jmdictId ? readingByJmdictId.get(entry.jmdictId) : null)
+  const textByKey = new Map()
+  for (const target of TARGETS) {
+    for (const entry of entriesByPath.get(target.path)) {
+      // keigo.json speaks its `front`; a word list speaks the card's reading.
+      const text = target.textField === 'front'
+        ? entry.front
+        : speechTextOf(entry, entry.jmdictId ? dict.get(entry.jmdictId) : null) ?? entry.kana
       if (!text) continue
-      entry.voicevoxVoices = entry.voicevoxVoices ?? []
-      for (const voice of VOICES) {
-        if (!entry.voicevoxVoices.includes(voice.id)) jobs.push({ entry, voice, text })
+      const key = audioKeyFor(text)
+      const seen = textByKey.get(key)
+      // Two readings sharing a key would silently serve each other's audio.
+      if (seen && seen !== text) {
+        throw new Error(`audio key collision: ${JSON.stringify(seen)} and ${JSON.stringify(text)}`)
       }
+      textByKey.set(key, text)
     }
+  }
+  console.log(`${textByKey.size} distinct spoken texts across ${TARGETS.length} lists`)
 
-    if (jobs.length) {
-      console.log(`  ${jobs.length} clip(s) to generate, ${CONCURRENCY} at a time`)
-      let done = 0
-      await inParallel(jobs, CONCURRENCY, async ({ entry, voice, text }) => {
-        try {
-          const wav = await synthesize(text, voice.id)
-          const mp3 = await wavToMp3(wav)
-          await uploadAudio(voice.id, entry.id, mp3)
-          // Single-threaded event loop, so this push cannot interleave badly
-          // even though several jobs for one entry may be in flight.
-          entry.voicevoxVoices.push(voice.id)
-          changed = true
-        } catch (err) {
-          console.warn(`  Failed (${entry.id}, ${voice.name}): ${err.message}`)
-        }
-        done++
-        if (done % 25 === 0 || done === jobs.length) {
-          process.stdout.write(`\r  ${done}/${jobs.length}`)
-        }
-      })
-      process.stdout.write('\n')
-    }
+  const allKeys = new Set(textByKey.keys())
 
-    if (changed) {
-      writeFileSync(target.path, JSON.stringify(entries, null, 2) + '\n')
-      console.log(`  Wrote ${target.path}`)
-    }
+  for (const voice of VOICES) {
+    const existing = await listExistingKeys(voice.id)
+    const jobs = [...textByKey].filter(([key]) => !existing.has(key)).map(([key, text]) => ({ key, text }))
+    console.log(`\n${voice.name}: ${existing.size} clip(s) present, ${jobs.length} to generate`)
+    if (!jobs.length) continue
+
+    let done = 0
+    await inParallel(jobs, CONCURRENCY, async ({ key, text }) => {
+      try {
+        const wav = await synthesize(text, voice.id)
+        const mp3 = await wavToMp3(wav)
+        await uploadAudio(voice.id, key, mp3)
+      } catch (err) {
+        console.warn(`  Failed (${text}): ${err.message}`)
+      }
+      done++
+      if (done % 25 === 0 || done === jobs.length) process.stdout.write(`\r  ${done}/${jobs.length}`)
+    })
+    process.stdout.write('\n')
   }
 
   console.log('\nReconciling storage (pruning orphaned audio)...')
   for (const voice of VOICES) {
-    await reconcileVoice(voice.id, allEntryIds)
+    await reconcileVoice(voice.id, allKeys)
   }
 
   console.log('\nDone.')

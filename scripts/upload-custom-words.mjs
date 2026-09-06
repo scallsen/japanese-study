@@ -8,9 +8,10 @@
  * and they belong to one person, so they live in `custom_words` instead.
  *
  * Idempotent: rows are keyed (user_id, id), so re-running replaces rather than
- * duplicates. Nothing is deleted from the repo here; that is a separate step,
- * and scripts/audio-keep.json must already be in place so the audio for these
- * words survives their disappearance from src/data/words.
+ * duplicates. Nothing is deleted from the repo here; that is a separate step.
+ * Their audio is unaffected either way — clips are keyed by what they say, not
+ * by which word asked for one, so a list leaving the repo orphans nothing that
+ * another list still speaks.
  *
  * Run: node --env-file=.env scripts/upload-custom-words.mjs <user-id> [--verify]
  */
