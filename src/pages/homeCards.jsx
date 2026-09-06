@@ -189,10 +189,19 @@ function TextbookCarousel() {
 // breakpoint the row becomes a column and every child is stretched to fill
 // it (`fullWidth` cloned onto each — both Button and SegmentedPrimary
 // support it), same shape as a modal's stacked primary/secondary actions.
+// The secondary (always the second child — a ghost Button, never
+// SegmentedPrimary) also drops to `size="md"`: stacked on its own row, its
+// own padding sits directly against the card's bottom padding, and being
+// transparent that padding reads as dead space rather than as a button —
+// shrinking it tightens that without shrinking the primary's tap target.
 export function ActionsRow({ children }) {
   const isMobile = useIsMobile()
   const items = isMobile
-    ? Children.map(children, child => (isValidElement(child) ? cloneElement(child, { fullWidth: true }) : child))
+    ? Children.map(children, (child, i) => (
+        isValidElement(child)
+          ? cloneElement(child, { fullWidth: true, ...(i > 0 ? { size: 'md' } : {}) })
+          : child
+      ))
     : children
   return (
     <div style={{
