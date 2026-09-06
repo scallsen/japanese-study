@@ -510,14 +510,21 @@ function VocabSrsHome() {
           />
         </div>
 
-        <div style={hairline} />
-
-        <DrillSettingsPanel
-          settings={settings}
-          onChange={setSetting}
-          backupVoices={jaVoices}
-          audioFootnote={audioFootnote}
-        />
+        {/* Card front/back/audio/interface settings only mean something with
+            a card actually on screen — shown here while reviewing, hidden on
+            the overview where there's nothing yet to preview them against
+            (the same settings are still reachable mid-session). */}
+        {session && (
+          <>
+            <div style={hairline} />
+            <DrillSettingsPanel
+              settings={settings}
+              onChange={setSetting}
+              backupVoices={jaVoices}
+              audioFootnote={audioFootnote}
+            />
+          </>
+        )}
 
         {/* ── Dev (DEV only) ── */}
         {import.meta.env.DEV && globalStats.totalCards > 0 && (

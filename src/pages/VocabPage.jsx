@@ -803,7 +803,7 @@ function TextbookHomeScreen({ state, accent, onStart, onAdvance, onSetCurrent, o
         <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', flex: 1, minWidth: 260 }}>
           <TextbookCover icon={textbook.icon} accent={accent} onChangeTextbook={onChangeTextbook} />
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: FS_CONTENT_HEADING }}>{textbook.title}</div>
+            <div style={{ fontSize: FS_CONTENT_HEADING, color: TEXT }}>{textbook.title}</div>
             <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginTop: 4 }}>
               {doneCount} of {chapters.length} chapters · {wordsDrilled} words drilled
             </div>
@@ -1167,6 +1167,10 @@ function VocabPageScreens() {
   )
 
   const drill = useDrill(pool, { engine: SimpleQueue })
+  // The card-settings sidebar only means anything while a drill is actually
+  // on screen — showing it over the chapter list, a preview, or the done
+  // screen reads as controls for a card that isn't there.
+  const showingDrillSettings = isDrilling && !drill.done
 
   // Warm the shared dictionary-entry cache for the whole selected pool as
   // soon as it's chosen — well before "Start Drill" — so ActiveDrill/
@@ -1307,7 +1311,7 @@ function VocabPageScreens() {
             rightSlot={(
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <AuthSlot />
-                {isMobile && <SidebarHeaderToggle onClick={() => setShowOptions(true)} />}
+                {isMobile && showingDrillSettings && <SidebarHeaderToggle onClick={() => setShowOptions(true)} />}
               </div>
             )}
           />
@@ -1423,14 +1427,16 @@ function VocabPageScreens() {
         </div>
       </div>
 
-      <SettingsSidebar
-        open={showOptions}
-        onToggle={() => setShowOptions(v => !v)}
-        onClose={() => setShowOptions(false)}
-        isMobile={isMobile}
-      >
-        {paddingH => renderPanelContent(paddingH)}
-      </SettingsSidebar>
+      {showingDrillSettings && (
+        <SettingsSidebar
+          open={showOptions}
+          onToggle={() => setShowOptions(v => !v)}
+          onClose={() => setShowOptions(false)}
+          isMobile={isMobile}
+        >
+          {paddingH => renderPanelContent(paddingH)}
+        </SettingsSidebar>
+      )}
 
       <TextbookPicker
         open={pickerOpen}

@@ -270,7 +270,7 @@ export function NewCard({ loading, state, onStart, onAdvance, onChangeTextbook }
   const { textbook, chapters, doneCount, hasWords } = state
   const complete = doneCount === chapters.length
   const cover = <TextbookCover icon={textbook.icon} accent={accent} onChangeTextbook={onChangeTextbook} />
-  const viewChapters = <Button variant="ghost" size="lg" onClick={() => navigate('#/vocab')}>View all chapters</Button>
+  const viewChapters = <Button variant="ghost" size="lg" onClick={() => navigate('#/vocab')}>View all</Button>
 
   if (!hasWords) {
     return (
