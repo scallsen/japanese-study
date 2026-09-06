@@ -26,7 +26,7 @@ export const WORD_SOURCES = [
   {
     id: 'nsm-n3',
     personal: true,
-    label: 'Nihongo So-Matome N3 (I-3)',
+    label: 'Coto Intermediate 3',
     lists: [
       { id: 'nsm-n3-w1d1', label: 'Week 1, Day 1' },
       { id: 'nsm-n3-w1d2', label: 'Week 1, Day 2' },
@@ -45,7 +45,7 @@ export const WORD_SOURCES = [
   {
     id: 'nsm-n3-i4',
     personal: true,
-    label: 'Nihongo So-Matome N3 (I-4)',
+    label: 'Coto Intermediate 4',
     lists: [
       { id: 'nsm-n3-i4-w1d1', label: 'Week 1, Day 1' },
       { id: 'nsm-n3-i4-w1d2', label: 'Week 1, Day 2' },
@@ -64,7 +64,7 @@ export const WORD_SOURCES = [
   {
     id: 'nsm-n3-i5',
     personal: true,
-    label: 'Nihongo So-Matome N3 (I-5)',
+    label: 'Coto Intermediate 5',
     lists: [
       { id: 'nsm-n3-i5-w1d1', label: 'Week 1, Day 1' },
       { id: 'nsm-n3-i5-w1d2', label: 'Week 1, Day 2' },
@@ -83,7 +83,7 @@ export const WORD_SOURCES = [
   {
     id: 'nsm-n2-a1',
     personal: true,
-    label: 'Nihongo So-Matome N2 (A-1)',
+    label: 'Coto Advanced 1',
     lists: [
       { id: 'n2-w1d1', label: 'Week 1, Day 1' },
       { id: 'n2-w1d2', label: 'Week 1, Day 2' },
@@ -102,7 +102,7 @@ export const WORD_SOURCES = [
   {
     id: 'nsm-n2-a2',
     personal: true,
-    label: 'Nihongo So-Matome N2 (A-2)',
+    label: 'Coto Advanced 2',
     lists: [
       { id: 'n2-a2-w1d1', label: 'Week 1, Day 1' },
       { id: 'n2-a2-w1d2', label: 'Week 1, Day 2' },
