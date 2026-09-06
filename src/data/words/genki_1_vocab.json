@@ -22,7 +22,8 @@
   {
     "id": "genki-1-l1-005",
     "listKey": "genki-1-l1",
-    "jmdictId": "1270910"
+    "jmdictId": "1270910",
+    "modified": true
   },
   {
     "id": "genki-1-l1-006",
@@ -42,22 +43,26 @@
   {
     "id": "genki-1-l1-009",
     "listKey": "genki-1-l1",
-    "jmdictId": "1294940"
+    "jmdictId": "1294940",
+    "modified": true
   },
   {
     "id": "genki-1-l1-010",
     "listKey": "genki-1-l1",
-    "jmdictId": "1005340"
+    "jmdictId": "1005340",
+    "modified": true
   },
   {
     "id": "genki-1-l1-011",
     "listKey": "genki-1-l1",
-    "jmdictId": "2020680"
+    "jmdictId": "2020680",
+    "modified": true
   },
   {
     "id": "genki-1-l1-012",
     "listKey": "genki-1-l1",
-    "jmdictId": "1366410"
+    "jmdictId": "1366410",
+    "modified": true
   },
   {
     "id": "genki-1-l1-013",
@@ -107,7 +112,8 @@
   {
     "id": "genki-1-l1-022",
     "listKey": "genki-1-l1",
-    "jmdictId": "1468900"
+    "jmdictId": "1468900",
+    "modified": true
   },
   {
     "id": "genki-1-l1-023",
@@ -177,7 +183,8 @@
   {
     "id": "genki-1-l1-036",
     "listKey": "genki-1-l1",
-    "jmdictId": "1053350"
+    "jmdictId": "1053350",
+    "modified": true
   },
   {
     "id": "genki-1-l1-037",
@@ -327,7 +334,8 @@
   {
     "id": "genki-1-l2-011",
     "listKey": "genki-1-l2",
-    "jmdictId": "1416830"
+    "jmdictId": "1416830",
+    "modified": true
   },
   {
     "id": "genki-1-l2-012",
@@ -477,7 +485,8 @@
   {
     "id": "genki-1-l2-041",
     "listKey": "genki-1-l2",
-    "jmdictId": "1175570"
+    "jmdictId": "1175570",
+    "modified": true
   },
   {
     "id": "genki-1-l2-042",
@@ -492,12 +501,14 @@
   {
     "id": "genki-1-l2-044",
     "listKey": "genki-1-l2",
-    "jmdictId": "1001720"
+    "jmdictId": "1001720",
+    "modified": true
   },
   {
     "id": "genki-1-l2-045",
     "listKey": "genki-1-l2",
-    "jmdictId": "1184270"
+    "jmdictId": "1184270",
+    "modified": true
   },
   {
     "id": "genki-1-l2-046",
@@ -507,7 +518,8 @@
   {
     "id": "genki-1-l2-047",
     "listKey": "genki-1-l2",
-    "jmdictId": "1189130"
+    "jmdictId": "1189130",
+    "modified": true
   },
   {
     "id": "genki-1-l2-048",
@@ -557,7 +569,8 @@
   {
     "id": "genki-1-l3-009",
     "listKey": "genki-1-l3",
-    "jmdictId": "1586330"
+    "jmdictId": "1586330",
+    "modified": true
   },
   {
     "id": "genki-1-l3-010",
@@ -587,7 +600,8 @@
   {
     "id": "genki-1-l3-015",
     "listKey": "genki-1-l3",
-    "jmdictId": "1602340"
+    "jmdictId": "1602340",
+    "modified": true
   },
   {
     "id": "genki-1-l3-016",
@@ -602,7 +616,8 @@
   {
     "id": "genki-1-l3-018",
     "listKey": "genki-1-l3",
-    "jmdictId": "1191740"
+    "jmdictId": "1191740",
+    "modified": true
   },
   {
     "id": "genki-1-l3-019",
@@ -617,7 +632,8 @@
   {
     "id": "genki-1-l3-021",
     "listKey": "genki-1-l3",
-    "jmdictId": "1584660"
+    "jmdictId": "1584660",
+    "modified": true
   },
   {
     "id": "genki-1-l3-022",
@@ -632,7 +648,8 @@
   {
     "id": "genki-1-l3-024",
     "listKey": "genki-1-l3",
-    "jmdictId": "1579080"
+    "jmdictId": "1579080",
+    "modified": true
   },
   {
     "id": "genki-1-l3-025",
@@ -727,7 +744,8 @@
   {
     "id": "genki-1-l3-043",
     "listKey": "genki-1-l3",
-    "jmdictId": "1512670"
+    "jmdictId": "1512670",
+    "modified": true
   },
   {
     "id": "genki-1-l3-044",
@@ -742,7 +760,8 @@
   {
     "id": "genki-1-l3-046",
     "listKey": "genki-1-l3",
-    "jmdictId": "1584930"
+    "jmdictId": "1584930",
+    "modified": true
   },
   {
     "id": "genki-1-l3-047",
@@ -752,7 +771,8 @@
   {
     "id": "genki-1-l3-048",
     "listKey": "genki-1-l3",
-    "jmdictId": "1414580"
+    "jmdictId": "1414580",
+    "modified": true
   },
   {
     "id": "genki-1-l3-049",
@@ -817,7 +837,8 @@
   {
     "id": "genki-1-l4-008",
     "listKey": "genki-1-l4",
-    "jmdictId": "1270590"
+    "jmdictId": "1270590",
+    "modified": true
   },
   {
     "id": "genki-1-l4-009",
@@ -912,7 +933,8 @@
   {
     "id": "genki-1-l4-027",
     "listKey": "genki-1-l4",
-    "jmdictId": "1315920"
+    "jmdictId": "1315920",
+    "modified": true
   },
   {
     "id": "genki-1-l4-028",
@@ -992,7 +1014,8 @@
   {
     "id": "genki-1-l4-043",
     "listKey": "genki-1-l4",
-    "jmdictId": "1154340"
+    "jmdictId": "1154340",
+    "modified": true
   },
   {
     "id": "genki-1-l4-044",
@@ -1012,7 +1035,8 @@
   {
     "id": "genki-1-l4-047",
     "listKey": "genki-1-l4",
-    "jmdictId": "1366420"
+    "jmdictId": "1008490",
+    "modified": true
   },
   {
     "id": "genki-1-l4-048",
@@ -1147,7 +1171,8 @@
   {
     "id": "genki-1-l5-011",
     "listKey": "genki-1-l5",
-    "jmdictId": "1546590"
+    "jmdictId": "1546590",
+    "modified": true
   },
   {
     "id": "genki-1-l5-012",
@@ -1262,7 +1287,8 @@
   {
     "id": "genki-1-l5-034",
     "listKey": "genki-1-l5",
-    "jmdictId": "1591900"
+    "jmdictId": "1591900",
+    "modified": true
   },
   {
     "id": "genki-1-l5-035",
@@ -1292,12 +1318,14 @@
   {
     "id": "genki-1-l5-040",
     "listKey": "genki-1-l5",
-    "jmdictId": "1463480"
+    "jmdictId": "1463480",
+    "modified": true
   },
   {
     "id": "genki-1-l5-041",
     "listKey": "genki-1-l5",
-    "jmdictId": "1096560"
+    "jmdictId": "1096560",
+    "modified": true
   },
   {
     "id": "genki-1-l5-042",
@@ -1337,7 +1365,8 @@
   {
     "id": "genki-1-l5-049",
     "listKey": "genki-1-l5",
-    "jmdictId": "1006980"
+    "jmdictId": "1006980",
+    "modified": true
   },
   {
     "id": "genki-1-l5-050",
@@ -1357,12 +1386,14 @@
   {
     "id": "genki-1-l5-053",
     "listKey": "genki-1-l5",
-    "jmdictId": "1524610"
+    "jmdictId": "1524610",
+    "modified": true
   },
   {
     "id": "genki-1-l5-054",
     "listKey": "genki-1-l5",
-    "jmdictId": "1525680"
+    "jmdictId": "1525680",
+    "modified": true
   },
   {
     "id": "genki-1-l6-001",
@@ -1577,7 +1608,8 @@
   {
     "id": "genki-1-l6-043",
     "listKey": "genki-1-l6",
-    "jmdictId": "1002980"
+    "jmdictId": "1002980",
+    "modified": true
   },
   {
     "id": "genki-1-l6-044",
@@ -1692,7 +1724,8 @@
   {
     "id": "genki-1-l7-021",
     "listKey": "genki-1-l7",
-    "jmdictId": "1577670"
+    "jmdictId": "1577670",
+    "modified": true
   },
   {
     "id": "genki-1-l7-022",
@@ -1767,7 +1800,8 @@
   {
     "id": "genki-1-l7-036",
     "listKey": "genki-1-l7",
-    "jmdictId": "1607260"
+    "jmdictId": "1607260",
+    "modified": true
   },
   {
     "id": "genki-1-l7-037",
@@ -1777,7 +1811,8 @@
   {
     "id": "genki-1-l7-038",
     "listKey": "genki-1-l7",
-    "jmdictId": "1911810"
+    "jmdictId": "1911810",
+    "modified": true
   },
   {
     "id": "genki-1-l7-039",
@@ -1787,12 +1822,14 @@
   {
     "id": "genki-1-l7-040",
     "listKey": "genki-1-l7",
-    "jmdictId": "1605510"
+    "jmdictId": "1605510",
+    "modified": true
   },
   {
     "id": "genki-1-l7-041",
     "listKey": "genki-1-l7",
-    "jmdictId": "1254790"
+    "jmdictId": "1254790",
+    "modified": true
   },
   {
     "id": "genki-1-l7-042",
@@ -1822,7 +1859,8 @@
   {
     "id": "genki-1-l8-001",
     "listKey": "genki-1-l8",
-    "jmdictId": "1584640"
+    "jmdictId": "1584640",
+    "modified": true
   },
   {
     "id": "genki-1-l8-002",
@@ -1907,12 +1945,14 @@
   {
     "id": "genki-1-l8-018",
     "listKey": "genki-1-l8",
-    "jmdictId": "1097340"
+    "jmdictId": "1097340",
+    "modified": true
   },
   {
     "id": "genki-1-l8-019",
     "listKey": "genki-1-l8",
-    "jmdictId": "1476410"
+    "jmdictId": "1476410",
+    "modified": true
   },
   {
     "id": "genki-1-l8-020",
@@ -2002,22 +2042,26 @@
   {
     "id": "genki-1-l8-037",
     "listKey": "genki-1-l8",
-    "jmdictId": "1172830"
+    "jmdictId": "1172830",
+    "modified": true
   },
   {
     "id": "genki-1-l8-038",
     "listKey": "genki-1-l8",
-    "jmdictId": "1390980"
+    "jmdictId": "1390980",
+    "modified": true
   },
   {
     "id": "genki-1-l8-039",
     "listKey": "genki-1-l8",
-    "jmdictId": "1399790"
+    "jmdictId": "1399790",
+    "modified": true
   },
   {
     "id": "genki-1-l8-040",
     "listKey": "genki-1-l8",
-    "jmdictId": "1554310"
+    "jmdictId": "1554310",
+    "modified": true
   },
   {
     "id": "genki-1-l8-041",
@@ -2037,7 +2081,8 @@
   {
     "id": "genki-1-l8-044",
     "listKey": "genki-1-l8",
-    "jmdictId": "1202150"
+    "jmdictId": "1202150",
+    "modified": true
   },
   {
     "id": "genki-1-l9-001",
@@ -2062,7 +2107,8 @@
   {
     "id": "genki-1-l9-005",
     "listKey": "genki-1-l9",
-    "jmdictId": "1193420"
+    "jmdictId": "1193420",
+    "modified": true
   },
   {
     "id": "genki-1-l9-006",
@@ -2202,12 +2248,14 @@
   {
     "id": "genki-1-l9-033",
     "listKey": "genki-1-l9",
-    "jmdictId": "1172910"
+    "jmdictId": "1172910",
+    "modified": true
   },
   {
     "id": "genki-1-l9-034",
     "listKey": "genki-1-l9",
-    "jmdictId": "1303620"
+    "jmdictId": "1303620",
+    "modified": true
   },
   {
     "id": "genki-1-l9-035",
@@ -2217,7 +2265,8 @@
   {
     "id": "genki-1-l9-036",
     "listKey": "genki-1-l9",
-    "jmdictId": "1202150"
+    "jmdictId": "1202150",
+    "modified": true
   },
   {
     "id": "genki-1-l9-037",
@@ -2452,12 +2501,14 @@
   {
     "id": "genki-1-l10-036",
     "listKey": "genki-1-l10",
-    "jmdictId": "1559160"
+    "jmdictId": "1559160",
+    "modified": true
   },
   {
     "id": "genki-1-l10-037",
     "listKey": "genki-1-l10",
-    "jmdictId": "1514320"
+    "jmdictId": "1514320",
+    "modified": true
   },
   {
     "id": "genki-1-l10-038",
@@ -2467,7 +2518,8 @@
   {
     "id": "genki-1-l10-039",
     "listKey": "genki-1-l10",
-    "jmdictId": "1004710"
+    "jmdictId": "1004710",
+    "modified": true
   },
   {
     "id": "genki-1-l10-040",
@@ -2482,7 +2534,8 @@
   {
     "id": "genki-1-l10-042",
     "listKey": "genki-1-l10",
-    "jmdictId": "1009250"
+    "jmdictId": "1009250",
+    "modified": true
   },
   {
     "id": "genki-1-l10-043",
@@ -2587,17 +2640,20 @@
   {
     "id": "genki-1-l11-020",
     "listKey": "genki-1-l11",
-    "jmdictId": "1143870"
+    "jmdictId": "1143870",
+    "modified": true
   },
   {
     "id": "genki-1-l11-021",
     "listKey": "genki-1-l11",
-    "jmdictId": "1172440"
+    "jmdictId": "1172440",
+    "modified": true
   },
   {
     "id": "genki-1-l11-022",
     "listKey": "genki-1-l11",
-    "jmdictId": "2021520"
+    "jmdictId": "2021520",
+    "modified": true
   },
   {
     "id": "genki-1-l11-023",
@@ -2622,7 +2678,8 @@
   {
     "id": "genki-1-l11-027",
     "listKey": "genki-1-l11",
-    "jmdictId": "1352570"
+    "jmdictId": "1352570",
+    "modified": true
   },
   {
     "id": "genki-1-l11-028",
@@ -2637,32 +2694,38 @@
   {
     "id": "genki-1-l11-030",
     "listKey": "genki-1-l11",
-    "jmdictId": "1318950"
+    "jmdictId": "1318950",
+    "modified": true
   },
   {
     "id": "genki-1-l11-031",
     "listKey": "genki-1-l11",
-    "jmdictId": "1257040"
+    "jmdictId": "1257040",
+    "modified": true
   },
   {
     "id": "genki-1-l11-032",
     "listKey": "genki-1-l11",
-    "jmdictId": "1351430"
+    "jmdictId": "1351430",
+    "modified": true
   },
   {
     "id": "genki-1-l11-033",
     "listKey": "genki-1-l11",
-    "jmdictId": "1076730"
+    "jmdictId": "1076730",
+    "modified": true
   },
   {
     "id": "genki-1-l11-034",
     "listKey": "genki-1-l11",
-    "jmdictId": "1422050"
+    "jmdictId": "1422050",
+    "modified": true
   },
   {
     "id": "genki-1-l11-035",
     "listKey": "genki-1-l11",
-    "jmdictId": "1552740"
+    "jmdictId": "1552740",
+    "modified": true
   },
   {
     "id": "genki-1-l11-036",
@@ -2712,12 +2775,14 @@
   {
     "id": "genki-1-l12-003",
     "listKey": "genki-1-l12",
-    "jmdictId": "1002610"
+    "jmdictId": "1002610",
+    "modified": true
   },
   {
     "id": "genki-1-l12-004",
     "listKey": "genki-1-l12",
-    "jmdictId": "1583720"
+    "jmdictId": "1583720",
+    "modified": true
   },
   {
     "id": "genki-1-l12-005",
@@ -2762,7 +2827,8 @@
   {
     "id": "genki-1-l12-013",
     "listKey": "genki-1-l12",
-    "jmdictId": "1600280"
+    "jmdictId": "1600280",
+    "modified": true
   },
   {
     "id": "genki-1-l12-014",
@@ -2862,12 +2928,14 @@
   {
     "id": "genki-1-l12-033",
     "listKey": "genki-1-l12",
-    "jmdictId": "1277350"
+    "jmdictId": "1277350",
+    "modified": true
   },
   {
     "id": "genki-1-l12-034",
     "listKey": "genki-1-l12",
-    "jmdictId": "2857751"
+    "jmdictId": "2857751",
+    "modified": true
   },
   {
     "id": "genki-1-l12-035",
@@ -2877,12 +2945,14 @@
   {
     "id": "genki-1-l12-036",
     "listKey": "genki-1-l12",
-    "jmdictId": "1241880"
+    "jmdictId": "1241880",
+    "modified": true
   },
   {
     "id": "genki-1-l12-037",
     "listKey": "genki-1-l12",
-    "jmdictId": "1360930"
+    "jmdictId": "1360930",
+    "modified": true
   },
   {
     "id": "genki-1-l12-038",

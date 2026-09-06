@@ -10,17 +10,28 @@ import { getMainTextScale, getSecondaryTextScale, cqw } from '../utils/cardTextF
 
 const CARD_BG = '#E8E4DE'
 
-function CardShell({ isReview, isSentenceVocab, children }) {
+// M marks a card whose word is written differently in the textbook it came
+// from than in the dictionary the card renders from — 勉強する drilled as 勉強,
+// だれ as 誰. Set at import time (see scripts/resolve-textbook-vocab.mjs), so
+// the learner is told the form differs rather than quietly shown a spelling
+// their book never uses.
+function CardShell({ isReview, isSentenceVocab, isModified, children }) {
+  const marks = [
+    isReview ? 'R' : isSentenceVocab ? 'SR' : null,
+    isModified ? 'M' : null,
+  ].filter(Boolean)
+
   return (
     <div style={{ position: 'relative', backgroundColor: CARD_BG, width: '100%', height: '100%' }}>
-      {(isReview || isSentenceVocab) && (
+      {marks.length > 0 && (
         <div style={{
           position: 'absolute', top: '3cqw', left: '3cqw',
+          display: 'flex', gap: '1.5cqw',
           fontFamily: FONT, fontSize: '4.5cqw', fontWeight: 700,
           color: 'rgba(0,0,0,0.16)', lineHeight: 1,
           pointerEvents: 'none', userSelect: 'none',
         }}>
-          {isReview ? 'R' : 'SR'}
+          {marks.map(m => <span key={m}>{m}</span>)}
         </div>
       )}
       {children}
@@ -46,7 +57,7 @@ function FrontContent({ word, displayForm, resolvedEnglish, reviewMode, pixelFon
   const frontText = isMeaningFront ? resolvedEnglish : displayForm
   const scale = getMainTextScale(frontText)
   return (
-    <CardShell isReview={word.isReview} isSentenceVocab={word.isSentenceVocab}>
+    <CardShell isReview={word.isReview} isSentenceVocab={word.isSentenceVocab} isModified={word.modified}>
       <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: isMeaningFront ? '0 16px' : 0 }}>
         <div style={{ ...frontTextStyle(scale), fontFamily: isMeaningFront ? FONT : jaFont }}>
           {frontText}
@@ -109,7 +120,7 @@ function BackContent({ word, displayForm, reading, resolvedEnglish, sentenceText
   })
 
   return (
-    <CardShell isReview={word.isReview} isSentenceVocab={word.isSentenceVocab}>
+    <CardShell isReview={word.isReview} isSentenceVocab={word.isSentenceVocab} isModified={word.modified}>
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, padding: '0 16px' }}>
           <div style={{
@@ -183,7 +194,7 @@ export default function VocabCard({ word, flipped, onFlip, animate, reviewMode, 
   if (dictLoading) {
     return (
       <div style={{ width: 'min(380px, calc(100vw - 32px), calc(var(--card-max-h, 9999px) * 380 / 280))', aspectRatio: '380 / 280', containerType: 'size' }}>
-        <CardShell isReview={word.isReview} isSentenceVocab={word.isSentenceVocab} />
+        <CardShell isReview={word.isReview} isSentenceVocab={word.isSentenceVocab} isModified={word.modified} />
       </div>
     )
   }

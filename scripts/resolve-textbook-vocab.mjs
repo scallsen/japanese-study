@@ -138,6 +138,11 @@ function glossDetail(gloss, row) {
 // 誰 and 彼の over あの.
 const isUk = row => (row.misc0 ?? []).includes('uk')
 
+// Mirrors src/utils/dictionaryEntryLookup.js's displayFormOf — the resolver has
+// to know what the card will actually render in order to tell whether it
+// differs from the book. If that rule changes, change it in both places.
+const displayFormOf = row => (isUk(row) ? (row.kana_forms?.[0] ?? row.primary_form) : row.primary_form)
+
 // The supplied gloss is the primary signal — reading narrows the field, but
 // meaning is what identifies the entry. Each later stage only breaks ties the
 // one above left. Nothing arbitrary (form counts, id order) ever decides: かく
@@ -305,6 +310,7 @@ for (const e of entries) {
 }
 
 // --- emit ----------------------------------------------------------------
+const rowById = new Map(pool.map(r => [r.id, r]))
 const resolved = entries.filter(e => e.jmdictId)
 const seen = new Map()
 const collapsed = []
@@ -329,11 +335,24 @@ for (const book of BOOKS) {
     }
     seen.set(dupKey, e)
     counters[e.listKey] = (counters[e.listKey] ?? 0) + 1
-    rows.push({
+
+    // The card renders JMdict's form, which is not always the form the book
+    // prints — 勉強する is drilled as 勉強, だれ as 誰, 〜枚 as 枚. Recording that
+    // the two differ lets the card say so, rather than quietly showing the
+    // learner something their textbook never wrote. Only the fact of the
+    // difference is stored, not the book's own text.
+    // An overridden entry never went through the matcher, so it has no `pick`;
+    // its chosen row still has to be looked up to know what will render.
+    const row_ = e.pick ?? rowById.get(e.jmdictId)
+    const shown = row_ ? displayFormOf(row_) : null
+    const bookForm = e.srcKanji?.trim() || e.srcKana?.trim()
+    const row = {
       id: `${e.listKey}-${String(counters[e.listKey]).padStart(3, '0')}`,
       listKey: e.listKey,
       jmdictId: e.jmdictId,
-    })
+    }
+    if (bookForm && shown && bookForm !== shown) row.modified = true
+    rows.push(row)
   }
   writeFileSync(book.file, `${JSON.stringify(rows, null, 2)}\n`)
   console.log(`Wrote ${rows.length} entries → ${book.file}`)

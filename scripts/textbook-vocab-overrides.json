@@ -31,6 +31,10 @@
     "id": "1221270",
     "note": "帰る as the book writes it, not 返る"
   },
+  "genki-1-l4||〜と": {
+    "id": "1008490",
+    "note": "the particle と — auto-matched 人 because Genki's qualifier \"(a person)\" matched its gloss"
+  },
   "genki-1-l4||ある": {
     "id": "1296400",
     "note": "有る (to exist), not 或る (a certain)"
@@ -70,6 +74,10 @@
   "genki-2-l13||いらっしゃいます": {
     "id": "1000940",
     "note": "いらっしゃる"
+  },
+  "genki-2-l14||あげる": {
+    "id": "1352320",
+    "note": "上げる — auto-matched 挙げる, whose first sense is literally \"to give (an example)\""
   },
   "genki-2-l16||ほかの": {
     "id": "1203260",
