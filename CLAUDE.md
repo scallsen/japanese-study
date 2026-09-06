@@ -422,6 +422,41 @@ Third-party data/asset credits (JMdict/EDICT, KANJIDIC2, Tanaka Corpus, Voicevox
 
 `jmdictId` write sites for SRS cards (all pass it through `createCard`'s `extras`): `VocabPage.jsx`'s `handleAddToSrs`, `WordImportPanel.jsx`, `ImmersionReader.jsx`, `StoryReviewPage.jsx`. `IMPORTED_CONTENT_FIELDS` in `srs.js` includes `jmdictId` so it survives `resetCardProgress`.
 
+### Personal word lists (`custom_words`)
+
+A learner's own course material — one class's re-chunking of a book, with its
+own example sentences and review markers — belongs to an account, not to the
+bundle. It lives in `custom_words` (one row per word, `payload` holding the word
+itself) rather than in `src/data/words/`, so it is not downloaded by every
+visitor: moving 5,277 of these words out took 1.1 MB of JSON off the bundle.
+
+| File | Purpose |
+|---|---|
+| `supabase/migrations/*_add_custom_words.sql` | Table + RLS. `user_id` cascades from `auth.users`, so `delete-account` needs no change |
+| `supabase/migrations/*_custom_word_counts.sql` | `custom_word_counts()` — per-chapter counts for the picker, so drawing 36 tiles doesn't fetch 5,277 rows |
+| `scripts/upload-custom-words.mjs` | Moves lists from the repo into an account. Idempotent; keyed `(user_id, id)` |
+| `src/hooks/useCustomWords.js` | `useCustomWordCounts()` for the picker, `useCustomWords(listKeys)` for the chapters actually selected |
+
+A source in `WORD_SOURCES` marked `personal: true` has no words in the bundle.
+`visibleSources(customCounts)` decides whether to offer it, and ownership
+answers itself — the source appears when the viewer has words in it, so there is
+no identity to configure. `VocabPage` loads the whole selected personal source
+(a few hundred words) so counts, the review toggles and the drill all read one
+pool; `DashboardPage` uses the counts RPC alone.
+
+**`scripts/audio-keep.json` is what stops this deleting audio.**
+`generate-audio.mjs` reconciles storage by *absence* — any file without a
+matching word in `src/data/words/*.json` is pruned — and these words are no
+longer there. That file names their ids (ids only, no content) and
+reconciliation unions them in. Without it the next push to `main` deletes
+~10,000 generated files. Any future list that leaves the repo needs the same
+treatment **before** it goes.
+
+Note the maintenance scripts that hard-code word-file paths
+(`backfill-vocab-jmdict`, `validate-word-lists`, `strip-redundant-vocab-english`,
+`extract-sentence-vocab`) now skip paths that no longer exist rather than
+failing to start.
+
 ### Adding a word list
 
 **Flat source (no sublists):**

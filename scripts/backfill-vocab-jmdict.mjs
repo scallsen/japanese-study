@@ -21,7 +21,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js'
-import { readFileSync, writeFileSync } from 'fs'
+import { readFileSync, writeFileSync, existsSync } from 'fs'
 import { resolveJmdictMatches, matchKey } from '../src/lib/dictionaryLookup.js'
 
 const SUPABASE_URL = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL
@@ -41,6 +41,13 @@ const TARGETS = [
   { path: 'src/data/words/nsm_n2_a1_vocab.json', formField: 'kanji', kanaField: 'kana' },
   { path: 'src/modules/vocab-srs/decks/keigo.json', formField: 'front', kanaField: null },
 ]
+
+// The course word lists moved to per-account storage, so these paths may
+// no longer exist. Skip what is absent rather than failing to start.
+const TARGETS_PRESENT = TARGETS.filter(x => existsSync(x.path))
+if (TARGETS_PRESENT.length < TARGETS.length) {
+  console.warn(`Skipping ${TARGETS.length - TARGETS_PRESENT.length} word list(s) that are no longer in this repo`)
+}
 
 async function processTarget(target, report) {
   console.log(`\nProcessing ${target.path}`)
@@ -80,7 +87,7 @@ async function processTarget(target, report) {
 
 async function main() {
   const report = []
-  for (const target of TARGETS) {
+  for (const target of TARGETS_PRESENT) {
     await processTarget(target, report)
   }
 

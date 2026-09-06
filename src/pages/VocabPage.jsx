@@ -34,6 +34,7 @@ import { safeLocalStorageGet, safeLocalStorageSet } from '../utils/storage.js'
 import { supabase } from '../lib/supabase.js'
 import * as SimpleQueue from '../engines/simpleQueue.js'
 import { WORD_DATA } from '../data/wordData.js'
+import { useCustomWords, useCustomWordCounts } from '../hooks/useCustomWords.js'
 import { createCard } from '../modules/vocab-srs/srs.js'
 import { ensureDeck, createDeck, deleteCards } from '../modules/vocab-srs/deckUtils.js'
 import DeckComboBox from '../components/DeckComboBox.jsx'
@@ -805,9 +806,10 @@ function VocabPageScreens() {
   const { user } = useAuth()
   // A personal source belongs to one account, so the list of sources on offer
   // depends on who is signed in.
+  const customCounts = useCustomWordCounts()
   const sourceOptions = useMemo(
-    () => visibleSources(user?.id).map(source => ({ value: source.id, label: source.label })),
-    [user],
+    () => visibleSources(customCounts).map(source => ({ value: source.id, label: source.label })),
+    [customCounts],
   )
   const { data: vocabProgress, save: saveVocabProgress } = useProgress('vocab-flashcard')
   const { data: srsData, save: saveSrs } = useProgress('vocab-srs')
@@ -895,38 +897,57 @@ function VocabPageScreens() {
     return source?.lists ?? [{ id: source?.id, label: source?.label }]
   }, [selectedSourceId])
 
+  // A personal source's words live in the learner's account, not the bundle.
+  // The whole selected source is loaded at once — a few hundred words — so
+  // counts, the review toggles and the drill all read one pool.
+  const personalSource = useMemo(
+    () => WORD_SOURCES.find(s => s.id === selectedSourceId)?.personal ?? false,
+    [selectedSourceId],
+  )
+  const customListKeys = useMemo(
+    () => (personalSource ? availableSubLists.map(l => l.id) : []),
+    [personalSource, availableSubLists],
+  )
+  const customWords = useCustomWords(customListKeys)
+  const wordPool = useMemo(
+    () => (customWords.length ? [...WORD_DATA, ...customWords] : WORD_DATA),
+    [customWords],
+  )
+
   const reviewWordCount = useMemo(() =>
-    WORD_DATA.filter(w => selectedSubLists.includes(w.listKey) && w.isReview).length,
+    wordPool.filter(w => selectedSubLists.includes(w.listKey) && w.isReview).length,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedSubLists.join(',')]
+    [selectedSubLists.join(','), wordPool]
   )
 
   const sentenceVocabWordCount = useMemo(() =>
-    WORD_DATA.filter(w => selectedSubLists.includes(w.listKey) && w.isSentenceVocab).length,
+    wordPool.filter(w => selectedSubLists.includes(w.listKey) && w.isSentenceVocab).length,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedSubLists.join(',')]
+    [selectedSubLists.join(','), wordPool]
   )
 
   const wordCountByList = useMemo(() => {
     const map = {}
-    for (const w of WORD_DATA) {
+    for (const w of wordPool) {
       if (!includeReview && w.isReview) continue
       if (!includeSentenceVocab && w.isSentenceVocab) continue
       map[w.listKey] = (map[w.listKey] ?? 0) + 1
     }
     return map
-  }, [includeReview, includeSentenceVocab])
+  }, [includeReview, includeSentenceVocab, wordPool])
 
   const glanceWords = useMemo(() =>
-    WORD_DATA.filter(w => selectedSubLists.includes(w.listKey) && (includeReview || !w.isReview) && (includeSentenceVocab || !w.isSentenceVocab)),
+    wordPool.filter(w => selectedSubLists.includes(w.listKey) && (includeReview || !w.isReview) && (includeSentenceVocab || !w.isSentenceVocab)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedSubLists.join(','), includeReview, includeSentenceVocab]
+    [selectedSubLists.join(','), includeReview, includeSentenceVocab, wordPool]
   )
 
+  // Depends on glanceWords itself, not on what glanceWords is derived from: a
+  // personal source's words arrive asynchronously, and keying on the selection
+  // alone would leave the drill holding the pool from before they loaded.
   const pool = useMemo(() =>
     glanceWords.map(w => ({ id: w.id, word: w })),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedSubLists.join(','), includeReview, includeSentenceVocab]
+    [glanceWords]
   )
 
   const drill = useDrill(pool, { engine: SimpleQueue })

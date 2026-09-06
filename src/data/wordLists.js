@@ -120,13 +120,14 @@ export const WORD_SOURCES = [
   },
 ]
 
-// Sources a given viewer should see. A personal source belongs to one account:
-// VITE_PERSONAL_USER_ID names it, and with that unset nobody sees them, which
-// is the right default for anyone else running this app.
+// Sources a given viewer should see.
 //
-// This governs what is OFFERED, not what is reachable — the word files ship in
-// the bundle like every other list. It declutters; it is not access control.
-export function visibleSources(userId) {
-  const owner = import.meta.env?.VITE_PERSONAL_USER_ID
-  return WORD_SOURCES.filter(s => !s.personal || (owner && userId === owner))
+// A personal source's words live in the viewer's own account, so ownership
+// answers itself: the source appears when the viewer actually has words in it.
+// No identity to configure, and it generalises to anyone with their own lists
+// rather than to one hard-coded account.
+export function visibleSources(customCounts = {}) {
+  const owned = new Set(Object.keys(customCounts))
+  return WORD_SOURCES.filter(s =>
+    !s.personal || (s.lists ?? []).some(l => owned.has(l.id)))
 }

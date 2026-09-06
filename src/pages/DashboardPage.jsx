@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import ModuleCard from '../components/ModuleCard.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
 import PageHeader from '../components/PageHeader.jsx'
@@ -13,6 +13,7 @@ import { useProgress } from '../hooks/useProgress.js'
 import { useIsMobile } from '../hooks/useIsMobile.js'
 import { MODULES } from '../data/modules.js'
 import { WORD_DATA } from '../data/wordData.js'
+import { useCustomWordCounts } from '../hooks/useCustomWords.js'
 import { resolveTextbookState } from '../lib/textbookProgress.js'
 import { migrateProgress } from '../modules/vocab-srs/migrate.js'
 import { getGlobalStats, getStateDistribution, getTodaysQueue } from '../modules/vocab-srs/srs.js'
@@ -39,7 +40,7 @@ const WORD_COUNT_BY_LIST = WORD_DATA.reduce((map, w) => {
   if (!w.isSentenceVocab) map[w.listKey] = (map[w.listKey] ?? 0) + 1
   return map
 }, {})
-const wordCountFor = id => WORD_COUNT_BY_LIST[id] ?? 0
+const bundledWordCountFor = id => WORD_COUNT_BY_LIST[id] ?? 0
 
 function readDailyNewCards() {
   const raw = safeLocalStorageGet('srs-daily-new-cards')
@@ -98,6 +99,13 @@ export default function DashboardPage() {
     if (message) showToast({ message })
   }, [showToast])
 
+  // A learner's own chapters are counted from their account rather than the
+  // bundle; everything else still comes from the bundled lists.
+  const customCounts = useCustomWordCounts()
+  const wordCountFor = useCallback(
+    id => bundledWordCountFor(id) || (customCounts[id] ?? 0),
+    [customCounts],
+  )
   const textbookState = vocabLoading ? null : resolveTextbookState(vocabProgress, wordCountFor)
   const srs = user && !srsLoading && srsRaw ? summariseSrs(srsRaw) : null
 
