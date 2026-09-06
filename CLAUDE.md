@@ -134,6 +134,7 @@ Living component library + progress tracker for the app-wide design-system conso
 | Feed Card | Built, migrated everywhere — gained an `image?: {src?, aspectRatio?}` cover slot + `disabled` boolean | `MediaSearch`'s `ResultTile`, `ImmersionModule`'s `ArticleCard`, `StoryModule`'s `RecentCard` (all migrated) |
 | Toggle Button | Built, migrated everywhere — composes Chip; tones `accent` / `success` / `neutral` | `EpisodeList`'s `TrackToggle`, `VocabSrsModule`'s deck On/Off, Immersion's and Story's Show/Hide furigana (`neutral`), `VocabSrsBrowsePage`'s Select/Done selecting (all migrated) |
 | Distribution Bar | Built, migrated | `VocabSrsModule`'s `DeckProgressBar` (now a thin wrapper adding the suspended Badge) |
+| Switch | Built | The per-row on/off control in `DrillSettingsPanel` |
 | Drill Button | Built, migrated | `SpeedModeControls` (now composes it), `VocabSrsDrill`'s `RatingButton` (deleted) |
 | Drill HUD | Built (pre-existing component, now in the guide) | — |
 | Popover, Option Picker | Built | The duplicated anchored-popover math in `DeckComboBox` + `WordPopup`; the search/list/create surface in `DeckComboBox` |
@@ -183,6 +184,8 @@ Used by multiple modules/pages:
 | `ActionBar.jsx` | Sticky bottom bar for a screen's primary actions (see settled decision #14) |
 | `FilterCard.jsx` | Card of labelled control rows — Anime Vocab's search filters, Story's generator form |
 | `ModuleCard.jsx` | Dashboard module card |
+| `Switch.jsx` | On/off control for a settings row — accent-aware, `role="switch"`, hover lit from the row |
+| `DrillSettingsPanel.jsx` | The drill settings drawer shared by Vocab Drill, Anime Vocab and SRS — see Drill settings section |
 | `AttributionFooter.jsx` | Third-party data credit line at the foot of a page — `<AttributionFooter sources={['dictionary', 'tanaka-corpus']} />`. See Attribution system section below |
 
 ### PageHeader
@@ -342,7 +345,7 @@ create policy "public read" on sentences for select using (true);
 ```
 `src/utils/sentenceLookup.js` (`fetchSentencesFor`) + `src/hooks/useSentenceForWord.js` (`useSentenceForWord`, `useSentencesForWords`) resolve the best sentence per `jmdictId` (quality-flagged first, then shortest), same cached-batch pattern as above.
 
-**Sentence resolution has the opposite priority rule from definitions** — a word/card's own curated `sentence` wins by default; a Tanaka sentence only fills the gap when there isn't one. `vocab-sentence-source` (Vocab Drill) / `srs-sentence-source` (SRS) — both `'custom' | 'tanaka'`, default `'custom'` — flip that priority outright when set to `'tanaka'`. Each renders as a `Select` ("Sentence source", options from `src/data/sentenceSource.js`) nested under the "Show sentence" checkbox, shown only while it's checked — same visual pattern as "Enable audio" → "Text to speech". Attribution for Tanaka-sourced sentences is handled at the page level, not per-card — see Attribution system below.
+**Sentence resolution has the opposite priority rule from definitions** — a word/card's own curated `sentence` wins by default; a Tanaka sentence only fills the gap when there isn't one. That rule is now **fixed behaviour, not a setting** — the "Sentence source" picker was removed from the drill settings drawer (it asked the learner to have an opinion about provenance mid-drill). The `sentenceSource` prop survives on `VocabCard`/`SrsCardFace`/`GlanceScreen`, defaulting to `'custom'`, so the Tanaka-wins path is still reachable if a caller ever wants it. Attribution for Tanaka-sourced sentences is handled at the page level, not per-card — see Attribution system below.
 
 ### Attribution system (`src/data/attributions.js` + `AttributionFooter.jsx`)
 
@@ -376,8 +379,26 @@ Third-party data/asset credits (JMdict/EDICT, KANJIDIC2, Tanaka Corpus, Voicevox
 3. Add the source entry (with its `lists` array) to `WORD_SOURCES` in `wordLists.js`.
    - If adding a new sublist to an existing source, append to its `lists` array and add the import.
 
-### Settings persistence
-All VocabPage settings are stored in localStorage with `vocab-` prefix (e.g. `vocab-show-furigana`) to avoid colliding with katsuyou-drill's keys. `vocab-audio-source` stores the audio-source picker value (see below).
+### Drill settings — one panel, one hook
+
+Vocab Drill, Anime Vocab and Vocab SRS render **the same settings drawer**: `src/components/DrillSettingsPanel.jsx`, fed by `useDrillSettings(prefix)` from `src/hooks/useDrillSettings.js`. They previously kept three hand-maintained copies of a checkbox list, and the labels had already drifted ("Show furigana" vs "Show furigana on front"). Don't add a fourth — a new drill calls the same hook and renders the same panel.
+
+**Grouped by the part of the card each setting changes**, which is the question being asked when the drawer opens:
+
+| Group | Rows |
+|---|---|
+| Card front | Furigana, Audio |
+| Card back | Meaning, Kanji breakdown, Sentence, Audio |
+| Audio | Voice (Male / Female), Backup voice |
+| Interface | Sound effects, Pixel font, Visual effects, Streak counter |
+
+Audio is **not** a group of its own: playing the word is one of the things a face does, so `frontAudio` (plays as the card arrives) and `backAudio` (plays on flip) are rows in the two faces, and the audio group keeps only the global decision of which voice speaks. That replaced a master `audio-enabled` switch plus SRS's `autoplay-audio` / `-front` / `-back` trio.
+
+**Voice vs backup voice.** `voice` (`'male'` | `'female'`) picks between the two recorded Voicevox voices — `audioSourceForVoice()` maps it onto the `voicevox-11` / `voicevox-2` speaker strings the rest of the audio code still speaks. `backupVoice` is a browser speech-synthesis voice name, and it reads **any word with no recording** — the drills now fall through to it unconditionally, where they used to only speak when the user had explicitly picked the retired "Browser TTS" source. Consequences: there is no longer a way to force browser TTS over an existing recording, and a card that used to be silent now gets spoken.
+
+**Rows that don't apply are not rendered** — never disabled-with-an-explanation. `hasRecordedVoices={false}` drops the Voice row (Anime Vocab pulls its words from subtitles, so no recordings exist for any of them); an empty `backupVoices` drops the Backup voice row (a device with no speech voices has nothing to choose between). There is no help text under any row, and no indenting: a sub-setting is sequenced by position and by appearing at all.
+
+Storage keys keep their `vocab-` / `srs-` prefixes and are listed in the SRS settings table below (the same suffixes apply to `vocab-`). **Vocab Drill and Anime Vocab deliberately share the `vocab-` namespace** — they always have; they are the same drill over different words. `initialDrillSettings(prefix)` migrates the old keys on first read (see `useDrillSettings.test.js` for the exact mapping) and the new keys are written from then on; the retired keys are left in place rather than deleted.
 
 ### Vocab audio (Voicevox)
 
@@ -752,20 +773,20 @@ All keys use `srs-` prefix. The VocabSrsModule reads these on mount; VocabSrsDri
 | `srs-daily-new-cards` | `10` | New cards per calendar day |
 | `srs-show-hard-easy` | `true` | Show Hard + Easy rating buttons (4-way vs 2-way) |
 | `srs-leech-threshold` | `8` | Lapse count before card is suspended (0 = disabled) |
-| `srs-audio-enabled` | `true` | Master audio switch |
-| `srs-autoplay-audio` | `true` | Parent toggle for front/back autoplay |
-| `srs-autoplay-front` | `true` | Autoplay word audio when card loads |
-| `srs-autoplay-back` | `true` | Autoplay word → sentence audio on flip |
-| `srs-audio-source` | `'voicevox-11'` | Audio source picker — `'voicevox-2'` \| `'voicevox-11'` \| `'browser'`, see Vocab audio section |
-| `srs-tts-voice` | `''` | Browser TTS voice name (used when audio source is `'browser'`) |
+| `srs-front-audio` | `false` | Speak the word as the card arrives |
+| `srs-back-audio` | `true` | Speak the word (then sentence) on flip |
+| `srs-voice` | `'male'` | Recorded voice — `'male'` \| `'female'`, mapped to a Voicevox speaker by `audioSourceForVoice()` |
+| `srs-backup-voice` | `''` | Browser speech voice name that reads words with no recording (`''` = device default) |
 | `srs-sfx-enabled` | `true` | Sound effects (correct/wrong beeps) |
 | `srs-show-furigana` | `true` | Show kana reading on card front; always shown on back |
 | `srs-show-translation` | `true` | Show English translation on card back |
 | `srs-show-sentence` | `true` | Show example sentence on card back |
-| `srs-sentence-source` | `'custom'` | `'custom'` \| `'tanaka'` — which sentence wins when both a curated sentence and a Tanaka Corpus match exist (see Dictionary linkage section under Vocabulary Drill) |
 | `srs-show-kanji-meaning` | `false` | Show per-kanji meaning bar on card back (see Per-kanji meanings under Vocabulary Drill) |
 | `srs-pixel-font` | `true` | Use DotGothic16 pixel font on cards |
 | `srs-visual-effects` | `true` | Enable card visual effects |
+| `srs-show-streak` | `true` | Show the streak counter |
+
+The same suffixes exist under the `vocab-` prefix for Vocab Drill and Anime Vocab, with one different default: `vocab-front-audio` starts `false`, since that drill's front is the kanji and the reading is what you're recalling. **Retired:** `*-audio-enabled`, `*-autoplay-audio`, `*-autoplay-front`, `*-autoplay-back`, `*-audio-source`, `*-tts-voice`, `*-sentence-source` — all migrated on first read by `initialDrillSettings()`, then unused.
 
 ### Dev advance feature (DEV only)
 

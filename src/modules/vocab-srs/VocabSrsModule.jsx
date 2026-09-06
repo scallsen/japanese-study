@@ -24,13 +24,13 @@ import { MODULES } from '../../data/modules.js'
 import { ModuleThemeProvider, useAccent } from '../../context/ModuleThemeContext.jsx'
 import { STATE_SEGMENTS, SUSPENDED_DESCRIPTION } from './cardStates.js'
 import SectionHeader from '../../components/SectionHeader.jsx'
+import DrillSettingsPanel from '../../components/DrillSettingsPanel.jsx'
+import { useDrillSettings, audioSourceForVoice } from '../../hooks/useDrillSettings.js'
 import Checkbox from '../../components/Checkbox.jsx'
-import Select from '../../components/Select.jsx'
 import { useJaVoices } from '../../hooks/useTTS.js'
 import { useAudioGenerationStatus } from '../../hooks/useAudioGenerationStatus.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
-import { AUDIO_SOURCE_OPTIONS, DEFAULT_AUDIO_SOURCE, getVoicevoxCredit, speakerIdFromAudioSource } from '../../utils/voicevoxAudio.js'
-import { SENTENCE_SOURCE_OPTIONS, DEFAULT_SENTENCE_SOURCE } from '../../data/sentenceSource.js'
+import { getVoicevoxCredit, speakerIdFromAudioSource } from '../../utils/voicevoxAudio.js'
 import AttributionFooter from '../../components/AttributionFooter.jsx'
 import { renderAttributionSegments } from '../../utils/attributionSegments.jsx'
 import { useIsMobile } from '../../hooks/useIsMobile.js'
@@ -179,42 +179,10 @@ function VocabSrsHome() {
   const [advanceDays, setAdvanceDays] = useState(3)
   const [showOptions, setShowOptions] = useState(() => window.innerWidth > 768)
 
-  const [showVisualEffects, setShowVisualEffects] = useState(() => {
-    const s = safeLocalStorageGet('srs-visual-effects'); return s === null ? true : s === 'true'
-  })
-  const [pixelFont, setPixelFont] = useState(() => {
-    const s = safeLocalStorageGet('srs-pixel-font'); return s === null ? true : s === 'true'
-  })
-  const [showTranslation, setShowTranslation] = useState(() => {
-    const s = safeLocalStorageGet('srs-show-translation'); return s === null ? true : s === 'true'
-  })
-  const [showFurigana, setShowFurigana] = useState(() => {
-    const s = safeLocalStorageGet('srs-show-furigana'); return s === null ? true : s === 'true'
-  })
-  const [showSentence, setShowSentence] = useState(() => {
-    const s = safeLocalStorageGet('srs-show-sentence'); return s === null ? true : s === 'true'
-  })
-  const [sentenceSource, setSentenceSource] = useState(() => safeLocalStorageGet('srs-sentence-source') ?? DEFAULT_SENTENCE_SOURCE)
-  const [showKanjiMeaning, setShowKanjiMeaning] = useState(() => {
-    const s = safeLocalStorageGet('srs-show-kanji-meaning'); return s === null ? false : s === 'true'
-  })
-  const [audioEnabled, setAudioEnabled] = useState(() => {
-    const s = safeLocalStorageGet('srs-audio-enabled'); return s === null ? true : s === 'true'
-  })
-  const [autoplayAudio, setAutoplayAudio] = useState(() => {
-    const s = safeLocalStorageGet('srs-autoplay-audio'); return s === null ? true : s === 'true'
-  })
-  const [autoplayFront, setAutoplayFront] = useState(() => {
-    const s = safeLocalStorageGet('srs-autoplay-front'); return s === null ? true : s === 'true'
-  })
-  const [autoplayBack, setAutoplayBack] = useState(() => {
-    const s = safeLocalStorageGet('srs-autoplay-back'); return s === null ? true : s === 'true'
-  })
-  const [audioSource, setAudioSource] = useState(() => safeLocalStorageGet('srs-audio-source') ?? DEFAULT_AUDIO_SOURCE)
-  const [sfxEnabled, setSfxEnabled] = useState(() => {
-    const s = safeLocalStorageGet('srs-sfx-enabled'); return s === null ? true : s === 'true'
-  })
-  const [ttsVoice, setTtsVoice] = useState(() => safeLocalStorageGet('srs-tts-voice') ?? '')
+  const { settings, set: setSetting } = useDrillSettings('srs')
+  const anyAudio = settings.frontAudio || settings.backAudio
+  const audioSource = anyAudio ? audioSourceForVoice(settings.voice) : 'none'
+  const voicevoxCredit = anyAudio ? getVoicevoxCredit(audioSource) : null
   const [dailyNewCards, setDailyNewCards] = useState(() => {
     const s = safeLocalStorageGet('srs-daily-new-cards'); return s ? parseInt(s, 10) : 10
   })
@@ -225,20 +193,6 @@ function VocabSrsHome() {
     const s = safeLocalStorageGet('srs-leech-threshold'); return s ? parseInt(s, 10) : 8
   })
 
-  useEffect(() => { safeLocalStorageSet('srs-visual-effects', showVisualEffects) }, [showVisualEffects])
-  useEffect(() => { safeLocalStorageSet('srs-pixel-font', pixelFont) }, [pixelFont])
-  useEffect(() => { safeLocalStorageSet('srs-show-translation', showTranslation) }, [showTranslation])
-  useEffect(() => { safeLocalStorageSet('srs-show-furigana', showFurigana) }, [showFurigana])
-  useEffect(() => { safeLocalStorageSet('srs-show-sentence', showSentence) }, [showSentence])
-  useEffect(() => { safeLocalStorageSet('srs-sentence-source', sentenceSource) }, [sentenceSource])
-  useEffect(() => { safeLocalStorageSet('srs-show-kanji-meaning', showKanjiMeaning) }, [showKanjiMeaning])
-  useEffect(() => { safeLocalStorageSet('srs-audio-enabled', audioEnabled) }, [audioEnabled])
-  useEffect(() => { safeLocalStorageSet('srs-autoplay-audio', autoplayAudio) }, [autoplayAudio])
-  useEffect(() => { safeLocalStorageSet('srs-autoplay-front', autoplayFront) }, [autoplayFront])
-  useEffect(() => { safeLocalStorageSet('srs-autoplay-back', autoplayBack) }, [autoplayBack])
-  useEffect(() => { safeLocalStorageSet('srs-audio-source', audioSource) }, [audioSource])
-  useEffect(() => { safeLocalStorageSet('srs-sfx-enabled', sfxEnabled) }, [sfxEnabled])
-  useEffect(() => { safeLocalStorageSet('srs-tts-voice', ttsVoice) }, [ttsVoice])
   useEffect(() => { safeLocalStorageSet('srs-daily-new-cards', dailyNewCards) }, [dailyNewCards])
   useEffect(() => { safeLocalStorageSet('srs-show-hard-easy', showHardEasy) }, [showHardEasy])
   useEffect(() => { safeLocalStorageSet('srs-leech-threshold', leechThreshold) }, [leechThreshold])
@@ -550,89 +504,17 @@ function VocabSrsHome() {
 
         <div style={hairline} />
 
-        {/* ── Additional Settings ── */}
-        <SectionHeader title="Additional Settings" />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <Checkbox checked={showVisualEffects} onChange={() => setShowVisualEffects(v => !v)} label="Show visual effects" />
-          <Checkbox checked={pixelFont} onChange={() => setPixelFont(v => !v)} label="Use pixel font" />
-          <Checkbox checked={showTranslation} onChange={() => setShowTranslation(v => !v)} label="Show translation" />
-          <Checkbox checked={showFurigana} onChange={() => setShowFurigana(v => !v)} label="Show furigana on front" />
-          <Checkbox checked={showSentence} onChange={() => setShowSentence(v => !v)} label="Show sentence" />
-          {showSentence && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
-              <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Sentence source</span>
-              <Select
-                value={sentenceSource}
-                onChange={setSentenceSource}
-                options={SENTENCE_SOURCE_OPTIONS}
-                label="Sentence source"
-              />
-            </div>
-          )}
-          <Checkbox checked={showKanjiMeaning} onChange={() => setShowKanjiMeaning(v => !v)} label="Show kanji meaning" />
-          <Checkbox
-            checked={audioEnabled}
-            onChange={() => setAudioEnabled(v => !v)}
-            label="Enable audio"
-          />
-          {audioEnabled && (
+        <DrillSettingsPanel
+          settings={settings}
+          onChange={setSetting}
+          backupVoices={jaVoices}
+          audioFootnote={
             <>
-              <Checkbox
-                checked={autoplayAudio}
-                onChange={() => setAutoplayAudio(v => !v)}
-                label="Auto-play"
-                indent={1}
-              />
-              {autoplayAudio && (
-                <>
-                  <Checkbox
-                    checked={autoplayFront}
-                    onChange={() => setAutoplayFront(v => !v)}
-                    label="On front"
-                    indent={2}
-                  />
-                  <Checkbox
-                    checked={autoplayBack}
-                    onChange={() => setAutoplayBack(v => !v)}
-                    label="On back (word then sentence)"
-                    indent={2}
-                  />
-                </>
-              )}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
-                <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Text to speech</span>
-                <Select
-                  value={audioSource}
-                  onChange={setAudioSource}
-                  options={AUDIO_SOURCE_OPTIONS}
-                  label="Text to speech"
-                />
-                {getVoicevoxCredit(audioSource) && (
-                  <span style={{ fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.35)' }}>{renderAttributionSegments(getVoicevoxCredit(audioSource))}</span>
-                )}
-                {audioProcessing && (
-                  <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>Audio is being generated</span>
-                )}
-                {audioSource === 'browser' && jaVoices.length > 0 && (
-                  <Select
-                    value={ttsVoice}
-                    onChange={setTtsVoice}
-                    options={[{ value: '', label: 'Default' }, ...jaVoices.map(v => ({ value: v.name, label: v.name }))]}
-                    label="Voice"
-                    subtext="Availability based on your device or browser"
-                  />
-                )}
-              </div>
-              <Checkbox
-                checked={sfxEnabled}
-                onChange={() => setSfxEnabled(v => !v)}
-                label="Sound effects"
-                subtext="Silent mode may mute sound effects"
-                indent={1}
-              />
+              {voicevoxCredit && <div>{renderAttributionSegments(voicevoxCredit)}</div>}
+              {audioProcessing && <div>Audio is being generated</div>}
             </>
-          )}
-        </div>
+          }
+        />
 
         {/* ── Dev (DEV only) ── */}
         {import.meta.env.DEV && globalStats.totalCards > 0 && (
@@ -707,19 +589,18 @@ function VocabSrsHome() {
             initialSession={session}
             onCardSave={handleCardSave}
             onDone={handleDrillDone}
-            showTranslation={showTranslation}
-            showFurigana={showFurigana}
-            showSentence={showSentence}
-            sentenceSource={sentenceSource}
-            showKanjiMeaning={showKanjiMeaning}
-            pixelFont={pixelFont}
-            showVisualEffects={showVisualEffects}
-            audioEnabled={audioEnabled}
-            autoplayFront={audioEnabled && autoplayAudio && autoplayFront}
-            autoplayBack={audioEnabled && autoplayAudio && autoplayBack}
+            showTranslation={settings.translation}
+            showFurigana={settings.furigana}
+            showSentence={settings.sentence}
+            showKanjiMeaning={settings.kanjiMeanings}
+            pixelFont={settings.pixelFont}
+            showVisualEffects={settings.visualEffects}
+            audioEnabled={anyAudio}
+            autoplayFront={settings.frontAudio}
+            autoplayBack={settings.backAudio}
             audioSource={audioSource}
-            sfxEnabled={audioEnabled && sfxEnabled}
-            ttsVoice={ttsVoice}
+            sfxEnabled={settings.sfx}
+            ttsVoice={settings.backupVoice}
             showHardEasy={showHardEasy}
             leechThreshold={leechThreshold}
             isMobile={isMobile}
@@ -815,7 +696,7 @@ function VocabSrsHome() {
                 <AttributionFooter sources={[
                   'dictionary',
                   'tanaka-corpus',
-                  ...(audioEnabled && speakerIdFromAudioSource(audioSource) ? ['voicevox'] : []),
+                  ...(speakerIdFromAudioSource(audioSource) ? ['voicevox'] : []),
                 ]} />
               </div>
             </main>

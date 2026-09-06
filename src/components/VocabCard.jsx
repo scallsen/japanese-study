@@ -156,7 +156,7 @@ function BackContent({ word, displayForm, reading, resolvedEnglish, sentenceText
   )
 }
 
-export default function VocabCard({ word, flipped, onFlip, animate, reviewMode, showFurigana, showTranslation, showSentence, showKanjiMeaning, pixelFont, sentenceSource }) {
+export default function VocabCard({ word, flipped, onFlip, animate, reviewMode, showFurigana, showTranslation, showSentence, showKanjiMeaning, pixelFont, sentenceSource = 'custom' }) {
   // Dictionary is the source of truth for the definition — and, whenever the
   // word doesn't carry its own kanji/kana override, for the display form and
   // reading too — when this word is linked (word.jmdictId). The word's own

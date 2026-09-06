@@ -371,8 +371,8 @@ export default function VocabSrsDrill({
       const urls = resolveAudioUrl(currentCard)
       if (urls.word) {
         playSequenceRef.current(urls.word, urls.sentence)
-      } else if (audioSource === 'browser') {
-        tts.speak(currentCard.front ?? '')
+      } else {
+        tts.speak(currentCard.kana ?? currentCard.front ?? '')
       }
     }
     setFlipped(true)
@@ -414,8 +414,8 @@ export default function VocabSrsDrill({
       } else {
         playAudioRef.current(urls.word)
       }
-    } else if (audioSource === 'browser') {
-      tts.speak(currentCard.front ?? '')
+    } else {
+      tts.speak(currentCard.kana ?? currentCard.front ?? '')
     }
   }
 
@@ -486,10 +486,11 @@ export default function VocabSrsDrill({
   useEffect(() => {
     if (!audioEnabled || !autoplayFront) return
     const url = resolveAudioUrl(currentCardForMemo).word
-    if (!url) return
     stopAudioRef.current()
     const t = setTimeout(() => {
-      if (!flippedRef.current) playAudioRef.current(url)
+      if (flippedRef.current) return
+      if (url) playAudioRef.current(url)
+      else tts.speak(currentCardForMemo?.kana ?? currentCardForMemo?.front ?? '')
     }, 50)
     return () => clearTimeout(t)
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -650,8 +651,8 @@ export default function VocabSrsDrill({
                         const urls = resolveAudioUrl(currentCard)
                         if (urls.word) {
                           playSequenceRef.current(urls.word, urls.sentence)
-                        } else if (audioSource === 'browser') {
-                          tts.speak(currentCard.front)
+                        } else {
+                          tts.speak(currentCard.kana ?? currentCard.front ?? '')
                         }
                       }
                     }
