@@ -20,7 +20,7 @@ Both issues have occurred in previous sessions and caused confusing bugs (search
 - **No comments** unless the WHY is non-obvious (a hidden constraint, a workaround, a subtle invariant).
 - **No TypeScript** — plain JS throughout.
 - **No i18n** — all strings hardcoded in English.
-- **No Japanese text in the UI** — labels, buttons, headings, and all other UI strings must be in English. Japanese text belongs only in word/card data (e.g. `kanji`, `kana`, `front` fields). `public/favicon.svg` (a pixel-art 文) is a deliberate exception — it's a logomark, not a string a learner has to read to use the app, the same distinction that already carves out Voicevox's Japanese voice-name credit.
+- **No Japanese text in the UI** — labels, buttons, headings, and all other UI strings must be in English. Japanese text belongs only in word/card data (e.g. `kanji`, `kana`, `front` fields). `public/favicon.svg` (a rendered 文 glyph) is a deliberate exception — it's a logomark, not a string a learner has to read to use the app, the same distinction that already carves out Voicevox's Japanese voice-name credit.
 - Hash-based routing — `window.location.hash` read in `App.jsx`. No third-party router.
 
 ## App architecture
