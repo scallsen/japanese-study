@@ -13,6 +13,7 @@ import DictionaryEntryPage from './pages/DictionaryEntryPage.jsx'
 import AnimeVocabModule from './modules/anime-vocab/AnimeVocabModule.jsx'
 import ToastLabPage from './pages/ToastLabPage.jsx'
 import StyleGuideLabPage from './pages/StyleGuideLabPage.jsx'
+import SettingsLabPage from './pages/SettingsLabPage.jsx'
 import HomeCardsLabPage from './pages/HomeCardsLabPage.jsx'
 import TextbookPickerLabPage from './pages/TextbookPickerLabPage.jsx'
 
@@ -58,6 +59,8 @@ export default function App() {
   if (route === '/dev/toast-lab') return <ToastLabPage />
   // Living style guide for shared components (DataList, and whatever joins it next), not linked from the dashboard
   if (route === '/dev/style-guide') return <StyleGuideLabPage />
+  // Exploration of alternative drill-settings sidebar layouts, not linked from the dashboard
+  if (route === '/dev/settings-lab') return <SettingsLabPage />
   // Dev-only harness for the home page's two primary cards in every state, not linked from the dashboard
   if (route === '/dev/home-cards') return <HomeCardsLabPage />
   // Dev-only bench for change-textbook layout options, not linked from the dashboard
