@@ -1,11 +1,14 @@
 import { supabase } from '../lib/supabase.js'
+import { displayFormOf } from '../lib/displayForm.js'
+
+export { displayFormOf }
 
 const cache = new Map()
 const attempted = new Set()
 
 // `misc0` is only sense 0's misc array, not the whole `senses` blob — it costs
 // a few bytes per row and carries the `uk` flag `displayFormOf` needs.
-const SELECT = 'id, primary_form, kana_forms, gloss_en, pos, common, jlpt_level, jlpt_level_inferred, misc0:senses->0->misc'
+const SELECT = 'id, primary_form, preferred_form, kana_forms, gloss_en, pos, common, jlpt_level, jlpt_level_inferred, misc0:senses->0->misc'
 
 // Returns { [jmdictId]: row|null } for every id already resolved (found or not).
 export async function fetchDictionaryEntries(ids) {
@@ -23,13 +26,6 @@ export async function fetchDictionaryEntries(ids) {
   return result
 }
 
-// JMdict's `uk` tag means "usually written using kana alone". Without honouring
-// it, a word linked only by jmdictId renders its rarest spelling — ちょっと as
-// 一寸, たくさん as 沢山, わかる as 分かる — which is not how any textbook writes them.
-export function displayFormOf(row) {
-  if (!row) return null
-  return (row.misc0 ?? []).includes('uk') ? (row.kana_forms?.[0] ?? row.primary_form) : row.primary_form
-}
 
 // Concise definition text for card display — first couple of gloss segments,
 // further capped by character count so a handful of long senses (e.g. 枚数's

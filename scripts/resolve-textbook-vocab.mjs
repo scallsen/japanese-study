@@ -26,6 +26,7 @@
 
 import { createClient } from '@supabase/supabase-js'
 import { readFileSync, writeFileSync, existsSync } from 'fs'
+import { displayFormOf } from '../src/lib/displayForm.js'
 
 const SUPABASE_URL = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -53,7 +54,7 @@ const BOOKS = [
 // Only kana_forms is GIN-indexed; overlapping kanji_forms seq-scans 217k rows
 // and hits the statement timeout. Every candidate must contain the reading
 // anyway, so the reading index reaches all of them.
-const SELECT = 'id, primary_form, kanji_forms, kana_forms, gloss_en, common, misc0:senses->0->misc'
+const SELECT = 'id, primary_form, preferred_form, kanji_forms, kana_forms, gloss_en, common, misc0:senses->0->misc'
 const BATCH = 50
 
 // --- normalisation -------------------------------------------------------
@@ -137,11 +138,6 @@ function glossDetail(gloss, row) {
 // context but deliberately never ranks — using it for identity picked 垂れ over
 // 誰 and 彼の over あの.
 const isUk = row => (row.misc0 ?? []).includes('uk')
-
-// Mirrors src/utils/dictionaryEntryLookup.js's displayFormOf — the resolver has
-// to know what the card will actually render in order to tell whether it
-// differs from the book. If that rule changes, change it in both places.
-const displayFormOf = row => (isUk(row) ? (row.kana_forms?.[0] ?? row.primary_form) : row.primary_form)
 
 // The supplied gloss is the primary signal — reading narrows the field, but
 // meaning is what identifies the entry. Each later stage only breaks ties the
