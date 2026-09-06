@@ -17,7 +17,7 @@ import { chromium } from 'playwright'
 const base = (process.argv[2] ?? 'http://127.0.0.1:5173').replace(/\/$/, '')
 const ROUTES = [
   '/', '#/vocab', '#/vocab-srs', '#/immersion', '#/dictionary', '#/story',
-  '#/account', '#/dev/home-cards', '#/dev/textbook-picker', '#/dev/style-guide', '#/dev/home-flow',
+  '#/account', '#/dev/home-cards', '#/dev/textbook-picker', '#/dev/style-guide', '#/dev/home-flow', '#/dev/textbook-flow',
 ]
 // A route that renders less than this is almost certainly a crashed shell
 // rather than a legitimately sparse screen.

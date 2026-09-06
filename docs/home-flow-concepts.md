@@ -146,3 +146,141 @@ Build order for A, each step shippable on its own:
    review-only; delete the SRS home body and the sidebar deck section;
    re-home the browse page.
 5. CLAUDE.md, smoke routes, retire this bench.
+
+---
+
+# Round two: concept B, question by question
+
+Bench: `#/dev/textbook-flow` (`src/pages/TextbookFlowLabPage.jsx`). Every
+question below is a switch; all of them apply to the one mock at once, so a
+combination can be judged as a whole. Walk it: Start Lesson 4 from the card,
+Finish, answer the prompt, then compare what the card and the chapter path
+say under each advancing model. Rewind with "Set as current" on any row.
+Open a lesson's Words. Then Decks.
+
+## 1. How advancing works
+
+The tracker is a bookmark: the one chapter the book is "open at". Three
+models for how it moves forward.
+
+- **Explicit advance** — finishing marks the chapter drilled; the tracker
+  stays. The card reads "Lesson 4 drilled ✓ · 0 of 63 in SRS", its primary
+  becomes **Advance to Lesson 5**, Redo is a quiet link. The chapter row
+  gains the same Advance button. *Recommended.* Finishing a drill and
+  being done with a lesson are different things (you may redo, send words,
+  read the chapter); a deliberate advance keeps them apart and gives the
+  SRS gate a natural place to hang. It also means the card always shows
+  one primary button.
+- **Auto-advance** — finishing from the card moves the tracker at once;
+  the card shows "Start Lesson 5" with "Lesson 4 done today" beneath. The
+  done screen's prompt is the only gate. Fewest clicks, but a redo of the
+  lesson you just did now looks like a free drill, and there is no moment
+  to decide.
+- **Advance on start** — closest to today: finishing marks drilled, the
+  tracker moves when "Start Lesson 5" is pressed. Hides a state change
+  inside another action, so the gate fires when you were trying to start
+  something.
+
+## 2. Moving the tracker backwards
+
+"Set as current" on any chapter row moves the bookmark there. Nothing is
+erased: drilled marks and sent-to-SRS state stay on the chapters ahead,
+the progress bar still counts drilled chapters, and the card's primary
+becomes "Redo Lesson 2". Advancing from there walks forward through
+already-drilled chapters one at a time; the gate never fires for a chapter
+whose words are all in the SRS. (Mock: rewind to Lesson 2, then Start,
+Finish, Advance.)
+
+## 3. The SRS gate
+
+- **Dialog** — advancing past a chapter with unsent words asks once:
+  "Send Lesson 4 to the SRS first?" with **Send 63 and advance** as the
+  primary, Advance without sending, Cancel. *Recommended*, with the
+  explicit model. It only appears when there is something to send, and it
+  appears at the one moment the words are about to fall out of sight.
+- **Inline notice** — no interruption; the card and the chapter row carry
+  an amber notice with a Send button while unsent words exist. Fine on
+  the row, but on the card it nags every visit.
+- **None** — only the done screen prompts.
+
+Independent of the gate, every chapter row shows its SRS state: **In SRS**
+when every word is sent, "40 of 53 in SRS" in amber when partial, nothing
+when none. The row's Send button becomes "Send remaining 13".
+
+## 4. Which words are in the SRS
+
+The lesson's Words screen (from the row, or "Choose words" on the done
+screen) lists the lesson with a checkbox column, "Select all not in SRS",
+and "Send N to SRS".
+
+- **One list, badges** — every word in book order, an In SRS badge on the
+  sent ones. *Recommended*: a textbook lesson's order is meaningful and
+  this keeps it; the badge column makes the gaps easy to scan.
+- **Two groups** — "Not in SRS" with selection first, "In SRS" read-only
+  below. Faster for the send action, loses the book's order.
+
+## 5. Tracker glyphs
+
+Done is a filled grey dot, upcoming a hollow one, in every option. The
+current chapter:
+
+- **Ring** — accent dot with a gapped accent ring.
+- **Halo** — accent dot with a soft translucent halo. Quieter, lower
+  contrast at 12px.
+- **Connected path** — the ring plus a line threading the glyphs, grey
+  behind the tracker and faint ahead of it. *Recommended*: the list reads
+  as a route, and the line tells the rewound case (grey line stops at the
+  tracker even though drilled dots continue below it).
+
+## 6. Covers
+
+**Cropped** (recommended): the pixel art's 5/32 transparent gutter is cut
+off both sides, so the artwork sits flush against the layout instead of
+being offset by a negative margin. The cover is the change-textbook control
+on the page as on the card — hover reveals "Change", the same
+`.textbook-cover` treatment. This replaces the "Change textbook" button.
+Applies to the home card too.
+
+## 7. Free drill
+
+- **Header action** — a "Free drill" button beside the book opens the
+  any-book sheet (book, lists, drill mode, Preview / Start). *Recommended.*
+  The rows already drill any chapter of the current book without moving
+  the tracker, so the sheet is only for other books — and it has to exist
+  for one real case: a learner with personal (Coto) lists who is also
+  working through a textbook has no other way to reach those lists.
+- **Not supported** — changing book is the only route. Clean, but loses
+  that case.
+
+## 8. Decks page header
+
+The home Review card gains a third stat, **Minutes** (~8), so the two are
+parallel. On the page:
+
+- **Headline + button** — "21 due · 10 new · ~8 min" as the page headline,
+  deck/card caption under it, **Start reviews** top right, the state bar
+  beneath. No card. *Recommended*: same words as the home card, the page's
+  one action beside the numbers it describes.
+- **Stat blocks + button** — the card's three stat blocks instead of the
+  headline. An exact echo of the card; heavier for a page header.
+- **Sticky action bar** — header is information only; Start reviews sits
+  in a bottom action bar like the Vocab page's Start review. Consistent
+  with the drill pages, but the action lands far from the numbers.
+
+Review settings (daily new, leech, Hard/Easy) stay in the settings
+sidebar, next to the card-display settings.
+
+## Build order for B
+
+1. Home card: one primary + Redo link, "drilled ✓ · n of m in SRS" line,
+   Advance action and gate, Minutes stat on the Review card, cropped cover.
+2. Textbook page replacing the Vocab home: header (cover, progress, Free
+   drill), chapter path with glyphs, row actions (Start/Drill, Words, Send,
+   Set as current, Advance), free-drill sheet.
+3. Words screen: the existing Preview/glance screen with selection, In SRS
+   badges and Send.
+4. Done screen: prompt with book-named deck default, "Choose words",
+   Advance / Start next per the model chosen.
+5. Decks page replacing the SRS home: header, deck list out of the sidebar,
+   Import menu; browse page re-homed under it.
+6. CLAUDE.md, smoke routes, retire both benches.

@@ -17,6 +17,7 @@ import SettingsLabPage from './pages/SettingsLabPage.jsx'
 import HomeCardsLabPage from './pages/HomeCardsLabPage.jsx'
 import TextbookPickerLabPage from './pages/TextbookPickerLabPage.jsx'
 import HomeFlowLabPage from './pages/HomeFlowLabPage.jsx'
+import TextbookFlowLabPage from './pages/TextbookFlowLabPage.jsx'
 
 function getRoute() {
   // Strip any query string (e.g. '/vocab-srs/browse?deck=x&manage=1') before
@@ -68,5 +69,7 @@ export default function App() {
   if (route === '/dev/textbook-picker') return <TextbookPickerLabPage />
   // Dev-only bench comparing three shapes for the learn → remember loop (home cards, Vocab/SRS indexes), not linked from the dashboard
   if (route === '/dev/home-flow') return <HomeFlowLabPage />
+  // Round two of the above for concept B: every open question as a switch on one mock, not linked from the dashboard
+  if (route === '/dev/textbook-flow') return <TextbookFlowLabPage />
   return <DashboardPage />
 }

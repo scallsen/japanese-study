@@ -24,8 +24,10 @@ import { useIsMobile } from '../hooks/useIsMobile.js'
 import { resolveTextbookState } from '../lib/textbookProgress.js'
 import { TEXTBOOKS, getTextbook } from '../data/textbooks.js'
 import { MODULES } from '../data/modules.js'
-import { WORD_DATA } from '../data/wordData.js'
 import { STATE_SEGMENTS } from '../modules/vocab-srs/cardStates.js'
+import {
+  BOOK_ID, DAILY_NEW, wordCountFor, INITIAL_DECKS, initialProgress, initialSent, deckTotal, summariseDecks, addChapterToDecks,
+} from './homeFlowFixtures.js'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_CONTENT_HEADING, FS_DISPLAY_HEADING, FS_STAT_VALUE,
   SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32,
@@ -46,14 +48,6 @@ const HAIRLINE = 'rgba(255,255,255,0.08)'
 const VOCAB_ACCENT = MODULES.find(m => m.id === 'school-vocab').accent
 const SRS_ACCENT = MODULES.find(m => m.id === 'vocab-srs').accent
 
-const BOOK_ID = 'genki-1'
-const DAILY_NEW = 10
-
-const WORD_COUNT_BY_LIST = WORD_DATA.reduce((map, w) => {
-  if (!w.isSentenceVocab) map[w.listKey] = (map[w.listKey] ?? 0) + 1
-  return map
-}, {})
-const wordCountFor = id => WORD_COUNT_BY_LIST[id] ?? 0
 const BOOKS_WITH_WORDS = TEXTBOOKS.filter(b => !b.personal && b.chapters.some(ch => wordCountFor(ch.id) > 0))
 
 const CONCEPTS = [
@@ -85,39 +79,6 @@ const DRILL_MODE_OPTIONS = [
   { value: 'meaning-front', label: 'English → Japanese' },
 ]
 
-const INITIAL_DECKS = [
-  { id: 'genki-1', name: 'Genki 1', source: 'imported', active: true, due: 12, newAvailable: 40, dist: { new: 40, learning: 31, young: 60, mature: 25, relearning: 0 } },
-  { id: 'core2000', name: 'Core 2000', source: 'bundled', active: true, due: 9, newAvailable: 1500, dist: { new: 1500, learning: 80, young: 220, mature: 207, relearning: 0 } },
-  { id: 'immersion-words', name: 'Immersion words', source: 'imported', active: false, due: 4, newAvailable: 10, dist: { new: 10, learning: 12, young: 15, mature: 5, relearning: 0 } },
-  { id: 'story-words', name: 'Story words', source: 'imported', active: true, due: 0, newAvailable: 18, dist: { new: 18, learning: 0, young: 0, mature: 0, relearning: 0 } },
-]
-
-function initialProgress() {
-  const book = getTextbook(BOOK_ID)
-  const sublists = {}
-  for (const ch of book.chapters.slice(0, 3)) {
-    sublists[ch.id] = { 'kanji-front': { lastReviewed: '2026-09-03T00:00:00Z', correct: 40, total: 48 } }
-  }
-  return { textbook: { id: BOOK_ID, currentChapterId: book.chapters[3].id }, sublists }
-}
-
-const deckTotal = d => Object.values(d.dist).reduce((a, b) => a + b, 0)
-
-function summariseDecks(decks) {
-  const active = decks.filter(d => d.active)
-  const due = active.reduce((s, d) => s + d.due, 0)
-  const newAvailable = active.reduce((s, d) => s + d.newAvailable, 0)
-  const newToday = Math.min(DAILY_NEW, newAvailable)
-  return {
-    due,
-    newToday,
-    newWaiting: newAvailable - newToday,
-    totalCards: decks.reduce((s, d) => s + deckTotal(d), 0),
-    activeDecks: active.length,
-    canStart: due + newToday > 0,
-  }
-}
-
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function HomeFlowLabPage() {
@@ -125,7 +86,7 @@ export default function HomeFlowLabPage() {
   const [concept, setConcept] = useState('console')
   const [progress, setProgress] = useState(initialProgress)
   const [decks, setDecks] = useState(INITIAL_DECKS)
-  const [sent, setSent] = useState(() => new Set(getTextbook(BOOK_ID).chapters.slice(0, 3).map(ch => ch.id)))
+  const [sent, setSent] = useState(initialSent)
   const [screen, setScreen] = useState({ name: 'home' })
   const [log, setLog] = useState([])
 
@@ -157,11 +118,7 @@ export default function HomeFlowLabPage() {
   function sendToSrs(chapter, bookId = BOOK_ID) {
     const book = getTextbook(bookId)
     const count = wordCountFor(chapter.id)
-    setDecks(ds => {
-      const existing = ds.find(d => d.id === book.id)
-      if (existing) return ds.map(d => d.id === book.id ? { ...d, newAvailable: d.newAvailable + count, dist: { ...d.dist, new: d.dist.new + count } } : d)
-      return [...ds, { id: book.id, name: book.title, source: 'imported', active: true, due: 0, newAvailable: count, dist: { new: count, learning: 0, young: 0, mature: 0, relearning: 0 } }]
-    })
+    setDecks(ds => addChapterToDecks(ds, book, count))
     setSent(s => new Set([...s, chapter.id]))
     note(`Sent ${count} words from ${chapter.label} to the "${book.title}" deck`)
   }
@@ -179,7 +136,7 @@ export default function HomeFlowLabPage() {
   function reset() {
     setProgress(initialProgress())
     setDecks(INITIAL_DECKS)
-    setSent(new Set(getTextbook(BOOK_ID).chapters.slice(0, 3).map(ch => ch.id)))
+    setSent(initialSent())
     setScreen({ name: 'home' })
     setLog([])
   }
@@ -513,7 +470,7 @@ function FreeDrillPicker({ mock, onStart, compact = false }) {
   )
 }
 
-function FreeDrillSheet({ open, onClose, mock }) {
+export function FreeDrillSheet({ open, onClose, mock }) {
   return (
     <Modal open={open} onClose={onClose} title="Drill any list" size="xl" isMobile={mock.isMobile}>
       <FreeDrillPicker

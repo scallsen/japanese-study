@@ -687,3 +687,9 @@ and a recommendation in `docs/home-flow-concepts.md`. **[INPUT]** pick a
 direction (A recommended: pointer control on the card, free-drill sheet,
 one Decks page; both index homes deleted) and answer the three open
 questions at the end of that doc before the build starts.
+
+**Round two (B chosen):** `#/dev/textbook-flow` puts each follow-up
+question — advance model, SRS gate, rewind, glyphs, cropped covers, free
+drill placement, lesson word list, Decks header — on its own switch over
+one mock. Recommendations per question are in the same doc. **[INPUT]**
+pick per switch; the build order at the end of the doc follows.
