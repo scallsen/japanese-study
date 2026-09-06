@@ -309,15 +309,20 @@ const tiers = {}
 for (const e of entries) tiers[e.tier] = (tiers[e.tier] ?? 0) + 1
 
 const resolved = entries.filter(e => e.jmdictId)
-const seen = new Set()
+const seen = new Map()
+const collapsed = []
 for (const book of BOOKS) {
   const rows = []
   const counters = {}
   for (const e of resolved) {
     if (e.book !== book) continue
+    // Two source entries can resolve to the same word in the same lesson —
+    // Genki lists both 知る and 知っています in lesson 7. Only one card can
+    // exist, but dropping the other silently would hide real data loss, so
+    // every collapse is recorded for the report.
     const dupKey = `${e.listKey}|${e.jmdictId}`
-    if (seen.has(dupKey)) continue
-    seen.add(dupKey)
+    if (seen.has(dupKey)) { collapsed.push({ kept: seen.get(dupKey), lost: e }); continue }
+    seen.set(dupKey, e)
     counters[e.listKey] = (counters[e.listKey] ?? 0) + 1
     rows.push({
       id: `${e.listKey}-${String(counters[e.listKey]).padStart(3, '0')}`,
@@ -352,6 +357,12 @@ writeFileSync(REPORT, `${JSON.stringify({
   // ids in file order is hopeless and reviewing a random sample finds nothing;
   // the errors that survive are concentrated where the gloss agreed least, so
   // this is the list to read top-down until it stops being interesting.
+  collapsed: collapsed.map(c => ({
+    listKey: c.lost.listKey,
+    jmdictId: c.lost.jmdictId,
+    kept: { kana: c.kept.srcKana, kanji: c.kept.srcKanji, gloss: c.kept.gloss },
+    lost: { kana: c.lost.srcKana, kanji: c.lost.srcKanji, gloss: c.lost.gloss },
+  })),
   audit: entries
     .filter(e => e.tier === 'auto')
     .map(e => ({
@@ -374,3 +385,6 @@ for (const [k, v] of Object.entries(tiers).sort((a, b) => b[1] - a[1])) {
   console.log(`  ${String(v).padStart(5)}  ${k}`)
 }
 console.log(`\n${needsReview.length} entries need review → ${REPORT}`)
+if (collapsed.length) {
+  console.log(`${collapsed.length} entries collapsed into a word their lesson already had (see "collapsed" in the report)`)
+}
