@@ -63,6 +63,10 @@ function storeLinks(query, extra = []) {
 // errata live — more useful to a learner than either retailer.
 const GENKI_ONLINE = [{ label: 'Genki Online', href: 'https://genki3.japantimes.co.jp/en/' }]
 
+// ASK's own page for the revised N3 kanji volume, by ISBN — the edition whose
+// six-week structure the chapters here follow.
+const SOMATOME_N3_KANJI = [{ label: 'ASK Publishing', href: 'https://ask-books.com/book-details/?slug=9784866394961' }]
+
 export const TEXTBOOKS = [
   {
     id: 'genki-1',
@@ -134,7 +138,7 @@ export const TEXTBOOKS = [
     subtitle: 'Kanji · N3',
     publisher: 'ASK Publishing',
     description: 'JLPT N3 kanji in six weeks of short daily sets, each day themed around a handful of characters. Every seventh day is review and teaches nothing new, which is why there are 36 chapters rather than 42.',
-    purchase: storeLinks('Nihongo So-matome N3 kanji'),
+    purchase: storeLinks('Nihongo So-matome N3 kanji', SOMATOME_N3_KANJI),
     icon: `${ICONS}/nihongo-so-matome-kanji-n3.svg`,
     chapters: weekDays('nsm-n3-kanji', 6, 6),
   },
