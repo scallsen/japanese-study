@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Modal from './Modal.jsx'
 import Button from './Button.jsx'
 import TextInput from './TextInput.jsx'
+import ProviderIcon from './ProviderIcon.jsx'
 import { useIsMobile } from '../hooks/useIsMobile.js'
 import { AUTH_PROVIDERS, EMAIL_SIGN_IN_ENABLED } from '../data/authProviders.js'
 import { TEXT_MUTED, FS_BASE, FS_SM, SPACE_8, SPACE_12, SPACE_16, DANGER } from '../data/theme.js'
@@ -58,7 +59,14 @@ export default function SignInDialog({ open, onClose, onProvider, onEmail }) {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE_12 }}>
           {AUTH_PROVIDERS.map(p => (
-            <Button key={p.id} variant="neutral" fullWidth disabled={busy} onClick={() => handleProvider(p.id)}>
+            <Button
+              key={p.id}
+              variant="neutral"
+              fullWidth
+              disabled={busy}
+              onClick={() => handleProvider(p.id)}
+              icon={<ProviderIcon provider={p.id} />}
+            >
               Continue with {p.label}
             </Button>
           ))}
