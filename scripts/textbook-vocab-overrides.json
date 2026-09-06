@@ -1,0 +1,149 @@
+{
+  "genki-1-l10|歩いて|あるいて": {
+    "form": "歩いて",
+    "id": "1514320",
+    "note": "歩く",
+    "reading": "あるいて"
+  },
+  "genki-1-l11|取る|とる": {
+    "id": "1326980",
+    "note": "取る"
+  },
+  "genki-1-l12||なくす": {
+    "id": "1529530",
+    "note": "無くす (mislay), not 亡くす (bereavement)"
+  },
+  "genki-1-l12|せきが出る|せきがでる": {
+    "form": "せきが出る",
+    "id": "2857751",
+    "note": "咳が出る; flagged only because the book writes せきが出る",
+    "reading": "せきがでる"
+  },
+  "genki-1-l12|風|かぜ": {
+    "id": "1583720",
+    "note": "風邪 — the input file's kanji column says 風, which is wrong for \"cold\""
+  },
+  "genki-1-l1|何|なん／なに": {
+    "id": "2846738",
+    "note": "なん reading; 1577100 (なに) leads with \"you-know-what\""
+  },
+  "genki-1-l2||あの": {
+    "id": "1000420",
+    "note": "彼の \"that\"; L1's あの is the filler 1000430"
+  },
+  "genki-1-l3|帰る|かえる": {
+    "id": "1221270",
+    "note": "帰る as the book writes it, not 返る"
+  },
+  "genki-1-l4||〜と": {
+    "id": "1008490",
+    "note": "the particle と — auto-matched 人 because Genki's qualifier \"(a person)\" matched its gloss"
+  },
+  "genki-1-l4||ある": {
+    "id": "1296400",
+    "note": "有る (to exist), not 或る (a certain)"
+  },
+  "genki-1-l4||いる": {
+    "id": "1577980",
+    "note": "居る (animate existence), not 要る/射る/炒る"
+  },
+  "genki-1-l5|聞く|きく": {
+    "id": "1591110",
+    "note": "聞く as the book writes it, not 訊く"
+  },
+  "genki-1-l7||Tシャツ": {
+    "id": "1000160",
+    "note": "Ｔシャツ — fullwidth T in JMdict"
+  },
+  "genki-1-l7||やせています": {
+    "id": "1605510",
+    "note": "痩せる"
+  },
+  "genki-1-l7|太っています|ふとっています": {
+    "id": "1408220",
+    "note": "太る"
+  },
+  "genki-1-l7|知っています|しっています": {
+    "id": "1420470",
+    "note": "知る — book prints the polite form"
+  },
+  "genki-1-l7|知りません|しりません": {
+    "id": "1420470",
+    "note": "知る — book prints the negative polite form"
+  },
+  "genki-1-l8||みんなで": {
+    "id": "1202150",
+    "note": "皆"
+  },
+  "genki-2-l13||いらっしゃいます": {
+    "form": "いらっしゃいます",
+    "id": "1000940",
+    "note": "いらっしゃる",
+    "reading": "いらっしゃいます"
+  },
+  "genki-2-l14||あげる": {
+    "id": "1352320",
+    "note": "上げる — auto-matched 挙げる, whose first sense is literally \"to give (an example)\""
+  },
+  "genki-2-l14|台|だい": {
+    "id": "1412560",
+    "note": "台 — the book writes 台; 題 \"title; subject\" shares the reading"
+  },
+  "genki-2-l14|本|ぽん": {
+    "id": "1522150",
+    "note": "本 the counter — Genki lists its rendaku reading ぽん, which matched ポン \"pat; tap; clap\""
+  },
+  "genki-2-l16||ほかの": {
+    "id": "1203260",
+    "note": "他"
+  },
+  "genki-2-l16|授業中に|じゅぎょうちゅうに": {
+    "id": "1885500",
+    "note": "授業中"
+  },
+  "genki-2-l18||つく": {
+    "id": "1441400",
+    "note": "点く (to be lit), not 着く/付く"
+  },
+  "genki-2-l18|お疲れ様でした|おつかれさまでした": {
+    "form": "お疲れ様でした",
+    "id": "1002570",
+    "note": "お疲れ様",
+    "reading": "おつかれさまでした"
+  },
+  "genki-2-l19||〜ていらっしゃる": {
+    "id": "1000940",
+    "note": "いらっしゃる"
+  },
+  "genki-2-l19|晴れる|はれる": {
+    "id": "1376470",
+    "note": "晴れる, not 腫れる"
+  },
+  "genki-2-l20||〜ておる": {
+    "id": "1577985",
+    "note": "おる — NOT 折る, which a naive stem match picks"
+  },
+  "genki-2-l20||おる": {
+    "id": "1577985",
+    "note": "居る — the おる entry, distinct from いる's 1577980"
+  },
+  "genki-2-l21||ちかん": {
+    "id": "1421710",
+    "note": "痴漢"
+  },
+  "genki-2-l21||バイト": {
+    "id": "1097870",
+    "note": "part-time job, not byte / cutting tool"
+  },
+  "genki-2-l22||〜とか": {
+    "id": "1008530",
+    "note": "とか"
+  },
+  "genki-2-l23||ものすごく": {
+    "form": "ものすごく",
+    "id": "1502630",
+    "note": "物凄い",
+    "reading": "ものすごく"
+  },
+  "genki-2-l23|換える|かえる": null
+}

@@ -257,9 +257,13 @@ export default function VocabSrsDrill({
   function resolveAudioUrl(card) {
     if (!card) return { word: null, sentence: null }
     if (card.wordAudio) return { word: getAudioUrl(card.wordAudio), sentence: getAudioUrl(card.sentenceAudio) }
+    // Generated clips are keyed by what is spoken, so a card derives its own
+    // URL from its reading and needs no record of which clips exist. A card
+    // whose clip has not been generated 404s and falls back to TTS.
     const speakerId = speakerIdFromAudioSource(audioSource)
-    if (speakerId && card.voicevoxVoices?.includes(speakerId)) {
-      return { word: getVoicevoxAudioUrl(speakerId, card.voicevoxId ?? card.id), sentence: null }
+    if (speakerId) {
+      const reading = card.kana ?? card.front
+      return { word: getVoicevoxAudioUrl(speakerId, reading), sentence: null }
     }
     return { word: null, sentence: null }
   }
@@ -275,9 +279,24 @@ export default function VocabSrsDrill({
 
   // These two take resolved URLs directly (not filenames) so they work for both
   // the imported-audio bucket (via getAudioUrl) and the voicevox bucket (via getVoicevoxAudioUrl).
+  // Generated clips are keyed by what is spoken and are not recorded per card,
+  // so any given URL may 404 — resolveAudioUrl below can no longer predict it.
+  // Resolves false in that case so the caller can hand the word to the backup
+  // voice instead of playing nothing, which is what a learner hears otherwise.
+  function started(audio) {
+    if (audio.error) return Promise.resolve(false)
+    return new Promise(resolve => {
+      let settled = false
+      const done = ok => { if (!settled) { settled = true; resolve(ok) } }
+      audio.addEventListener('error', () => done(false), { once: true })
+      audio.addEventListener('playing', () => done(true), { once: true })
+      audio.play().then(() => {}, () => done(false))
+    })
+  }
+
   const playAudioRef = useRef()
   playAudioRef.current = (url) => {
-    if (!url) return
+    if (!url) return Promise.resolve(false)
     if (audioCurrentRef.current) {
       audioCurrentRef.current.onended = null
       audioCurrentRef.current.pause()
@@ -288,13 +307,13 @@ export default function VocabSrsDrill({
     } else {
       audioCurrentRef.current = new Audio(url)
     }
-    audioCurrentRef.current.play().catch(() => {})
+    return started(audioCurrentRef.current)
   }
 
   // Plays wordUrl, then sentenceUrl when word finishes.
   const playSequenceRef = useRef()
   playSequenceRef.current = (wordUrl, sentenceUrl) => {
-    if (!wordUrl) return
+    if (!wordUrl) return Promise.resolve(false)
     if (audioCurrentRef.current) {
       audioCurrentRef.current.onended = null
       audioCurrentRef.current.pause()
@@ -314,7 +333,17 @@ export default function VocabSrsDrill({
         sentAudio.play().catch(() => {})
       }
     }
-    wordAudio.play().catch(() => {})
+    return started(wordAudio)
+  }
+
+  // The clip first, the backup voice when there is no clip or it fails to
+  // load. `sequence` also plays the sentence clip after the word one.
+  async function speakCard(card, urls, { sequence } = {}) {
+    if (!card) return
+    const played = sequence
+      ? await playSequenceRef.current(urls.word, urls.sentence)
+      : await playAudioRef.current(urls.word)
+    if (!played) tts.speak(card.kana ?? card.front ?? '')
   }
 
   const stopAudioRef = useRef()
@@ -368,12 +397,7 @@ export default function VocabSrsDrill({
     if (sfxEnabled) sfx.play('flip_card')
     const currentCard = getCurrentCard(sessionRef.current)
     if (audioEnabled && autoplayBack && currentCard) {
-      const urls = resolveAudioUrl(currentCard)
-      if (urls.word) {
-        playSequenceRef.current(urls.word, urls.sentence)
-      } else {
-        tts.speak(currentCard.kana ?? currentCard.front ?? '')
-      }
+      speakCard(currentCard, resolveAudioUrl(currentCard), { sequence: true })
     }
     setFlipped(true)
   }
@@ -407,16 +431,7 @@ export default function VocabSrsDrill({
   handleReplayRef.current = () => {
     const currentCard = getCurrentCard(sessionRef.current)
     if (!currentCard || !audioEnabled) return
-    const urls = resolveAudioUrl(currentCard)
-    if (urls.word) {
-      if (flippedRef.current) {
-        playSequenceRef.current(urls.word, urls.sentence)
-      } else {
-        playAudioRef.current(urls.word)
-      }
-    } else {
-      tts.speak(currentCard.kana ?? currentCard.front ?? '')
-    }
+    speakCard(currentCard, resolveAudioUrl(currentCard), { sequence: flippedRef.current })
   }
 
   useGamepad({
@@ -485,12 +500,11 @@ export default function VocabSrsDrill({
   // Auto-play word audio on the front when a new card appears.
   useEffect(() => {
     if (!audioEnabled || !autoplayFront) return
-    const url = resolveAudioUrl(currentCardForMemo).word
+    const urls = resolveAudioUrl(currentCardForMemo)
     stopAudioRef.current()
     const t = setTimeout(() => {
       if (flippedRef.current) return
-      if (url) playAudioRef.current(url)
-      else tts.speak(currentCardForMemo?.kana ?? currentCardForMemo?.front ?? '')
+      speakCard(currentCardForMemo, urls)
     }, 50)
     return () => clearTimeout(t)
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -648,12 +662,7 @@ export default function VocabSrsDrill({
                     if (next) {
                       if (sfxEnabled) sfx.play('flip_card')
                       if (audioEnabled && autoplayBack && currentCard) {
-                        const urls = resolveAudioUrl(currentCard)
-                        if (urls.word) {
-                          playSequenceRef.current(urls.word, urls.sentence)
-                        } else {
-                          tts.speak(currentCard.kana ?? currentCard.front ?? '')
-                        }
+                        speakCard(currentCard, resolveAudioUrl(currentCard), { sequence: true })
                       }
                     }
                   }}
@@ -675,7 +684,7 @@ export default function VocabSrsDrill({
 
             {audioEnabled && currentCard && currentAudioUrls.word && flipped && (
               <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
-                <Button variant="ghost-muted" size="sm" onClick={() => playAudioRef.current(currentAudioUrls.word)}>▶ Word</Button>
+                <Button variant="ghost-muted" size="sm" onClick={() => speakCard(currentCard, currentAudioUrls)}>▶ Word</Button>
                 {currentAudioUrls.sentence && (
                   <Button variant="ghost-muted" size="sm" onClick={() => playAudioRef.current(currentAudioUrls.sentence)}>▶ Sentence</Button>
                 )}

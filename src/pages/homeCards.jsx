@@ -143,7 +143,10 @@ function TextbookCover({ icon, accent, onChangeTextbook }) {
 // -50%, so the loop is seamless; the animation itself is
 // `.textbook-marquee__track` in global.css (keyframes can't be inline).
 function TextbookCarousel() {
-  const covers = TEXTBOOKS.filter(book => book.icon)
+  // A personal book is one learner's own course material, so there is nobody
+  // to advertise it to here — and the five of them share two covers between
+  // them, which is what made this drift past as repeated N3 and N2 spines.
+  const covers = TEXTBOOKS.filter(book => book.icon && !book.personal)
   const fade = 'linear-gradient(to right, transparent, #000 10%, #000 90%, transparent)'
   return (
     <div

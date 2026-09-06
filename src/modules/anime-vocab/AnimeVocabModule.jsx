@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../../lib/supabase.js'
 import PageHeader from '../../components/PageHeader.jsx'
 import AuthSlot from '../../components/AuthSlot.jsx'
@@ -95,7 +95,24 @@ export default function AnimeVocabModule({ initialMediaId }) {
     return () => { cancelled = true }
   }, [initialMediaId])
 
+  // All four screens swap inside one persistent scroll container, so without
+  // this the outgoing screen's scroll offset carries into the incoming one —
+  // picking a series from far down the search results lands you mid-page on
+  // its episode list. The search screen is the exception: it stays mounted
+  // precisely so a round trip preserves its state (see the render below), so
+  // its offset is saved on the way out and restored on the way back rather
+  // than reset. Captured at click time, not in the effect, since by the time
+  // the effect runs the container has already been re-measured against the
+  // incoming screen's (possibly shorter) content and clamped.
+  const scrollRef = useRef(null)
+  const searchScrollTop = useRef(0)
+  const viewKey = drillWords ? 'drill' : episode ? `episode:${episode.id}` : media ? `media:${media.id}` : 'search'
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = viewKey === 'search' ? searchScrollTop.current : 0
+  }, [viewKey])
+
   function handleMediaSelected(selectedMedia, selectedEpisodes) {
+    searchScrollTop.current = scrollRef.current?.scrollTop ?? 0
     setMedia(selectedMedia)
     setEpisodes(selectedEpisodes)
   }
@@ -173,7 +190,7 @@ export default function AnimeVocabModule({ initialMediaId }) {
         <TopProgressBar loading={showProgressBar} color={ACCENT} />
       </PageHeader>
       <div style={{ flex: 1, display: 'flex', minHeight: 0, position: 'relative' }}>
-        <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: showDrillBar ? '32px 24px 84px' : '32px 24px', display: 'flex', flexDirection: 'column' }}>
+        <div ref={scrollRef} style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: showDrillBar ? '32px 24px 84px' : '32px 24px', display: 'flex', flexDirection: 'column' }}>
           <div style={{ flex: 1 }}>
             {resolving && (
               <div style={{ maxWidth: 640, margin: '0 auto' }}>

@@ -30,6 +30,9 @@ const wordCountFor = id => (id.startsWith('genki') ? 0 : 20)
 // drift from it.
 function textbookState(bookId, { drilledCount = 0, pointer = null } = {}) {
   const book = getTextbook(bookId)
+  // These fixtures are built at module scope, so a stale book id here throws
+  // during import and takes the whole app down — not just this dev-only page.
+  if (!book) throw new Error(`HomeCardsLabPage fixture references unknown textbook "${bookId}"`)
   const sublists = {}
   for (const chapter of book.chapters.slice(0, drilledCount)) {
     sublists[chapter.id] = { 'kanji-front': { lastReviewed: '2026-09-01T00:00:00Z', correct: 18, total: 20 } }
@@ -54,25 +57,25 @@ const NEW_STATES = [
     key: 'fresh',
     label: 'Chosen, nothing started',
     note: 'One primary action',
-    props: { state: textbookState('nsm-n3') },
+    props: { state: textbookState('nsm-n3-kanji') },
   },
   {
     key: 'in-progress',
     label: 'Current chapter drilled',
     note: 'Start next + Continue current',
-    props: { state: textbookState('nsm-n3', { drilledCount: 4, pointer: 'nsm-n3-w2d1' }) },
+    props: { state: textbookState('nsm-n3-kanji', { drilledCount: 4, pointer: 'nsm-n3-kanji-w1d5' }) },
   },
   {
     key: 'next-untouched',
     label: 'Mid-book, current not drilled',
     note: 'Progress made, one action again',
-    props: { state: textbookState('nsm-n3', { drilledCount: 5 }) },
+    props: { state: textbookState('nsm-n3-kanji', { drilledCount: 5 }) },
   },
   {
     key: 'complete',
     label: 'Book complete',
     note: 'Every chapter drilled',
-    props: { state: textbookState('nsm-n3', { drilledCount: 12 }) },
+    props: { state: textbookState('nsm-n3-kanji', { drilledCount: 36 }) },
   },
   {
     key: 'no-words',

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { fetchDictionaryEntries } from '../utils/dictionaryEntryLookup.js'
+import { fetchDictionaryEntries, fetchSenseGlosses } from '../utils/dictionaryEntryLookup.js'
 
 // ids: array of jmdictId (nullish entries are filtered out).
 // Returns { entries: { [id]: row|null }, loading } — `loading` is true while
@@ -30,4 +30,28 @@ export function useDictionaryEntry(id, enabled = true) {
   const { entries, loading } = useDictionaryEntries(id ? [id] : [], enabled)
   if (!id) return { entry: null, loading: false }
   return { entry: entries[id] ?? null, loading }
+}
+
+// words: array of word objects. Only those naming a sense (`word.sense`) are
+// looked up — for everything else cardGloss uses the entry's leading glosses
+// and this fetches nothing at all. Returns { [jmdictId]: gloss[][] }, the shape
+// cardGloss's third argument expects.
+export function useSenseGlosses(words, enabled = true) {
+  const [senseGlosses, setSenseGlosses] = useState({})
+  const ids = enabled
+    ? [...new Set((words ?? []).filter(w => w?.sense != null && w.jmdictId).map(w => w.jmdictId))]
+    : []
+  const key = ids.join(',')
+
+  useEffect(() => {
+    if (!enabled || ids.length === 0) return
+    let cancelled = false
+    fetchSenseGlosses(ids).then(map => {
+      if (!cancelled) setSenseGlosses(prev => ({ ...prev, ...map }))
+    })
+    return () => { cancelled = true }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key, enabled])
+
+  return senseGlosses
 }
