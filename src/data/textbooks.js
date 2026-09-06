@@ -59,11 +59,13 @@ function storeLinks(query, extra = []) {
   ]
 }
 
-// The publisher's own links for Genki: Genki Online carries the audio, answer
-// keys and errata, and the JT Publishing store sells the ebook directly. Both
-// beat a retailer for a learner, so they lead. The ebook is per volume.
+// The publisher's own links for Genki. Its stockist page lists the book's
+// regional storefronts — 36 Amazons and 36 Kinokuniyas — which serves a reader
+// anywhere better than the two direct searches below can. Only the Japanese
+// version of that page exists (/en/bookstores/ is a 404), but it is a table of
+// store names, so it reads regardless. The ebook is sold per volume.
 const genkiLinks = ebookId => [
-  { label: 'Genki Online', href: 'https://genki3.japantimes.co.jp/en/' },
+  { label: 'Where to buy', href: 'https://genki3.japantimes.co.jp/bookstores/#OL' },
   { label: 'Ebook', href: `https://store.jtpublishing.co.jp/en/products/${ebookId}` },
 ]
 
