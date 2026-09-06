@@ -28,14 +28,14 @@ const PANEL_W = 392  // SettingsSidebar's real content width (420 panel - 28 che
 // is the proposal on the table: per-list defaults, so a beginner book opens
 // with furigana on and an N2 vocabulary book opens with it off. `audio` is the
 // other real variable — bundled lists have generated Voicevox files, a deck
-// the user imported themselves has nothing but the browser voice.
+// the user imported themselves has nothing, and falls through to the backup.
 const CONTEXTS = [
   {
     id: 'genki-1',
     label: 'Genki 1',
     meta: 'Beginner · N5 · Lesson 3',
     audio: 'voicevox',
-    recommended: { furigana: true, translation: true, kanjiMeanings: true, sentence: true, voice: 'voicevox-11' },
+    recommended: { furigana: true, translation: true, kanjiMeanings: true, sentence: true, voice: 'male' },
     why: 'A beginner still reads kana faster than kanji. Furigana on the front is the difference between a card that teaches and a card that stumps.',
   },
   {
@@ -43,7 +43,7 @@ const CONTEXTS = [
     label: 'So-Matome N2',
     meta: 'Advanced · N2 · Week 2, Day 1',
     audio: 'voicevox',
-    recommended: { furigana: false, translation: true, kanjiMeanings: false, sentence: true, voice: 'voicevox-11' },
+    recommended: { furigana: false, translation: true, kanjiMeanings: false, sentence: true, voice: 'male' },
     why: 'At N2 the reading is the thing being tested. Furigana on the front turns every card into a free pass.',
   },
   {
@@ -51,8 +51,8 @@ const CONTEXTS = [
     label: 'Imported Words',
     meta: 'Your own words · from photo / text import',
     audio: 'none',
-    recommended: { furigana: true, translation: true, kanjiMeanings: true, sentence: false, voice: 'browser' },
-    why: 'Words photographed out in the wild. No generated audio exists for them and no curated sentence either — so the panel should not offer settings that resolve to nothing.',
+    recommended: { furigana: true, translation: true, kanjiMeanings: true, sentence: false },
+    why: 'Words photographed out in the wild. No recordings exist for them and no curated sentence either — so the panel should not offer settings that resolve to nothing.',
   },
 ]
 
@@ -64,10 +64,32 @@ const WORD = {
   kanjiMeanings: { 経: 'pass through', 験: 'verification' },
 }
 
-const VOICE_OPTIONS = [
-  { value: 'voicevox-11', label: 'Male (Kurono Takehiro)' },
-  { value: 'voicevox-2', label: 'Female (Shikoku Metan)' },
-  { value: 'browser', label: 'Browser voice' },
+// The redesigned audio model: the recorded voices are a two-way choice, and
+// the browser voice stops being a third peer option. It is the backup that
+// reads anything without a recording, which is what the code already does
+// silently — so it gets its own row that says so.
+const VOICE_CHOICES = [
+  { value: 'male', label: 'Male' },
+  { value: 'female', label: 'Female' },
+]
+
+const VOICE_LABELS = {
+  male: 'Male (Kurono Takehiro)',
+  female: 'Female (Shikoku Metan)',
+}
+
+const BACKUP_VOICE_OPTIONS = [
+  { value: '', label: 'Device default' },
+  { value: 'Kyoko', label: 'Kyoko' },
+  { value: 'Otoya', label: 'Otoya' },
+  { value: 'Hattori', label: 'Hattori' },
+]
+
+// What ships today, kept exact for the baseline variant only.
+const TODAY_VOICE_OPTIONS = [
+  { value: 'male', label: 'Male (Kurono Takehiro)' },
+  { value: 'female', label: 'Female (Shikoku Metan)' },
+  { value: 'browser', label: 'Browser TTS' },
 ]
 
 const DEFAULTS = {
@@ -77,9 +99,9 @@ const DEFAULTS = {
   sentence: true,
   sentenceSource: 'custom',
   audio: true,
-  voice: 'voicevox-11',
-  autoplayFront: true,
-  autoplayBack: true,
+  voice: 'male',
+  backupVoice: '',
+  autoplay: true,
   sfx: true,
   pixelFont: true,
   visualEffects: true,
@@ -96,7 +118,7 @@ const PRESETS = {
   listening: {
     label: 'Listening',
     hint: 'Audio leads, text supports',
-    values: { furigana: true, translation: true, kanjiMeanings: false, sentence: true, audio: true, autoplayFront: true },
+    values: { furigana: true, translation: true, kanjiMeanings: false, sentence: true, audio: true, autoplay: true },
   },
   minimal: {
     label: 'Minimal',
@@ -112,42 +134,6 @@ function SpeakerIcon({ muted, size = 16 }) {
       {muted
         ? <path d="M17 9l4 6M21 9l-4 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
         : <path d="M16.5 8.5a5 5 0 010 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />}
-    </svg>
-  )
-}
-
-// ── Icons ───────────────────────────────────────────────────────────────
-// Stroke-only, one 24px grid, drawn from currentColor so a row can tint its
-// own icon with the accent when the setting is on. No Japanese glyphs — the
-// no-Japanese-in-UI rule covers icons too, and a glyph icon would read as a
-// letter next to the label rather than as a symbol.
-const ICON_PATHS = {
-  front: <><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M8 12h8" /></>,
-  back: <><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M7 10h10M7 14h6" /></>,
-  audio: <><path d="M4 9.5v5h3.5L12 18V6L7.5 9.5H4z" /><path d="M16 9.5a4 4 0 010 5" /></>,
-  interface: <><path d="M4 7h16M4 12h16M4 17h16" /><circle cx="9" cy="7" r="2" /><circle cx="15" cy="12" r="2" /><circle cx="7" cy="17" r="2" /></>,
-  furigana: <><path d="M7 6.5h4M9 5.5v2" /><rect x="5" y="11" width="14" height="8" rx="1.5" /></>,
-  meaning: <><path d="M4 10h9M4 14h9" /><path d="M16.5 8.5l3.5 3.5-3.5 3.5" /></>,
-  kanji: <><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M12 4v16M3 12h18" /></>,
-  sentence: <><path d="M4 7h16M4 12h16M4 17h9" /></>,
-  voice: <><circle cx="9" cy="8" r="3" /><path d="M4 19c0-3 2.2-5 5-5s5 2 5 5" /><path d="M17 8.5a5 5 0 010 7" /></>,
-  autoplay: <><circle cx="12" cy="12" r="8" /><path d="M10.5 8.8l5 3.2-5 3.2z" /></>,
-  sfx: <><path d="M4 11v2M8 8v8M12 5.5v13M16 9v6M20 11v2" /></>,
-  font: <><rect x="4" y="4" width="6" height="6" /><rect x="14" y="4" width="6" height="6" /><rect x="4" y="14" width="6" height="6" /><rect x="14" y="14" width="6" height="6" /></>,
-  effects: <><path d="M11 3.5l1.7 4.3 4.3 1.7-4.3 1.7L11 15.5 9.3 11.2 5 9.5l4.3-1.7z" /><path d="M17.5 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z" /></>,
-  streak: <><path d="M12 3.5c3 3.4 5 5.9 5 8.9a5 5 0 01-10 0c0-2 1-3.3 2-4.6.3 1.2.9 2 1.8 2.4C10.4 8 10.9 5.7 12 3.5z" /></>,
-}
-
-function Icon({ name, size = 20, color = 'currentColor' }) {
-  const path = ICON_PATHS[name]
-  if (!path) return null
-  return (
-    <svg
-      width={size} height={size} viewBox="0 0 24 24" fill="none"
-      stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
-      style={{ flexShrink: 0 }}
-    >
-      {path}
     </svg>
   )
 }
@@ -211,9 +197,21 @@ function PreviewFace({ face, settings, context }) {
   )
 }
 
-function Preview({ settings, context, children }) {
-  const speaking = settings.audio && (context.audio === 'voicevox' || settings.voice === 'browser')
-  const voiceLabel = VOICE_OPTIONS.find(v => v.value === settings.voice)?.label
+// Which voice actually speaks this word, given the deck, the chosen voice and
+// whether the device has any browser voices at all. This is the behaviour the
+// current panel hides.
+function speakingLine(settings, context, browserVoices) {
+  if (!settings.audio) return { muted: true, text: 'Audio off' }
+  if (context.audio === 'none') {
+    if (!browserVoices) return { muted: true, text: 'No recording and no device voice — this word is silent' }
+    const name = BACKUP_VOICE_OPTIONS.find(v => v.value === settings.backupVoice)?.label
+    return { muted: false, text: `No recording — backup voice reads it (${name})` }
+  }
+  return { muted: false, text: VOICE_LABELS[settings.voice] }
+}
+
+function Preview({ settings, context, browserVoices, children }) {
+  const line = speakingLine(settings, context, browserVoices)
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: SPACE_16 }}>
       <div style={{ display: 'flex', gap: SPACE_16, flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -225,12 +223,8 @@ function Preview({ settings, context, children }) {
         ))}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: SPACE_8, color: TEXT_MUTED, fontSize: FS_SM, textAlign: 'center' }}>
-        <SpeakerIcon muted={!speaking} size={16} />
-        {!settings.audio
-          ? 'Audio off'
-          : context.audio === 'none' && settings.voice !== 'browser'
-            ? 'No recording for this word — the browser voice reads it'
-            : voiceLabel}
+        <SpeakerIcon muted={line.muted} size={16} />
+        {line.text}
       </div>
       {children}
     </div>
@@ -241,7 +235,7 @@ function Preview({ settings, context, children }) {
 // FilterCard's own FilterRow was considered and rejected here: its 92px
 // fixed label column is sized for short filter labels ("Content", "JLPT"),
 // and wraps settings labels onto two lines. Same container, different row.
-function Row({ label, hint, badge, control, icon, on, indent = 0, onClick, disabled }) {
+function Row({ label, hint, badge, control, indent = 0, onClick, disabled }) {
   const clickable = !!onClick && !disabled
   return (
     <div
@@ -258,15 +252,12 @@ function Row({ label, hint, badge, control, icon, on, indent = 0, onClick, disab
         opacity: disabled ? 0.45 : 1,
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: SPACE_12, minWidth: 0 }}>
-        {icon && <Icon name={icon} color={on ? ACCENT : 'rgba(255,255,255,0.4)'} />}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: SPACE_8 }}>
-            <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>{label}</span>
-            {badge}
-          </div>
-          {hint && <span style={{ fontSize: FS_SM, color: 'rgba(255,255,255,0.35)' }}>{hint}</span>}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: SPACE_8 }}>
+          <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>{label}</span>
+          {badge}
         </div>
+        {hint && <span style={{ fontSize: FS_SM, color: 'rgba(255,255,255,0.35)' }}>{hint}</span>}
       </div>
       {/* The whole row is the hit target when it is clickable, so the control
           inside must not swallow the click and toggle twice. */}
@@ -275,8 +266,17 @@ function Row({ label, hint, badge, control, icon, on, indent = 0, onClick, disab
   )
 }
 
+function GroupLabel({ children, note }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: SPACE_12, margin: `${SPACE_24}px 0 ${SPACE_8}px` }}>
+      <span style={{ ...SUBHEADING_STYLE, color: 'rgba(255,255,255,0.35)' }}>{children}</span>
+      {note && <span style={{ fontSize: FS_SM, color: 'rgba(255,255,255,0.25)' }}>{note}</span>}
+    </div>
+  )
+}
+
 // ── Control styles ──────────────────────────────────────────────────────
-// The same boolean, five ways. Switching between them restyles every row so
+// The same boolean, four ways. Switching between them restyles every row so
 // they can be compared in place rather than described.
 function SwitchControl({ on, disabled }) {
   return (
@@ -345,7 +345,6 @@ const CONTROL_STYLES = [
   { value: 'chip', label: 'On / Off chip' },
   { value: 'segmented', label: 'Segmented' },
   { value: 'checkbox', label: 'Checkbox' },
-  { value: 'tiles', label: 'Tiles' },
 ]
 
 // Returns the control node plus whether the row itself should be the hit
@@ -365,42 +364,7 @@ function boolControl(style, { on, onChange, disabled }) {
   return { node: <SwitchControl on={on} disabled={disabled} />, rowClickable: true }
 }
 
-function SettingTile({ icon, label, on, onChange, disabled }) {
-  return (
-    <button
-      type="button"
-      disabled={disabled}
-      onClick={onChange}
-      className="lab-tile"
-      style={{
-        display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: SPACE_8,
-        padding: SPACE_12, borderRadius: 8, cursor: disabled ? 'not-allowed' : 'pointer',
-        background: on ? `${ACCENT}14` : 'rgba(255,255,255,0.03)',
-        border: `1px solid ${on ? `${ACCENT}55` : 'rgba(255,255,255,0.1)'}`,
-        fontFamily: FONT, letterSpacing: TRACKING, textAlign: 'left',
-        opacity: disabled ? 0.45 : 1,
-      }}
-    >
-      <Icon name={icon} size={22} color={on ? ACCENT : 'rgba(255,255,255,0.4)'} />
-      <span style={{ fontSize: FS_SM, color: on ? TEXT : TEXT_MUTED }}>{label}</span>
-    </button>
-  )
-}
-
-function GroupLabel({ children, note, icon }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: SPACE_12, margin: `${SPACE_24}px 0 ${SPACE_8}px` }}>
-      <span style={{ display: 'flex', alignItems: 'center', gap: SPACE_8 }}>
-        {icon && <Icon name={icon} size={16} color="rgba(255,255,255,0.35)" />}
-        <span style={{ ...SUBHEADING_STYLE, color: 'rgba(255,255,255,0.35)' }}>{children}</span>
-      </span>
-      {note && <span style={{ fontSize: FS_SM, color: 'rgba(255,255,255,0.25)' }}>{note}</span>}
-    </div>
-  )
-}
-
-// Default control for the variants that are not themselves comparing control
-// styles. Defined below SwitchControl's own declaration order via hoisting.
+// Default control for the variants that are not themselves comparing styles.
 function Switch({ on, onChange, disabled }) {
   return (
     <button
@@ -418,8 +382,14 @@ function Switch({ on, onChange, disabled }) {
 // present a switch that resolves to nothing.
 function unavailable(key, context) {
   if (context.id !== 'word-import') return null
-  if (key === 'sentence') return 'No curated sentences in this deck'
+  if (key === 'sentence') return 'No sentences in this deck'
   return null
+}
+
+function backupVoiceHint(context) {
+  return context.audio === 'none'
+    ? 'This deck has no recordings, so the backup reads every word'
+    : 'Reads words with no recording'
 }
 
 // ── Variant 0 — today ───────────────────────────────────────────────────
@@ -446,7 +416,7 @@ function TodayPanel({ s, set }) {
           <>
             <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE_4, paddingLeft: 20 }}>
               <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)' }}>Text to speech</span>
-              <Select value={s.voice} onChange={v => set('voice', v)} options={VOICE_OPTIONS} label="Text to speech" />
+              <Select value={s.voice} onChange={v => set('voice', v)} options={TODAY_VOICE_OPTIONS} label="Text to speech" />
             </div>
             <Checkbox checked={s.sfx} onChange={() => set('sfx', !s.sfx)} label="Sound effects" subtext="Silent mode may mute sound effects" indent={1} />
           </>
@@ -457,75 +427,64 @@ function TodayPanel({ s, set }) {
 }
 
 // ── Variant 1 — card anatomy ────────────────────────────────────────────
-// The groups are data so the same definition can render as rows in four
-// control styles or as a tile grid, rather than four hand-written panels.
-function anatomyGroups(s, context) {
-  const noSentence = unavailable('sentence', context)
+// The groups are data so the same definition renders in any control style,
+// rather than four hand-written panels.
+function anatomyGroups(s, context, browserVoices) {
   return [
     {
-      id: 'front', label: 'Card front', note: 'what you see first', icon: 'front',
+      id: 'front', label: 'Card front', note: 'what you see first',
       rows: [
-        { key: 'furigana', label: 'Furigana', hint: 'Reading above the kanji', icon: 'furigana' },
+        { key: 'furigana', label: 'Furigana', hint: 'Reading above the kanji' },
       ],
     },
     {
-      id: 'back', label: 'Card back', note: 'what the answer shows', icon: 'back',
+      id: 'back', label: 'Card back', note: 'what the answer shows',
       rows: [
-        { key: 'translation', label: 'Meaning', icon: 'meaning' },
-        { key: 'kanjiMeanings', label: 'Kanji breakdown', hint: 'Per-character meaning strip', icon: 'kanji' },
-        { key: 'sentence', label: 'Example sentence', hint: noSentence, disabled: !!noSentence, icon: 'sentence' },
-        { key: 'sentenceSource', type: 'select', label: 'Sentence from', icon: 'sentence', indent: 1, options: SENTENCE_SOURCE_OPTIONS, hidden: !s.sentence || !!noSentence },
+        { key: 'translation', label: 'Meaning' },
+        { key: 'kanjiMeanings', label: 'Kanji breakdown', hint: 'Per-character meaning strip' },
+        { key: 'sentence', label: 'Sentence', hint: unavailable('sentence', context), disabled: !!unavailable('sentence', context) },
       ],
     },
     {
-      id: 'audio', label: 'Audio', icon: 'audio',
+      id: 'audio', label: 'Audio',
       rows: [
-        { key: 'audio', label: 'Word audio', icon: 'audio' },
-        {
-          key: 'voice', type: 'select', label: 'Voice', icon: 'voice', indent: 1, options: VOICE_OPTIONS,
-          hint: context.audio === 'none' ? 'This deck has no recordings — the browser voice reads it' : null,
-          hidden: !s.audio,
-        },
-        { key: 'autoplay', type: 'autoplay', label: 'Play automatically', icon: 'autoplay', indent: 1, hidden: !s.audio },
+        { key: 'audio', label: 'Word audio' },
+        { key: 'voice', type: 'chips', label: 'Voice', options: VOICE_CHOICES, indent: 1, hidden: !s.audio },
+        // Hidden outright when the device exposes no voices — an empty picker
+        // is worse than an absent one, and there is nothing to choose between.
+        { key: 'backupVoice', type: 'select', label: 'Backup voice', hint: backupVoiceHint(context), options: BACKUP_VOICE_OPTIONS, indent: 1, hidden: !s.audio || !browserVoices },
+        { key: 'autoplay', label: 'Play automatically', indent: 1, hidden: !s.audio },
       ],
     },
     {
-      id: 'interface', label: 'Interface', note: 'not about the card', icon: 'interface',
+      id: 'interface', label: 'Interface', note: 'not about the card',
       rows: [
-        { key: 'sfx', label: 'Sound effects', hint: 'Flip and answer clicks', icon: 'sfx' },
-        { key: 'pixelFont', label: 'Pixel font', icon: 'font' },
-        { key: 'visualEffects', label: 'Visual effects', icon: 'effects' },
-        { key: 'streak', label: 'Streak counter', icon: 'streak' },
+        { key: 'sfx', label: 'Sound effects', hint: 'Flip and answer clicks' },
+        { key: 'pixelFont', label: 'Pixel font' },
+        { key: 'visualEffects', label: 'Visual effects' },
+        { key: 'streak', label: 'Streak counter' },
       ],
     },
   ]
 }
 
-function AnatomyPanel({ s, set, context, controlStyle = 'switch', showIcons = true }) {
-  const groups = anatomyGroups(s, context)
+function AnatomyPanel({ s, set, context, controlStyle = 'switch', browserVoices = true }) {
+  const groups = anatomyGroups(s, context, browserVoices)
 
   function renderRow(row) {
-    const icon = showIcons ? row.icon : null
     if (row.type === 'select') {
       return (
         <Row
-          key={row.key} icon={icon} on indent={row.indent} label={row.label} hint={row.hint}
+          key={row.key} indent={row.indent} label={row.label} hint={row.hint}
           control={<Select value={s[row.key]} onChange={v => set(row.key, v)} options={row.options} label={row.label} />}
         />
       )
     }
-    if (row.type === 'autoplay') {
+    if (row.type === 'chips') {
       return (
         <Row
-          key={row.key} icon={icon} on={s.autoplayFront || s.autoplayBack} indent={row.indent} label={row.label}
-          control={
-            <ChipSelector
-              mode="multi"
-              value={new Set([...(s.autoplayFront ? ['front'] : []), ...(s.autoplayBack ? ['back'] : [])])}
-              onChange={next => { set('autoplayFront', next.has('front')); set('autoplayBack', next.has('back')) }}
-              options={[{ value: 'front', label: 'Front' }, { value: 'back', label: 'Back' }]}
-            />
-          }
+          key={row.key} indent={row.indent} label={row.label} hint={row.hint}
+          control={<ChipSelector mode="single" value={s[row.key]} onChange={v => set(row.key, v)} options={row.options} />}
         />
       )
     }
@@ -534,7 +493,7 @@ function AnatomyPanel({ s, set, context, controlStyle = 'switch', showIcons = tr
     const { node, rowClickable } = boolControl(controlStyle, { on, onChange: toggle, disabled: row.disabled })
     return (
       <Row
-        key={row.key} icon={icon} on={on} indent={row.indent} label={row.label} hint={row.hint}
+        key={row.key} indent={row.indent} label={row.label} hint={row.hint}
         disabled={row.disabled} onClick={rowClickable ? toggle : undefined} control={node}
       />
     )
@@ -542,31 +501,12 @@ function AnatomyPanel({ s, set, context, controlStyle = 'switch', showIcons = tr
 
   return (
     <div style={{ padding: SPACE_16 }}>
-      {groups.map(group => {
-        const visible = group.rows.filter(r => !r.hidden)
-        const tiles = controlStyle === 'tiles' ? visible.filter(r => !r.type) : []
-        const rows = controlStyle === 'tiles' ? visible.filter(r => r.type) : visible
-        return (
-          <div key={group.id}>
-            <GroupLabel icon={showIcons ? group.icon : null} note={group.note}>{group.label}</GroupLabel>
-            {tiles.length > 0 && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: SPACE_8, marginBottom: rows.length > 0 ? SPACE_8 : 0 }}>
-                {tiles.map(row => (
-                  <SettingTile
-                    key={row.key}
-                    icon={row.icon}
-                    label={row.label}
-                    on={s[row.key] && !row.disabled}
-                    disabled={row.disabled}
-                    onChange={() => set(row.key, !s[row.key])}
-                  />
-                ))}
-              </div>
-            )}
-            {rows.length > 0 && <FilterCard>{rows.map(renderRow)}</FilterCard>}
-          </div>
-        )
-      })}
+      {groups.map(group => (
+        <div key={group.id}>
+          <GroupLabel note={group.note}>{group.label}</GroupLabel>
+          <FilterCard>{group.rows.filter(r => !r.hidden).map(renderRow)}</FilterCard>
+        </div>
+      ))}
     </div>
   )
 }
@@ -579,7 +519,7 @@ const TABS = [
   { value: 'app', label: 'App' },
 ]
 
-function TabsPanel({ s, set, context }) {
+function TabsPanel({ s, set, context, browserVoices = true }) {
   const [tab, setTab] = useState('front')
   const noSentence = unavailable('sentence', context)
   return (
@@ -596,18 +536,17 @@ function TabsPanel({ s, set, context }) {
           <FilterCard>
             <Row label="Meaning" control={<Switch on={s.translation} onChange={() => set('translation', !s.translation)} />} />
             <Row label="Kanji breakdown" control={<Switch on={s.kanjiMeanings} onChange={() => set('kanjiMeanings', !s.kanjiMeanings)} />} />
-            <Row label="Example sentence" hint={noSentence} control={<Switch on={s.sentence && !noSentence} onChange={() => set('sentence', !s.sentence)} disabled={!!noSentence} />} />
-            {s.sentence && !noSentence && (
-              <Row indent={1} label="Sentence from" control={<Select value={s.sentenceSource} onChange={v => set('sentenceSource', v)} options={SENTENCE_SOURCE_OPTIONS} label="Sentence source" />} />
-            )}
+            <Row label="Sentence" hint={noSentence} disabled={!!noSentence} control={<Switch on={s.sentence && !noSentence} onChange={() => set('sentence', !s.sentence)} disabled={!!noSentence} />} />
           </FilterCard>
         )}
         {tab === 'audio' && (
           <FilterCard>
             <Row label="Word audio" control={<Switch on={s.audio} onChange={() => set('audio', !s.audio)} />} />
-            <Row indent={1} label="Voice" hint={context.audio === 'none' ? 'No recordings in this deck' : null} control={<Select value={s.voice} onChange={v => set('voice', v)} options={VOICE_OPTIONS} label="Voice" />} />
-            <Row indent={1} label="Autoplay front" control={<Switch on={s.autoplayFront} onChange={() => set('autoplayFront', !s.autoplayFront)} />} />
-            <Row indent={1} label="Autoplay back" control={<Switch on={s.autoplayBack} onChange={() => set('autoplayBack', !s.autoplayBack)} />} />
+            <Row indent={1} label="Voice" control={<ChipSelector mode="single" value={s.voice} onChange={v => set('voice', v)} options={VOICE_CHOICES} />} />
+            {browserVoices && (
+              <Row indent={1} label="Backup voice" hint={backupVoiceHint(context)} control={<Select value={s.backupVoice} onChange={v => set('backupVoice', v)} options={BACKUP_VOICE_OPTIONS} label="Backup voice" />} />
+            )}
+            <Row indent={1} label="Play automatically" control={<Switch on={s.autoplay} onChange={() => set('autoplay', !s.autoplay)} />} />
             <Row label="Sound effects" hint="Interface clicks, not the word" control={<Switch on={s.sfx} onChange={() => set('sfx', !s.sfx)} />} />
           </FilterCard>
         )}
@@ -627,7 +566,7 @@ function RecommendedBadge() {
   return <Badge tone="accent" variant="text">recommended</Badge>
 }
 
-function PresetPanel({ s, set, setMany, context, preset, setPreset }) {
+function PresetPanel({ s, set, setMany, context, preset, setPreset, browserVoices = true }) {
   const rec = context.recommended
   const offSpec = Object.entries(rec).filter(([k, v]) => s[k] !== v)
   const noSentence = unavailable('sentence', context)
@@ -642,13 +581,11 @@ function PresetPanel({ s, set, setMany, context, preset, setPreset }) {
     set(key, value)
   }
 
-  function row(key, label, hint, icon, control) {
+  function row(key, label, hint, control) {
     return (
       <Row
         label={label}
         hint={hint}
-        icon={icon}
-        on={!!s[key]}
         badge={key in rec && s[key] === rec[key] ? <RecommendedBadge /> : null}
         control={control}
       />
@@ -681,27 +618,22 @@ function PresetPanel({ s, set, setMany, context, preset, setPreset }) {
 
       <GroupLabel>Card front</GroupLabel>
       <FilterCard>
-        {row('furigana', 'Furigana', 'Reading above the kanji', 'furigana', <Switch on={s.furigana} onChange={() => touch('furigana', !s.furigana)} />)}
+        {row('furigana', 'Furigana', 'Reading above the kanji', <Switch on={s.furigana} onChange={() => touch('furigana', !s.furigana)} />)}
       </FilterCard>
 
       <GroupLabel>Card back</GroupLabel>
       <FilterCard>
-        {row('translation', 'Meaning', null, 'meaning', <Switch on={s.translation} onChange={() => touch('translation', !s.translation)} />)}
-        {row('kanjiMeanings', 'Kanji breakdown', null, 'kanji', <Switch on={s.kanjiMeanings} onChange={() => touch('kanjiMeanings', !s.kanjiMeanings)} />)}
-        {row('sentence', 'Example sentence', noSentence, 'sentence', <Switch on={s.sentence && !noSentence} disabled={!!noSentence} onChange={() => touch('sentence', !s.sentence)} />)}
+        {row('translation', 'Meaning', null, <Switch on={s.translation} onChange={() => touch('translation', !s.translation)} />)}
+        {row('kanjiMeanings', 'Kanji breakdown', null, <Switch on={s.kanjiMeanings} onChange={() => touch('kanjiMeanings', !s.kanjiMeanings)} />)}
+        {row('sentence', 'Sentence', noSentence, <Switch on={s.sentence && !noSentence} disabled={!!noSentence} onChange={() => touch('sentence', !s.sentence)} />)}
       </FilterCard>
 
       <GroupLabel>Audio</GroupLabel>
       <FilterCard>
         <Row label="Word audio" control={<Switch on={s.audio} onChange={() => touch('audio', !s.audio)} />} />
-        {s.audio && (
-          <Row
-            indent={1}
-            label="Voice"
-            badge={s.voice === rec.voice ? <RecommendedBadge /> : null}
-            hint={context.audio === 'none' ? 'This deck has no recordings' : null}
-            control={<Select value={s.voice} onChange={v => touch('voice', v)} options={VOICE_OPTIONS} label="Voice" />}
-          />
+        {s.audio && row('voice', 'Voice', null, <ChipSelector mode="single" value={s.voice} onChange={v => touch('voice', v)} options={VOICE_CHOICES} />)}
+        {s.audio && browserVoices && (
+          <Row indent={1} label="Backup voice" hint={backupVoiceHint(context)} control={<Select value={s.backupVoice} onChange={v => set('backupVoice', v)} options={BACKUP_VOICE_OPTIONS} label="Backup voice" />} />
         )}
         <Row label="Sound effects" control={<Switch on={s.sfx} onChange={() => set('sfx', !s.sfx)} />} />
       </FilterCard>
@@ -718,10 +650,10 @@ function PresetPanel({ s, set, setMany, context, preset, setPreset }) {
 
 // ── Variant 4 — on the card itself ──────────────────────────────────────
 const CARD_TOGGLES = [
-  { key: 'furigana', glyph: 'ふ', label: 'Furigana', face: 'front' },
-  { key: 'translation', glyph: 'EN', label: 'Meaning', face: 'back' },
-  { key: 'kanjiMeanings', glyph: '漢', label: 'Kanji', face: 'back' },
-  { key: 'sentence', glyph: '文', label: 'Sentence', face: 'back' },
+  { key: 'furigana', label: 'Furigana', face: 'front' },
+  { key: 'translation', label: 'Meaning', face: 'back' },
+  { key: 'kanjiMeanings', label: 'Kanji', face: 'back' },
+  { key: 'sentence', label: 'Sentence', face: 'back' },
 ]
 
 function CardToolbar({ s, set, context }) {
@@ -737,8 +669,8 @@ function CardToolbar({ s, set, context }) {
             onClick={() => set(t.key, !s[t.key])}
             label={
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: SPACE_4 }}>
-                <span style={{ fontSize: FS_BASE }}>{t.glyph}</span>
-                <span style={{ fontSize: FS_BADGE, opacity: 0.7 }}>{t.face}</span>
+                {t.label}
+                <span style={{ fontSize: FS_BADGE, opacity: 0.6 }}>{t.face}</span>
               </span>
             }
           />
@@ -750,7 +682,7 @@ function CardToolbar({ s, set, context }) {
         label={
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: SPACE_4 }}>
             <SpeakerIcon muted={!s.audio} size={14} />
-            {s.voice === 'browser' ? 'browser' : s.voice === 'voicevox-2' ? 'female' : 'male'}
+            {s.voice === 'female' ? 'Female' : 'Male'}
           </span>
         }
       />
@@ -758,7 +690,7 @@ function CardToolbar({ s, set, context }) {
   )
 }
 
-function OnCardPanel({ s, set }) {
+function OnCardPanel({ s, set, context, browserVoices = true }) {
   return (
     <div style={{ padding: SPACE_16 }}>
       <Notice tone="neutral" title="The toggles moved onto the card">
@@ -768,10 +700,11 @@ function OnCardPanel({ s, set }) {
       </Notice>
       <GroupLabel>Set once</GroupLabel>
       <FilterCard>
-        <Row label="Voice" control={<Select value={s.voice} onChange={v => set('voice', v)} options={VOICE_OPTIONS} label="Voice" />} />
-        <Row label="Autoplay front" control={<Switch on={s.autoplayFront} onChange={() => set('autoplayFront', !s.autoplayFront)} />} />
-        <Row label="Autoplay back" control={<Switch on={s.autoplayBack} onChange={() => set('autoplayBack', !s.autoplayBack)} />} />
-        <Row label="Sentence from" control={<Select value={s.sentenceSource} onChange={v => set('sentenceSource', v)} options={SENTENCE_SOURCE_OPTIONS} label="Sentence source" />} />
+        <Row label="Voice" control={<ChipSelector mode="single" value={s.voice} onChange={v => set('voice', v)} options={VOICE_CHOICES} />} />
+        {browserVoices && (
+          <Row label="Backup voice" hint={backupVoiceHint(context)} control={<Select value={s.backupVoice} onChange={v => set('backupVoice', v)} options={BACKUP_VOICE_OPTIONS} label="Backup voice" />} />
+        )}
+        <Row label="Play automatically" control={<Switch on={s.autoplay} onChange={() => set('autoplay', !s.autoplay)} />} />
         <Row label="Sound effects" control={<Switch on={s.sfx} onChange={() => set('sfx', !s.sfx)} />} />
         <Row label="Pixel font" control={<Switch on={s.pixelFont} onChange={() => set('pixelFont', !s.pixelFont)} />} />
         <Row label="Visual effects" control={<Switch on={s.visualEffects} onChange={() => set('visualEffects', !s.visualEffects)} />} />
@@ -795,9 +728,9 @@ const VARIANTS = [
     id: 'anatomy',
     label: 'Card anatomy',
     title: 'Grouped by where it appears',
-    blurb: 'The four subjects the flat list mixes together, named and separated: what the front shows, what the back shows, audio, and app chrome. Each row carries an icon that lights up in the accent colour when its setting is on, so the panel can be scanned for state without reading a single label.',
-    fixes: 'Answers "where does this show up?" without flipping a card. Sound effects stop being a child of word audio — they are interface feedback, not the word being read. Settings a list cannot honour say so instead of lying. The icons give each row a fixed shape to aim at, which is what breaks up a column of otherwise identical rows.',
-    costs: 'Taller than the checkbox column, so mobile scrolls more. Four boxes is more chrome than one list. Icons need to be drawn once and then never re-guessed — an unclear icon is worse than none, since it reads as a label you cannot parse.',
+    blurb: 'The four subjects the flat list mixes together, named and separated: what the front shows, what the back shows, audio, and app chrome. Each row is a label with its state on the right, and nothing is nested more than one level deep.',
+    fixes: 'Answers "where does this show up?" without flipping a card. Sound effects stop being a child of word audio — they are interface feedback, not the word being read. Audio names a voice instead of a vendor, and the backup voice row states the fallback the code has always done silently.',
+    costs: 'Taller than the checkbox column, so mobile scrolls more. Four boxes is more chrome than one list.',
     Panel: AnatomyPanel,
   },
   {
@@ -806,7 +739,7 @@ const VARIANTS = [
     title: 'One group at a time',
     blurb: 'The same grouping, but only one group on screen at once. Nothing scrolls and the panel height stops moving.',
     fixes: 'Fits a phone without scrolling, and makes the front/back split the primary navigation.',
-    costs: 'You can no longer see the whole configuration at once, and changing two things in different groups takes a detour. Four tabs is a lot of navigation for twelve settings.',
+    costs: 'You can no longer see the whole configuration at once, and changing two things in different groups takes a detour. Four tabs is a lot of navigation for eleven settings.',
     Panel: TabsPanel,
   },
   {
@@ -836,7 +769,7 @@ const PROBLEMS = [
   ['Sound effects live under audio', 'Interface clicks are nested inside "Enable audio", so silencing the spoken word also hides the control for the button sounds. They are unrelated concerns.'],
   ['No preview', 'You toggle blind, then flip a card to see what changed — while the card is right there on screen.'],
   ['Defaults are global, but the right answer is per-list', 'A beginner list wants furigana on the front; an N2 vocabulary list wants it off, because there the reading is the answer. One shared switch cannot be right for both.'],
-  ['The audio picker names a technology, not a decision', '"Text to speech: Browser TTS" asks the learner to know what Voicevox is. It also hides the real behaviour: a word with no generated file silently falls back to the browser voice.'],
+  ['The audio picker names a technology, not a decision', '"Text to speech: Browser TTS" asks the learner to know what Voicevox is, and puts the browser voice alongside the recordings as if it were a third equal choice. It is not — it is the fallback for words with no recording, which the code already does silently.'],
   ['Three copies', 'Vocab Drill, Vocab SRS and Anime Vocab each render their own near-identical version of this list, and the labels have already drifted ("Show furigana" vs "Show furigana on front").'],
 ]
 
@@ -850,9 +783,9 @@ function ControlComparison({ value, onChange }) {
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: SPACE_12 }}>
       {CONTROL_STYLES.map(style => {
         const active = value === style.value
-        const on = style.value === 'tiles' ? demo.switch : demo[style.value]
-        const toggle = () => set(style.value === 'tiles' ? 'switch' : style.value, !on)
-        const { node, rowClickable } = style.value === 'tiles' ? {} : boolControl(style.value, { on, onChange: toggle })
+        const on = demo[style.value]
+        const toggle = () => set(style.value, !on)
+        const { node, rowClickable } = boolControl(style.value, { on, onChange: toggle })
         return (
           <div
             key={style.value}
@@ -868,13 +801,7 @@ function ControlComparison({ value, onChange }) {
                 {active ? 'In use' : 'Use'}
               </Button>
             </div>
-            {style.value === 'tiles' ? (
-              <div style={{ padding: SPACE_12 }}>
-                <SettingTile icon="furigana" label="Furigana" on={on} onChange={toggle} />
-              </div>
-            ) : (
-              <Row icon="furigana" on={on} label="Furigana" control={node} onClick={rowClickable ? toggle : undefined} />
-            )}
+            <Row label="Furigana" control={node} onClick={rowClickable ? toggle : undefined} />
           </div>
         )
       })}
@@ -882,13 +809,26 @@ function ControlComparison({ value, onChange }) {
   )
 }
 
-export default function SettingsLabPage({ initialVariant = 'anatomy', initialContext = 'genki-1', initialControlStyle = 'switch' }) {
+const SIMPLIFICATIONS = [
+  ['Sentence source is gone', 'The Custom / Tanaka Corpus picker was a preference about where a sentence comes from, which is not a decision a learner has an opinion about mid-drill. The rule becomes automatic: a curated sentence wins, Tanaka fills the gap.'],
+  ['One "Play automatically"', 'Autoplay front and autoplay back were two switches for one intent. One switch plays the word when the card appears and again when it flips.'],
+  ['"Example sentence" is just "Sentence"', 'The group heading already says Card back, so the row does not need to explain what kind of sentence it is.'],
+  ['Voice is Male / Female', 'Two recorded voices, so a two-way choice rather than a dropdown that also contains a non-recorded option.'],
+  ['Backup voice is its own row', 'The browser voice is not a third peer voice, it is what reads a word with no recording. It gets a row that says so — and disappears entirely on a device that exposes no voices, because an empty picker is worse than no picker.'],
+]
+
+export default function SettingsLabPage({
+  initialVariant = 'anatomy',
+  initialContext = 'genki-1',
+  initialControlStyle = 'switch',
+  initialBrowserVoices = true,
+}) {
   const [variantId, setVariantId] = useState(initialVariant)
   const [contextId, setContextId] = useState(initialContext)
   const [settings, setSettings] = useState(DEFAULTS)
   const [preset, setPreset] = useState('custom')
   const [controlStyle, setControlStyle] = useState(initialControlStyle)
-  const [showIcons, setShowIcons] = useState(true)
+  const [browserVoices, setBrowserVoices] = useState(initialBrowserVoices)
 
   const variant = VARIANTS.find(v => v.id === variantId)
   const context = CONTEXTS.find(c => c.id === contextId)
@@ -905,14 +845,24 @@ export default function SettingsLabPage({ initialVariant = 'anatomy', initialCon
 
           <div style={{ fontSize: FS_CONTENT_HEADING, marginBottom: SPACE_8 }}>Drill settings — a rethink</div>
           <p style={{ fontSize: FS_BASE, color: TEXT_MUTED, lineHeight: 1.6, maxWidth: 720, margin: `0 0 ${SPACE_24}px` }}>
-            Five layouts for the same set of settings, all driven by one live state and previewed against a real
-            card. Switch the pretend word list to see how each one handles defaults that should differ per list,
-            and a deck with no generated audio.
+            Five layouts for the same settings, all driven by one live state and previewed against a real card.
+            Switch the pretend word list to see how each one handles defaults that should differ per list, a deck
+            with no recordings, and a device with no browser voices.
           </p>
 
           <GroupLabel>What is wrong with the list today</GroupLabel>
           <Card padding={0}>
             {PROBLEMS.map(([title, body], i) => (
+              <div key={title} style={{ padding: `${SPACE_12}px ${SPACE_16}px`, borderTop: i > 0 ? `1px solid ${HAIRLINE}` : 'none' }}>
+                <div style={{ fontSize: FS_BASE, marginBottom: SPACE_4 }}>{title}</div>
+                <div style={{ fontSize: FS_SM, color: TEXT_MUTED, lineHeight: 1.55 }}>{body}</div>
+              </div>
+            ))}
+          </Card>
+
+          <GroupLabel>What the rethink removes</GroupLabel>
+          <Card padding={0}>
+            {SIMPLIFICATIONS.map(([title, body], i) => (
               <div key={title} style={{ padding: `${SPACE_12}px ${SPACE_16}px`, borderTop: i > 0 ? `1px solid ${HAIRLINE}` : 'none' }}>
                 <div style={{ fontSize: FS_BASE, marginBottom: SPACE_4 }}>{title}</div>
                 <div style={{ fontSize: FS_SM, color: TEXT_MUTED, lineHeight: 1.55 }}>{body}</div>
@@ -932,6 +882,17 @@ export default function SettingsLabPage({ initialVariant = 'anatomy', initialCon
               <div style={{ color: TEXT }}>{context.meta}</div>
               <div style={{ marginTop: SPACE_4 }}>{context.why}</div>
             </div>
+            <div style={{ marginTop: SPACE_16, paddingTop: SPACE_16, borderTop: `1px solid ${HAIRLINE}` }}>
+              <div style={{ fontSize: FS_SM, color: TEXT_MUTED, marginBottom: SPACE_8 }}>
+                Device browser voices — with none installed, the Backup voice row is not rendered at all
+              </div>
+              <ChipSelector
+                mode="single"
+                value={browserVoices ? 'yes' : 'no'}
+                onChange={v => setBrowserVoices(v === 'yes')}
+                options={[{ value: 'yes', label: 'Voices available' }, { value: 'no', label: 'No voices' }]}
+              />
+            </div>
           </Card>
 
           <GroupLabel>Layout</GroupLabel>
@@ -950,17 +911,8 @@ export default function SettingsLabPage({ initialVariant = 'anatomy', initialCon
                 A switch or checkbox is a state indicator, so the whole row becomes the hit target — a bigger,
                 more forgiving target than the control itself, and the pattern every settings app uses. A chip or
                 segmented control names its own actions, so it has to own its clicks and the row cannot be tapped.
-                Tiles trade the reading order of a list for a scannable grid.
               </p>
               <ControlComparison value={controlStyle} onChange={setControlStyle} />
-              <div style={{ marginTop: SPACE_16 }}>
-                <ChipSelector
-                  mode="single"
-                  value={showIcons ? 'icons' : 'no-icons'}
-                  onChange={v => setShowIcons(v === 'icons')}
-                  options={[{ value: 'icons', label: 'With icons' }, { value: 'no-icons', label: 'Labels only' }]}
-                />
-              </div>
             </>
           )}
 
@@ -981,7 +933,7 @@ export default function SettingsLabPage({ initialVariant = 'anatomy', initialCon
                 </Card>
               )}
               <div style={{ marginTop: SPACE_24 }}>
-                <Preview settings={settings} context={context}>
+                <Preview settings={settings} context={context} browserVoices={browserVoices}>
                   {variantId === 'oncard' && <CardToolbar s={settings} set={set} context={context} />}
                 </Preview>
               </div>
@@ -1002,7 +954,7 @@ export default function SettingsLabPage({ initialVariant = 'anatomy', initialCon
                 preset={preset}
                 setPreset={setPreset}
                 controlStyle={controlStyle}
-                showIcons={showIcons}
+                browserVoices={browserVoices}
               />
             </div>
           </div>
@@ -1021,9 +973,9 @@ export default function SettingsLabPage({ initialVariant = 'anatomy', initialCon
                 first opened and offered — never forced — afterwards.
               </p>
               <p style={{ margin: `0 0 ${SPACE_12}px` }}>
-                <span style={{ color: TEXT }}>Audio should describe voices, not vendors.</span> Male / Female /
-                Browser, with a line stating that words without a recording use the browser voice. That is already
-                what the code does; the panel just never says so.
+                <span style={{ color: TEXT }}>Voice, then backup voice.</span> Male / Female is the choice; the
+                browser voice is the fallback for words with no recording, on its own row, hidden when the device
+                has no voices to offer.
               </p>
               <p style={{ margin: 0 }}>
                 <span style={{ color: TEXT }}>Whichever wins, it should be one component.</span> A single

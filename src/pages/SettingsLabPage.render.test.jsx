@@ -10,7 +10,7 @@ beforeAll(() => {
 const VARIANTS = ['today', 'anatomy', 'tabs', 'presets', 'oncard']
 const CONTEXTS = ['genki-1', 'nsm-n2', 'word-import']
 
-const CONTROL_STYLES = ['switch', 'chip', 'segmented', 'checkbox', 'tiles']
+const CONTROL_STYLES = ['switch', 'chip', 'segmented', 'checkbox']
 
 describe('SettingsLabPage', () => {
   it.each(VARIANTS.flatMap(v => CONTEXTS.map(c => [v, c])))('renders %s on %s', (variant, context) => {
@@ -23,5 +23,17 @@ describe('SettingsLabPage', () => {
     const html = renderToStaticMarkup(<SettingsLabPage initialVariant="anatomy" initialControlStyle={style} />)
     expect(html).toContain('Card front')
     expect(html).toContain('Furigana')
+  })
+
+  it('offers the backup voice row when the device has voices', () => {
+    const html = renderToStaticMarkup(<SettingsLabPage initialVariant="anatomy" initialBrowserVoices />)
+    expect(html).toContain('>Backup voice<')
+  })
+
+  it.each(['anatomy', 'tabs', 'presets', 'oncard'])('hides the backup voice row in %s when the device has none', variant => {
+    const html = renderToStaticMarkup(<SettingsLabPage initialVariant={variant} initialBrowserVoices={false} />)
+    // The explanatory copy above the panel still names it, so assert on the
+    // control's own label text rather than any occurrence of the phrase.
+    expect(html).not.toContain('>Backup voice<')
   })
 })

@@ -527,6 +527,3 @@ button, input, select, textarea {
 .lab-seg-btn:hover:not(:disabled) {
   background: rgba(255,255,255,0.09) !important;
 }
-.lab-tile:hover:not(:disabled) {
-  border-color: rgba(255,255,255,0.3) !important;
-}
