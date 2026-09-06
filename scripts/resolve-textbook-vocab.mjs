@@ -388,21 +388,25 @@ writeFileSync(REPORT, `${JSON.stringify({
     kept: { kana: c.kept.srcKana, kanji: c.kept.srcKanji, gloss: c.kept.gloss },
     lost: { kana: c.lost.srcKana, kanji: c.lost.srcKanji, gloss: c.lost.gloss },
   })),
+  // Every entry that became a card, auto-matched or human-decided. Overrides
+  // belong here too — they are the decisions most worth re-reading, and an
+  // audit that omitted them would quietly under-report what needs review.
   audit: entries
-    .filter(e => e.tier === 'auto')
+    .filter(e => e.jmdictId && e.tier !== 'skipped-inflection')
     .map(e => ({
-      confidence: Math.round(glossDetail(e.gloss, e.pick).frac * 100),
+      tier: e.tier,
+      confidence: e.pick ? Math.round(glossDetail(e.gloss, e.pick).frac * 100) : null,
       lesson: e.lesson,
       kana: e.srcKana,
       kanji: e.srcKanji,
       gloss: e.gloss,
       via: e.via,
       candidates: (e.candidates ?? []).length,
-      id: e.pick.id,
-      shows: isUk(e.pick) ? (e.pick.kana_forms?.[0] ?? e.pick.primary_form) : e.pick.primary_form,
-      dictGloss: (e.pick.gloss_en ?? '').slice(0, 70),
+      id: e.jmdictId,
+      shows: displayFormOf(e.pick ?? rowById.get(e.jmdictId)),
+      dictGloss: ((e.pick ?? rowById.get(e.jmdictId))?.gloss_en ?? '').slice(0, 70),
     }))
-    .sort((a, b) => a.confidence - b.confidence || b.candidates - a.candidates),
+    .sort((a, b) => (a.confidence ?? -1) - (b.confidence ?? -1) || b.candidates - a.candidates),
 }, null, 2)}\n`)
 
 console.log('\nTiers:')
