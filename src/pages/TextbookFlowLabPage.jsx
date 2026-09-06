@@ -367,12 +367,12 @@ function SegmentedPrimary({ size = 'lg', label, onClick, menuItems = [] }) {
   const chevronPad = size === 'xl' ? 10 : 8
 
   return (
-    <div style={{ display: 'inline-flex', borderRadius: 6, overflow: 'hidden' }}>
+    <div style={{ display: 'inline-flex', alignItems: 'stretch', borderRadius: 6, overflow: 'hidden', boxSizing: 'border-box' }}>
       <button
         type="button"
         className="btn btn-tint"
         onClick={onClick}
-        style={{ background: accent, border: 'none', color: '#fff', padding: pad, fontFamily: FONT, letterSpacing: TRACKING, fontSize: FS_BASE, cursor: 'pointer' }}
+        style={{ background: accent, border: 'none', boxSizing: 'border-box', color: '#fff', padding: pad, fontFamily: FONT, letterSpacing: TRACKING, fontSize: FS_BASE, lineHeight: 1, cursor: 'pointer' }}
       >
         {label}
       </button>
@@ -382,7 +382,11 @@ function SegmentedPrimary({ size = 'lg', label, onClick, menuItems = [] }) {
         className="btn btn-tint"
         onClick={() => setOpen(o => !o)}
         aria-label="More actions"
-        style={{ background: accent, borderLeft: '1px solid rgba(255,255,255,0.25)', color: '#fff', padding: `0 ${chevronPad}px`, cursor: 'pointer', fontSize: FS_CAPTION }}
+        style={{
+          background: accent, border: 'none', borderLeft: '1px solid rgba(255,255,255,0.25)', boxSizing: 'border-box',
+          color: '#fff', padding: `0 ${chevronPad}px`, display: 'flex', alignItems: 'center',
+          fontFamily: FONT, letterSpacing: TRACKING, fontSize: FS_CAPTION, lineHeight: 1, cursor: 'pointer',
+        }}
       >
         ▾
       </button>
@@ -524,19 +528,20 @@ function TextbookScreen({ mock }) {
   return (
     <ModuleThemeProvider accent={VOCAB_ACCENT}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE_24 }}>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: SPACE_8, flexWrap: 'wrap' }}>
-          {opts.freeDrill === 'header' && <Button variant="neutral" size="lg" onClick={() => setFreeOpen(true)}>Free drill</Button>}
-          <SegmentedPrimary size="lg" label={label} onClick={onClick} menuItems={menuItems} />
-        </div>
-
-        <div style={{ display: 'flex', gap: SPACE_16, alignItems: 'flex-start' }}>
-          <Cover icon={textbook.icon} cropped={opts.cover === 'cropped'} onClick={() => note('Open textbook picker')} />
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: FS_CONTENT_HEADING }}>{textbook.title}</div>
-            <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginTop: SPACE_4 }}>{textbook.subtitle} · {doneCount} of {chapters.length} chapters · {wordsDrilled} words drilled</div>
-            <div style={{ height: 4, borderRadius: 2, background: HAIRLINE, overflow: 'hidden', marginTop: SPACE_12 }}>
-              <div style={{ height: '100%', width: `${Math.round((doneCount / chapters.length) * 100)}%`, background: VOCAB_ACCENT }} />
+        <div style={{ display: 'flex', gap: SPACE_16, alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: SPACE_16, alignItems: 'flex-start', flex: 1, minWidth: 260 }}>
+            <Cover icon={textbook.icon} cropped={opts.cover === 'cropped'} onClick={() => note('Open textbook picker')} />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: FS_CONTENT_HEADING }}>{textbook.title}</div>
+              <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginTop: SPACE_4 }}>{textbook.subtitle} · {doneCount} of {chapters.length} chapters · {wordsDrilled} words drilled</div>
+              <div style={{ height: 4, borderRadius: 2, background: HAIRLINE, overflow: 'hidden', marginTop: SPACE_12 }}>
+                <div style={{ height: '100%', width: `${Math.round((doneCount / chapters.length) * 100)}%`, background: VOCAB_ACCENT }} />
+              </div>
             </div>
+          </div>
+          <div style={{ display: 'flex', gap: SPACE_8, flexShrink: 0 }}>
+            {opts.freeDrill === 'header' && <Button variant="neutral" size="lg" onClick={() => setFreeOpen(true)}>Free drill</Button>}
+            <SegmentedPrimary size="lg" label={label} onClick={onClick} menuItems={menuItems} />
           </div>
         </div>
 
