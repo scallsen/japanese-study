@@ -348,6 +348,25 @@ writeFileSync(REPORT, `${JSON.stringify({
       id: r.id, form: r.primary_form, common: r.common, uk: isUk(r), gloss: (r.gloss_en ?? '').slice(0, 70),
     })),
   })),
+  // Every auto-resolved entry, weakest corroboration first. Reviewing 1,000
+  // ids in file order is hopeless and reviewing a random sample finds nothing;
+  // the errors that survive are concentrated where the gloss agreed least, so
+  // this is the list to read top-down until it stops being interesting.
+  audit: entries
+    .filter(e => e.tier === 'auto')
+    .map(e => ({
+      confidence: Math.round(glossDetail(e.gloss, e.pick).frac * 100),
+      lesson: e.lesson,
+      kana: e.srcKana,
+      kanji: e.srcKanji,
+      gloss: e.gloss,
+      via: e.via,
+      candidates: (e.candidates ?? []).length,
+      id: e.pick.id,
+      shows: isUk(e.pick) ? (e.pick.kana_forms?.[0] ?? e.pick.primary_form) : e.pick.primary_form,
+      dictGloss: (e.pick.gloss_en ?? '').slice(0, 70),
+    }))
+    .sort((a, b) => a.confidence - b.confidence || b.candidates - a.candidates),
 }, null, 2)}\n`)
 
 console.log('\nTiers:')
