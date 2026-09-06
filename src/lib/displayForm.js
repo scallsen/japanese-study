@@ -33,6 +33,10 @@ export const DISPLAY_FORM_COLUMNS = 'primary_form, preferred_form, kana_forms, m
 //   `kanji` — one of the forms the entry itself lists, chosen because the book
 //   uses that one: 登る rather than 上る, けんか rather than 喧嘩.
 //
+//   `mark` — the book decorates the word to show how it is used (〜枚 for a
+//   counter, きれい（な） for a na-adjective). A template with `{}` where the
+//   form goes, so a leading, trailing or wrapping decoration all work.
+//
 //   `suru` — the book teaches this as a する-verb. JMdict files those under the
 //   bare noun (勉強 covers 勉強する), so the entry is right but the form is a
 //   stem; appending する restores what the book prints, and the verb reading it
@@ -43,8 +47,6 @@ export function cardFormOf(word, entry) {
   const suffix = word?.suru ? 'する' : ''
   const form = word?.kanji ?? displayFormOf(entry)
   const reading = word?.kana ?? entry?.kana_forms?.[0]
-  return {
-    form: form == null ? null : form + suffix,
-    reading: reading == null ? null : reading + suffix,
-  }
+  const decorate = t => (t == null ? null : word?.mark ? word.mark.replace('{}', t + suffix) : t + suffix)
+  return { form: decorate(form), reading: decorate(reading) }
 }

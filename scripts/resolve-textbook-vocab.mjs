@@ -372,9 +372,24 @@ for (const book of BOOKS) {
       // so the card can say the form differs rather than pretending otherwise.
       else row.modified = true
     }
+    // A textbook decorates an entry to show how it is used — 〜枚 for a counter,
+    // そんな〜 for a prenominal, きれい（な） for a na-adjective. Matching has to
+    // strip that to find the word, but the card should print it, so the
+    // decoration is kept as a template around the form rather than as a set of
+    // per-shape flags: whatever was stripped, back where the book had it.
+    const rawBook = (e.srcKanji?.trim() || e.srcKana?.trim() || '')
+    // Compare against the form AFTER する is re-appended, or the する a `suru`
+    // word already carries is captured a second time and rendered twice.
+    const core = (row.kanji ?? bookForm) + (row.suru ? 'する' : '')
+    const at = core ? rawBook.indexOf(core) : -1
+    if (at >= 0 && rawBook !== core) {
+      row.mark = `${rawBook.slice(0, at)}{}${rawBook.slice(at + core.length)}`
+    }
+
     // What the card will actually render, for the audit — which otherwise
     // reports the dictionary's form and misses that the book's was kept.
-    e.renders = (row.kanji ?? shown) + (row.suru ? 'する' : '')
+    const rendered = (row.kanji ?? shown) + (row.suru ? 'する' : '')
+    e.renders = row.mark ? row.mark.replace('{}', rendered) : rendered
     rows.push(row)
   }
   writeFileSync(book.file, `${JSON.stringify(rows, null, 2)}\n`)

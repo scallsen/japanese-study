@@ -305,6 +305,13 @@ and `genki_2_vocab.json` are the reference examples; the older So-Matome files
 still carry the fuller shape below and are read the same way, since every field
 is an override with a dictionary fallback rather than a required value.
 
+`mark` carries the decoration a textbook puts around a word to show how it is
+used — 〜枚 for a counter, そんな〜 for a prenominal, きれい（な） for a
+na-adjective. Matching has to strip that to find the word, so it is stored as a
+template (`〜{}`, `{}（な）`) and re-applied at render time: whatever was
+stripped, back where the book had it. A template rather than per-shape flags
+because the decoration leads, trails or wraps depending on the word.
+
 `suru` marks a word the book teaches as a する-verb. JMdict files those under
 the bare noun (勉強 covers 勉強する), so the entry is right but the stored form is
 a stem; the card appends する to both form and reading, which is what stops
