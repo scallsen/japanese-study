@@ -205,7 +205,8 @@
     "id": "genki-2-l13-041",
     "listKey": "genki-2-l13",
     "jmdictId": "1212570",
-    "modified": true
+    "kanji": "感動",
+    "suru": true
   },
   {
     "id": "genki-2-l13-042",
@@ -475,13 +476,15 @@
     "id": "genki-2-l14-037",
     "listKey": "genki-2-l14",
     "jmdictId": "1401210",
-    "modified": true
+    "kanji": "相談",
+    "suru": true
   },
   {
     "id": "genki-2-l14-038",
     "listKey": "genki-2-l14",
     "jmdictId": "1117900",
-    "modified": true
+    "kanji": "プロポーズ",
+    "suru": true
   },
   {
     "id": "genki-2-l14-039",
@@ -719,13 +722,15 @@
     "id": "genki-2-l15-037",
     "listKey": "genki-2-l15",
     "jmdictId": "1405890",
-    "modified": true
+    "kanji": "卒業",
+    "suru": true
   },
   {
     "id": "genki-2-l15-038",
     "listKey": "genki-2-l15",
     "jmdictId": "1543750",
-    "modified": true
+    "kanji": "予約",
+    "suru": true
   },
   {
     "id": "genki-2-l15-039",
@@ -889,19 +894,22 @@
     "id": "genki-2-l16-030",
     "listKey": "genki-2-l16",
     "jmdictId": "1428410",
-    "modified": true
+    "kanji": "朝寝坊",
+    "suru": true
   },
   {
     "id": "genki-2-l16-031",
     "listKey": "genki-2-l16",
     "jmdictId": "1154860",
-    "modified": true
+    "kanji": "案内",
+    "suru": true
   },
   {
     "id": "genki-2-l16-032",
     "listKey": "genki-2-l16",
     "jmdictId": "1386460",
-    "modified": true
+    "kanji": "説明",
+    "suru": true
   },
   {
     "id": "genki-2-l16-033",
@@ -1114,13 +1122,15 @@
     "id": "genki-2-l17-031",
     "listKey": "genki-2-l17",
     "jmdictId": "1577040",
-    "modified": true
+    "kanji": "化粧",
+    "suru": true
   },
   {
     "id": "genki-2-l17-032",
     "listKey": "genki-2-l17",
     "jmdictId": "1331670",
-    "modified": true
+    "kanji": "就職",
+    "suru": true
   },
   {
     "id": "genki-2-l17-033",
@@ -1131,7 +1141,8 @@
     "id": "genki-2-l17-034",
     "listKey": "genki-2-l17",
     "jmdictId": "1550880",
-    "modified": true
+    "kanji": "離婚",
+    "suru": true
   },
   {
     "id": "genki-2-l17-035",
@@ -1373,7 +1384,8 @@
     "id": "genki-2-l18-039",
     "listKey": "genki-2-l18",
     "jmdictId": "1426650",
-    "modified": true
+    "kanji": "注文",
+    "suru": true
   },
   {
     "id": "genki-2-l18-040",
@@ -1419,7 +1431,8 @@
     "id": "genki-2-l19-001",
     "listKey": "genki-2-l19",
     "jmdictId": "1349610",
-    "modified": true
+    "kanji": "招待",
+    "suru": true
   },
   {
     "id": "genki-2-l19-002",
@@ -1608,19 +1621,22 @@
     "id": "genki-2-l19-038",
     "listKey": "genki-2-l19",
     "jmdictId": "1178450",
-    "modified": true
+    "kanji": "遠慮",
+    "suru": true
   },
   {
     "id": "genki-2-l19-039",
     "listKey": "genki-2-l19",
     "jmdictId": "1593590",
-    "modified": true
+    "kanji": "ごちそう",
+    "suru": true
   },
   {
     "id": "genki-2-l19-040",
     "listKey": "genki-2-l19",
     "jmdictId": "1426530",
-    "modified": true
+    "kanji": "注意",
+    "suru": true
   },
   {
     "id": "genki-2-l19-041",
@@ -1826,19 +1842,22 @@
     "id": "genki-2-l20-033",
     "listKey": "genki-2-l20",
     "jmdictId": "1271750",
-    "modified": true
+    "kanji": "交換",
+    "suru": true
   },
   {
     "id": "genki-2-l20-034",
     "listKey": "genki-2-l20",
     "jmdictId": "1378860",
-    "modified": true
+    "kanji": "生活",
+    "suru": true
   },
   {
     "id": "genki-2-l20-035",
     "listKey": "genki-2-l20",
     "jmdictId": "1512300",
-    "modified": true
+    "kanji": "返品",
+    "suru": true
   },
   {
     "id": "genki-2-l20-036",
@@ -2143,7 +2162,8 @@
     "id": "genki-2-l21-047",
     "listKey": "genki-2-l21",
     "jmdictId": "1341670",
-    "modified": true
+    "kanji": "準備",
+    "suru": true
   },
   {
     "id": "genki-2-l21-048",
@@ -2155,13 +2175,15 @@
     "id": "genki-2-l21-049",
     "listKey": "genki-2-l21",
     "jmdictId": "1226360",
-    "modified": true
+    "kanji": "びっくり",
+    "suru": true
   },
   {
     "id": "genki-2-l21-050",
     "listKey": "genki-2-l21",
     "jmdictId": "1559900",
-    "modified": true
+    "kanji": "連絡",
+    "suru": true
   },
   {
     "id": "genki-2-l21-051",
@@ -2388,37 +2410,43 @@
     "id": "genki-2-l22-041",
     "listKey": "genki-2-l22",
     "jmdictId": "2036870",
-    "modified": true
+    "kanji": "お願い",
+    "suru": true
   },
   {
     "id": "genki-2-l22-042",
     "listKey": "genki-2-l22",
     "jmdictId": "1304200",
-    "modified": true
+    "kanji": "賛成",
+    "suru": true
   },
   {
     "id": "genki-2-l22-043",
     "listKey": "genki-2-l22",
     "jmdictId": "1320140",
-    "modified": true
+    "kanji": "失敗",
+    "suru": true
   },
   {
     "id": "genki-2-l22-044",
     "listKey": "genki-2-l22",
     "jmdictId": "1437700",
-    "modified": true
+    "kanji": "徹夜",
+    "suru": true
   },
   {
     "id": "genki-2-l22-045",
     "listKey": "genki-2-l22",
     "jmdictId": "1480670",
-    "modified": true
+    "kanji": "反対",
+    "suru": true
   },
   {
     "id": "genki-2-l22-046",
     "listKey": "genki-2-l22",
     "jmdictId": "1523400",
-    "modified": true
+    "kanji": "翻訳",
+    "suru": true
   },
   {
     "id": "genki-2-l22-047",
@@ -2596,13 +2624,15 @@
     "id": "genki-2-l23-029",
     "listKey": "genki-2-l23",
     "jmdictId": "1003170",
-    "modified": true
+    "kanji": "がっかり",
+    "suru": true
   },
   {
     "id": "genki-2-l23-030",
     "listKey": "genki-2-l23",
     "jmdictId": "1196970",
-    "modified": true
+    "kanji": "我慢",
+    "suru": true
   },
   {
     "id": "genki-2-l23-031",
@@ -2613,13 +2643,15 @@
     "id": "genki-2-l23-032",
     "listKey": "genki-2-l23",
     "jmdictId": "1452720",
-    "modified": true
+    "kanji": "同情",
+    "suru": true
   },
   {
     "id": "genki-2-l23-033",
     "listKey": "genki-2-l23",
     "jmdictId": "1103110",
-    "modified": true
+    "kanji": "パンク",
+    "suru": true
   },
   {
     "id": "genki-2-l23-034",
@@ -2630,7 +2662,8 @@
     "id": "genki-2-l23-035",
     "listKey": "genki-2-l23",
     "jmdictId": "1539280",
-    "modified": true
+    "kanji": "優勝",
+    "suru": true
   },
   {
     "id": "genki-2-l23-036",

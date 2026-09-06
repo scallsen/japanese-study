@@ -358,8 +358,15 @@ for (const book of BOOKS) {
       // Together with the entry's reading this gives one card three possible
       // renderings — the book's spelling, JMdict's canonical form, and plain
       // kana — for a display setting to choose between.
-      const listed = [...(entry.kanji_forms ?? []), ...(entry.kana_forms ?? [])].includes(bookForm)
-      if (listed) row.kanji = bookForm
+      const forms = [...(entry.kanji_forms ?? []), ...(entry.kana_forms ?? [])]
+      // A する-verb is filed under its bare noun, so the book's full form is
+      // never listed — but its stem usually is (勉強 for 勉強する, and けんか,
+      // in kana, for けんかする). Keep that stem and record that する belongs
+      // back on it, so the card drills the verb the book teaches rather than
+      // the noun JMdict files it under.
+      const stem = e.derivedSpelling || e.derivedReadings?.[0]
+      if (forms.includes(bookForm)) row.kanji = bookForm
+      else if (stem && forms.includes(stem)) { row.kanji = stem; row.suru = true }
       // Nothing the entry lists is written the way the book writes it: 勉強する
       // against 勉強, or a spelling the book got wrong (風 for "cold"). Mark it,
       // so the card can say the form differs rather than pretending otherwise.
@@ -367,7 +374,7 @@ for (const book of BOOKS) {
     }
     // What the card will actually render, for the audit — which otherwise
     // reports the dictionary's form and misses that the book's was kept.
-    e.renders = row.kanji ?? shown
+    e.renders = (row.kanji ?? shown) + (row.suru ? 'する' : '')
     rows.push(row)
   }
   writeFileSync(book.file, `${JSON.stringify(rows, null, 2)}\n`)

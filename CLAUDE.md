@@ -305,6 +305,13 @@ and `genki_2_vocab.json` are the reference examples; the older So-Matome files
 still carry the fuller shape below and are read the same way, since every field
 is an override with a dictionary fallback rather than a required value.
 
+`suru` marks a word the book teaches as a する-verb. JMdict files those under
+the bare noun (勉強 covers 勉強する), so the entry is right but the stored form is
+a stem; the card appends する to both form and reading, which is what stops
+勉強する being drilled as the noun 勉強. `src/lib/displayForm.js`'s
+`cardFormOf(word, entry)` is the one place that resolves a card's form and
+reading — use it rather than reading `kanji`/`kana` directly.
+
 `kanji` is present only when the textbook writes the word as one of the
 *several forms JMdict already lists for that entry* — のぼる is 上る/登る/昇る and
 Genki teaches 登る; 五日 and ５日 are one entry. Keeping the book's spelling makes

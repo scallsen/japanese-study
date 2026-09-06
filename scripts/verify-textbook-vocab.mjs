@@ -11,7 +11,7 @@
 
 import { createClient } from '@supabase/supabase-js'
 import { readFileSync } from 'fs'
-import { displayFormOf, DISPLAY_FORM_COLUMNS } from '../src/lib/displayForm.js'
+import { cardFormOf, DISPLAY_FORM_COLUMNS } from '../src/lib/displayForm.js'
 
 const SUPABASE_URL = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -39,10 +39,8 @@ let shown = 0
 for (const w of words) {
   const r = rows.get(w.jmdictId)
   if (!r) { console.log(`  !! ${w.id}  jmdictId ${w.jmdictId} NOT FOUND in dictionary`); missing++; continue }
-  // Same precedence the card uses: the book's own spelling wins when the
-  // import kept one, else the dictionary's display form.
-  const form = w.kanji ?? displayFormOf(r)
-  const line = `${w.listKey.padEnd(12)} ${form.padEnd(10)} ${(r.kana_forms?.[0] ?? '').padEnd(12)} ${(r.gloss_en ?? '').slice(0, 52)}`
+  const { form, reading } = cardFormOf(w, r)
+  const line = `${w.listKey.padEnd(12)} ${form.padEnd(10)} ${(reading ?? '').padEnd(12)} ${(r.gloss_en ?? '').slice(0, 52)}`
   if (filter && !line.includes(filter) && !w.id.includes(filter)) continue
   console.log(`  ${line}`)
   shown++
