@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import PageHeader from '../components/PageHeader.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
 import ChipSelector from '../components/Chip.jsx'
@@ -11,9 +11,11 @@ import Notice from '../components/Notice.jsx'
 import ActionBar from '../components/ActionBar.jsx'
 import DistributionBar from '../components/DistributionBar.jsx'
 import ToggleButton from '../components/ToggleButton.jsx'
+import Popover from '../components/Popover.jsx'
+import Menu from '../components/Menu.jsx'
 import { PrimaryCard } from './homeCards.jsx'
 import { FreeDrillSheet } from './HomeFlowLabPage.jsx'
-import { ModuleThemeProvider } from '../context/ModuleThemeContext.jsx'
+import { ModuleThemeProvider, useAccent } from '../context/ModuleThemeContext.jsx'
 import { useIsMobile } from '../hooks/useIsMobile.js'
 import { resolveTextbookState } from '../lib/textbookProgress.js'
 import { cardFormOf } from '../lib/displayForm.js'
@@ -109,7 +111,7 @@ const OPTION_GROUPS = [
   },
 ]
 
-const DEFAULTS = { advance: 'explicit', gate: 'dialog', glyph: 'ring', cover: 'cropped', freeDrill: 'header', wordList: 'badges', decksHeader: 'strip' }
+const DEFAULTS = { advance: 'explicit', gate: 'dialog', glyph: 'halo', cover: 'cropped', freeDrill: 'header', wordList: 'badges', decksHeader: 'strip' }
 
 const wordsOf = chapterId => WORD_DATA.filter(w => w.listKey === chapterId && !w.isSentenceVocab)
 
@@ -348,6 +350,87 @@ function Glyph({ kind, style: glyphStyle }) {
   return <span style={{ ...base, background: VOCAB_ACCENT, boxShadow: halo }} />
 }
 
+// A main action plus, when there's a real alternative (redo the current
+// chapter instead of advancing), a chevron that opens it in a popover menu
+// rather than surfacing it as a second visible button. Degrades to a plain
+// Button when there's nothing to put in the menu.
+function SegmentedPrimary({ size = 'lg', label, onClick, menuItems = [] }) {
+  const accent = useAccent()
+  const [open, setOpen] = useState(false)
+  const chevronRef = useRef(null)
+
+  if (menuItems.length === 0) {
+    return <Button size={size} onClick={onClick}>{label}</Button>
+  }
+
+  const pad = size === 'xl' ? `${SPACE_12}px ${SPACE_32}px` : `10px ${SPACE_24}px`
+  const chevronPad = size === 'xl' ? 10 : 8
+
+  return (
+    <div style={{ display: 'inline-flex', borderRadius: 6, overflow: 'hidden' }}>
+      <button
+        type="button"
+        className="btn btn-tint"
+        onClick={onClick}
+        style={{ background: accent, border: 'none', color: '#fff', padding: pad, fontFamily: FONT, letterSpacing: TRACKING, fontSize: FS_BASE, cursor: 'pointer' }}
+      >
+        {label}
+      </button>
+      <button
+        ref={chevronRef}
+        type="button"
+        className="btn btn-tint"
+        onClick={() => setOpen(o => !o)}
+        aria-label="More actions"
+        style={{ background: accent, borderLeft: '1px solid rgba(255,255,255,0.25)', color: '#fff', padding: `0 ${chevronPad}px`, cursor: 'pointer', fontSize: FS_CAPTION }}
+      >
+        ▾
+      </button>
+      <Popover open={open} onClose={() => setOpen(false)} anchorRef={chevronRef} align="end" width={200} bodyPadding={0}>
+        <Menu items={menuItems} onSelect={id => { setOpen(false); menuItems.find(i => i.id === id)?.onClick() }} />
+      </Popover>
+    </div>
+  )
+}
+
+// Shared between the home card and the textbook page header, which show the
+// same primary action for the chapter under the tracker — redo goes in the
+// segmented button's menu instead of sitting beside it as its own button.
+function chapterPrimaryAction(mock) {
+  const { state, opts, drilledAtPointer, lastDone, sentCountOf, fullySent, chapterAfter, startDrill, advance, note } = mock
+  const { chapters, current, doneCount } = state
+  if (doneCount === chapters.length) {
+    return { label: 'Pick new textbook', onClick: () => note('Open textbook picker'), menuItems: [], body: null }
+  }
+  const next = chapterAfter(current)
+  const inSrsLine = ch => fullySent(ch) ? 'in SRS' : `${sentCountOf(ch)} of ${ch.wordCount} in SRS`
+  let label, onClick, menuItems = [], body = null
+
+  if (opts.advance === 'auto') {
+    label = `Start ${current.label}`
+    onClick = () => startDrill(current, { fromCard: true })
+    if (lastDone && lastDone.id !== current.id) {
+      body = <Line>{lastDone.label} done today · {inSrsLine(lastDone)}</Line>
+      menuItems = [{ id: 'redo-last', label: `Redo ${lastDone.label}`, onClick: () => startDrill(lastDone, { fromCard: false }) }]
+    }
+  } else if (drilledAtPointer && next) {
+    body = <Line>{current.label} drilled ✓ · {inSrsLine(current)}</Line>
+    menuItems = [{ id: 'redo', label: `Redo ${current.label}`, onClick: () => startDrill(current, { fromCard: false }) }]
+    if (opts.advance === 'explicit') {
+      label = `Advance to ${next.label}`
+      onClick = () => advance(current)
+    } else {
+      label = `Start ${next.label}`
+      onClick = () => advance(current, n => startDrill(n, { fromCard: true }))
+    }
+  } else {
+    label = `${current.drilled ? 'Redo' : 'Start'} ${current.label}`
+    onClick = () => startDrill(current, { fromCard: true })
+  }
+
+  return { label, onClick, menuItems, body }
+}
+
 // ── Home ──────────────────────────────────────────────────────────────────────
 
 function HomeScreen({ mock }) {
@@ -359,66 +442,36 @@ function HomeScreen({ mock }) {
   )
 }
 
-function Links({ children }) {
-  return <div style={{ display: 'flex', flexWrap: 'wrap', gap: SPACE_4, marginLeft: -14 }}>{children}</div>
-}
-
-function Actions({ links, children }) {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE_12 }}>
-      {links && <Links>{links}</Links>}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: SPACE_8 }}>{children}</div>
-    </div>
-  )
+// Only ever two buttons on a card: the (possibly segmented) primary, then
+// the one secondary action, side by side rather than a quiet link row above.
+function ActionsRow({ children }) {
+  return <div style={{ display: 'flex', flexWrap: 'wrap', gap: SPACE_8, alignItems: 'center' }}>{children}</div>
 }
 
 function NewCard({ mock }) {
-  const { state, opts, drilledAtPointer, lastDone, sentCountOf, fullySent, chapterAfter, startDrill, advance, sendAll, go, note } = mock
+  const { state, opts, sentCountOf, drilledAtPointer, sendAll, go, note } = mock
   const { textbook, chapters, current, doneCount } = state
   const complete = doneCount === chapters.length
-  const next = chapterAfter(current)
   const cover = <Cover icon={textbook.icon} cropped={opts.cover === 'cropped'} onClick={() => note('Open textbook picker')} />
-  const viewAll = <Button variant="ghost" size="sm" onClick={() => go('textbook')}>View all chapters</Button>
+  const viewChapters = <Button variant="neutral" size="lg" onClick={() => go('textbook')}>View chapters</Button>
+  const { label, onClick, menuItems, body } = chapterPrimaryAction(mock)
 
-  if (complete) {
-    return (
-      <PrimaryCard accent={VOCAB_ACCENT} title={textbook.title} subtitle="Book completed" cover={cover} progress={1}
-        actions={<Actions links={viewAll}><Button size="lg" onClick={() => note('Open textbook picker')}>Pick new textbook</Button></Actions>} />
-    )
-  }
-
-  // What the card says about the chapter under the tracker, per model.
-  let body = null
-  let primary
-  let redo = null
-  const unsent = current.wordCount - sentCountOf(current)
-  const inSrsLine = ch => fullySent(ch) ? 'in SRS' : `${sentCountOf(ch)} of ${ch.wordCount} in SRS`
-
-  if (opts.advance === 'auto') {
-    primary = <Button size="lg" onClick={() => startDrill(current, { fromCard: true })}>Start {current.label}</Button>
-    if (lastDone && lastDone.id !== current.id) {
-      body = <Line>{lastDone.label} done today · {inSrsLine(lastDone)}</Line>
-    }
-  } else if (drilledAtPointer && next) {
-    body = <Line>{current.label} drilled ✓ · {inSrsLine(current)}</Line>
-    redo = <Button variant="ghost" size="sm" onClick={() => startDrill(current, { fromCard: false })}>Redo {current.label}</Button>
-    primary = opts.advance === 'explicit'
-      ? <Button size="lg" onClick={() => advance(current)}>Advance to {next.label}</Button>
-      : <Button size="lg" onClick={() => advance(current, n => startDrill(n, { fromCard: true }))}>Start {next.label}</Button>
-  } else {
-    primary = <Button size="lg" onClick={() => startDrill(current, { fromCard: true })}>{current.drilled ? 'Redo' : 'Start'} {current.label}</Button>
-  }
-
-  const showNotice = opts.gate === 'notice' && drilledAtPointer && unsent > 0 && opts.advance !== 'auto'
+  const unsent = complete ? 0 : current.wordCount - sentCountOf(current)
+  const showNotice = !complete && opts.gate === 'notice' && drilledAtPointer && unsent > 0 && opts.advance !== 'auto'
 
   return (
     <PrimaryCard
       accent={VOCAB_ACCENT}
       title={textbook.title}
-      subtitle={`${doneCount} of ${chapters.length} chapters`}
+      subtitle={complete ? 'Book completed' : `${doneCount} of ${chapters.length} chapters`}
       cover={cover}
-      progress={chapters.length ? doneCount / chapters.length : 0}
-      actions={<Actions links={<>{viewAll}{redo}</>}>{primary}</Actions>}
+      progress={complete ? 1 : (chapters.length ? doneCount / chapters.length : 0)}
+      actions={
+        <ActionsRow>
+          <SegmentedPrimary size="lg" label={label} onClick={onClick} menuItems={menuItems} />
+          {viewChapters}
+        </ActionsRow>
+      }
     >
       {showNotice ? (
         <Notice tone="warning" title={`${unsent} words from ${current.label} not in the SRS`}>
@@ -436,20 +489,18 @@ function Line({ children }) {
 function ReviewCard({ mock }) {
   const { srs, go, note } = mock
   const { due, newToday, newWaiting, totalCards, activeDecks, canStart, estimatedMinutes } = srs
+  const headline = canStart ? `${due} due · ${newToday} new · ~${estimatedMinutes} min` : 'Nothing due'
   const caption = [`${activeDecks} active ${activeDecks === 1 ? 'deck' : 'decks'}`, `${totalCards} cards`, newWaiting > 0 ? `${newWaiting} new waiting` : null].filter(Boolean).join(' · ')
   return (
-    <PrimaryCard accent={SRS_ACCENT} title="Reviews" subtitle={caption}
+    <PrimaryCard accent={SRS_ACCENT} title="Reviews" subtitle={headline}
       actions={
-        <Actions links={<Button variant="ghost" size="sm" onClick={() => go('decks')}>Decks</Button>}>
-          <Button size="lg" disabled={!canStart} onClick={() => note('Start the SRS review')}>{canStart ? 'Start reviews' : 'Nothing due'}</Button>
-        </Actions>
+        <ActionsRow>
+          <Button size="lg" disabled={!canStart} onClick={() => note('Start the SRS review')}>{canStart ? `Review ${due + newToday} cards` : 'Nothing due'}</Button>
+          <Button variant="neutral" size="lg" onClick={() => go('decks')}>Manage decks</Button>
+        </ActionsRow>
       }
     >
-      <div style={{ display: 'flex', gap: SPACE_24 }}>
-        <Stat value={due} label="Due" />
-        <Stat value={newToday} label="New today" />
-        <Stat value={canStart ? `~${estimatedMinutes}` : '0'} label="Minutes" />
-      </div>
+      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>{caption}</div>
     </PrimaryCard>
   )
 }
@@ -466,26 +517,26 @@ function Stat({ value, label }) {
 // ── Textbook page ─────────────────────────────────────────────────────────────
 
 function TextbookScreen({ mock }) {
-  const { state, opts, note, isMobile } = mock
+  const { state, opts, note } = mock
   const { textbook, chapters, doneCount, wordsDrilled } = state
   const [freeOpen, setFreeOpen] = useState(false)
+  const { label, onClick, menuItems } = chapterPrimaryAction(mock)
   return (
     <ModuleThemeProvider accent={VOCAB_ACCENT}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE_24 }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: SPACE_8, flexWrap: 'wrap' }}>
+          {opts.freeDrill === 'header' && <Button variant="neutral" size="lg" onClick={() => setFreeOpen(true)}>Free drill</Button>}
+          <SegmentedPrimary size="lg" label={label} onClick={onClick} menuItems={menuItems} />
+        </div>
+
         <div style={{ display: 'flex', gap: SPACE_16, alignItems: 'flex-start' }}>
           <Cover icon={textbook.icon} cropped={opts.cover === 'cropped'} onClick={() => note('Open textbook picker')} />
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: SPACE_12 }}>
-              <div>
-                <div style={{ fontSize: FS_CONTENT_HEADING }}>{textbook.title}</div>
-                <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginTop: SPACE_4 }}>{textbook.subtitle} · {doneCount} of {chapters.length} chapters · {wordsDrilled} words drilled</div>
-              </div>
-              {opts.freeDrill === 'header' && !isMobile && <Button variant="neutral" size="sm" onClick={() => setFreeOpen(true)}>Free drill</Button>}
-            </div>
+            <div style={{ fontSize: FS_CONTENT_HEADING }}>{textbook.title}</div>
+            <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginTop: SPACE_4 }}>{textbook.subtitle} · {doneCount} of {chapters.length} chapters · {wordsDrilled} words drilled</div>
             <div style={{ height: 4, borderRadius: 2, background: HAIRLINE, overflow: 'hidden', marginTop: SPACE_12 }}>
               <div style={{ height: '100%', width: `${Math.round((doneCount / chapters.length) * 100)}%`, background: VOCAB_ACCENT }} />
             </div>
-            {opts.freeDrill === 'header' && isMobile && <div style={{ marginTop: SPACE_12 }}><Button variant="neutral" size="sm" onClick={() => setFreeOpen(true)}>Free drill</Button></div>}
           </div>
         </div>
 
@@ -726,7 +777,7 @@ function DoneScreen({ mock }) {
 
 function GateDialog({ gate, onClose, mock }) {
   const { sendAll, setPointer } = mock
-  if (!gate) return <Modal open={false} onClose={onClose} />
+  if (!gate) return null
   const { from, next, unsent, then } = gate
   function proceed(send) {
     if (send) sendAll(from)
@@ -741,12 +792,10 @@ function GateDialog({ gate, onClose, mock }) {
       title={`Send ${from.label} to the SRS first?`}
       size="sm"
       isMobile={mock.isMobile}
-      showClose={false}
       footer={
         <>
-          <Button variant="neutral" onClick={onClose}>Cancel</Button>
-          <Button variant="neutral" onClick={() => proceed(false)}>Advance without sending</Button>
-          <Button onClick={() => proceed(true)}>Send {unsent} and advance</Button>
+          <Button variant="neutral" onClick={() => proceed(false)}>Skip</Button>
+          <Button onClick={() => proceed(true)}>Add {unsent} to SRS</Button>
         </>
       }
     >
