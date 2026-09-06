@@ -12,6 +12,9 @@ import {
 
 const HAIRLINE = 'rgba(255,255,255,0.08)'
 const SURFACE = '#2A2A2A'
+// Fixed rather than a minimum: the modal's height must not depend on which
+// book is selected. Sized to fit the longest description without scrolling.
+const DESKTOP_HEIGHT = 470
 const LIST_WIDTH = 200
 
 // Temporary: most books have no bundled word data yet (see textbooks.js) —
@@ -137,6 +140,8 @@ export function TextbookBrowser({
       padding: SPACE_16,
       flex: stacked ? '0 0 auto' : 1,
       minWidth: 0,
+      // Lets the scrolling description inside actually shrink.
+      ...(stacked ? null : { minHeight: 0 }),
       // Pinned to the top of the modal body's scroll so browsing the list
       // never scrolls away the book you're reading about. SURFACE, not
       // transparent, or the list would show through it.
@@ -160,9 +165,16 @@ export function TextbookBrowser({
 
       <div style={{
         fontSize: FS_CAPTION, color: TEXT_MUTED, lineHeight: 1.5,
-        // Clamped on a phone so a long description can't crowd out the list;
-        // there's room for the whole thing beside the list on desktop.
-        ...(stacked ? { display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' } : null),
+        // Books describe themselves at different lengths, and letting that set
+        // the modal's height made it jump 45px as you moved down the list. On
+        // desktop the description is the one part that gives: it takes the
+        // leftover space and scrolls, so the cover, the buy links and the
+        // confirm button hold still. minHeight:0 because a flex child will not
+        // shrink below its content without it, which is what would push the
+        // button back off the bottom.
+        ...(stacked
+          ? { display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }
+          : { flex: 1, minHeight: 0, overflowY: 'auto' }),
       }}>
         {selected.description}
       </div>
@@ -185,7 +197,6 @@ export function TextbookBrowser({
 
       {showConfirm && (
         <>
-          {!stacked && <div style={{ flex: 1, minHeight: SPACE_8 }} />}
           <ConfirmButton selected={selected} currentId={currentId} onChoose={() => onChoose(selected.id)} withTitle={stacked} available={selectedAvailable} />
         </>
       )}
@@ -237,7 +248,7 @@ export function TextbookBrowser({
 
   if (!stacked) {
     return (
-      <div style={{ display: 'flex', minHeight: 380 }}>
+      <div style={{ display: 'flex', height: DESKTOP_HEIGHT }}>
         {list}
         {detail}
       </div>
