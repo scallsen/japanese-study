@@ -485,7 +485,7 @@ Vocab Drill, Anime Vocab and Vocab SRS render **the same settings drawer**: `src
 | Card front | Furigana, Audio |
 | Card back | Meaning, Kanji breakdown, Sentence, Audio |
 | Audio | Voice (Male / Female), Backup voice |
-| Interface | Sound effects, Pixel font, Visual effects, Streak counter |
+| Interface | Sound effects, Visual effects, Pixel font, Streak counter |
 
 Audio is **not** a group of its own: playing the word is one of the things a face does, so `frontAudio` (plays as the card arrives) and `backAudio` (plays on flip) are rows in the two faces, and the audio group keeps only the global decision of which voice speaks. That replaced a master `audio-enabled` switch plus SRS's `autoplay-audio` / `-front` / `-back` trio.
 
@@ -875,15 +875,17 @@ All keys use `srs-` prefix. The VocabSrsModule reads these on mount; VocabSrsDri
 | `srs-voice` | `'male'` | Recorded voice — `'male'` \| `'female'`, mapped to a Voicevox speaker by `audioSourceForVoice()` |
 | `srs-backup-voice` | `''` | Browser speech voice name that reads words with no recording (`''` = device default) |
 | `srs-sfx-enabled` | `true` | Sound effects (correct/wrong beeps) |
-| `srs-show-furigana` | `true` | Show kana reading on card front; always shown on back |
+| `srs-show-furigana` | `false` | Show kana reading on card front; always shown on back |
 | `srs-show-translation` | `true` | Show English translation on card back |
 | `srs-show-sentence` | `true` | Show example sentence on card back |
-| `srs-show-kanji-meaning` | `false` | Show per-kanji meaning bar on card back (see Per-kanji meanings under Vocabulary Drill) |
-| `srs-pixel-font` | `true` | Use DotGothic16 pixel font on cards |
+| `srs-show-kanji-meaning` | `true` | Show per-kanji meaning bar on card back (see Per-kanji meanings under Vocabulary Drill) |
+| `srs-pixel-font` | `false` | Use DotGothic16 pixel font on cards |
 | `srs-visual-effects` | `true` | Enable card visual effects |
-| `srs-show-streak` | `true` | Show the streak counter |
+| `srs-show-streak` | `false` | Show the streak counter |
 
-The same suffixes exist under the `vocab-` prefix for Vocab Drill and Anime Vocab, with one different default: `vocab-front-audio` starts `false`, since that drill's front is the kanji and the reading is what you're recalling. **Retired:** `*-audio-enabled`, `*-autoplay-audio`, `*-autoplay-front`, `*-autoplay-back`, `*-audio-source`, `*-tts-voice`, `*-sentence-source` — all migrated on first read by `initialDrillSettings()`, then unused.
+The same suffixes and the same defaults exist under the `vocab-` prefix for Vocab Drill and Anime Vocab — `DRILL_SETTINGS_DEFAULTS` is one object, not one per drill.
+
+**The defaults are a deliberate opening position, not an accumulation.** The front gives nothing away (no reading, no audio) so a card actually tests recall; the back gives everything (meaning, kanji breakdown, sentence, audio) so it explains itself once you've answered. Interface keeps the feedback that responds to an answer (sound effects, visual effects) and drops the two decorations (pixel font, streak counter). Changing a default only affects an install with no stored value for that key — everyone else keeps what they had, or what their old keys migrate to. **Retired:** `*-audio-enabled`, `*-autoplay-audio`, `*-autoplay-front`, `*-autoplay-back`, `*-audio-source`, `*-tts-voice`, `*-sentence-source` — all migrated on first read by `initialDrillSettings()`, then unused.
 
 ### Dev advance feature (DEV only)
 

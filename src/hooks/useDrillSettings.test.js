@@ -30,6 +30,27 @@ describe('initialDrillSettings', () => {
     expect(initialDrillSettings('vocab')).toEqual(DRILL_SETTINGS_DEFAULTS)
   })
 
+  // Spelled out rather than compared to the constant: these are a product
+  // decision (front gives nothing away, back explains itself, interface keeps
+  // only the feedback that responds to an answer), so a change to any of them
+  // should have to be made here too.
+  it('opens a fresh install in the intended position', () => {
+    expect(DRILL_SETTINGS_DEFAULTS).toEqual({
+      furigana: false,
+      frontAudio: false,
+      translation: true,
+      kanjiMeanings: true,
+      sentence: true,
+      backAudio: true,
+      voice: 'male',
+      backupVoice: '',
+      sfx: true,
+      visualEffects: true,
+      pixelFont: false,
+      streak: false,
+    })
+  })
+
   it('prefers stored new-shape keys over any migration', () => {
     withStorage({ 'vocab-front-audio': 'true', 'vocab-audio-enabled': 'false', 'vocab-voice': 'female' })
     const s = initialDrillSettings('vocab')

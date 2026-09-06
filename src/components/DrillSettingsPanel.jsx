@@ -47,15 +47,23 @@ function Row({ label, control, onActivate }) {
   )
 }
 
-function Group({ label, children }) {
+// `footnote` renders inside the group rather than after it, so the stack's
+// gap stays between groups and the credit stays attached to the rows it
+// belongs to.
+function Group({ label, footnote, children }) {
   const rows = (Array.isArray(children) ? children : [children]).filter(Boolean)
   if (rows.length === 0) return null
   return (
     <div>
-      <div style={{ margin: `${SPACE_24}px 0 ${SPACE_8}px` }}>
+      <div style={{ marginBottom: SPACE_8 }}>
         <span style={{ ...SUBHEADING_STYLE, color: 'rgba(255,255,255,0.35)', fontFamily: 'inherit' }}>{label}</span>
       </div>
       <FilterCard>{rows}</FilterCard>
+      {footnote && (
+        <div style={{ marginTop: SPACE_8, fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.35)' }}>
+          {footnote}
+        </div>
+      )}
     </div>
   )
 }
@@ -102,7 +110,7 @@ export default function DrillSettingsPanel({
   const showBackupVoice = backupVoices.length > 0
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE_24 }}>
       <Group label="Card front">
         {boolRow('furigana', 'Furigana')}
         {boolRow('frontAudio', 'Audio')}
@@ -116,42 +124,35 @@ export default function DrillSettingsPanel({
       </Group>
 
       {(showVoice || showBackupVoice) && (
-        <>
-          <Group label="Audio">
-            {showVoice && (
-              <Row
-                key="voice"
-                label="Voice"
-                control={<ChipSelector mode="single" value={settings.voice} onChange={v => onChange('voice', v)} options={VOICE_OPTIONS} />}
-              />
-            )}
-            {showBackupVoice && (
-              <Row
-                key="backupVoice"
-                label="Backup voice"
-                control={
-                  <Select
-                    value={settings.backupVoice}
-                    onChange={v => onChange('backupVoice', v)}
-                    options={[{ value: '', label: 'Device default' }, ...backupVoices.map(v => ({ value: v.name, label: v.name }))]}
-                    label="Backup voice"
-                  />
-                }
-              />
-            )}
-          </Group>
-          {audioFootnote && (
-            <div style={{ marginTop: SPACE_8, fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.35)' }}>
-              {audioFootnote}
-            </div>
+        <Group label="Audio" footnote={audioFootnote}>
+          {showVoice && (
+            <Row
+              key="voice"
+              label="Voice"
+              control={<ChipSelector mode="single" value={settings.voice} onChange={v => onChange('voice', v)} options={VOICE_OPTIONS} />}
+            />
           )}
-        </>
+          {showBackupVoice && (
+            <Row
+              key="backupVoice"
+              label="Backup voice"
+              control={
+                <Select
+                  value={settings.backupVoice}
+                  onChange={v => onChange('backupVoice', v)}
+                  options={[{ value: '', label: 'Device default' }, ...backupVoices.map(v => ({ value: v.name, label: v.name }))]}
+                  label="Backup voice"
+                />
+              }
+            />
+          )}
+        </Group>
       )}
 
       <Group label="Interface">
         {boolRow('sfx', 'Sound effects')}
-        {boolRow('pixelFont', 'Pixel font')}
         {boolRow('visualEffects', 'Visual effects')}
+        {boolRow('pixelFont', 'Pixel font')}
         {boolRow('streak', 'Streak counter')}
         {extraInterfaceRows}
       </Group>

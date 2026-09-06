@@ -241,6 +241,14 @@ function VocabSrsHome() {
   const isMobile = useIsMobile()
   const jaVoices = useJaVoices()
   const { isProcessing: audioProcessing } = useAudioGenerationStatus()
+  // Rendered only when there is something to credit — an empty footnote block
+  // would still occupy space under the audio group.
+  const audioFootnote = (voicevoxCredit || audioProcessing) ? (
+    <>
+      {voicevoxCredit && <div>{renderAttributionSegments(voicevoxCredit)}</div>}
+      {audioProcessing && <div>Audio is being generated</div>}
+    </>
+  ) : null
 
   if (loading && !progress) return null
 
@@ -508,12 +516,7 @@ function VocabSrsHome() {
           settings={settings}
           onChange={setSetting}
           backupVoices={jaVoices}
-          audioFootnote={
-            <>
-              {voicevoxCredit && <div>{renderAttributionSegments(voicevoxCredit)}</div>}
-              {audioProcessing && <div>Audio is being generated</div>}
-            </>
-          }
+          audioFootnote={audioFootnote}
         />
 
         {/* ── Dev (DEV only) ── */}

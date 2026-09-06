@@ -12,19 +12,24 @@ import { safeLocalStorageGet, safeLocalStorageSet } from '../utils/storage.js'
 // the two recorded Voicevox voices; `backupVoice` is the browser voice that
 // reads anything with no recording, which is what the code always did
 // silently.
+//
+// A fresh install opens with the front giving nothing away — no reading, no
+// audio — and the back giving everything, so a card tests you once and then
+// explains itself. Interface keeps the feedback that reacts to an answer and
+// drops the two decorations.
 export const DRILL_SETTINGS_DEFAULTS = {
-  furigana: true,
+  furigana: false,
   frontAudio: false,
   translation: true,
-  kanjiMeanings: false,
+  kanjiMeanings: true,
   sentence: true,
   backAudio: true,
   voice: 'male',
   backupVoice: '',
   sfx: true,
-  pixelFont: true,
   visualEffects: true,
-  streak: true,
+  pixelFont: false,
+  streak: false,
 }
 
 // 'male'/'female' -> the audio-source string the drills and voicevoxAudio.js
