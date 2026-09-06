@@ -2705,16 +2705,10 @@
   {
     "id": "genki-2-l23-027",
     "listKey": "genki-2-l23",
-    "jmdictId": "1589780",
-    "kanji": "換える"
-  },
-  {
-    "id": "genki-2-l23-028",
-    "listKey": "genki-2-l23",
     "jmdictId": "1550840"
   },
   {
-    "id": "genki-2-l23-029",
+    "id": "genki-2-l23-028",
     "listKey": "genki-2-l23",
     "jmdictId": "1003170",
     "kanji": "がっかり",
@@ -2722,26 +2716,26 @@
     "kana": "がっかり"
   },
   {
-    "id": "genki-2-l23-030",
+    "id": "genki-2-l23-029",
     "listKey": "genki-2-l23",
     "jmdictId": "1196970",
     "kanji": "我慢",
     "suru": true
   },
   {
-    "id": "genki-2-l23-031",
+    "id": "genki-2-l23-030",
     "listKey": "genki-2-l23",
     "jmdictId": "2253800"
   },
   {
-    "id": "genki-2-l23-032",
+    "id": "genki-2-l23-031",
     "listKey": "genki-2-l23",
     "jmdictId": "1452720",
     "kanji": "同情",
     "suru": true
   },
   {
-    "id": "genki-2-l23-033",
+    "id": "genki-2-l23-032",
     "listKey": "genki-2-l23",
     "jmdictId": "1103110",
     "kanji": "パンク",
@@ -2749,47 +2743,47 @@
     "kana": "パンク"
   },
   {
-    "id": "genki-2-l23-034",
+    "id": "genki-2-l23-033",
     "listKey": "genki-2-l23",
     "jmdictId": "2092960"
   },
   {
-    "id": "genki-2-l23-035",
+    "id": "genki-2-l23-034",
     "listKey": "genki-2-l23",
     "jmdictId": "1539280",
     "kanji": "優勝",
     "suru": true
   },
   {
-    "id": "genki-2-l23-036",
+    "id": "genki-2-l23-035",
     "listKey": "genki-2-l23",
     "jmdictId": "2857380"
   },
   {
-    "id": "genki-2-l23-037",
+    "id": "genki-2-l23-036",
     "listKey": "genki-2-l23",
     "jmdictId": "2847540"
   },
   {
-    "id": "genki-2-l23-038",
+    "id": "genki-2-l23-037",
     "listKey": "genki-2-l23",
     "jmdictId": "1006640",
     "sense": 2
   },
   {
-    "id": "genki-2-l23-039",
+    "id": "genki-2-l23-038",
     "listKey": "genki-2-l23",
     "jmdictId": "1345605",
     "sense": 2
   },
   {
-    "id": "genki-2-l23-040",
+    "id": "genki-2-l23-039",
     "listKey": "genki-2-l23",
     "jmdictId": "1007130",
     "mark": "{}〜"
   },
   {
-    "id": "genki-2-l23-041",
+    "id": "genki-2-l23-040",
     "listKey": "genki-2-l23",
     "jmdictId": "1502630",
     "modified": true

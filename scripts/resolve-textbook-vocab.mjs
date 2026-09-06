@@ -540,7 +540,9 @@ if (collapsed.length) {
 // The three outcomes must account for every input row. A mismatch means an
 // entry reached no tier at all, which nothing else would surface.
 const cards = [...seen.values()].length
-const accounted = cards + collapsed.length + (tiers.unmatched ?? 0) + needsReview.filter(e => e.tier !== 'unmatched').length
+const accounted = cards + collapsed.length + (tiers.unmatched ?? 0)
+  + (tiers['override-none'] ?? 0)
+  + needsReview.filter(e => e.tier !== 'unmatched').length
 if (accounted !== entries.length) {
   console.warn(`WARNING: ${accounted} entries accounted for, ${entries.length} read`)
 }
