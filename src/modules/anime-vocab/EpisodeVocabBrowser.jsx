@@ -10,7 +10,7 @@ import Button from '../../components/Button.jsx'
 import DataList from '../../components/DataList.jsx'
 import ActionBar from '../../components/ActionBar.jsx'
 import Badge from '../../components/Badge.jsx'
-import { Chip, default as ChipSelector } from '../../components/Chip.jsx'
+import ChipSelector from '../../components/Chip.jsx'
 import FilterCard, { FilterRow } from '../../components/FilterCard.jsx'
 import CenteredLoadingMessage from '../../components/CenteredLoadingMessage.jsx'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
@@ -26,17 +26,16 @@ const DEFAULT_WORD_LIMIT = 20
 // alone, since those start looking like genuinely useful/notable vocabulary.
 const GENERIC_RANK_THRESHOLD = 200
 
-// Community-estimated JLPT levels (no official list exists — see
-// scripts/import-jlpt-vocab.mjs), so a word with no jlpt_level match is left
-// in rather than assumed easy — the level filter only ever removes words we
-// have positive (if approximate) data for.
-const JLPT_LEVEL_ORDER = { N5: 1, N4: 2, N3: 3, N2: 4, N1: 5 }
-// "any" isn't a threshold point (it means "disable the filter"), so it's a
-// standalone Chip beside the 4-option ChipSelector rather than a 5th option
-// — passing it as an option would either misrender (thresholdIndex -1 shows
-// nothing active, not "everything") or, worse, light every chip if it ever
-// matched index 0.
+// Community-estimated JLPT levels — no official list exists, see
+// scripts/import-jlpt-vocab.mjs. Picking a level shows only that level: a
+// plain single-select, not a cumulative threshold, so N5 is a real choice
+// rather than a synonym for "any". Words with no jlpt_level match are in
+// scope only under "Any level" — once a level is named, an untagged word
+// can't be shown to belong to it, and a large share of an episode's content
+// words are untagged, so keeping them would leave the filter barely filtering.
 const JLPT_CHIP_OPTIONS = [
+  { value: 'any', label: 'Any level' },
+  { value: 'N5', label: 'N5' },
   { value: 'N4', label: 'N4' },
   { value: 'N3', label: 'N3' },
   { value: 'N2', label: 'N2' },
@@ -91,7 +90,7 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
   const [includeGrammar, setIncludeGrammar] = useState(false)
   const [includeNames, setIncludeNames] = useState(false)
   const [includeGeneric, setIncludeGeneric] = useState(false)
-  const [minJlptLevel, setMinJlptLevel] = useState('any')
+  const [jlptLevel, setJlptLevel] = useState('any')
   const [includeKnown, setIncludeKnown] = useState(true)
   const [lookupQuery, setLookupQuery] = useState('')
   const [selected, setSelected] = useState(new Set())
@@ -184,10 +183,10 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
       .filter(r => includeGrammar || !r.is_grammar)
       .filter(r => includeNames || !r.is_name)
       .filter(r => includeGeneric || r.global_frequency_rank == null || r.global_frequency_rank > GENERIC_RANK_THRESHOLD)
-      .filter(r => minJlptLevel === 'any' || r.jlptLevel == null || JLPT_LEVEL_ORDER[r.jlptLevel] >= JLPT_LEVEL_ORDER[minJlptLevel])
+      .filter(r => jlptLevel === 'any' || r.jlptLevel === jlptLevel)
       .filter(r => includeKnown || (r.status !== 'young' && r.status !== 'mature'))
       .sort((a, b) => (a.frequency_rank ?? 0) - (b.frequency_rank ?? 0)),
-    [candidateRows, includeGrammar, includeNames, includeGeneric, minJlptLevel, includeKnown]
+    [candidateRows, includeGrammar, includeNames, includeGeneric, jlptLevel, includeKnown]
   )
 
   // Auto-select the top DEFAULT_WORD_LIMIT eligible words whenever filters
@@ -258,16 +257,7 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
 
       <FilterCard>
         <FilterRow key="jlpt" label="JLPT level">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-            <Chip label="Any level" active={minJlptLevel === 'any'} onClick={() => setMinJlptLevel('any')} />
-            <ChipSelector
-              options={JLPT_CHIP_OPTIONS}
-              value={minJlptLevel}
-              onChange={setMinJlptLevel}
-              mode="threshold"
-              thresholdDirection="forward"
-            />
-          </div>
+          <ChipSelector mode="single" options={JLPT_CHIP_OPTIONS} value={jlptLevel} onChange={setJlptLevel} />
         </FilterRow>
         <FilterRow key="filter" label="Filter">
           <ChipSelector mode="multi" options={filterOptions} value={filterValue} onChange={handleFilterChange} />
