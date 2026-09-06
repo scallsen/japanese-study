@@ -444,7 +444,7 @@ function DoneScreen({
       key: 'mistakes', width: 36, align: 'right',
       render: row => row.mistakes > 0 ? <Badge variant="text" tone={MISTAKE_TIER_TONE[mistakeTier(row.mistakes)]}>{row.mistakes}×</Badge> : null,
     },
-  ], [dictEntries])
+  ], [dictEntries, senseGlosses])
 
   function showAddedToast(result) {
     if (!result) return
