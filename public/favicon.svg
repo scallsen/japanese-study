@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg">
-<rect width="16" height="16" fill="#1E1E1E" />
+<rect width="16" height="16" rx="3.5" fill="#1E1E1E" />
 <text x="8" y="8.6" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="bold" fill="#E8E8E8">文</text>
 </svg>
