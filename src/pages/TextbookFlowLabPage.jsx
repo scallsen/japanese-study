@@ -64,7 +64,7 @@ const OPTION_GROUPS = [
     options: [
       { value: 'dialog', label: 'Dialog', blurb: 'Advancing past a chapter with unsent words opens "Send Lesson 4 to the SRS first?" — send and advance, or advance without.' },
       { value: 'notice', label: 'Inline notice', blurb: 'No interruption: the card and the chapter row carry a warning line ("0 of 63 in SRS") and a Send button. Advancing just advances.' },
-      { value: 'none', label: 'None', blurb: 'Only the done screen prompts. Advancing never asks.' },
+      { value: 'none', label: 'None', blurb: 'No prompt anywhere. Advancing never asks — the lesson\'s word list is the only place to send words.' },
     ],
   },
   {
@@ -604,7 +604,7 @@ function ChapterPath({ mock }) {
                 <div style={{ fontSize: FS_BASE, color: ch.drilled || isCurrent ? TEXT : TEXT_MUTED }}>{ch.label}</div>
                 <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: 2 }}>{meta}</div>
               </div>
-              <span style={{ color: TEXT_MUTED, fontSize: FS_CAPTION }}>{open ? '▾' : '›'}</span>
+              <span style={{ display: 'inline-block', color: TEXT_MUTED, fontSize: FS_CAPTION, transform: open ? 'rotate(90deg)' : 'none', transition: 'transform 120ms' }}>›</span>
             </div>
             {open && (
               <div style={{ padding: `0 14px 12px 54px`, display: 'flex', flexDirection: 'column', gap: SPACE_8 }}>
@@ -720,15 +720,10 @@ function DrillScreen({ mock }) {
 }
 
 function DoneScreen({ mock }) {
-  const { screen, state, opts, sentCountOf, fullySent, chapterAfter, sendAll, startDrill, advance, go, note } = mock
+  const { screen, state, opts, chapterAfter, startDrill, advance, go } = mock
   const { chapter, bookId } = screen
-  const book = getTextbook(bookId)
   const count = chapter.wordCount ?? wordCountFor(chapter.id)
   const isBook = bookId === BOOK_ID
-  const alreadySent = isBook && fullySent(chapter)
-  const unsent = isBook ? count - sentCountOf(chapter) : count
-  const [skipped, setSkipped] = useState(false)
-  const done = alreadySent || skipped
 
   const isCurrent = isBook && chapter.id === state.current.id
   const next = isBook ? chapterAfter(chapter) : null
@@ -753,29 +748,10 @@ function DoneScreen({ mock }) {
           <Stat value={6} label="Troubled" />
         </div>
 
-        <Card padding={SPACE_16} style={{ width: 'min(520px, 100%)' }}>
-          <SectionHeader title="Remember these words" />
-          {done ? (
-            <Notice tone={alreadySent ? 'success' : 'neutral'} title={alreadySent ? `In your "${book.title}" deck` : 'Not sent'}>
-              {alreadySent ? 'Every word in this lesson is already in the SRS.' : 'You can send them later from the lesson\'s word list.'}
-            </Notice>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE_12 }}>
-              <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, lineHeight: 1.5 }}>
-                {unsent} of {count} words are not in the SRS yet. Send them to the &ldquo;{book.title}&rdquo; deck, or pick individual words from the lesson&apos;s word list.
-              </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: SPACE_8, alignItems: 'center' }}>
-                <Button onClick={() => { sendAll(chapter, bookId); note('Sent from the done screen') }}>Send {unsent} to SRS</Button>
-                {isBook && <Button variant="neutral" onClick={() => go('preview', { chapter })}>Choose words</Button>}
-                <Button variant="ghost-muted" size="sm" onClick={() => setSkipped(true)}>Not now</Button>
-              </div>
-            </div>
-          )}
-        </Card>
-
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: SPACE_8, justifyContent: 'center' }}>
           {primary}
           <Button variant="neutral" size="lg" onClick={() => startDrill(chapter, { fromCard: false, bookId })}>Redo troubled</Button>
+          {isBook && <Button variant="neutral" size="lg" onClick={() => go('preview', { chapter })}>View words</Button>}
           <Button variant="neutral" size="lg" onClick={() => go('textbook')}>Back to book</Button>
         </div>
       </div>
