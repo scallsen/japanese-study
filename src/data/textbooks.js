@@ -153,8 +153,15 @@ export const TEXTBOOKS = [
   // learner's account (custom_words), so these appear only for whoever owns
   // them — the picker offers a book when it has words for the viewer, and for
   // everyone else these have none.
+  //
+  // `personal: true` says so outright, for anything that can't ask about word
+  // counts. The empty card's cover carousel is the case: it has no viewer to
+  // count words for, so without the flag it advertised all five to everybody —
+  // and since they reuse the two So-Matome covers between them, as four
+  // identical N3 spines and two identical N2 ones.
   {
     id: 'nsm-n3',
+    personal: true,
     title: 'Coto Intermediate 3',
     subtitle: 'N3',
     publisher: 'Coto Academy',
@@ -165,6 +172,7 @@ export const TEXTBOOKS = [
   },
   {
     id: 'nsm-n3-i4',
+    personal: true,
     title: 'Coto Intermediate 4',
     subtitle: 'N3',
     publisher: 'Coto Academy',
@@ -175,6 +183,7 @@ export const TEXTBOOKS = [
   },
   {
     id: 'nsm-n3-i5',
+    personal: true,
     title: 'Coto Intermediate 5',
     subtitle: 'N3',
     publisher: 'Coto Academy',
@@ -185,6 +194,7 @@ export const TEXTBOOKS = [
   },
   {
     id: 'nsm-n2-a1',
+    personal: true,
     title: 'Coto Advanced 1',
     subtitle: 'N2',
     publisher: 'Coto Academy',
@@ -195,6 +205,7 @@ export const TEXTBOOKS = [
   },
   {
     id: 'nsm-n2-a2',
+    personal: true,
     title: 'Coto Advanced 2',
     subtitle: 'N2',
     publisher: 'Coto Academy',
