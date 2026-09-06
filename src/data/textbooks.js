@@ -34,15 +34,34 @@ const ICONS = '/placeholder-svg'
 // misalignment. Recheck this if a new cover is drawn to different bounds.
 export const COVER_GUTTER_FRACTION = 5 / 32
 
-// Retailer *search* links, not product pages: a search URL keeps working
-// where a hardcoded product id rots as soon as an edition changes. Swap in
-// real product links per book if you'd rather point at exact editions.
-function storeLinks(query) {
+// Amazon runs a separate storefront per country and a search on the wrong one
+// finds nothing you can actually buy. Timezone is the best proxy available:
+// navigator.language commonly reports en-US for someone living in Japan, while
+// the timezone follows where the machine is. A wrong guess still lands on a
+// working search, so this errs toward the larger catalogue.
+function amazonHost() {
+  try {
+    if (Intl.DateTimeFormat().resolvedOptions().timeZone === 'Asia/Tokyo') return 'www.amazon.co.jp'
+  } catch { /* no Intl — fall through */ }
+  return 'www.amazon.com'
+}
+
+// Retailer *search* links, not product pages: a search URL keeps working where
+// a hardcoded product id rots as soon as an edition changes. `extra` is for a
+// publisher's own page, which is the better first link when a book has one.
+// Kinokuniya is named for its US storefront because that is the one linked —
+// kinokuniya.co.jp is a separate site and does not answer the same URL shape.
+function storeLinks(query, extra = []) {
   return [
-    { label: 'Amazon', href: `https://www.amazon.com/s?k=${encodeURIComponent(query)}` },
-    { label: 'Kinokuniya', href: `https://united-states.kinokuniya.com/products?keyword=${encodeURIComponent(query)}` },
+    ...extra,
+    { label: 'Amazon', href: `https://${amazonHost()}/s?k=${encodeURIComponent(query)}` },
+    { label: 'Kinokuniya US', href: `https://united-states.kinokuniya.com/products?keyword=${encodeURIComponent(query)}` },
   ]
 }
+
+// The publisher's own site for Genki, which is where the audio, answer keys and
+// errata live — more useful to a learner than either retailer.
+const GENKI_ONLINE = [{ label: 'Genki Online', href: 'https://genki3.japantimes.co.jp/en/' }]
 
 export const TEXTBOOKS = [
   {
@@ -50,8 +69,8 @@ export const TEXTBOOKS = [
     title: 'Genki 1',
     subtitle: 'Beginner · N5',
     publisher: 'The Japan Times',
-    description: 'The standard first-year course. Twelve lessons of dialogue, grammar notes and drills, taught in kana and kanji from the start.',
-    purchase: storeLinks('Genki 1 Japanese textbook third edition'),
+    description: 'The standard first-year course, 3rd edition. Twelve lessons of dialogue, grammar notes and drills, taught in kana and kanji from the very start.',
+    purchase: storeLinks('Genki 1 Japanese textbook third edition', GENKI_ONLINE),
     icon: `${ICONS}/genki-1.svg`,
     chapters: lessons('genki-1', 1, 12),
   },
@@ -60,8 +79,8 @@ export const TEXTBOOKS = [
     title: 'Genki 2',
     subtitle: 'Beginner · N4',
     publisher: 'The Japan Times',
-    description: 'Picks up at lesson 13 and runs to 23, working through passive, causative and the polite registers that trip up most beginners.',
-    purchase: storeLinks('Genki 2 Japanese textbook third edition'),
+    description: 'The second half, lessons 13 to 23. Passive, causative and the polite registers that trip up most beginners, still 3rd edition.',
+    purchase: storeLinks('Genki 2 Japanese textbook third edition', GENKI_ONLINE),
     icon: `${ICONS}/genki-2.svg`,
     chapters: lessons('genki-2', 13, 23),
   },
@@ -114,7 +133,7 @@ export const TEXTBOOKS = [
     title: 'Nihongo So-Matome N3 Kanji',
     subtitle: 'Kanji · N3',
     publisher: 'ASK Publishing',
-    description: 'JLPT N3 kanji in six weeks of short daily sets, each day built around a theme. The book\'s seventh day of each week is review and introduces no new words.',
+    description: 'JLPT N3 kanji in six weeks of short daily sets, each day themed around a handful of characters. Every seventh day is review and teaches nothing new, which is why there are 36 chapters rather than 42.',
     purchase: storeLinks('Nihongo So-matome N3 kanji'),
     icon: `${ICONS}/nihongo-so-matome-kanji-n3.svg`,
     chapters: weekDays('nsm-n3-kanji', 6, 6),
