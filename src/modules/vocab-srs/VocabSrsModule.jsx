@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useProgress } from '../../hooks/useProgress.js'
-import { getDeckStats, getGlobalStats, getStateDistribution, tallyCardStates, getTodaysQueue, resolveCard, resetCardProgress, createCard, State } from './srs.js'
+import { getDeckStats, getGlobalStats, getStateDistribution, getTodaysQueue, resolveCard, resetCardProgress, createCard, State } from './srs.js'
 import { parseAnkiExport } from './import.js'
 import { initSession } from './session.js'
 import { migrateProgress, initializeDeckCards } from './migrate.js'
@@ -18,6 +18,7 @@ import NumberField from '../../components/NumberField.jsx'
 import ToggleButton from '../../components/ToggleButton.jsx'
 import Badge from '../../components/Badge.jsx'
 import DistributionBar from '../../components/DistributionBar.jsx'
+import DataList from '../../components/DataList.jsx'
 import { useToast } from '../../context/ToastContext.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_NAV, SUBHEADING_STYLE, FS_CAPTION, FS_CONTENT_HEADING, SUCCESS } from '../../data/theme.js'
 import { MODULES } from '../../data/modules.js'
@@ -55,13 +56,17 @@ function DeckProgressBar({ distribution }) {
   )
 }
 
-function DeckRow({ deck, stats, onToggle, onRename }) {
-  const ACCENT = useAccent()
+// The Decks list's name column — click-to-rename (imported decks only),
+// same inline-edit behaviour the old sidebar DeckRow had. The row itself
+// navigates to the deck's browse view, so every click here has to stop that:
+// preventDefault (an ancestor <a>'s navigation is gated on the click event's
+// canceled flag) and stopPropagation both, same reasoning DataList's own
+// RowCheckbox uses for a selection control inside a navigable row.
+function DeckNameCell({ deck, stats, onRename }) {
   const [editing, setEditing] = useState(false)
   const [draftName, setDraftName] = useState(deck.name)
   const canManage = deck.source === 'imported'
-  const notStarted = stats.total === 0
-  const infoText = notStarted
+  const infoText = stats.total === 0
     ? 'not started'
     : `${stats.total} cards · ${stats.dueToday} due · ${stats.newAvailable} new`
 
@@ -73,65 +78,34 @@ function DeckRow({ deck, stats, onToggle, onRename }) {
   }
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 4,
-      padding: '8px 0',
-      borderBottom: '1px solid rgba(255,255,255,0.05)',
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ fontSize: 9, color: deck.active ? ACCENT : 'rgba(255,255,255,0.2)', flexShrink: 0 }}>
-              {deck.active ? '●' : '○'}
-            </span>
-            {editing ? (
-              <input
-                autoFocus
-                value={draftName}
-                onChange={e => setDraftName(e.target.value)}
-                onBlur={commitRename}
-                onKeyDown={e => {
-                  if (e.key === 'Enter') commitRename()
-                  if (e.key === 'Escape') { setDraftName(deck.name); setEditing(false) }
-                }}
-                style={{
-                  minWidth: 0,
-                  flex: 1,
-                  fontSize: FS_BASE,
-                  color: TEXT,
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.15)',
-                  borderRadius: 4,
-                  padding: '2px 6px',
-                  fontFamily: 'inherit',
-                  letterSpacing: TRACKING,
-                }}
-              />
-            ) : (
-              <span
-                onClick={canManage ? () => setEditing(true) : undefined}
-                title={canManage ? 'Click to rename' : undefined}
-                style={{ fontSize: FS_BASE, color: TEXT, cursor: canManage ? 'text' : 'default' }}
-              >
-                {deck.name}
-              </span>
-            )}
-          </div>
-          <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: 2 }}>{infoText}</div>
-        </div>
-        <ToggleButton active={deck.active} labels={{ on: 'On', off: 'Off' }} onClick={onToggle} />
-      </div>
-      {canManage && (
-        <a
-          href={`#/vocab-srs/browse?deck=${deck.id}&manage=1`}
-          className="srs-browse-link"
-          style={{ fontSize: FS_CAPTION, color: ACCENT }}
+    <div style={{ minWidth: 0 }}>
+      {editing ? (
+        <input
+          autoFocus
+          value={draftName}
+          onClick={e => { e.preventDefault(); e.stopPropagation() }}
+          onChange={e => setDraftName(e.target.value)}
+          onBlur={commitRename}
+          onKeyDown={e => {
+            if (e.key === 'Enter') commitRename()
+            if (e.key === 'Escape') { setDraftName(deck.name); setEditing(false) }
+          }}
+          style={{
+            minWidth: 0, width: '100%', fontSize: FS_BASE, color: TEXT,
+            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)',
+            borderRadius: 4, padding: '2px 6px', fontFamily: 'inherit', letterSpacing: TRACKING,
+          }}
+        />
+      ) : (
+        <span
+          onClick={canManage ? e => { e.preventDefault(); e.stopPropagation(); setEditing(true) } : undefined}
+          title={canManage ? 'Click to rename' : undefined}
+          style={{ fontSize: FS_BASE, color: deck.active ? TEXT : TEXT_MUTED, cursor: canManage ? 'text' : 'default' }}
         >
-          Manage cards →
-        </a>
+          {deck.name}
+        </span>
       )}
+      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: 2 }}>{infoText}</div>
     </div>
   )
 }
@@ -276,10 +250,39 @@ function VocabSrsHome() {
   const effectiveNewPerDay = Math.max(0, dailyNewCards - newCardsIntroducedToday)
   const { due, newCards, rescheduled } = getTodaysQueue(cardsObj, decks, { newPerDay: effectiveNewPerDay })
   const canStart = due.length > 0 || newCards.length > 0 || rescheduled.length > 0
-  // Distribution of the cards that would actually be studied if "Start review"
-  // were pressed right now — distinct from stateDistribution's whole-deck view.
-  const queueDistribution = tallyCardStates([...due, ...rescheduled, ...newCards])
   const activeDecks = deckList.filter(d => d.active)
+
+  // The Decks list's columns — name (+ inline rename), a per-deck learning-
+  // stage bar, and the on/off toggle. Both the toggle and the name's rename
+  // affordance stop the click from also firing the row's own navigate.
+  const deckColumns = [
+    {
+      key: 'name', flex: 2,
+      render: deck => <DeckNameCell deck={deck} stats={getDeckStats(cardsObj, deck.id)} onRename={name => handleRenameDeck(deck.id, name)} />,
+    },
+    {
+      key: 'dist', flex: 1.4,
+      render: deck => (
+        <div style={{ width: '100%' }}>
+          {/* getStateDistribution filters to active decks — force it here so
+              a toggled-off deck's bar still reflects its real cards, matching
+              the count text beside it (getDeckStats doesn't gate on active). */}
+          <DistributionBar
+            segments={STATE_SEGMENTS.map(s => ({ ...s, count: getStateDistribution(cardsObj, { [deck.id]: { ...deck, active: true } })[s.key] ?? 0 }))}
+            showLegend={false}
+          />
+        </div>
+      ),
+    },
+    {
+      key: 'toggle', width: 64, align: 'right',
+      render: deck => (
+        <span onClick={e => e.stopPropagation()}>
+          <ToggleButton active={deck.active} labels={{ on: 'On', off: 'Off' }} onClick={() => handleToggleDeck(deck.id)} />
+        </span>
+      ),
+    },
+  ]
 
   // Recomputes today's new-card count from cards actually introduced this
   // session — a session card that has left State.New has been studied. Returns
@@ -456,40 +459,9 @@ function VocabSrsHome() {
     return (
       <div style={{ padding: `16px ${paddingH}px 16px` }}>
 
-        {/* ── Deck Stats (global) ── */}
-        <SectionHeader title="Deck Stats" />
-        {stateDistribution.total === 0 ? (
-          <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, padding: '4px 0 8px' }}>
-            No cards yet
-          </div>
-        ) : (
-          <>
-            <DeckProgressBar distribution={stateDistribution} />
-            <a href="#/vocab-srs/browse" className="srs-browse-link" style={{ display: 'inline-block', marginTop: 12, fontSize: FS_BASE, color: ACCENT }}>
-              View all cards →
-            </a>
-          </>
-        )}
-
-        <div style={hairline} />
-
-        {/* ── Decks ── */}
-        <SectionHeader title="Decks" />
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {deckList.map(deck => (
-            <DeckRow
-              key={deck.id}
-              deck={deck}
-              stats={getDeckStats(cardsObj, deck.id)}
-              onToggle={() => handleToggleDeck(deck.id)}
-              onRename={newName => handleRenameDeck(deck.id, newName)}
-            />
-          ))}
-        </div>
-
-        <div style={hairline} />
-
-        {/* ── SRS Settings ── */}
+        {/* Deck stats/toggling/renaming live in the main content now (the
+            Decks list below the header) — the sidebar keeps only the
+            settings that don't have a natural home there. */}
         <SectionHeader title="SRS Settings" />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -630,77 +602,74 @@ function VocabSrsHome() {
             />
 
             <main style={{ flex: 1, overflowY: 'auto', padding: '28px 24px', display: 'flex', flexDirection: 'column' }}>
-              <div style={{ maxWidth: 480, margin: '0 auto', width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <div style={{ maxWidth: 820, margin: '0 auto', width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
                 <div style={{ flex: 1 }}>
 
                 {activeDecks.length === 0 ? (
-                  <div style={{ textAlign: 'center', paddingTop: 60 }}>
+                  <div style={{ textAlign: 'center', padding: '40px 0 32px' }}>
                     <div style={{ fontSize: FS_NAV, color: TEXT, marginBottom: 8 }}>No active decks</div>
-                    <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>
-                      Enable a deck in the settings panel to begin
-                    </div>
+                    <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>Turn one on below to begin.</div>
                   </div>
                 ) : (
-                  <>
-                    {/* Global summary */}
-                    <div style={{ marginBottom: 20 }}>
-                      <div style={{ fontSize: FS_CONTENT_HEADING, color: TEXT, letterSpacing: TRACKING, marginBottom: 14 }}>
-                        {canStart
-                          ? `${due.length + rescheduled.length} due · ${newCards.length} new · ~${Math.ceil((due.length + rescheduled.length + newCards.length) * 0.25) || '<1'} min`
-                          : 'Nothing due'}
+                  <div style={{ marginBottom: 28 }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+                      <div>
+                        <div style={{ fontSize: FS_CONTENT_HEADING, color: TEXT, letterSpacing: TRACKING }}>
+                          {canStart
+                            ? `${due.length + rescheduled.length} due · ${newCards.length} new · ~${Math.ceil((due.length + rescheduled.length + newCards.length) * 0.25) || '<1'} min`
+                            : 'Nothing due'}
+                        </div>
+                        <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginTop: 4 }}>
+                          {activeDecks.length} active {activeDecks.length === 1 ? 'deck' : 'decks'} · {globalStats.totalCards} cards
+                        </div>
                       </div>
-                      <DeckProgressBar distribution={queueDistribution} />
-                    </div>
-
-                    {/* Per-deck breakdown */}
-                    {activeDecks.length > 1 && (
-                      <div style={{ marginBottom: 24 }}>
-                        {activeDecks.map(deck => {
-                          const ds = getDeckStats(cardsObj, deck.id)
-                          return (
-                            <div key={deck.id} style={{
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                              padding: '5px 0',
-                              borderBottom: '1px solid rgba(255,255,255,0.05)',
-                            }}>
-                              <span style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>{deck.name}</span>
-                              <span style={{ fontSize: FS_BASE, color: TEXT }}>
-                                {ds.dueToday} due · {ds.newAvailable} new
-                              </span>
-                            </div>
-                          )
-                        })}
-                      </div>
-                    )}
-
-                    <div style={{ marginBottom: 28 }}>
-                      <Button variant="accent-outline" size="lg" fullWidth onClick={() => handleStartReview(effectiveNewPerDay)} disabled={!canStart}>
+                      <Button variant="accent-outline" size="lg" onClick={() => handleStartReview(effectiveNewPerDay)} disabled={!canStart}>
                         {canStart ? `Start review (${due.length + rescheduled.length + newCards.length})` : 'Nothing due'}
                       </Button>
                     </div>
-
-                    <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 20 }}>
-                      <div style={{ ...SUBHEADING_STYLE, color: TEXT_MUTED, marginBottom: 10 }}>
-                        Import
+                    {stateDistribution.total > 0 && (
+                      <div style={{ marginTop: 16 }}>
+                        <DeckProgressBar distribution={stateDistribution} />
+                        <a href="#/vocab-srs/browse" className="srs-browse-link" style={{ display: 'inline-block', marginTop: 12, fontSize: FS_BASE, color: ACCENT }}>
+                          View all cards →
+                        </a>
                       </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-                          <FileButton accept=".txt" onFile={handleFileChange}>Choose .txt file</FileButton>
-                          {importMsg && (
-                            <span style={{ fontSize: FS_BASE, color: SUCCESS }}>{importMsg}</span>
-                          )}
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-                          <Button variant="neutral" onClick={() => setShowWordImport(true)}>Import from text / image</Button>
-                        </div>
-                      </div>
-                      <div style={{ marginTop: 8, fontSize: 12, color: 'rgba(255,255,255,0.2)' }}>
-                        {Object.keys(cardsObj).length} total cards
-                      </div>
-                    </div>
-                  </>
+                    )}
+                  </div>
                 )}
+
+                <div style={{ marginBottom: 28 }}>
+                  <SectionHeader title={`Decks · ${activeDecks.length} of ${deckList.length} on`} />
+                  <DataList
+                    columns={deckColumns}
+                    rows={deckList}
+                    maxWidth="100%"
+                    navigate={{ href: deck => `#/vocab-srs/browse?deck=${deck.id}` }}
+                  />
+                  <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: 8 }}>
+                    Click a deck to browse its cards. Review settings (daily new, leech, Hard/Easy) stay in the settings sidebar.
+                  </div>
+                </div>
+
+                <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 20 }}>
+                  <div style={{ ...SUBHEADING_STYLE, color: TEXT_MUTED, marginBottom: 10 }}>
+                    Import
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                      <FileButton accept=".txt" onFile={handleFileChange}>Choose .txt file</FileButton>
+                      {importMsg && (
+                        <span style={{ fontSize: FS_BASE, color: SUCCESS }}>{importMsg}</span>
+                      )}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                      <Button variant="neutral" onClick={() => setShowWordImport(true)}>Import from text / image</Button>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: 8, fontSize: 12, color: 'rgba(255,255,255,0.2)' }}>
+                    {Object.keys(cardsObj).length} total cards
+                  </div>
+                </div>
                 </div>
 
                 <AttributionFooter sources={[
