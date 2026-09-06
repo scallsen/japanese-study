@@ -10,6 +10,7 @@ import ConfirmDialog from '../components/ConfirmDialog.jsx'
 import Modal from '../components/Modal.jsx'
 import Markdown from '../components/Markdown.jsx'
 import TopProgressBar from '../components/TopProgressBar.jsx'
+import ProviderIcon from '../components/ProviderIcon.jsx'
 import { useAccent } from '../context/ModuleThemeContext.jsx'
 // Inlined at build time by Vite, so the modal always shows the committed file
 // rather than a copy that drifts from it.
@@ -22,6 +23,7 @@ import { AUTH_PROVIDERS, EMAIL_PROVIDER, providerLabel } from '../data/authProvi
 import { AI_DAILY_LIMITS } from '../data/aiLimits.js'
 import { useAiUsage } from '../hooks/useAiUsage.js'
 import { useApiKeyStatus } from '../hooks/useApiKeyStatus.js'
+import { useQuotaResetCountdown } from '../hooks/useQuotaResetCountdown.js'
 import { callFunction } from '../lib/functionsClient.js'
 import { useProgress } from '../hooks/useProgress.js'
 import { migrateProgress } from '../modules/vocab-srs/migrate.js'
@@ -62,6 +64,7 @@ export default function AccountPage() {
   const { usage } = useAiUsage()
   const { hint: keyHint, loading: keyLoading, refresh: refreshKey } = useApiKeyStatus()
   const { data: srsRaw } = useProgress('vocab-srs')
+  const resetsIn = useQuotaResetCountdown()
 
   const shell = {
     height: '100%',
@@ -243,7 +246,18 @@ export default function AccountPage() {
   ]
 
   const accountColumns = [
-    { key: 'label', width: 150 },
+    {
+      key: 'label',
+      width: 150,
+      // Own gap rather than the cell's default 4px, which sits the mark
+      // almost against the first letter.
+      render: row => (
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: SPACE_8 }}>
+          <ProviderIcon provider={row.id} />
+          {row.label}
+        </span>
+      ),
+    },
     {
       key: 'detail',
       flex: 1,
@@ -441,7 +455,7 @@ export default function AccountPage() {
             <div style={{ color: TEXT_MUTED, fontSize: FS_SM, marginTop: SPACE_12, lineHeight: 1.5 }}>
               {usingOwnKey
                 ? 'Billed to your Anthropic account. Your key is stored encrypted and never shown again — only the last four characters come back.'
-                : 'Resets at 00:00 UTC. Generating a story and reading words from a photo both call Claude, so they’re capped per day.'}
+                : `Resets in ${resetsIn}`}
             </div>
           </section>
 
