@@ -20,6 +20,7 @@ import {
 
 const BG = '#1E1E1E'
 const SURFACE = '#2A2A2A'
+const ACCENT = '#3ABDA4'  // core teal — the lab sits outside any ModuleThemeProvider
 const HAIRLINE = 'rgba(255,255,255,0.08)'
 const PANEL_W = 392  // SettingsSidebar's real content width (420 panel - 28 chevron)
 
@@ -115,6 +116,42 @@ function SpeakerIcon({ muted, size = 16 }) {
   )
 }
 
+// ── Icons ───────────────────────────────────────────────────────────────
+// Stroke-only, one 24px grid, drawn from currentColor so a row can tint its
+// own icon with the accent when the setting is on. No Japanese glyphs — the
+// no-Japanese-in-UI rule covers icons too, and a glyph icon would read as a
+// letter next to the label rather than as a symbol.
+const ICON_PATHS = {
+  front: <><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M8 12h8" /></>,
+  back: <><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M7 10h10M7 14h6" /></>,
+  audio: <><path d="M4 9.5v5h3.5L12 18V6L7.5 9.5H4z" /><path d="M16 9.5a4 4 0 010 5" /></>,
+  interface: <><path d="M4 7h16M4 12h16M4 17h16" /><circle cx="9" cy="7" r="2" /><circle cx="15" cy="12" r="2" /><circle cx="7" cy="17" r="2" /></>,
+  furigana: <><path d="M7 6.5h4M9 5.5v2" /><rect x="5" y="11" width="14" height="8" rx="1.5" /></>,
+  meaning: <><path d="M4 10h9M4 14h9" /><path d="M16.5 8.5l3.5 3.5-3.5 3.5" /></>,
+  kanji: <><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M12 4v16M3 12h18" /></>,
+  sentence: <><path d="M4 7h16M4 12h16M4 17h9" /></>,
+  voice: <><circle cx="9" cy="8" r="3" /><path d="M4 19c0-3 2.2-5 5-5s5 2 5 5" /><path d="M17 8.5a5 5 0 010 7" /></>,
+  autoplay: <><circle cx="12" cy="12" r="8" /><path d="M10.5 8.8l5 3.2-5 3.2z" /></>,
+  sfx: <><path d="M4 11v2M8 8v8M12 5.5v13M16 9v6M20 11v2" /></>,
+  font: <><rect x="4" y="4" width="6" height="6" /><rect x="14" y="4" width="6" height="6" /><rect x="4" y="14" width="6" height="6" /><rect x="14" y="14" width="6" height="6" /></>,
+  effects: <><path d="M11 3.5l1.7 4.3 4.3 1.7-4.3 1.7L11 15.5 9.3 11.2 5 9.5l4.3-1.7z" /><path d="M17.5 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z" /></>,
+  streak: <><path d="M12 3.5c3 3.4 5 5.9 5 8.9a5 5 0 01-10 0c0-2 1-3.3 2-4.6.3 1.2.9 2 1.8 2.4C10.4 8 10.9 5.7 12 3.5z" /></>,
+}
+
+function Icon({ name, size = 20, color = 'currentColor' }) {
+  const path = ICON_PATHS[name]
+  if (!path) return null
+  return (
+    <svg
+      width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
+      style={{ flexShrink: 0 }}
+    >
+      {path}
+    </svg>
+  )
+}
+
 // ── Preview card ────────────────────────────────────────────────────────
 // A stand-in for VocabCard — same cream face and stacking order, but with
 // the kanji meanings hardcoded so the lab needs no Supabase round-trip.
@@ -204,35 +241,177 @@ function Preview({ settings, context, children }) {
 // FilterCard's own FilterRow was considered and rejected here: its 92px
 // fixed label column is sized for short filter labels ("Content", "JLPT"),
 // and wraps settings labels onto two lines. Same container, different row.
-function Row({ label, hint, badge, control, indent = 0 }) {
+function Row({ label, hint, badge, control, icon, on, indent = 0, onClick, disabled }) {
+  const clickable = !!onClick && !disabled
   return (
-    <div style={{
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: SPACE_12,
-      padding: `10px ${SPACE_16}px`, paddingLeft: SPACE_16 + indent * 18,
-    }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: SPACE_8 }}>
-          <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>{label}</span>
-          {badge}
+    <div
+      role={clickable ? 'button' : undefined}
+      tabIndex={clickable ? 0 : undefined}
+      onClick={clickable ? onClick : undefined}
+      onKeyDown={clickable ? e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); onClick() } } : undefined}
+      className={clickable ? 'lab-row' : undefined}
+      style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: SPACE_12,
+        padding: `10px ${SPACE_16}px`, paddingLeft: SPACE_16 + indent * 18,
+        cursor: clickable ? 'pointer' : undefined,
+        userSelect: clickable ? 'none' : undefined,
+        opacity: disabled ? 0.45 : 1,
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: SPACE_12, minWidth: 0 }}>
+        {icon && <Icon name={icon} color={on ? ACCENT : 'rgba(255,255,255,0.4)'} />}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: SPACE_8 }}>
+            <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>{label}</span>
+            {badge}
+          </div>
+          {hint && <span style={{ fontSize: FS_SM, color: 'rgba(255,255,255,0.35)' }}>{hint}</span>}
         </div>
-        {hint && <span style={{ fontSize: FS_SM, color: 'rgba(255,255,255,0.35)' }}>{hint}</span>}
       </div>
-      <div style={{ flexShrink: 0 }}>{control}</div>
+      {/* The whole row is the hit target when it is clickable, so the control
+          inside must not swallow the click and toggle twice. */}
+      <div style={{ flexShrink: 0, pointerEvents: clickable ? 'none' : undefined }}>{control}</div>
     </div>
   )
 }
 
-function GroupLabel({ children, note }) {
+// ── Control styles ──────────────────────────────────────────────────────
+// The same boolean, five ways. Switching between them restyles every row so
+// they can be compared in place rather than described.
+function SwitchControl({ on, disabled }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: SPACE_12, margin: `${SPACE_24}px 0 ${SPACE_8}px` }}>
-      <span style={{ ...SUBHEADING_STYLE, color: 'rgba(255,255,255,0.35)' }}>{children}</span>
+    <span
+      className="lab-switch"
+      style={{
+        position: 'relative', display: 'inline-block', width: 38, height: 22, borderRadius: 11,
+        background: on ? ACCENT : 'rgba(255,255,255,0.16)',
+        border: `1px solid ${on ? ACCENT : 'rgba(255,255,255,0.2)'}`,
+        transition: 'background 140ms',
+        opacity: disabled ? 0.4 : 1,
+      }}
+    >
+      <span style={{
+        position: 'absolute', top: 2, left: on ? 18 : 2, width: 16, height: 16, borderRadius: '50%',
+        background: on ? '#fff' : 'rgba(255,255,255,0.55)', transition: 'left 140ms',
+      }} />
+    </span>
+  )
+}
+
+function SegmentedControl({ on, onChange, disabled }) {
+  return (
+    <span style={{ display: 'inline-flex', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 5, overflow: 'hidden', opacity: disabled ? 0.4 : 1 }}>
+      {[false, true].map(value => (
+        <button
+          key={String(value)}
+          type="button"
+          disabled={disabled}
+          onClick={() => onChange(value)}
+          className="lab-seg-btn"
+          style={{
+            padding: '4px 12px', border: 'none', cursor: disabled ? 'not-allowed' : 'pointer',
+            fontFamily: FONT, letterSpacing: TRACKING, fontSize: FS_SM,
+            background: on === value ? (value ? `${ACCENT}2E` : 'rgba(255,255,255,0.1)') : 'transparent',
+            color: on === value ? (value ? ACCENT : TEXT) : TEXT_MUTED,
+          }}
+        >
+          {value ? 'On' : 'Off'}
+        </button>
+      ))}
+    </span>
+  )
+}
+
+function CheckControl({ on, disabled }) {
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+      width: 18, height: 18, borderRadius: 4,
+      border: on ? 'none' : '1px solid rgba(255,255,255,0.35)',
+      background: on ? ACCENT : 'transparent',
+      opacity: disabled ? 0.4 : 1,
+    }}>
+      {on && (
+        <svg width="11" height="9" viewBox="0 0 10 8" fill="none">
+          <path d="M1 4L3.5 6.5L9 1" stroke="#1E1E1E" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      )}
+    </span>
+  )
+}
+
+const CONTROL_STYLES = [
+  { value: 'switch', label: 'Switch' },
+  { value: 'chip', label: 'On / Off chip' },
+  { value: 'segmented', label: 'Segmented' },
+  { value: 'checkbox', label: 'Checkbox' },
+  { value: 'tiles', label: 'Tiles' },
+]
+
+// Returns the control node plus whether the row itself should be the hit
+// target: a switch or checkbox is a state indicator you can also poke, so the
+// whole row toggles (every settings app does this). A chip or segmented
+// control names its own actions and owns its clicks.
+function boolControl(style, { on, onChange, disabled }) {
+  if (style === 'chip') {
+    return { node: <ToggleButton active={on} labels={{ on: 'On', off: 'Off' }} onClick={onChange} disabled={disabled} />, rowClickable: false }
+  }
+  if (style === 'segmented') {
+    return { node: <SegmentedControl on={on} onChange={v => v !== on && onChange()} disabled={disabled} />, rowClickable: false }
+  }
+  if (style === 'checkbox') {
+    return { node: <CheckControl on={on} disabled={disabled} />, rowClickable: true }
+  }
+  return { node: <SwitchControl on={on} disabled={disabled} />, rowClickable: true }
+}
+
+function SettingTile({ icon, label, on, onChange, disabled }) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onChange}
+      className="lab-tile"
+      style={{
+        display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: SPACE_8,
+        padding: SPACE_12, borderRadius: 8, cursor: disabled ? 'not-allowed' : 'pointer',
+        background: on ? `${ACCENT}14` : 'rgba(255,255,255,0.03)',
+        border: `1px solid ${on ? `${ACCENT}55` : 'rgba(255,255,255,0.1)'}`,
+        fontFamily: FONT, letterSpacing: TRACKING, textAlign: 'left',
+        opacity: disabled ? 0.45 : 1,
+      }}
+    >
+      <Icon name={icon} size={22} color={on ? ACCENT : 'rgba(255,255,255,0.4)'} />
+      <span style={{ fontSize: FS_SM, color: on ? TEXT : TEXT_MUTED }}>{label}</span>
+    </button>
+  )
+}
+
+function GroupLabel({ children, note, icon }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: SPACE_12, margin: `${SPACE_24}px 0 ${SPACE_8}px` }}>
+      <span style={{ display: 'flex', alignItems: 'center', gap: SPACE_8 }}>
+        {icon && <Icon name={icon} size={16} color="rgba(255,255,255,0.35)" />}
+        <span style={{ ...SUBHEADING_STYLE, color: 'rgba(255,255,255,0.35)' }}>{children}</span>
+      </span>
       {note && <span style={{ fontSize: FS_SM, color: 'rgba(255,255,255,0.25)' }}>{note}</span>}
     </div>
   )
 }
 
+// Default control for the variants that are not themselves comparing control
+// styles. Defined below SwitchControl's own declaration order via hoisting.
 function Switch({ on, onChange, disabled }) {
-  return <ToggleButton active={on} labels={{ on: 'On', off: 'Off' }} onClick={onChange} disabled={disabled} />
+  return (
+    <button
+      type="button"
+      onClick={onChange}
+      disabled={disabled}
+      style={{ background: 'none', border: 'none', padding: 0, cursor: disabled ? 'not-allowed' : 'pointer', display: 'flex' }}
+    >
+      <SwitchControl on={on} disabled={disabled} />
+    </button>
+  )
 }
 
 // What this list genuinely cannot offer — the panel should say so rather than
@@ -278,59 +457,116 @@ function TodayPanel({ s, set }) {
 }
 
 // ── Variant 1 — card anatomy ────────────────────────────────────────────
-function AnatomyPanel({ s, set, context }) {
+// The groups are data so the same definition can render as rows in four
+// control styles or as a tile grid, rather than four hand-written panels.
+function anatomyGroups(s, context) {
   const noSentence = unavailable('sentence', context)
-  return (
-    <div style={{ padding: SPACE_16 }}>
-      <GroupLabel note="what you see first">Card front</GroupLabel>
-      <FilterCard>
-        <Row label="Furigana" hint="Reading above the kanji" control={<Switch on={s.furigana} onChange={() => set('furigana', !s.furigana)} />} />
-      </FilterCard>
+  return [
+    {
+      id: 'front', label: 'Card front', note: 'what you see first', icon: 'front',
+      rows: [
+        { key: 'furigana', label: 'Furigana', hint: 'Reading above the kanji', icon: 'furigana' },
+      ],
+    },
+    {
+      id: 'back', label: 'Card back', note: 'what the answer shows', icon: 'back',
+      rows: [
+        { key: 'translation', label: 'Meaning', icon: 'meaning' },
+        { key: 'kanjiMeanings', label: 'Kanji breakdown', hint: 'Per-character meaning strip', icon: 'kanji' },
+        { key: 'sentence', label: 'Example sentence', hint: noSentence, disabled: !!noSentence, icon: 'sentence' },
+        { key: 'sentenceSource', type: 'select', label: 'Sentence from', icon: 'sentence', indent: 1, options: SENTENCE_SOURCE_OPTIONS, hidden: !s.sentence || !!noSentence },
+      ],
+    },
+    {
+      id: 'audio', label: 'Audio', icon: 'audio',
+      rows: [
+        { key: 'audio', label: 'Word audio', icon: 'audio' },
+        {
+          key: 'voice', type: 'select', label: 'Voice', icon: 'voice', indent: 1, options: VOICE_OPTIONS,
+          hint: context.audio === 'none' ? 'This deck has no recordings — the browser voice reads it' : null,
+          hidden: !s.audio,
+        },
+        { key: 'autoplay', type: 'autoplay', label: 'Play automatically', icon: 'autoplay', indent: 1, hidden: !s.audio },
+      ],
+    },
+    {
+      id: 'interface', label: 'Interface', note: 'not about the card', icon: 'interface',
+      rows: [
+        { key: 'sfx', label: 'Sound effects', hint: 'Flip and answer clicks', icon: 'sfx' },
+        { key: 'pixelFont', label: 'Pixel font', icon: 'font' },
+        { key: 'visualEffects', label: 'Visual effects', icon: 'effects' },
+        { key: 'streak', label: 'Streak counter', icon: 'streak' },
+      ],
+    },
+  ]
+}
 
-      <GroupLabel note="what the answer shows">Card back</GroupLabel>
-      <FilterCard>
-        <Row label="Meaning" control={<Switch on={s.translation} onChange={() => set('translation', !s.translation)} />} />
-        <Row label="Kanji breakdown" hint="Per-character meaning strip" control={<Switch on={s.kanjiMeanings} onChange={() => set('kanjiMeanings', !s.kanjiMeanings)} />} />
+function AnatomyPanel({ s, set, context, controlStyle = 'switch', showIcons = true }) {
+  const groups = anatomyGroups(s, context)
+
+  function renderRow(row) {
+    const icon = showIcons ? row.icon : null
+    if (row.type === 'select') {
+      return (
         <Row
-          label="Example sentence"
-          hint={noSentence}
-          control={<Switch on={s.sentence && !noSentence} onChange={() => set('sentence', !s.sentence)} disabled={!!noSentence} />}
+          key={row.key} icon={icon} on indent={row.indent} label={row.label} hint={row.hint}
+          control={<Select value={s[row.key]} onChange={v => set(row.key, v)} options={row.options} label={row.label} />}
         />
-        {s.sentence && !noSentence && (
-          <Row indent={1} label="Sentence from" control={<Select value={s.sentenceSource} onChange={v => set('sentenceSource', v)} options={SENTENCE_SOURCE_OPTIONS} label="Sentence source" />} />
-        )}
-      </FilterCard>
-
-      <GroupLabel>Audio</GroupLabel>
-      <FilterCard>
-        <Row label="Word audio" control={<Switch on={s.audio} onChange={() => set('audio', !s.audio)} />} />
-        {s.audio && (
-          <Row
-            indent={1}
-            label="Voice"
-            hint={context.audio === 'none' ? 'This deck has no recordings — the browser voice reads it' : null}
-            control={<Select value={s.voice} onChange={v => set('voice', v)} options={VOICE_OPTIONS} label="Voice" />}
-          />
-        )}
-        {s.audio && (
-          <Row indent={1} label="Play automatically" control={
+      )
+    }
+    if (row.type === 'autoplay') {
+      return (
+        <Row
+          key={row.key} icon={icon} on={s.autoplayFront || s.autoplayBack} indent={row.indent} label={row.label}
+          control={
             <ChipSelector
               mode="multi"
               value={new Set([...(s.autoplayFront ? ['front'] : []), ...(s.autoplayBack ? ['back'] : [])])}
               onChange={next => { set('autoplayFront', next.has('front')); set('autoplayBack', next.has('back')) }}
               options={[{ value: 'front', label: 'Front' }, { value: 'back', label: 'Back' }]}
             />
-          } />
-        )}
-      </FilterCard>
+          }
+        />
+      )
+    }
+    const on = s[row.key] && !row.disabled
+    const toggle = () => set(row.key, !s[row.key])
+    const { node, rowClickable } = boolControl(controlStyle, { on, onChange: toggle, disabled: row.disabled })
+    return (
+      <Row
+        key={row.key} icon={icon} on={on} indent={row.indent} label={row.label} hint={row.hint}
+        disabled={row.disabled} onClick={rowClickable ? toggle : undefined} control={node}
+      />
+    )
+  }
 
-      <GroupLabel note="not about the card">Interface</GroupLabel>
-      <FilterCard>
-        <Row label="Sound effects" hint="Flip and answer clicks" control={<Switch on={s.sfx} onChange={() => set('sfx', !s.sfx)} />} />
-        <Row label="Pixel font" control={<Switch on={s.pixelFont} onChange={() => set('pixelFont', !s.pixelFont)} />} />
-        <Row label="Visual effects" control={<Switch on={s.visualEffects} onChange={() => set('visualEffects', !s.visualEffects)} />} />
-        <Row label="Streak counter" control={<Switch on={s.streak} onChange={() => set('streak', !s.streak)} />} />
-      </FilterCard>
+  return (
+    <div style={{ padding: SPACE_16 }}>
+      {groups.map(group => {
+        const visible = group.rows.filter(r => !r.hidden)
+        const tiles = controlStyle === 'tiles' ? visible.filter(r => !r.type) : []
+        const rows = controlStyle === 'tiles' ? visible.filter(r => r.type) : visible
+        return (
+          <div key={group.id}>
+            <GroupLabel icon={showIcons ? group.icon : null} note={group.note}>{group.label}</GroupLabel>
+            {tiles.length > 0 && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: SPACE_8, marginBottom: rows.length > 0 ? SPACE_8 : 0 }}>
+                {tiles.map(row => (
+                  <SettingTile
+                    key={row.key}
+                    icon={row.icon}
+                    label={row.label}
+                    on={s[row.key] && !row.disabled}
+                    disabled={row.disabled}
+                    onChange={() => set(row.key, !s[row.key])}
+                  />
+                ))}
+              </div>
+            )}
+            {rows.length > 0 && <FilterCard>{rows.map(renderRow)}</FilterCard>}
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -406,11 +642,13 @@ function PresetPanel({ s, set, setMany, context, preset, setPreset }) {
     set(key, value)
   }
 
-  function row(key, label, hint, control) {
+  function row(key, label, hint, icon, control) {
     return (
       <Row
         label={label}
         hint={hint}
+        icon={icon}
+        on={!!s[key]}
         badge={key in rec && s[key] === rec[key] ? <RecommendedBadge /> : null}
         control={control}
       />
@@ -443,14 +681,14 @@ function PresetPanel({ s, set, setMany, context, preset, setPreset }) {
 
       <GroupLabel>Card front</GroupLabel>
       <FilterCard>
-        {row('furigana', 'Furigana', 'Reading above the kanji', <Switch on={s.furigana} onChange={() => touch('furigana', !s.furigana)} />)}
+        {row('furigana', 'Furigana', 'Reading above the kanji', 'furigana', <Switch on={s.furigana} onChange={() => touch('furigana', !s.furigana)} />)}
       </FilterCard>
 
       <GroupLabel>Card back</GroupLabel>
       <FilterCard>
-        {row('translation', 'Meaning', null, <Switch on={s.translation} onChange={() => touch('translation', !s.translation)} />)}
-        {row('kanjiMeanings', 'Kanji breakdown', null, <Switch on={s.kanjiMeanings} onChange={() => touch('kanjiMeanings', !s.kanjiMeanings)} />)}
-        {row('sentence', 'Example sentence', noSentence, <Switch on={s.sentence && !noSentence} disabled={!!noSentence} onChange={() => touch('sentence', !s.sentence)} />)}
+        {row('translation', 'Meaning', null, 'meaning', <Switch on={s.translation} onChange={() => touch('translation', !s.translation)} />)}
+        {row('kanjiMeanings', 'Kanji breakdown', null, 'kanji', <Switch on={s.kanjiMeanings} onChange={() => touch('kanjiMeanings', !s.kanjiMeanings)} />)}
+        {row('sentence', 'Example sentence', noSentence, 'sentence', <Switch on={s.sentence && !noSentence} disabled={!!noSentence} onChange={() => touch('sentence', !s.sentence)} />)}
       </FilterCard>
 
       <GroupLabel>Audio</GroupLabel>
@@ -557,9 +795,9 @@ const VARIANTS = [
     id: 'anatomy',
     label: 'Card anatomy',
     title: 'Grouped by where it appears',
-    blurb: 'The four subjects the flat list mixes together, named and separated: what the front shows, what the back shows, audio, and app chrome. Each row is a label with its current value on the right, so the panel reads at a glance instead of being decoded checkbox by checkbox.',
-    fixes: 'Answers "where does this show up?" without flipping a card. Sound effects stop being a child of word audio — they are interface feedback, not the word being read. Settings a list cannot honour say so instead of lying.',
-    costs: 'Taller than the checkbox column, so mobile scrolls more. Four boxes is more chrome than one list.',
+    blurb: 'The four subjects the flat list mixes together, named and separated: what the front shows, what the back shows, audio, and app chrome. Each row carries an icon that lights up in the accent colour when its setting is on, so the panel can be scanned for state without reading a single label.',
+    fixes: 'Answers "where does this show up?" without flipping a card. Sound effects stop being a child of word audio — they are interface feedback, not the word being read. Settings a list cannot honour say so instead of lying. The icons give each row a fixed shape to aim at, which is what breaks up a column of otherwise identical rows.',
+    costs: 'Taller than the checkbox column, so mobile scrolls more. Four boxes is more chrome than one list. Icons need to be drawn once and then never re-guessed — an unclear icon is worse than none, since it reads as a label you cannot parse.',
     Panel: AnatomyPanel,
   },
   {
@@ -602,11 +840,55 @@ const PROBLEMS = [
   ['Three copies', 'Vocab Drill, Vocab SRS and Anime Vocab each render their own near-identical version of this list, and the labels have already drifted ("Show furigana" vs "Show furigana on front").'],
 ]
 
-export default function SettingsLabPage({ initialVariant = 'anatomy', initialContext = 'genki-1' }) {
+// One row, rendered in every control style at once, so the styles can be
+// compared against each other instead of one at a time.
+function ControlComparison({ value, onChange }) {
+  const [demo, setDemo] = useState({ switch: true, chip: true, segmented: false, checkbox: true })
+  const set = (k, v) => setDemo(prev => ({ ...prev, [k]: v }))
+
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: SPACE_12 }}>
+      {CONTROL_STYLES.map(style => {
+        const active = value === style.value
+        const on = style.value === 'tiles' ? demo.switch : demo[style.value]
+        const toggle = () => set(style.value === 'tiles' ? 'switch' : style.value, !on)
+        const { node, rowClickable } = style.value === 'tiles' ? {} : boolControl(style.value, { on, onChange: toggle })
+        return (
+          <div
+            key={style.value}
+            style={{
+              border: `1px solid ${active ? `${ACCENT}66` : 'rgba(255,255,255,0.1)'}`,
+              background: active ? `${ACCENT}0F` : 'rgba(255,255,255,0.02)',
+              borderRadius: 8, overflow: 'hidden',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: SPACE_8, padding: `${SPACE_8}px ${SPACE_12}px`, borderBottom: `1px solid ${HAIRLINE}` }}>
+              <span style={{ fontSize: FS_SM, color: active ? ACCENT : TEXT_MUTED }}>{style.label}</span>
+              <Button variant={active ? 'accent-outline' : 'neutral'} size="sm" onClick={() => onChange(style.value)}>
+                {active ? 'In use' : 'Use'}
+              </Button>
+            </div>
+            {style.value === 'tiles' ? (
+              <div style={{ padding: SPACE_12 }}>
+                <SettingTile icon="furigana" label="Furigana" on={on} onChange={toggle} />
+              </div>
+            ) : (
+              <Row icon="furigana" on={on} label="Furigana" control={node} onClick={rowClickable ? toggle : undefined} />
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+export default function SettingsLabPage({ initialVariant = 'anatomy', initialContext = 'genki-1', initialControlStyle = 'switch' }) {
   const [variantId, setVariantId] = useState(initialVariant)
   const [contextId, setContextId] = useState(initialContext)
   const [settings, setSettings] = useState(DEFAULTS)
   const [preset, setPreset] = useState('custom')
+  const [controlStyle, setControlStyle] = useState(initialControlStyle)
+  const [showIcons, setShowIcons] = useState(true)
 
   const variant = VARIANTS.find(v => v.id === variantId)
   const context = CONTEXTS.find(c => c.id === contextId)
@@ -661,6 +943,27 @@ export default function SettingsLabPage({ initialVariant = 'anatomy', initialCon
             options={VARIANTS.map(v => ({ value: v.id, label: v.label }))}
           />
 
+          {variantId === 'anatomy' && (
+            <>
+              <GroupLabel note="applies to the panel on the right">Toggle style</GroupLabel>
+              <p style={{ fontSize: FS_SM, color: TEXT_MUTED, lineHeight: 1.55, margin: `0 0 ${SPACE_12}px`, maxWidth: 720 }}>
+                A switch or checkbox is a state indicator, so the whole row becomes the hit target — a bigger,
+                more forgiving target than the control itself, and the pattern every settings app uses. A chip or
+                segmented control names its own actions, so it has to own its clicks and the row cannot be tapped.
+                Tiles trade the reading order of a list for a scannable grid.
+              </p>
+              <ControlComparison value={controlStyle} onChange={setControlStyle} />
+              <div style={{ marginTop: SPACE_16 }}>
+                <ChipSelector
+                  mode="single"
+                  value={showIcons ? 'icons' : 'no-icons'}
+                  onChange={v => setShowIcons(v === 'icons')}
+                  options={[{ value: 'icons', label: 'With icons' }, { value: 'no-icons', label: 'Labels only' }]}
+                />
+              </div>
+            </>
+          )}
+
           <div style={{ marginTop: SPACE_24, display: 'flex', gap: SPACE_32, alignItems: 'flex-start', flexWrap: 'wrap' }}>
             <div style={{ flex: '1 1 320px', minWidth: 300 }}>
               <div style={{ fontSize: FS_CONTENT_HEADING, marginBottom: SPACE_8 }}>{variant.title}</div>
@@ -698,6 +1001,8 @@ export default function SettingsLabPage({ initialVariant = 'anatomy', initialCon
                 context={context}
                 preset={preset}
                 setPreset={setPreset}
+                controlStyle={controlStyle}
+                showIcons={showIcons}
               />
             </div>
           </div>

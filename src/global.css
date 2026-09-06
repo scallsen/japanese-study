@@ -505,3 +505,28 @@ button, input, select, textarea {
 .tb-buy:hover {
   text-decoration: underline !important;
 }
+
+/* Settings lab (#/dev/settings-lab) — dev-only exploration of the drill
+   settings panel. Every rule here carries !important because the elements
+   set the same property inline. */
+.lab-row:hover {
+  background: rgba(255,255,255,0.04) !important;
+}
+.lab-row:focus-visible {
+  outline: 1px solid rgba(255,255,255,0.4);
+  outline-offset: -1px;
+}
+.lab-switch {
+  filter: brightness(1);
+  transition: filter 130ms;
+}
+.lab-row:hover .lab-switch,
+.lab-switch:hover {
+  filter: brightness(1.25);
+}
+.lab-seg-btn:hover:not(:disabled) {
+  background: rgba(255,255,255,0.09) !important;
+}
+.lab-tile:hover:not(:disabled) {
+  border-color: rgba(255,255,255,0.3) !important;
+}

@@ -10,10 +10,18 @@ beforeAll(() => {
 const VARIANTS = ['today', 'anatomy', 'tabs', 'presets', 'oncard']
 const CONTEXTS = ['genki-1', 'nsm-n2', 'word-import']
 
+const CONTROL_STYLES = ['switch', 'chip', 'segmented', 'checkbox', 'tiles']
+
 describe('SettingsLabPage', () => {
   it.each(VARIANTS.flatMap(v => CONTEXTS.map(c => [v, c])))('renders %s on %s', (variant, context) => {
     const html = renderToStaticMarkup(<SettingsLabPage initialVariant={variant} initialContext={context} />)
     expect(html).toContain('Drill settings')
     expect(html).toContain('経験')
+  })
+
+  it.each(CONTROL_STYLES)('renders the anatomy panel with %s controls', style => {
+    const html = renderToStaticMarkup(<SettingsLabPage initialVariant="anatomy" initialControlStyle={style} />)
+    expect(html).toContain('Card front')
+    expect(html).toContain('Furigana')
   })
 })
