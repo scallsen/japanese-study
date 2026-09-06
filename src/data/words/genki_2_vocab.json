@@ -7,7 +7,8 @@
   {
     "id": "genki-2-l13-002",
     "listKey": "genki-2-l13",
-    "jmdictId": "1002320"
+    "jmdictId": "1002320",
+    "sense": 1
   },
   {
     "id": "genki-2-l13-003",
@@ -113,7 +114,8 @@
     "id": "genki-2-l13-023",
     "listKey": "genki-2-l13",
     "jmdictId": "1012760",
-    "kanji": "やくざ"
+    "kanji": "やくざ",
+    "kana": "やくざ"
   },
   {
     "id": "genki-2-l13-024",
@@ -134,7 +136,8 @@
     "id": "genki-2-l13-027",
     "listKey": "genki-2-l13",
     "jmdictId": "1219510",
-    "kanji": "うれしい"
+    "kanji": "うれしい",
+    "kana": "うれしい"
   },
   {
     "id": "genki-2-l13-028",
@@ -233,55 +236,64 @@
     "id": "genki-2-l13-046",
     "listKey": "genki-2-l13",
     "jmdictId": "1462900",
-    "kanji": "二日"
+    "kanji": "二日",
+    "sense": 1
   },
   {
     "id": "genki-2-l13-047",
     "listKey": "genki-2-l13",
     "jmdictId": "1301330",
-    "kanji": "三日"
+    "kanji": "三日",
+    "sense": 1
   },
   {
     "id": "genki-2-l13-048",
     "listKey": "genki-2-l13",
     "jmdictId": "1307320",
-    "kanji": "四日"
+    "kanji": "四日",
+    "sense": 1
   },
   {
     "id": "genki-2-l13-049",
     "listKey": "genki-2-l13",
     "jmdictId": "1268570",
-    "kanji": "五日"
+    "kanji": "五日",
+    "sense": 1
   },
   {
     "id": "genki-2-l13-050",
     "listKey": "genki-2-l13",
     "jmdictId": "1561470",
-    "kanji": "六日"
+    "kanji": "六日",
+    "sense": 1
   },
   {
     "id": "genki-2-l13-051",
     "listKey": "genki-2-l13",
     "jmdictId": "1579630",
-    "kanji": "七日"
+    "kanji": "七日",
+    "sense": 1
   },
   {
     "id": "genki-2-l13-052",
     "listKey": "genki-2-l13",
     "jmdictId": "1476920",
-    "kanji": "八日"
+    "kanji": "八日",
+    "sense": 1
   },
   {
     "id": "genki-2-l13-053",
     "listKey": "genki-2-l13",
     "jmdictId": "1243850",
-    "kanji": "九日"
+    "kanji": "九日",
+    "sense": 1
   },
   {
     "id": "genki-2-l13-054",
     "listKey": "genki-2-l13",
     "jmdictId": "1335000",
-    "kanji": "十日"
+    "kanji": "十日",
+    "sense": 1
   },
   {
     "id": "genki-2-l13-055",
@@ -337,7 +349,8 @@
     "id": "genki-2-l14-010",
     "listKey": "genki-2-l14",
     "jmdictId": "1270390",
-    "kanji": "ごしゅじん"
+    "kanji": "ごしゅじん",
+    "kana": "ごしゅじん"
   },
   {
     "id": "genki-2-l14-011",
@@ -432,13 +445,16 @@
   {
     "id": "genki-2-l14-029",
     "listKey": "genki-2-l14",
-    "jmdictId": "1547330"
+    "jmdictId": "1547330",
+    "sense": 1
   },
   {
     "id": "genki-2-l14-030",
     "listKey": "genki-2-l14",
     "jmdictId": "2234080",
-    "kanji": "けち"
+    "kanji": "けち",
+    "kana": "けち",
+    "sense": 1
   },
   {
     "id": "genki-2-l14-031",
@@ -454,13 +470,16 @@
     "id": "genki-2-l14-033",
     "listKey": "genki-2-l14",
     "jmdictId": "1436730",
-    "kanji": "あきらめる"
+    "kanji": "あきらめる",
+    "kana": "あきらめる"
   },
   {
     "id": "genki-2-l14-034",
     "listKey": "genki-2-l14",
     "jmdictId": "1352320",
-    "kanji": "あげる"
+    "kanji": "あげる",
+    "kana": "あげる",
+    "sense": 4
   },
   {
     "id": "genki-2-l14-035",
@@ -470,7 +489,8 @@
   {
     "id": "genki-2-l14-036",
     "listKey": "genki-2-l14",
-    "jmdictId": "1340450"
+    "jmdictId": "1340450",
+    "sense": 2
   },
   {
     "id": "genki-2-l14-037",
@@ -484,7 +504,8 @@
     "listKey": "genki-2-l14",
     "jmdictId": "1117900",
     "kanji": "プロポーズ",
-    "suru": true
+    "suru": true,
+    "kana": "プロポーズ"
   },
   {
     "id": "genki-2-l14-039",
@@ -585,7 +606,8 @@
   {
     "id": "genki-2-l15-010",
     "listKey": "genki-2-l15",
-    "jmdictId": "1333090"
+    "jmdictId": "1333090",
+    "sense": 1
   },
   {
     "id": "genki-2-l15-011",
@@ -600,7 +622,8 @@
   {
     "id": "genki-2-l15-013",
     "listKey": "genki-2-l15",
-    "jmdictId": "1238460"
+    "jmdictId": "1238460",
+    "sense": 1
   },
   {
     "id": "genki-2-l15-014",
@@ -665,13 +688,15 @@
   {
     "id": "genki-2-l15-026",
     "listKey": "genki-2-l15",
-    "jmdictId": "1589580"
+    "jmdictId": "1589580",
+    "sense": 2
   },
   {
     "id": "genki-2-l15-027",
     "listKey": "genki-2-l15",
     "jmdictId": "1583460",
-    "kanji": "かく"
+    "kanji": "かく",
+    "kana": "かく"
   },
   {
     "id": "genki-2-l15-028",
@@ -716,7 +741,8 @@
   {
     "id": "genki-2-l15-036",
     "listKey": "genki-2-l15",
-    "jmdictId": "1157170"
+    "jmdictId": "1157170",
+    "sense": 5
   },
   {
     "id": "genki-2-l15-037",
@@ -756,7 +782,8 @@
     "id": "genki-2-l16-003",
     "listKey": "genki-2-l16",
     "jmdictId": "1369900",
-    "kanji": "ごみ"
+    "kanji": "ごみ",
+    "kana": "ごみ"
   },
   {
     "id": "genki-2-l16-004",
@@ -817,7 +844,8 @@
   {
     "id": "genki-2-l16-015",
     "listKey": "genki-2-l16",
-    "jmdictId": "1223660"
+    "jmdictId": "1223660",
+    "sense": 1
   },
   {
     "id": "genki-2-l16-016",
@@ -920,7 +948,8 @@
     "id": "genki-2-l16-034",
     "listKey": "genki-2-l16",
     "jmdictId": "1001150",
-    "kanji": "ええと"
+    "kanji": "ええと",
+    "kana": "ええと"
   },
   {
     "id": "genki-2-l16-035",
@@ -936,7 +965,8 @@
     "id": "genki-2-l16-037",
     "listKey": "genki-2-l16",
     "jmdictId": "2148580",
-    "kanji": "このぐらい"
+    "kanji": "このぐらい",
+    "kana": "このぐらい"
   },
   {
     "id": "genki-2-l16-038",
@@ -956,12 +986,17 @@
   {
     "id": "genki-2-l16-041",
     "listKey": "genki-2-l16",
-    "jmdictId": "1885500"
+    "jmdictId": "1885500",
+    "kanji": "授業中",
+    "mark": "{}に"
   },
   {
     "id": "genki-2-l16-042",
     "listKey": "genki-2-l16",
-    "jmdictId": "1203260"
+    "jmdictId": "1203260",
+    "kanji": "ほか",
+    "kana": "ほか",
+    "mark": "{}の"
   },
   {
     "id": "genki-2-l17-001",
@@ -987,7 +1022,8 @@
     "id": "genki-2-l17-005",
     "listKey": "genki-2-l17",
     "jmdictId": "1260490",
-    "kanji": "かぎ"
+    "kanji": "かぎ",
+    "kana": "かぎ"
   },
   {
     "id": "genki-2-l17-006",
@@ -1063,7 +1099,8 @@
     "id": "genki-2-l17-020",
     "listKey": "genki-2-l17",
     "jmdictId": "1391940",
-    "kanji": "うらやましい"
+    "kanji": "うらやましい",
+    "kana": "うらやましい"
   },
   {
     "id": "genki-2-l17-021",
@@ -1100,13 +1137,15 @@
     "id": "genki-2-l17-027",
     "listKey": "genki-2-l17",
     "jmdictId": "2035700",
-    "kanji": "いれる"
+    "kanji": "いれる",
+    "kana": "いれる"
   },
   {
     "id": "genki-2-l17-028",
     "listKey": "genki-2-l17",
     "jmdictId": "1260500",
-    "kanji": "かぎをかける"
+    "kanji": "かぎをかける",
+    "kana": "かぎをかける"
   },
   {
     "id": "genki-2-l17-029",
@@ -1135,7 +1174,8 @@
   {
     "id": "genki-2-l17-033",
     "listKey": "genki-2-l17",
-    "jmdictId": "1157170"
+    "jmdictId": "1157170",
+    "sense": 3
   },
   {
     "id": "genki-2-l17-034",
@@ -1162,7 +1202,8 @@
   {
     "id": "genki-2-l17-038",
     "listKey": "genki-2-l17",
-    "jmdictId": "2093030"
+    "jmdictId": "2093030",
+    "sense": 1
   },
   {
     "id": "genki-2-l17-039",
@@ -1188,12 +1229,14 @@
   {
     "id": "genki-2-l17-043",
     "listKey": "genki-2-l17",
-    "jmdictId": "1012810"
+    "jmdictId": "1012810",
+    "sense": 1
   },
   {
     "id": "genki-2-l18-001",
     "listKey": "genki-2-l18",
-    "jmdictId": "1269320"
+    "jmdictId": "1269320",
+    "sense": 2
   },
   {
     "id": "genki-2-l18-002",
@@ -1309,7 +1352,8 @@
   {
     "id": "genki-2-l18-024",
     "listKey": "genki-2-l18",
-    "jmdictId": "1180470"
+    "jmdictId": "1180470",
+    "sense": 1
   },
   {
     "id": "genki-2-l18-025",
@@ -1339,7 +1383,8 @@
   {
     "id": "genki-2-l18-030",
     "listKey": "genki-2-l18",
-    "jmdictId": "1344380"
+    "jmdictId": "1344380",
+    "sense": 2
   },
   {
     "id": "genki-2-l18-031",
@@ -1369,7 +1414,8 @@
   {
     "id": "genki-2-l18-036",
     "listKey": "genki-2-l18",
-    "jmdictId": "1350040"
+    "jmdictId": "1350040",
+    "sense": 1
   },
   {
     "id": "genki-2-l18-037",
@@ -1406,7 +1452,8 @@
   {
     "id": "genki-2-l18-043",
     "listKey": "genki-2-l18",
-    "jmdictId": "1002570"
+    "jmdictId": "1002570",
+    "modified": true
   },
   {
     "id": "genki-2-l18-044",
@@ -1530,7 +1577,8 @@
     "id": "genki-2-l19-020",
     "listKey": "genki-2-l19",
     "jmdictId": "1364360",
-    "kanji": "まじめ"
+    "kanji": "まじめ",
+    "kana": "まじめ"
   },
   {
     "id": "genki-2-l19-021",
@@ -1596,7 +1644,8 @@
   {
     "id": "genki-2-l19-033",
     "listKey": "genki-2-l19",
-    "jmdictId": "1219680"
+    "jmdictId": "1219680",
+    "sense": 2
   },
   {
     "id": "genki-2-l19-034",
@@ -1606,7 +1655,8 @@
   {
     "id": "genki-2-l19-035",
     "listKey": "genki-2-l19",
-    "jmdictId": "1207610"
+    "jmdictId": "1207610",
+    "sense": 10
   },
   {
     "id": "genki-2-l19-036",
@@ -1617,7 +1667,9 @@
     "id": "genki-2-l19-037",
     "listKey": "genki-2-l19",
     "jmdictId": "1315730",
-    "kanji": "もてる"
+    "kanji": "もてる",
+    "kana": "もてる",
+    "sense": 1
   },
   {
     "id": "genki-2-l19-038",
@@ -1631,14 +1683,16 @@
     "listKey": "genki-2-l19",
     "jmdictId": "1593590",
     "kanji": "ごちそう",
-    "suru": true
+    "suru": true,
+    "kana": "ごちそう"
   },
   {
     "id": "genki-2-l19-040",
     "listKey": "genki-2-l19",
     "jmdictId": "1426530",
     "kanji": "注意",
-    "suru": true
+    "suru": true,
+    "sense": 1
   },
   {
     "id": "genki-2-l19-041",
@@ -1649,7 +1703,8 @@
     "id": "genki-2-l19-042",
     "listKey": "genki-2-l19",
     "jmdictId": "1576050",
-    "kanji": "おととい"
+    "kanji": "おととい",
+    "kana": "おととい"
   },
   {
     "id": "genki-2-l19-043",
@@ -1730,7 +1785,8 @@
   {
     "id": "genki-2-l20-011",
     "listKey": "genki-2-l20",
-    "jmdictId": "1359240"
+    "jmdictId": "1359240",
+    "sense": 1
   },
   {
     "id": "genki-2-l20-012",
@@ -1756,12 +1812,14 @@
     "id": "genki-2-l20-016",
     "listKey": "genki-2-l20",
     "jmdictId": "1542640",
-    "kanji": "ゆうべ"
+    "kanji": "ゆうべ",
+    "kana": "ゆうべ"
   },
   {
     "id": "genki-2-l20-017",
     "listKey": "genki-2-l20",
-    "jmdictId": "1335750"
+    "jmdictId": "1335750",
+    "sense": 4
   },
   {
     "id": "genki-2-l20-018",
@@ -1810,7 +1868,8 @@
   {
     "id": "genki-2-l20-026",
     "listKey": "genki-2-l20",
-    "jmdictId": "1239730"
+    "jmdictId": "1239730",
+    "sense": 1
   },
   {
     "id": "genki-2-l20-027",
@@ -1820,7 +1879,8 @@
   {
     "id": "genki-2-l20-028",
     "listKey": "genki-2-l20",
-    "jmdictId": "1535880"
+    "jmdictId": "1535880",
+    "sense": 1
   },
   {
     "id": "genki-2-l20-029",
@@ -1882,7 +1942,8 @@
   {
     "id": "genki-2-l20-039",
     "listKey": "genki-2-l20",
-    "jmdictId": "1005110"
+    "jmdictId": "1005110",
+    "sense": 2
   },
   {
     "id": "genki-2-l20-040",
@@ -1897,7 +1958,8 @@
   {
     "id": "genki-2-l20-042",
     "listKey": "genki-2-l20",
-    "jmdictId": "1406050"
+    "jmdictId": "1406050",
+    "sense": 2
   },
   {
     "id": "genki-2-l20-043",
@@ -1917,7 +1979,8 @@
   {
     "id": "genki-2-l20-046",
     "listKey": "genki-2-l20",
-    "jmdictId": "1612030"
+    "jmdictId": "1612030",
+    "sense": 1
   },
   {
     "id": "genki-2-l20-047",
@@ -1952,7 +2015,8 @@
   {
     "id": "genki-2-l21-006",
     "listKey": "genki-2-l21",
-    "jmdictId": "1252390"
+    "jmdictId": "1252390",
+    "sense": 2
   },
   {
     "id": "genki-2-l21-007",
@@ -1984,7 +2048,8 @@
     "id": "genki-2-l21-012",
     "listKey": "genki-2-l21",
     "jmdictId": "1421710",
-    "kanji": "ちかん"
+    "kanji": "ちかん",
+    "kana": "ちかん"
   },
   {
     "id": "genki-2-l21-013",
@@ -2034,7 +2099,8 @@
   {
     "id": "genki-2-l21-022",
     "listKey": "genki-2-l21",
-    "jmdictId": "1602060"
+    "jmdictId": "1602060",
+    "sense": 2
   },
   {
     "id": "genki-2-l21-023",
@@ -2044,12 +2110,14 @@
   {
     "id": "genki-2-l21-024",
     "listKey": "genki-2-l21",
-    "jmdictId": "1414340"
+    "jmdictId": "1414340",
+    "sense": 1
   },
   {
     "id": "genki-2-l21-025",
     "listKey": "genki-2-l21",
-    "jmdictId": "1533000"
+    "jmdictId": "1533000",
+    "sense": 2
   },
   {
     "id": "genki-2-l21-026",
@@ -2066,12 +2134,14 @@
     "id": "genki-2-l21-028",
     "listKey": "genki-2-l21",
     "jmdictId": "1333400",
-    "kanji": "ける"
+    "kanji": "ける",
+    "kana": "ける"
   },
   {
     "id": "genki-2-l21-029",
     "listKey": "genki-2-l21",
-    "jmdictId": "1306470"
+    "jmdictId": "1306470",
+    "sense": 1
   },
   {
     "id": "genki-2-l21-030",
@@ -2102,7 +2172,8 @@
     "id": "genki-2-l21-035",
     "listKey": "genki-2-l21",
     "jmdictId": "1427900",
-    "kanji": "貼る"
+    "kanji": "貼る",
+    "sense": 5
   },
   {
     "id": "genki-2-l21-036",
@@ -2113,17 +2184,21 @@
     "id": "genki-2-l21-037",
     "listKey": "genki-2-l21",
     "jmdictId": "1361330",
-    "kanji": "ふる"
+    "kanji": "ふる",
+    "kana": "ふる",
+    "sense": 3
   },
   {
     "id": "genki-2-l21-038",
     "listKey": "genki-2-l21",
-    "jmdictId": "1350600"
+    "jmdictId": "1350600",
+    "sense": 1
   },
   {
     "id": "genki-2-l21-039",
     "listKey": "genki-2-l21",
-    "jmdictId": "1012980"
+    "jmdictId": "1012980",
+    "sense": 3
   },
   {
     "id": "genki-2-l21-040",
@@ -2139,19 +2214,22 @@
     "id": "genki-2-l21-042",
     "listKey": "genki-2-l21",
     "jmdictId": "1427160",
-    "kanji": "ためる"
+    "kanji": "ためる",
+    "kana": "ためる"
   },
   {
     "id": "genki-2-l21-043",
     "listKey": "genki-2-l21",
     "jmdictId": "1405800",
-    "kanji": "つづける"
+    "kanji": "つづける",
+    "kana": "つづける"
   },
   {
     "id": "genki-2-l21-044",
     "listKey": "genki-2-l21",
     "jmdictId": "1603550",
-    "kanji": "ほめる"
+    "kanji": "ほめる",
+    "kana": "ほめる"
   },
   {
     "id": "genki-2-l21-045",
@@ -2174,14 +2252,16 @@
     "id": "genki-2-l21-048",
     "listKey": "genki-2-l21",
     "jmdictId": "1471650",
-    "kanji": "ばかにする"
+    "kanji": "ばかにする",
+    "kana": "ばかにする"
   },
   {
     "id": "genki-2-l21-049",
     "listKey": "genki-2-l21",
     "jmdictId": "1226360",
     "kanji": "びっくり",
-    "suru": true
+    "suru": true,
+    "kana": "びっくり"
   },
   {
     "id": "genki-2-l21-050",
@@ -2233,7 +2313,8 @@
   {
     "id": "genki-2-l22-005",
     "listKey": "genki-2-l22",
-    "jmdictId": "1191980"
+    "jmdictId": "1191980",
+    "sense": 1
   },
   {
     "id": "genki-2-l22-006",
@@ -2349,7 +2430,8 @@
   {
     "id": "genki-2-l22-028",
     "listKey": "genki-2-l22",
-    "jmdictId": "1207230"
+    "jmdictId": "1207230",
+    "sense": 1
   },
   {
     "id": "genki-2-l22-029",
@@ -2532,7 +2614,8 @@
   {
     "id": "genki-2-l23-010",
     "listKey": "genki-2-l23",
-    "jmdictId": "1538900"
+    "jmdictId": "1538900",
+    "sense": 1
   },
   {
     "id": "genki-2-l23-011",
@@ -2593,7 +2676,8 @@
     "id": "genki-2-l23-022",
     "listKey": "genki-2-l23",
     "jmdictId": "2671020",
-    "kanji": "おなかをこわす"
+    "kanji": "おなかをこわす",
+    "kana": "おなかをこわす"
   },
   {
     "id": "genki-2-l23-023",
@@ -2603,7 +2687,8 @@
   {
     "id": "genki-2-l23-024",
     "listKey": "genki-2-l23",
-    "jmdictId": "1529550"
+    "jmdictId": "1529550",
+    "sense": 2
   },
   {
     "id": "genki-2-l23-025",
@@ -2613,7 +2698,8 @@
   {
     "id": "genki-2-l23-026",
     "listKey": "genki-2-l23",
-    "jmdictId": "1329590"
+    "jmdictId": "1329590",
+    "sense": 4
   },
   {
     "id": "genki-2-l23-027",
@@ -2631,7 +2717,8 @@
     "listKey": "genki-2-l23",
     "jmdictId": "1003170",
     "kanji": "がっかり",
-    "suru": true
+    "suru": true,
+    "kana": "がっかり"
   },
   {
     "id": "genki-2-l23-030",
@@ -2657,7 +2744,8 @@
     "listKey": "genki-2-l23",
     "jmdictId": "1103110",
     "kanji": "パンク",
-    "suru": true
+    "suru": true,
+    "kana": "パンク"
   },
   {
     "id": "genki-2-l23-034",
@@ -2684,12 +2772,14 @@
   {
     "id": "genki-2-l23-038",
     "listKey": "genki-2-l23",
-    "jmdictId": "1006640"
+    "jmdictId": "1006640",
+    "sense": 2
   },
   {
     "id": "genki-2-l23-039",
     "listKey": "genki-2-l23",
-    "jmdictId": "1345605"
+    "jmdictId": "1345605",
+    "sense": 2
   },
   {
     "id": "genki-2-l23-040",
@@ -2700,6 +2790,7 @@
   {
     "id": "genki-2-l23-041",
     "listKey": "genki-2-l23",
-    "jmdictId": "1502630"
+    "jmdictId": "1502630",
+    "modified": true
   }
 ]

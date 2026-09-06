@@ -305,6 +305,13 @@ and `genki_2_vocab.json` are the reference examples; the older So-Matome files
 still carry the fuller shape below and are read the same way, since every field
 is an override with a dictionary fallback rather than a required value.
 
+`sense` names which of the entry's senses the textbook teaches. JMdict orders
+senses by general prominence rather than by what a beginner course wants —
+あげる's "to give" is sense 5 of 上げる, behind "to raise; to elevate" — so the
+leading glosses often answer a question the book never asked. 85 cards carry
+one; `cardGloss(word, entry)` in `dictionaryEntryLookup.js` renders it, falling
+back to `briefGloss` when no sense is named.
+
 `mark` carries the decoration a textbook puts around a word to show how it is
 used — 〜枚 for a counter, そんな〜 for a prenominal, きれい（な） for a
 na-adjective. Matching has to strip that to find the word, so it is stored as a

@@ -27,7 +27,7 @@ import { useAuth } from '../context/AuthContext.jsx'
 import { useProgress } from '../hooks/useProgress.js'
 import { useAudioGenerationStatus } from '../hooks/useAudioGenerationStatus.js'
 import { useDictionaryEntries } from '../hooks/useDictionaryEntries.js'
-import { briefGloss } from '../utils/dictionaryEntryLookup.js'
+import { cardGloss } from '../utils/dictionaryEntryLookup.js'
 import { useSentencesForWords } from '../hooks/useSentenceForWord.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../utils/storage.js'
 import { supabase } from '../lib/supabase.js'
@@ -425,7 +425,7 @@ function DoneScreen({
         const dictEntry = row.word.jmdictId ? dictEntries[row.word.jmdictId] : null
         return (
           <span style={{ lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-            {row.word.english ?? briefGloss(dictEntry)}
+            {row.word.english ?? cardGloss(row.word, dictEntry)}
           </span>
         )
       },
@@ -973,7 +973,7 @@ function VocabPageScreens() {
       existingFronts.add(front)
       const cardId = `${targetDeckId}-${Date.now()}-${i}`
       const kana = word.kana ?? dictEntry?.kana_forms?.[0]
-      const english = word.english ?? briefGloss(dictEntry)
+      const english = word.english ?? cardGloss(word, dictEntry)
       const extras = {}
       if (kana) extras.kana = kana
       if (word.sentence) extras.sentence = word.sentence

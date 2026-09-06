@@ -54,7 +54,7 @@ const BOOKS = [
 // Only kana_forms is GIN-indexed; overlapping kanji_forms seq-scans 217k rows
 // and hits the statement timeout. Every candidate must contain the reading
 // anyway, so the reading index reaches all of them.
-const SELECT = 'id, primary_form, preferred_form, kanji_forms, kana_forms, gloss_en, common, misc0:senses->0->misc'
+const SELECT = 'id, primary_form, preferred_form, kanji_forms, kana_forms, gloss_en, common, senses, misc0:senses->0->misc'
 const BATCH = 50
 
 // --- normalisation -------------------------------------------------------
@@ -132,6 +132,30 @@ function glossDetail(gloss, row) {
   const hits = [...want].filter(w => firstAt.has(w)).map(w => firstAt.get(w))
   if (!hits.length) return { frac: 0, pos: Infinity }
   return { frac: hits.length / want.size, pos: hits.reduce((a, b) => a + b, 0) / hits.length }
+}
+
+// Which of an entry's senses the textbook is teaching. JMdict orders senses by
+// general prominence, not by what a beginner course wants: あげる's "to give" is
+// sense 5 of 上げる, behind "to raise; to elevate". Showing the first three
+// glosses therefore answers a different question than the book asked.
+function bestSense(gloss, row) {
+  const senses = row?.senses
+  if (!Array.isArray(senses) || senses.length < 2) return 0
+  let want = toks(gloss)
+  let loose = false
+  if (!want.size) { loose = true; want = toks(gloss, true) }
+  if (!want.size) return 0
+
+  const score = i => {
+    const have = toks((senses[i].gloss ?? []).join('; '), loose)
+    let hits = 0
+    for (const w of want) if (have.has(w)) hits++
+    return hits / want.size
+  }
+  let best = 0
+  for (let i = 1; i < senses.length; i++) if (score(i) > score(best)) best = i
+  // Only move off the default when the match is real and strictly better.
+  return score(best) > 0 && score(best) > score(0) ? best : 0
 }
 
 // `uk` says how a word is *written*, not which word it is. It is reported for
@@ -307,6 +331,21 @@ for (const e of entries) {
 
 // --- emit ----------------------------------------------------------------
 const rowById = new Map(pool.map(r => [r.id, r]))
+
+// An override exists because the reading lookup failed, so its target is often
+// absent from a pool built by querying readings — 授業中 is filed under
+// じゅぎょうちゅう, never the book's じゅぎょうちゅうに. Those rows have to be
+// fetched by id, or every override silently skips the display-form work and
+// renders the dictionary's own spelling.
+const missingIds = [...new Set(entries
+  .filter(e => e.jmdictId && !rowById.has(e.jmdictId))
+  .map(e => e.jmdictId))]
+for (let i = 0; i < missingIds.length; i += BATCH) {
+  const { data, error } = await supabase.from('dictionary').select(SELECT).in('id', missingIds.slice(i, i + BATCH))
+  if (error) throw error
+  for (const row of data ?? []) rowById.set(row.id, row)
+}
+if (missingIds.length) console.log(`  fetched ${missingIds.length} override targets absent from the reading pool`)
 const resolved = entries.filter(e => e.jmdictId)
 const seen = new Map()
 const collapsed = []
@@ -367,10 +406,34 @@ for (const book of BOOKS) {
       const stem = e.derivedSpelling || e.derivedReadings?.[0]
       if (forms.includes(bookForm)) row.kanji = bookForm
       else if (stem && forms.includes(stem)) { row.kanji = stem; row.suru = true }
-      // Nothing the entry lists is written the way the book writes it: 勉強する
-      // against 勉強, or a spelling the book got wrong (風 for "cold"). Mark it,
+      else {
+        // The book often prints a word with the particle it is used with —
+        // ほかの, 授業中に — which JMdict never includes in the entry. The entry
+        // is already settled by this point, so trimming the tail can only
+        // change how the card is written, never which word it is: keep the
+        // listed form and let `mark` put the tail back.
+        for (let n = 1; n <= 2 && !row.kanji; n++) {
+          const head = bookForm.slice(0, -n)
+          if (head.length >= 2 && forms.includes(head)) row.kanji = head
+        }
+      }
+      // Nothing the entry lists is written the way the book writes it: 歩いて
+      // against 歩く, or a spelling the book got wrong (風 for "cold"). Mark it,
       // so the card can say the form differs rather than pretending otherwise.
-      else row.modified = true
+      if (!row.kanji) row.modified = true
+
+      // When the form kept is itself a kana form, it IS the reading. Leaving
+      // the reading to kana_forms[0] made みんなで read みなで, because 皆 lists
+      // both みな and みんな and the book uses the second.
+      if (row.kanji && (entry.kana_forms ?? []).includes(row.kanji)) row.kana = row.kanji
+    }
+
+    const sense = bestSense(e.gloss, entry)
+    if (sense > 0) {
+      row.sense = sense
+      // Narrowing the gloss changes what the card teaches, so it is reviewable
+      // like any other decision rather than applied invisibly.
+      e.senseGloss = (entry.senses?.[sense]?.gloss ?? []).join('; ')
     }
     // A textbook decorates an entry to show how it is used — 〜枚 for a counter,
     // そんな〜 for a prenominal, きれい（な） for a na-adjective. Matching has to
@@ -383,7 +446,10 @@ for (const book of BOOKS) {
     const core = (row.kanji ?? bookForm) + (row.suru ? 'する' : '')
     const at = core ? rawBook.indexOf(core) : -1
     if (at >= 0 && rawBook !== core) {
-      row.mark = `${rawBook.slice(0, at)}{}${rawBook.slice(at + core.length)}`
+      const mark = `${rawBook.slice(0, at)}{}${rawBook.slice(at + core.length)}`
+      // 〜 and （な） are how the book writes the word; "+ negative" is an
+      // English note about how it is used, and does not belong on a card face.
+      if (!/[A-Za-z]/.test(mark)) row.mark = mark
     }
 
     // What the card will actually render, for the audit — which otherwise
@@ -447,6 +513,7 @@ writeFileSync(REPORT, `${JSON.stringify({
       id: e.jmdictId,
       shows: e.renders ?? displayFormOf(e.pick ?? rowById.get(e.jmdictId)),
       dictGloss: ((e.pick ?? rowById.get(e.jmdictId))?.gloss_en ?? '').slice(0, 70),
+      senseGloss: e.senseGloss ?? null,
     }))
     .sort((a, b) => (a.confidence ?? -1) - (b.confidence ?? -1) || b.candidates - a.candidates),
 }, null, 2)}\n`)
