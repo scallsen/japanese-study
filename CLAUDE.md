@@ -296,14 +296,26 @@ Mirrors katsuyou-drill's UI exactly. Speed-mode only (no text input). Card front
 
 ### Word data format
 
-**New word lists carry only `{ id, listKey, jmdictId }`** — no gloss, reading,
-display form or sentence. The `dictionary` table is already the source of truth
+**New word lists carry `{ id, listKey, jmdictId }`, plus an optional `kanji`** —
+no gloss, reading or sentence. The `dictionary` table is already the source of truth
 for all of those (see the Dictionary linkage section), so storing them again
 duplicates data that would then drift, and the raw textbook lists they come from
 are the publisher's content while this repo is public. `src/data/words/genki_1_vocab.json`
 and `genki_2_vocab.json` are the reference examples; the older So-Matome files
 still carry the fuller shape below and are read the same way, since every field
 is an override with a dictionary fallback rather than a required value.
+
+`kanji` is present only when the textbook writes the word as one of the
+*several forms JMdict already lists for that entry* — のぼる is 上る/登る/昇る and
+Genki teaches 登る; 五日 and ５日 are one entry. Keeping the book's spelling makes
+the card match the book while still pointing at the same entry for reading and
+meaning, so it selects among JMdict's forms rather than storing textbook text,
+and the resolver revalidates it on every run. A card therefore has three
+possible renderings from one id — the book's spelling, JMdict's canonical form
+(`displayFormOf`), and the plain reading — which is the plumbing a display
+setting needs. `modified: true` marks the opposite case: nothing the entry lists
+is written the way the book writes it (勉強する against 勉強), and the card shows
+an M so the difference is stated rather than hidden.
 
 Two consequences worth knowing before adding a list this way: an entry with no
 `jmdictId` cannot render at all (there is nothing to fall back to), and a

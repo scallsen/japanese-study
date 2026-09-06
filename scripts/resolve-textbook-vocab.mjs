@@ -332,22 +332,39 @@ for (const book of BOOKS) {
     seen.set(dupKey, e)
     counters[e.listKey] = (counters[e.listKey] ?? 0) + 1
 
-    // The card renders JMdict's form, which is not always the form the book
-    // prints — 勉強する is drilled as 勉強, だれ as 誰, 〜枚 as 枚. Recording that
-    // the two differ lets the card say so, rather than quietly showing the
-    // learner something their textbook never wrote. Only the fact of the
-    // difference is stored, not the book's own text.
     // An overridden entry never went through the matcher, so it has no `pick`;
     // its chosen row still has to be looked up to know what will render.
-    const row_ = e.pick ?? rowById.get(e.jmdictId)
-    const shown = row_ ? displayFormOf(row_) : null
-    const bookForm = e.srcKanji?.trim() || e.srcKana?.trim()
+    const entry = e.pick ?? rowById.get(e.jmdictId)
+    const shown = entry ? displayFormOf(entry) : null
+    // The normalised spelling, so a stripped 〜 or （な） is not mistaken for
+    // the book and the dictionary disagreeing about the word.
+    const bookForm = e.spelling || e.readings[0]
+
     const row = {
       id: `${e.listKey}-${String(counters[e.listKey]).padStart(3, '0')}`,
       listKey: e.listKey,
       jmdictId: e.jmdictId,
     }
-    if (bookForm && shown && bookForm !== shown) row.modified = true
+
+    if (bookForm && shown && bookForm !== shown) {
+      // JMdict lists several written forms for one word — のぼる is 上る/登る/昇る,
+      // 五日 is ５日/五日 — and a textbook teaches one of them. Where the book's
+      // spelling is one the entry itself lists, keep it: the card then matches
+      // the book while still pointing at the same entry for reading and
+      // meaning. This selects among JMdict's own forms rather than storing the
+      // textbook's text, and it is revalidated every run, so a form that later
+      // leaves JMdict stops being used instead of silently persisting.
+      //
+      // Together with the entry's reading this gives one card three possible
+      // renderings — the book's spelling, JMdict's canonical form, and plain
+      // kana — for a display setting to choose between.
+      const listed = [...(entry.kanji_forms ?? []), ...(entry.kana_forms ?? [])].includes(bookForm)
+      if (listed) row.kanji = bookForm
+      // Nothing the entry lists is written the way the book writes it: 勉強する
+      // against 勉強, or a spelling the book got wrong (風 for "cold"). Mark it,
+      // so the card can say the form differs rather than pretending otherwise.
+      else row.modified = true
+    }
     rows.push(row)
   }
   writeFileSync(book.file, `${JSON.stringify(rows, null, 2)}\n`)

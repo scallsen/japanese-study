@@ -39,7 +39,10 @@ let shown = 0
 for (const w of words) {
   const r = rows.get(w.jmdictId)
   if (!r) { console.log(`  !! ${w.id}  jmdictId ${w.jmdictId} NOT FOUND in dictionary`); missing++; continue }
-  const line = `${w.listKey.padEnd(12)} ${displayFormOf(r).padEnd(10)} ${(r.kana_forms?.[0] ?? '').padEnd(12)} ${(r.gloss_en ?? '').slice(0, 52)}`
+  // Same precedence the card uses: the book's own spelling wins when the
+  // import kept one, else the dictionary's display form.
+  const form = w.kanji ?? displayFormOf(r)
+  const line = `${w.listKey.padEnd(12)} ${form.padEnd(10)} ${(r.kana_forms?.[0] ?? '').padEnd(12)} ${(r.gloss_en ?? '').slice(0, 52)}`
   if (filter && !line.includes(filter) && !w.id.includes(filter)) continue
   console.log(`  ${line}`)
   shown++
