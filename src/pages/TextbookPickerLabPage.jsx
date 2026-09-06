@@ -71,8 +71,8 @@ const WIDTHS = [
 export default function TextbookPickerLabPage() {
   const [layout, setLayout] = useState('rows')
   const [width, setWidth] = useState(560)
-  const [selectedId, setSelectedId] = useState('nsm-n3')
-  const [chosenId, setChosenId] = useState('nsm-n3')
+  const [selectedId, setSelectedId] = useState('nsm-n3-kanji')
+  const [chosenId, setChosenId] = useState('nsm-n3-kanji')
   const [modalOpen, setModalOpen] = useState(false)
   const isMobile = useIsMobile()
 
