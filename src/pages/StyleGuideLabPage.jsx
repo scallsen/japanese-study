@@ -19,6 +19,7 @@ import Select from '../components/Select.jsx'
 import Checkbox from '../components/Checkbox.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
 import FileButton from '../components/FileButton.jsx'
+import Switch from '../components/Switch.jsx'
 import DeckComboBox from '../components/DeckComboBox.jsx'
 import SignInGate from '../components/SignInGate.jsx'
 import { WordPopup } from '../components/JapaneseReader.jsx'
@@ -58,6 +59,7 @@ const NAV = [
       { key: 'number-field', label: 'Number Field', built: true },
       { key: 'select', label: 'Select', built: true },
       { key: 'file-button', label: 'File Button', built: true },
+      { key: 'switch', label: 'Switch', built: true },
     ],
   },
   {
@@ -118,6 +120,7 @@ const DESCRIPTIONS = {
   modal: 'The scrim + panel shell for every overlay: centred dialog on desktop, bottom sheet on mobile. ConfirmDialog is now a thin composition of this + Button rather than its own implementation.',
   toast: 'A transient confirmation with an optional inline action. Four placement variants; the dedicated Toast lab compares them side by side.',
   'feed-card': 'One item in a browsable feed. Reconciles Immersion’s ArticleCard and Story’s RecentCard, which had drifted on padding, hover mechanism, transition timing, and title font.',
+  switch: 'The on/off control for a settings row. Not a Toggle Button (that renames itself between states and reads as an action) and not a Checkbox (which leads with its control and carries its own label). A switch trails a row whose label is on the left, and only ever reports state — so the label column stays scannable while values change. Takes the module accent.',
   'toggle-button': 'A standalone on/off control whose label changes with its state — Follow/Unfollow, deck On/Off. Not a Button variant (its hover can mean the opposite action, which no resting-state variant expresses) and not a Chip (a chip picks one of a set and keeps a fixed label). Composes Chip so both share one visual language.',
   'distribution-bar': 'How a collection divides across states. Distinct from the progress bar, which shows one value’s completion.',
   'deck-picker': 'Pick an existing deck, or create one and pick it, in a single control — type to filter, and a "+ Create «typed»" row appears inline as soon as the query doesn’t match. Popover on desktop, bottom sheet on mobile. Chosen over DeckPickerSheet and SegmentedDeckAdd, which are retired.',
@@ -807,6 +810,37 @@ function ToggleButtonDemo() {
   return <ComponentPage title="Toggle Button" description={DESCRIPTIONS['toggle-button']} built preview={preview} controls={controls} notes={notes} />
 }
 
+function SwitchDemo() {
+  const [furigana, setFurigana] = useState(true)
+  const [disabled, setDisabled] = useState(false)
+
+  const preview = (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE_16, width: '100%', maxWidth: 320 }}>
+      <div style={{ fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.3)' }}>A settings row — the row is the mouse hit target, the switch keeps its own keyboard focus</div>
+      <div
+        className="settings-row"
+        onClick={() => setDisabled(d => d)}
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8 }}
+      >
+        <span style={{ fontSize: FS_BASE }}>Furigana</span>
+        <Switch checked={furigana} onChange={() => setFurigana(v => !v)} disabled={disabled} label="Furigana" />
+      </div>
+      <ModuleThemeProvider accent="#E06C9F">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8 }}>
+          <span style={{ fontSize: FS_BASE }}>Inside a pink module</span>
+          <Switch checked={furigana} onChange={() => setFurigana(v => !v)} disabled={disabled} label="Furigana" />
+        </div>
+      </ModuleThemeProvider>
+    </div>
+  )
+
+  const controls = <Checkbox checked={disabled} onChange={() => setDisabled(v => !v)} label="Disabled" />
+
+  const notes = <>The track takes the module accent, like Chip and Toggle Button, so a switch in Anime Vocab is pink for the same reason its chips are. Hover lights the track from the row as well as from the switch itself, since the row is what most people aim at.</>
+
+  return <ComponentPage title="Switch" description={DESCRIPTIONS['switch']} built preview={preview} controls={controls} notes={notes} />
+}
+
 const DECK_SEGMENTS = [
   { key: 'new', label: 'Unlearned', count: 412, description: 'Never reviewed — waiting for its first study session' },
   { key: 'learning', label: 'Learning', count: 38, description: 'Answered correctly once, not yet graduated' },
@@ -1055,6 +1089,7 @@ const PAGES = {
   'number-field': NumberFieldDemo,
   select: SelectDemo,
   'file-button': FileButtonDemo,
+  switch: SwitchDemo,
   'section-header': SectionHeaderDemo,
   'sign-in-gate': SignInGateDemo,
   chip: ChipDemo,

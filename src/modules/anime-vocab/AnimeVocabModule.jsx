@@ -5,10 +5,9 @@ import AuthSlot from '../../components/AuthSlot.jsx'
 import AttributionFooter from '../../components/AttributionFooter.jsx'
 import TopProgressBar from '../../components/TopProgressBar.jsx'
 import CenteredLoadingMessage from '../../components/CenteredLoadingMessage.jsx'
-import SectionHeader from '../../components/SectionHeader.jsx'
-import Checkbox from '../../components/Checkbox.jsx'
-import Select from '../../components/Select.jsx'
 import SettingsSidebar, { SidebarHeaderToggle } from '../../components/SettingsSidebar.jsx'
+import DrillSettingsPanel from '../../components/DrillSettingsPanel.jsx'
+import { useDrillSettings } from '../../hooks/useDrillSettings.js'
 import MediaSearch from './MediaSearch.jsx'
 import EpisodeList from './EpisodeList.jsx'
 import EpisodeVocabBrowser from './EpisodeVocabBrowser.jsx'
@@ -17,9 +16,7 @@ import TrackedAnimeSection from './TrackedAnimeSection.jsx'
 import { useTrackedAnime } from './useTrackedAnime.js'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import { useJaVoices } from '../../hooks/useTTS.js'
-import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
-import { SENTENCE_SOURCE_OPTIONS, DEFAULT_SENTENCE_SOURCE } from '../../data/sentenceSource.js'
-import { FONT, TRACKING, FS_BASE } from '../../data/theme.js'
+import { FONT, TRACKING } from '../../data/theme.js'
 import { MODULES } from '../../data/modules.js'
 import { ModuleThemeProvider, useAccent } from '../../context/ModuleThemeContext.jsx'
 import { useIsMobile } from '../../hooks/useIsMobile.js'
@@ -66,47 +63,7 @@ export default function AnimeVocabModule({ initialMediaId }) {
   // separate anime-vocab-* namespace, so display/audio preferences carry
   // over between the two drills automatically, in both directions.
   const [showOptions, setShowOptions] = useState(false)
-  const [showStreak,       setShowStreak]       = useState(() => {
-    const s = safeLocalStorageGet('vocab-show-streak'); return s === null ? true : s === 'true'
-  })
-  const [showFurigana,     setShowFurigana]     = useState(() => {
-    const s = safeLocalStorageGet('vocab-show-furigana'); return s === null ? true : s === 'true'
-  })
-  const [showVisualEffects, setShowVisualEffects] = useState(() => {
-    const s = safeLocalStorageGet('vocab-visual-effects'); return s === null ? true : s === 'true'
-  })
-  const [pixelFont,        setPixelFont]        = useState(() => {
-    const s = safeLocalStorageGet('vocab-pixel-font'); return s === null ? true : s === 'true'
-  })
-  const [showTranslation,  setShowTranslation]  = useState(() => {
-    const s = safeLocalStorageGet('vocab-show-translation'); return s === null ? true : s === 'true'
-  })
-  const [showSentence,     setShowSentence]     = useState(() => {
-    const s = safeLocalStorageGet('vocab-show-sentence'); return s === null ? false : s === 'true'
-  })
-  const [sentenceSource, setSentenceSource] = useState(() => safeLocalStorageGet('vocab-sentence-source') ?? DEFAULT_SENTENCE_SOURCE)
-  const [showKanjiMeaning, setShowKanjiMeaning] = useState(() => {
-    const s = safeLocalStorageGet('vocab-show-kanji-meaning'); return s === null ? false : s === 'true'
-  })
-  const [audioEnabled,     setAudioEnabled]     = useState(() => {
-    const s = safeLocalStorageGet('vocab-audio-enabled'); return s === null ? true : s === 'true'
-  })
-  const [sfxEnabled,       setSfxEnabled]       = useState(() => {
-    const s = safeLocalStorageGet('vocab-sfx-enabled'); return s === null ? true : s === 'true'
-  })
-  const [ttsVoice,         setTtsVoice]         = useState(() => safeLocalStorageGet('vocab-tts-voice') ?? '')
-
-  useEffect(() => { safeLocalStorageSet('vocab-show-streak',       showStreak) },        [showStreak])
-  useEffect(() => { safeLocalStorageSet('vocab-show-furigana',     showFurigana) },       [showFurigana])
-  useEffect(() => { safeLocalStorageSet('vocab-visual-effects',    showVisualEffects) },  [showVisualEffects])
-  useEffect(() => { safeLocalStorageSet('vocab-pixel-font',        pixelFont) },          [pixelFont])
-  useEffect(() => { safeLocalStorageSet('vocab-show-translation',  showTranslation) },    [showTranslation])
-  useEffect(() => { safeLocalStorageSet('vocab-show-sentence',     showSentence) },       [showSentence])
-  useEffect(() => { safeLocalStorageSet('vocab-sentence-source',   sentenceSource) },     [sentenceSource])
-  useEffect(() => { safeLocalStorageSet('vocab-show-kanji-meaning', showKanjiMeaning) },  [showKanjiMeaning])
-  useEffect(() => { safeLocalStorageSet('vocab-audio-enabled',     audioEnabled) },       [audioEnabled])
-  useEffect(() => { safeLocalStorageSet('vocab-sfx-enabled',       sfxEnabled) },         [sfxEnabled])
-  useEffect(() => { safeLocalStorageSet('vocab-tts-voice',         ttsVoice) },           [ttsVoice])
+  const { settings, set: setSetting } = useDrillSettings('vocab')
 
   useEffect(() => {
     if (!initialMediaId) return
@@ -202,62 +159,18 @@ export default function AnimeVocabModule({ initialMediaId }) {
   const showDrillSettings = !!(media && episode && drillWords)
   const footerSources = episode ? ['jiten', 'dictionary', 'jlpt-vocab'] : ['jiten']
 
-  // No "Text to speech" (Voicevox) source picker like VocabPage's — Anime
-  // Vocab words are drawn from episode vocabulary, never Voicevox-pre-
-  // generated, so that control would always silently do nothing. Just the
-  // browser-voice picker (vocab-tts-voice) is exposed here, under the same
-  // "Enable audio" checkbox VocabPage uses.
   function renderSettingsPanel(paddingH) {
     return (
       <div style={{ padding: `16px ${paddingH}px 16px` }}>
-        <SectionHeader title="Settings" />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <Checkbox checked={showStreak}        onChange={() => setShowStreak(v => !v)}        label="Show streak" />
-          <Checkbox checked={showFurigana}      onChange={() => setShowFurigana(v => !v)}      label="Show furigana" />
-          <Checkbox checked={showVisualEffects} onChange={() => setShowVisualEffects(v => !v)} label="Show visual effects" />
-          <Checkbox checked={pixelFont}         onChange={() => setPixelFont(v => !v)}         label="Use pixel font" />
-          <Checkbox checked={showTranslation}   onChange={() => setShowTranslation(v => !v)}   label="Show translation" />
-          <Checkbox checked={showSentence}      onChange={() => setShowSentence(v => !v)}       label="Show sentence" />
-          {showSentence && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
-              <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Sentence source</span>
-              <Select
-                value={sentenceSource}
-                onChange={setSentenceSource}
-                options={SENTENCE_SOURCE_OPTIONS}
-                label="Sentence source"
-              />
-            </div>
-          )}
-          <Checkbox checked={showKanjiMeaning}  onChange={() => setShowKanjiMeaning(v => !v)}   label="Show kanji meaning" />
-          <Checkbox
-            checked={audioEnabled}
-            onChange={() => setAudioEnabled(v => !v)}
-            label="Enable audio"
-          />
-          {audioEnabled && (
-            <>
-              {jaVoices.length > 0 && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
-                  <Select
-                    value={ttsVoice}
-                    onChange={setTtsVoice}
-                    options={[{ value: '', label: 'Default' }, ...jaVoices.map(v => ({ value: v.name, label: v.name }))]}
-                    label="Voice"
-                    subtext="Availability based on your device or browser"
-                  />
-                </div>
-              )}
-              <Checkbox
-                checked={sfxEnabled}
-                onChange={() => setSfxEnabled(v => !v)}
-                label="Sound effects"
-                subtext="Silent mode may mute sound effects"
-                indent={1}
-              />
-            </>
-          )}
-        </div>
+        {/* No Voice row: these words come out of subtitles on demand, so no
+            recordings exist for any of them and the backup voice reads every
+            card. */}
+        <DrillSettingsPanel
+          settings={settings}
+          onChange={setSetting}
+          hasRecordedVoices={false}
+          backupVoices={jaVoices}
+        />
       </div>
     )
   }
@@ -304,18 +217,18 @@ export default function AnimeVocabModule({ initialMediaId }) {
               <EpisodeDrill
                 words={drillWords}
                 onBack={backToBrowser}
-                ttsVoice={ttsVoice}
-                audioEnabled={audioEnabled}
-                sfxEnabled={sfxEnabled}
+                ttsVoice={settings.backupVoice}
+                playOnFront={settings.frontAudio}
+                playOnBack={settings.backAudio}
+                sfxEnabled={settings.sfx}
                 disableKeyboard={showOptions}
-                showStreak={showStreak}
-                showFurigana={showFurigana}
-                showTranslation={showTranslation}
-                showSentence={showSentence}
-                sentenceSource={sentenceSource}
-                showKanjiMeaning={showKanjiMeaning}
-                pixelFont={pixelFont}
-                showVisualEffects={showVisualEffects}
+                showStreak={settings.streak}
+                showFurigana={settings.furigana}
+                showTranslation={settings.translation}
+                showSentence={settings.sentence}
+                showKanjiMeaning={settings.kanjiMeanings}
+                pixelFont={settings.pixelFont}
+                showVisualEffects={settings.visualEffects}
               />
             )}
           </div>
