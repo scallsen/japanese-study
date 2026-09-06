@@ -677,3 +677,13 @@ swapping the home page's four headings by hand and preferring the result.
 - **Visible change to accept:** every Dictionary and Vocab Drill group
   divider loses its hairline. Verified live on `#/dictionary` (Kanji /
   Words) and the style guide.
+
+## Home flow concepts (`worktree-home-flow-concepts`, on main after #101)
+
+Bench at `#/dev/home-flow` (`src/pages/HomeFlowLabPage.jsx`) with three
+click-through concepts for what the Vocab and SRS index pages are for now
+that the home cards carry both primary actions. Written up with trade-offs
+and a recommendation in `docs/home-flow-concepts.md`. **[INPUT]** pick a
+direction (A recommended: pointer control on the card, free-drill sheet,
+one Decks page; both index homes deleted) and answer the three open
+questions at the end of that doc before the build starts.

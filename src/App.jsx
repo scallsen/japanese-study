@@ -16,6 +16,7 @@ import StyleGuideLabPage from './pages/StyleGuideLabPage.jsx'
 import SettingsLabPage from './pages/SettingsLabPage.jsx'
 import HomeCardsLabPage from './pages/HomeCardsLabPage.jsx'
 import TextbookPickerLabPage from './pages/TextbookPickerLabPage.jsx'
+import HomeFlowLabPage from './pages/HomeFlowLabPage.jsx'
 
 function getRoute() {
   // Strip any query string (e.g. '/vocab-srs/browse?deck=x&manage=1') before
@@ -65,5 +66,7 @@ export default function App() {
   if (route === '/dev/home-cards') return <HomeCardsLabPage />
   // Dev-only bench for change-textbook layout options, not linked from the dashboard
   if (route === '/dev/textbook-picker') return <TextbookPickerLabPage />
+  // Dev-only bench comparing three shapes for the learn → remember loop (home cards, Vocab/SRS indexes), not linked from the dashboard
+  if (route === '/dev/home-flow') return <HomeFlowLabPage />
   return <DashboardPage />
 }
