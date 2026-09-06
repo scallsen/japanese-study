@@ -53,7 +53,7 @@ const OPTION_GROUPS = [
     key: 'advance',
     title: 'Advancing',
     options: [
-      { value: 'explicit', label: 'Explicit advance', blurb: 'Finishing marks the chapter drilled; the tracker stays. The card\'s primary becomes "Advance to Lesson 5" (Redo as a quiet link) and advancing is a deliberate act, which is where the SRS gate hangs.' },
+      { value: 'explicit', label: 'Explicit advance', blurb: 'Finishing marks the chapter drilled; the tracker stays. The card\'s primary becomes "Start Lesson 5" (Redo in the chevron menu) and advancing is a deliberate act, which is where the SRS gate hangs.' },
       { value: 'auto', label: 'Auto-advance', blurb: 'Finishing from the card moves the tracker at once. The done screen\'s SRS prompt is the only gate; the card shows "Lesson 4 done today" under "Start Lesson 5".' },
       { value: 'on-start', label: 'Advance on start', blurb: 'Finishing marks drilled; the tracker moves when "Start Lesson 5" is pressed. Closest to today. The gate runs at that press.' },
     ],
@@ -364,15 +364,24 @@ function SegmentedPrimary({ size = 'lg', label, onClick, menuItems = [] }) {
   }
 
   const pad = size === 'xl' ? `${SPACE_12}px ${SPACE_32}px` : `10px ${SPACE_24}px`
-  const chevronPad = size === 'xl' ? 10 : 8
+  // The chevron segment is a perfect square sized to the main button's own
+  // rendered height (2× its vertical padding + one line of FS_BASE text) —
+  // computed explicitly rather than via CSS aspect-ratio, which a flex row
+  // with align-items: stretch doesn't resolve reliably (the cross-axis size
+  // isn't "definite" yet when the aspect-ratio width would need it, so
+  // Chromium falls back to the glyph's own tiny content width instead).
+  const square = (size === 'xl' ? SPACE_12 : 10) * 2 + FS_BASE
 
   return (
-    <div style={{ display: 'inline-flex', alignItems: 'stretch', borderRadius: 6, overflow: 'hidden', boxSizing: 'border-box' }}>
+    <div style={{ display: 'inline-flex', flexShrink: 0, alignItems: 'stretch', borderRadius: 6, overflow: 'hidden', boxSizing: 'border-box' }}>
       <button
         type="button"
         className="btn btn-tint"
         onClick={onClick}
-        style={{ background: accent, border: 'none', boxSizing: 'border-box', color: '#fff', padding: pad, fontFamily: FONT, letterSpacing: TRACKING, fontSize: FS_BASE, lineHeight: 1, cursor: 'pointer' }}
+        style={{
+          background: accent, border: 'none', boxSizing: 'border-box', flexShrink: 0, whiteSpace: 'nowrap',
+          color: '#fff', padding: pad, fontFamily: FONT, letterSpacing: TRACKING, fontSize: FS_BASE, lineHeight: 1, cursor: 'pointer',
+        }}
       >
         {label}
       </button>
@@ -383,8 +392,8 @@ function SegmentedPrimary({ size = 'lg', label, onClick, menuItems = [] }) {
         onClick={() => setOpen(o => !o)}
         aria-label="More actions"
         style={{
-          background: accent, border: 'none', borderLeft: '1px solid rgba(255,255,255,0.25)', boxSizing: 'border-box',
-          color: '#fff', padding: `0 ${chevronPad}px`, display: 'flex', alignItems: 'center',
+          background: accent, border: 'none', borderLeft: '1px solid rgba(255,255,255,0.25)', boxSizing: 'border-box', flexShrink: 0,
+          color: '#fff', padding: 0, width: square, height: square, display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontFamily: FONT, letterSpacing: TRACKING, fontSize: FS_CAPTION, lineHeight: 1, cursor: 'pointer',
         }}
       >
@@ -421,7 +430,7 @@ function chapterPrimaryAction(mock) {
     body = <Line>{current.label} drilled ✓ · {inSrsLine(current)}</Line>
     menuItems = [{ id: 'redo', label: `Redo ${current.label}`, onClick: () => startDrill(current, { fromCard: false }) }]
     if (opts.advance === 'explicit') {
-      label = `Advance to ${next.label}`
+      label = `Start ${next.label}`
       onClick = () => advance(current)
     } else {
       label = `Start ${next.label}`
@@ -457,7 +466,7 @@ function NewCard({ mock }) {
   const { textbook, chapters, current, doneCount } = state
   const complete = doneCount === chapters.length
   const cover = <Cover icon={textbook.icon} cropped={opts.cover === 'cropped'} onClick={() => note('Open textbook picker')} />
-  const viewChapters = <Button variant="neutral" size="lg" onClick={() => go('textbook')}>View chapters</Button>
+  const viewChapters = <Button variant="ghost" size="lg" onClick={() => go('textbook')}>View chapters</Button>
   const { label, onClick, menuItems, body } = chapterPrimaryAction(mock)
 
   const unsent = complete ? 0 : current.wordCount - sentCountOf(current)
@@ -500,7 +509,7 @@ function ReviewCard({ mock }) {
       actions={
         <ActionsRow>
           <Button size="lg" disabled={!canStart} onClick={() => note('Start the SRS review')}>{canStart ? `Review ${due + newToday} cards` : 'Nothing due'}</Button>
-          <Button variant="neutral" size="lg" onClick={() => go('decks')}>Manage decks</Button>
+          <Button variant="ghost" size="lg" onClick={() => go('decks')}>Manage decks</Button>
         </ActionsRow>
       }
     >
@@ -540,7 +549,7 @@ function TextbookScreen({ mock }) {
             </div>
           </div>
           <div style={{ display: 'flex', gap: SPACE_8, flexShrink: 0 }}>
-            {opts.freeDrill === 'header' && <Button variant="neutral" size="lg" onClick={() => setFreeOpen(true)}>Free drill</Button>}
+            {opts.freeDrill === 'header' && <Button variant="ghost" size="lg" onClick={() => setFreeOpen(true)}>Free drill</Button>}
             <SegmentedPrimary size="lg" label={label} onClick={onClick} menuItems={menuItems} />
           </div>
         </div>
@@ -614,7 +623,7 @@ function ChapterPath({ mock }) {
                   <Button size="sm" variant="neutral" onClick={() => go('preview', { chapter: ch })}>Words</Button>
                   <Button size="sm" variant="neutral" disabled={fullySent(ch)} onClick={() => sendAll(ch)}>{fullySent(ch) ? 'In SRS' : unsent < ch.wordCount ? `Send remaining ${unsent}` : 'Send to SRS'}</Button>
                   {isCurrent && drilledAtPointer && next && opts.advance === 'explicit' && (
-                    <Button size="sm" variant="accent-outline" onClick={() => advance(ch)}>Advance to {next.label}</Button>
+                    <Button size="sm" variant="accent-outline" onClick={() => advance(ch)}>Start {next.label}</Button>
                   )}
                   {!isCurrent && <Button size="sm" variant="ghost" onClick={() => setPointer(ch.id)}>Set as current</Button>}
                 </div>
@@ -733,7 +742,7 @@ function DoneScreen({ mock }) {
   if (isBook && opts.advance === 'auto' && !isCurrent && state.current && !state.current.drilled) {
     primary = <Button size="lg" onClick={() => startDrill(state.current, { fromCard: true })}>Start {state.current.label}</Button>
   } else if (isCurrent && next && opts.advance === 'explicit') {
-    primary = <Button size="lg" onClick={() => { advance(chapter); go('home') }}>Advance to {next.label}</Button>
+    primary = <Button size="lg" onClick={() => { advance(chapter); go('home') }}>Start {next.label}</Button>
   } else if (isCurrent && next && opts.advance === 'on-start') {
     primary = <Button size="lg" onClick={() => advance(chapter, n => startDrill(n, { fromCard: true }))}>Start {next.label}</Button>
   }
