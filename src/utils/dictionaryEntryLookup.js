@@ -7,11 +7,13 @@ const cache = new Map()
 const attempted = new Set()
 
 // `misc0` is only sense 0's misc array, not the whole `senses` blob — it costs
-// a few bytes per row and carries the `uk` flag `displayFormOf` needs.
-// `senses` is fetched because a word can name which sense its textbook teaches
-// (see cardGloss); `misc0` stays as the cheap sense-0 projection displayFormOf
-// needs, since it is also read for entries no word points a sense at.
-const SELECT = 'id, primary_form, preferred_form, kana_forms, gloss_en, pos, common, jlpt_level, jlpt_level_inferred, senses, misc0:senses->0->misc'
+// a few bytes per row and carries the `uk` flag `displayFormOf` needs. The full
+// blob is deliberately absent: measured over 200 common entries it takes a row
+// from 294 to 488 bytes, and every consumer of this lookup would pay that —
+// including the anime episode browser, which resolves hundreds of ids at once —
+// for something only the handful of cards that name a sense read. Those go
+// through fetchSenseGlosses below instead.
+const SELECT = 'id, primary_form, preferred_form, kana_forms, gloss_en, pos, common, jlpt_level, jlpt_level_inferred, misc0:senses->0->misc'
 
 // Returns { [jmdictId]: row|null } for every id already resolved (found or not).
 export async function fetchDictionaryEntries(ids) {
@@ -25,6 +27,28 @@ export async function fetchDictionaryEntries(ids) {
   const result = {}
   for (const id of unique) {
     if (attempted.has(id)) result[id] = cache.get(id) ?? null
+  }
+  return result
+}
+
+const senseCache = new Map()
+const senseAttempted = new Set()
+
+// Returns { [jmdictId]: gloss[][] } — the gloss list of each sense, for ids a
+// word points a sense at. Separate from fetchDictionaryEntries on purpose (see
+// SELECT above): ~87 of the 1,861 bundled words name a sense, so this fetches a
+// few rows per drill rather than fattening every dictionary lookup in the app.
+export async function fetchSenseGlosses(ids) {
+  const unique = [...new Set(ids)].filter(Boolean)
+  const missing = unique.filter(id => !senseAttempted.has(id))
+  if (missing.length > 0 && supabase) {
+    const { data } = await supabase.from('dictionary').select('id, senses').in('id', missing)
+    missing.forEach(id => senseAttempted.add(id))
+    if (data) for (const row of data) senseCache.set(row.id, (row.senses ?? []).map(s => s?.gloss ?? []))
+  }
+  const result = {}
+  for (const id of unique) {
+    if (senseAttempted.has(id)) result[id] = senseCache.get(id) ?? null
   }
   return result
 }
@@ -44,10 +68,12 @@ export function briefGloss(row, count = 3, maxChars = 60) {
 // senses its textbook is teaching — JMdict orders senses by general prominence,
 // so あげる's "to give" sits at sense 5 of 上げる, behind "to raise; to elevate",
 // and the first three glosses would answer a question the book never asked.
-// Falls back to the entry's leading glosses when no sense is named.
-export function cardGloss(word, row) {
-  const sense = word?.sense != null ? row?.senses?.[word.sense] : null
-  if (sense?.gloss?.length) return trimGlosses(sense.gloss)
+// `senseGlosses` is the map from useSenseGlosses/fetchSenseGlosses; without it
+// (or before it resolves) this falls back to the entry's leading glosses, which
+// is also what a word that names no sense always gets.
+export function cardGloss(word, row, senseGlosses) {
+  const gloss = word?.sense != null ? senseGlosses?.[word.jmdictId]?.[word.sense] : null
+  if (gloss?.length) return trimGlosses(gloss)
   return briefGloss(row)
 }
 

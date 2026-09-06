@@ -3,7 +3,7 @@ import { buildFurigana } from '../utils/furigana.js'
 import { FONT } from '../data/theme.js'
 import { useKanjiMeanings } from '../hooks/useKanjiMeanings.js'
 import { kanjiCharsOf } from '../utils/kanjiMeaningLookup.js'
-import { useDictionaryEntry } from '../hooks/useDictionaryEntries.js'
+import { useDictionaryEntry, useSenseGlosses } from '../hooks/useDictionaryEntries.js'
 import { cardGloss } from '../utils/dictionaryEntryLookup.js'
 import { cardFormOf } from '../lib/displayForm.js'
 import { useSentenceForWord } from '../hooks/useSentenceForWord.js'
@@ -175,7 +175,8 @@ export default function VocabCard({ word, flipped, onFlip, animate, reviewMode, 
   // fields are only a fallback for words that don't have (or don't yet have)
   // a dictionary match.
   const { entry: dictEntry, loading: dictLoading } = useDictionaryEntry(word.jmdictId, true)
-  const resolvedEnglish = cardGloss(word, dictEntry) ?? word.english
+  const senseGlosses = useSenseGlosses([word])
+  const resolvedEnglish = cardGloss(word, dictEntry, senseGlosses) ?? word.english
   const { form: displayForm, reading } = cardFormOf(word, dictEntry)
 
   // The word's own curated sentence wins by default ('custom'); a Tanaka

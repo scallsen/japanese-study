@@ -26,7 +26,7 @@ import { useGamepad } from '../hooks/useGamepad.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useProgress } from '../hooks/useProgress.js'
 import { useAudioGenerationStatus } from '../hooks/useAudioGenerationStatus.js'
-import { useDictionaryEntries } from '../hooks/useDictionaryEntries.js'
+import { useDictionaryEntries, useSenseGlosses } from '../hooks/useDictionaryEntries.js'
 import { cardGloss } from '../utils/dictionaryEntryLookup.js'
 import { cardFormOf, speechTextOf } from '../lib/displayForm.js'
 import { useSentencesForWords } from '../hooks/useSentenceForWord.js'
@@ -393,6 +393,7 @@ function DoneScreen({
   )
   const jmdictIds = useMemo(() => rows.map(r => r.word.jmdictId).filter(Boolean), [rows])
   const { entries: dictEntries } = useDictionaryEntries(jmdictIds, true)
+  const senseGlosses = useSenseGlosses(useMemo(() => rows.map(r => r.word), [rows]))
   const defaultSelectedIds = useMemo(() => new Set(rows.filter(r => r.mistakes > 0).map(r => r.id)), [rows])
   const [selected, setSelected] = useState(() => new Set(defaultSelectedIds))
   const { showToast } = useToast()
@@ -434,7 +435,7 @@ function DoneScreen({
         const dictEntry = row.word.jmdictId ? dictEntries[row.word.jmdictId] : null
         return (
           <span style={{ lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-            {row.word.english ?? cardGloss(row.word, dictEntry)}
+            {row.word.english ?? cardGloss(row.word, dictEntry, senseGlosses)}
           </span>
         )
       },
@@ -966,6 +967,7 @@ function VocabPageScreens() {
   // cache instead of flashing a loading state per card.
   const poolJmdictIds = useMemo(() => pool.map(p => p.word.jmdictId).filter(Boolean), [pool])
   const { entries: poolDictEntries } = useDictionaryEntries(poolJmdictIds, true)
+  const poolSenseGlosses = useSenseGlosses(useMemo(() => pool.map(p => p.word), [pool]))
 
   useEffect(() => {
     if (window.location.hash.includes('?')) window.history.replaceState(null, '', '#/vocab')
@@ -1008,7 +1010,7 @@ function VocabPageScreens() {
       existingFronts.add(front)
       const cardId = `${targetDeckId}-${Date.now()}-${i}`
       const kana = word.kana ?? dictEntry?.kana_forms?.[0]
-      const english = word.english ?? cardGloss(word, dictEntry)
+      const english = word.english ?? cardGloss(word, dictEntry, poolSenseGlosses)
       const extras = {}
       if (kana) extras.kana = kana
       if (word.sentence) extras.sentence = word.sentence
