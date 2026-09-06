@@ -10,7 +10,7 @@ import Button from '../../components/Button.jsx'
 import DataList from '../../components/DataList.jsx'
 import ActionBar from '../../components/ActionBar.jsx'
 import Badge from '../../components/Badge.jsx'
-import ChipSelector from '../../components/Chip.jsx'
+import { Chip, default as ChipSelector } from '../../components/Chip.jsx'
 import FilterCard, { FilterRow } from '../../components/FilterCard.jsx'
 import CenteredLoadingMessage from '../../components/CenteredLoadingMessage.jsx'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
@@ -27,20 +27,13 @@ const DEFAULT_WORD_LIMIT = 20
 const GENERIC_RANK_THRESHOLD = 200
 
 // Community-estimated JLPT levels — no official list exists, see
-// scripts/import-jlpt-vocab.mjs. Picking a level shows only that level: a
-// plain single-select, not a cumulative threshold, so N5 is a real choice
-// rather than a synonym for "any". Words with no jlpt_level match are in
-// scope only under "Any level" — once a level is named, an untagged word
-// can't be shown to belong to it, and a large share of an episode's content
-// words are untagged, so keeping them would leave the filter barely filtering.
-const JLPT_CHIP_OPTIONS = [
-  { value: 'any', label: 'Any level' },
-  { value: 'N5', label: 'N5' },
-  { value: 'N4', label: 'N4' },
-  { value: 'N3', label: 'N3' },
-  { value: 'N2', label: 'N2' },
-  { value: 'N1', label: 'N1' },
-]
+// scripts/import-jlpt-vocab.mjs. Free multi-select, not a cumulative
+// threshold: levels are buckets you pick out of, not a range you scan down
+// from, and a threshold made N5 unselectable (it just meant "any"). Same
+// "Any" + multi-ChipSelector shape as MediaSearch's Difficulty row, down to
+// its click semantics — see toggleJlptLevel.
+const ALL_JLPT_LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1']
+const JLPT_CHIP_OPTIONS = ALL_JLPT_LEVELS.map(level => ({ value: level, label: level }))
 
 const STATUS_LABEL = { new: 'New', learning: 'Learning', young: 'Young', mature: 'Mature', relearning: 'Relearning', 'not-in-deck': null }
 const STATUS_COLOR = { new: TEXT_MUTED, learning: '#fbbf24', young: '#60a5fa', mature: '#4ade80', relearning: '#f87171' }
@@ -90,7 +83,7 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
   const [includeGrammar, setIncludeGrammar] = useState(false)
   const [includeNames, setIncludeNames] = useState(false)
   const [includeGeneric, setIncludeGeneric] = useState(false)
-  const [jlptLevel, setJlptLevel] = useState('any')
+  const [jlptLevels, setJlptLevels] = useState(() => new Set(ALL_JLPT_LEVELS))
   const [includeKnown, setIncludeKnown] = useState(true)
   const [lookupQuery, setLookupQuery] = useState('')
   const [selected, setSelected] = useState(new Set())
@@ -178,15 +171,30 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
     setIncludeKnown(next.has('known'))
   }
 
+  // Mirrors MediaSearch's toggleDifficulty: clicking a level while "Any" is
+  // active starts a fresh single-level selection rather than dropping to a
+  // confusing 4-of-5 state, and emptying the set snaps back to "Any" instead
+  // of leaving a selection that would match nothing.
+  function toggleJlptLevel(level) {
+    setJlptLevels(prev => {
+      if (prev.size === ALL_JLPT_LEVELS.length) return new Set([level])
+      const next = new Set(prev)
+      if (next.has(level)) next.delete(level); else next.add(level)
+      return next.size === 0 ? new Set(ALL_JLPT_LEVELS) : next
+    })
+  }
+
+  const isAnyJlptLevel = jlptLevels.size === ALL_JLPT_LEVELS.length
+
   const eligible = useMemo(() =>
     candidateRows
       .filter(r => includeGrammar || !r.is_grammar)
       .filter(r => includeNames || !r.is_name)
       .filter(r => includeGeneric || r.global_frequency_rank == null || r.global_frequency_rank > GENERIC_RANK_THRESHOLD)
-      .filter(r => jlptLevel === 'any' || r.jlptLevel === jlptLevel)
+      .filter(r => isAnyJlptLevel || (r.jlptLevel != null && jlptLevels.has(r.jlptLevel)))
       .filter(r => includeKnown || (r.status !== 'young' && r.status !== 'mature'))
       .sort((a, b) => (a.frequency_rank ?? 0) - (b.frequency_rank ?? 0)),
-    [candidateRows, includeGrammar, includeNames, includeGeneric, jlptLevel, includeKnown]
+    [candidateRows, includeGrammar, includeNames, includeGeneric, jlptLevels, isAnyJlptLevel, includeKnown]
   )
 
   // Auto-select the top DEFAULT_WORD_LIMIT eligible words whenever filters
@@ -257,7 +265,21 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
 
       <FilterCard>
         <FilterRow key="jlpt" label="JLPT level">
-          <ChipSelector mode="single" options={JLPT_CHIP_OPTIONS} value={jlptLevel} onChange={setJlptLevel} />
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            <Chip label="Any level" active={isAnyJlptLevel} onClick={() => setJlptLevels(new Set(ALL_JLPT_LEVELS))} />
+            <ChipSelector
+              options={JLPT_CHIP_OPTIONS}
+              value={jlptLevels}
+              onChange={next => {
+                // Same set-diff recovery as the Difficulty row: multi mode
+                // toggles the clicked option against the current set, which
+                // can't express toggleJlptLevel's "from Any, start fresh".
+                const clicked = [...next].find(v => !jlptLevels.has(v)) ?? [...jlptLevels].find(v => !next.has(v))
+                toggleJlptLevel(clicked)
+              }}
+              mode="multi"
+            />
+          </div>
         </FilterRow>
         <FilterRow key="filter" label="Filter">
           <ChipSelector mode="multi" options={filterOptions} value={filterValue} onChange={handleFilterChange} />
