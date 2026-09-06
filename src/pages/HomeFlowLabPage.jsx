@@ -430,54 +430,78 @@ function Stat({ value, label }) {
 
 // ── Free drill (concept A's sheet; also the "Other lists" body in B and C) ───
 
-function FreeDrillPicker({ mock, onStart, compact = false }) {
+// State only, no rendering — shared by the modal sheet (whose Preview/Start
+// buttons live in Modal's own footer, outside the scrollable body) and the
+// inline "Other lists" disclosure (whose buttons sit in the body). Both
+// need the same book/mode/selection state and the same `start` derivation;
+// only where the action row renders differs.
+function useFreeDrill() {
   const [bookId, setBookId] = useState(BOOK_ID)
   const [selected, setSelected] = useState(() => new Set())
   const [mode, setMode] = useState('kanji-front')
   const book = getTextbook(bookId)
-  const options = book.chapters.map(ch => ({ value: ch.id, label: `${ch.label} · ${wordCountFor(ch.id)}` }))
+  const rows = book.chapters.map(ch => ({ ...ch, wordCount: wordCountFor(ch.id) }))
   const total = [...selected].reduce((s, id) => s + wordCountFor(id), 0)
+  const toggle = id => setSelected(s => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n })
 
-  function start() {
+  function chooseBook(id) { setBookId(id); setSelected(new Set()) }
+
+  function start(onStart) {
     const first = book.chapters.find(ch => selected.has(ch.id))
     onStart({ ...first, wordCount: total, label: selected.size > 1 ? `${selected.size} lists from ${book.title}` : first.label }, bookId)
   }
 
+  return { bookId, chooseBook, book, mode, setMode, rows, selected, toggle, total, start }
+}
+
+const FREE_DRILL_COLUMNS = [
+  { key: 'label', flex: 1, render: ch => ch.label },
+  { key: 'count', width: 90, align: 'right', tone: 'muted', render: ch => `${ch.wordCount} words` },
+]
+
+// Two dropdowns (word list, drill mode), then a checkbox list to pick any
+// number of that book's lessons — Select and DataList rather than the
+// former chip rows, so this reads like the rest of the app's pickers
+// instead of its own one-off control.
+function FreeDrillFields({ state, compact = false }) {
+  const { bookId, chooseBook, mode, setMode, rows, selected, toggle } = state
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE_16 }}>
-      <div style={{ display: 'grid', gridTemplateColumns: compact ? '1fr' : 'minmax(0, 1fr) minmax(0, 1.5fr)', gap: SPACE_12 }}>
-        <Select
-          label="Book"
-          size="md"
-          value={bookId}
-          onChange={v => { setBookId(v); setSelected(new Set()) }}
-          options={BOOKS_WITH_WORDS.map(b => ({ value: b.id, label: b.title }))}
-        />
+      <div style={{ display: 'grid', gridTemplateColumns: compact ? '1fr' : '1fr 1fr', gap: SPACE_12 }}>
+        <div>
+          <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: SPACE_4 }}>Word list</div>
+          <Select size="md" value={bookId} onChange={chooseBook} options={BOOKS_WITH_WORDS.map(b => ({ value: b.id, label: b.title }))} />
+        </div>
         <div>
           <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: SPACE_4 }}>Drill mode</div>
-          <ChipSelector mode="single" size="md" grow options={DRILL_MODE_OPTIONS} value={mode} onChange={setMode} />
+          <Select size="md" value={mode} onChange={setMode} options={DRILL_MODE_OPTIONS} />
         </div>
       </div>
-      <div>
-        <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: SPACE_8 }}>Lists — pick any number</div>
-        <ChipSelector mode="multi" options={options} value={selected} onChange={setSelected} />
-      </div>
-      <div style={{ display: 'flex', gap: SPACE_8, justifyContent: 'flex-end' }}>
-        <Button variant="neutral" disabled={selected.size === 0} onClick={() => mock.note('Preview (existing glance screen)')}>Preview</Button>
-        <Button disabled={selected.size === 0} onClick={start}>Start{total ? ` (${total} words)` : ''}</Button>
-      </div>
+      <DataList columns={FREE_DRILL_COLUMNS} rows={rows} selection={{ selected, onToggle: toggle, bulkHeader: true }} />
     </div>
   )
 }
 
 export function FreeDrillSheet({ open, onClose, mock }) {
+  const state = useFreeDrill()
+  const { selected, total } = state
   return (
-    <Modal open={open} onClose={onClose} title="Drill any list" size="xl" isMobile={mock.isMobile}>
-      <FreeDrillPicker
-        mock={mock}
-        compact={mock.isMobile}
-        onStart={(chapter, bookId) => { onClose(); mock.startDrill(chapter, { advance: false, bookId }) }}
-      />
+    <Modal
+      open={open}
+      onClose={onClose}
+      title="Drill any list"
+      size="md"
+      isMobile={mock.isMobile}
+      footer={
+        <>
+          <Button variant="neutral" disabled={selected.size === 0} onClick={() => mock.note('Preview (existing glance screen)')}>Preview</Button>
+          <Button disabled={selected.size === 0} onClick={() => state.start((chapter, bookId) => { onClose(); mock.startDrill(chapter, { advance: false, bookId }) })}>
+            Start{total ? ` (${total} words)` : ''}
+          </Button>
+        </>
+      }
+    >
+      <FreeDrillFields state={state} compact={mock.isMobile} />
     </Modal>
   )
 }
@@ -790,10 +814,18 @@ function ChapterPath({ mock }) {
 }
 
 function OtherLists({ mock }) {
+  const state = useFreeDrill()
+  const { selected, total } = state
   return (
     <Disclosure label="Drill a list from another book">
-      <div style={{ marginTop: SPACE_12 }}>
-        <FreeDrillPicker mock={mock} compact={mock.isMobile} onStart={(chapter, bookId) => mock.startDrill(chapter, { advance: false, bookId })} />
+      <div style={{ marginTop: SPACE_12, display: 'flex', flexDirection: 'column', gap: SPACE_16 }}>
+        <FreeDrillFields state={state} compact={mock.isMobile} />
+        <div style={{ display: 'flex', gap: SPACE_8, justifyContent: 'flex-end' }}>
+          <Button variant="neutral" disabled={selected.size === 0} onClick={() => mock.note('Preview (existing glance screen)')}>Preview</Button>
+          <Button disabled={selected.size === 0} onClick={() => state.start((chapter, bookId) => mock.startDrill(chapter, { advance: false, bookId }))}>
+            Start{total ? ` (${total} words)` : ''}
+          </Button>
+        </div>
       </div>
     </Disclosure>
   )

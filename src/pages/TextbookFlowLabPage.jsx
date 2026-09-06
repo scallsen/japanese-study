@@ -394,10 +394,10 @@ function SegmentedPrimary({ size = 'lg', label, onClick, menuItems = [] }) {
         style={{
           background: accent, border: 'none', borderLeft: '1px solid rgba(255,255,255,0.25)', boxSizing: 'border-box', flexShrink: 0,
           color: '#fff', padding: 0, width: square, height: square, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontFamily: FONT, letterSpacing: TRACKING, fontSize: FS_CAPTION, lineHeight: 1, cursor: 'pointer',
+          fontFamily: FONT, letterSpacing: TRACKING, fontSize: 20, lineHeight: 1, cursor: 'pointer',
         }}
       >
-        ▾
+        <span style={{ display: 'block', transform: 'translateY(-2px)' }}>▾</span>
       </button>
       <Popover open={open} onClose={() => setOpen(false)} anchorRef={chevronRef} align="end" width={200} bodyPadding={0}>
         <Menu items={menuItems} onSelect={id => { setOpen(false); menuItems.find(i => i.id === id)?.onClick() }} />
@@ -410,24 +410,23 @@ function SegmentedPrimary({ size = 'lg', label, onClick, menuItems = [] }) {
 // same primary action for the chapter under the tracker — redo goes in the
 // segmented button's menu instead of sitting beside it as its own button.
 function chapterPrimaryAction(mock) {
-  const { state, opts, drilledAtPointer, lastDone, sentCountOf, fullySent, chapterAfter, startDrill, advance, note } = mock
+  const { state, opts, drilledAtPointer, lastDone, chapterAfter, startDrill, advance, note } = mock
   const { chapters, current, doneCount } = state
   if (doneCount === chapters.length) {
     return { label: 'Pick new textbook', onClick: () => note('Open textbook picker'), menuItems: [], body: null }
   }
   const next = chapterAfter(current)
-  const inSrsLine = ch => fullySent(ch) ? 'in SRS' : `${sentCountOf(ch)} of ${ch.wordCount} in SRS`
   let label, onClick, menuItems = [], body = null
 
   if (opts.advance === 'auto') {
     label = `Start ${current.label}`
     onClick = () => startDrill(current, { fromCard: true })
     if (lastDone && lastDone.id !== current.id) {
-      body = <Line>{lastDone.label} done today · {inSrsLine(lastDone)}</Line>
+      body = <Line>{lastDone.label} done today</Line>
       menuItems = [{ id: 'redo-last', label: `Redo ${lastDone.label}`, onClick: () => startDrill(lastDone, { fromCard: false }) }]
     }
   } else if (drilledAtPointer && next) {
-    body = <Line>{current.label} drilled ✓ · {inSrsLine(current)}</Line>
+    body = <Line>{current.label} drilled ✓</Line>
     menuItems = [{ id: 'redo', label: `Redo ${current.label}`, onClick: () => startDrill(current, { fromCard: false }) }]
     if (opts.advance === 'explicit') {
       label = `Start ${next.label}`
@@ -501,9 +500,9 @@ function Line({ children }) {
 
 function ReviewCard({ mock }) {
   const { srs, go, note } = mock
-  const { due, newToday, newWaiting, totalCards, activeDecks, canStart, estimatedMinutes } = srs
+  const { due, newToday, activeDecks, canStart, estimatedMinutes } = srs
   const headline = canStart ? `${due} due · ${newToday} new · ~${estimatedMinutes} min` : 'Nothing due'
-  const caption = [`${activeDecks} active ${activeDecks === 1 ? 'deck' : 'decks'}`, `${totalCards} cards`, newWaiting > 0 ? `${newWaiting} new waiting` : null].filter(Boolean).join(' · ')
+  const caption = `${activeDecks} active ${activeDecks === 1 ? 'deck' : 'decks'}`
   return (
     <PrimaryCard accent={SRS_ACCENT} title="Reviews" subtitle={headline}
       actions={
@@ -542,7 +541,7 @@ function TextbookScreen({ mock }) {
             <Cover icon={textbook.icon} cropped={opts.cover === 'cropped'} onClick={() => note('Open textbook picker')} />
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: FS_CONTENT_HEADING }}>{textbook.title}</div>
-              <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginTop: SPACE_4 }}>{textbook.subtitle} · {doneCount} of {chapters.length} chapters · {wordsDrilled} words drilled</div>
+              <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginTop: SPACE_4 }}>{doneCount} of {chapters.length} chapters · {wordsDrilled} words drilled</div>
               <div style={{ height: 4, borderRadius: 2, background: HAIRLINE, overflow: 'hidden', marginTop: SPACE_12 }}>
                 <div style={{ height: '100%', width: `${Math.round((doneCount / chapters.length) * 100)}%`, background: VOCAB_ACCENT }} />
               </div>
@@ -567,7 +566,7 @@ function TextbookScreen({ mock }) {
 }
 
 function ChapterPath({ mock }) {
-  const { state, opts, drilledAtPointer, sentCountOf, fullySent, chapterAfter, startDrill, sendAll, advance, setPointer, go } = mock
+  const { state, opts, drilledAtPointer, sentCountOf, chapterAfter, startDrill, sendAll, advance, setPointer, go } = mock
   const { chapters, current } = state
   const [openId, setOpenId] = useState(current.id)
   const currentIndex = chapters.findIndex(ch => ch.id === current.id)
@@ -579,11 +578,11 @@ function ChapterPath({ mock }) {
         const isCurrent = ch.id === current.id
         const kind = isCurrent ? 'current' : ch.drilled ? 'done' : 'todo'
         const open = openId === ch.id
-        const sentN = sentCountOf(ch)
-        const unsent = ch.wordCount - sentN
+        const unsent = ch.wordCount - sentCountOf(ch)
         const behind = i <= currentIndex
         const meta = [`${ch.wordCount} words`, ch.drilled ? 'drilled' : null].filter(Boolean).join(' · ')
         const showRowNotice = opts.gate === 'notice' && isCurrent && drilledAtPointer && unsent > 0
+        const primaryLabel = isCurrent ? (drilledAtPointer ? 'Redo chapter' : 'Start chapter') : 'Drill chapter'
 
         return (
           <div key={ch.id} style={{ borderTop: i === 0 ? 'none' : `1px solid rgba(255,255,255,0.06)` }}>
@@ -605,11 +604,7 @@ function ChapterPath({ mock }) {
                 <div style={{ fontSize: FS_BASE, color: ch.drilled || isCurrent ? TEXT : TEXT_MUTED }}>{ch.label}</div>
                 <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: 2 }}>{meta}</div>
               </div>
-              <div style={{ display: 'flex', gap: SPACE_4, alignItems: 'center' }}>
-                {isCurrent && <Badge tone="accent">Current</Badge>}
-                {fullySent(ch) ? <Badge tone="success">In SRS</Badge> : sentN > 0 ? <Badge tone="warning" variant="text">{sentN} of {ch.wordCount} in SRS</Badge> : null}
-                <span style={{ color: TEXT_MUTED, fontSize: FS_CAPTION, marginLeft: SPACE_4 }}>{open ? '▾' : '›'}</span>
-              </div>
+              <span style={{ color: TEXT_MUTED, fontSize: FS_CAPTION }}>{open ? '▾' : '›'}</span>
             </div>
             {open && (
               <div style={{ padding: `0 14px 12px 54px`, display: 'flex', flexDirection: 'column', gap: SPACE_8 }}>
@@ -619,11 +614,10 @@ function ChapterPath({ mock }) {
                   </Notice>
                 )}
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: SPACE_8 }}>
-                  <Button size="sm" onClick={() => startDrill(ch, { fromCard: isCurrent })}>{isCurrent ? (drilledAtPointer ? 'Redo' : 'Start') : 'Drill'}</Button>
-                  <Button size="sm" variant="neutral" onClick={() => go('preview', { chapter: ch })}>Words</Button>
-                  <Button size="sm" variant="neutral" disabled={fullySent(ch)} onClick={() => sendAll(ch)}>{fullySent(ch) ? 'In SRS' : unsent < ch.wordCount ? `Send remaining ${unsent}` : 'Send to SRS'}</Button>
+                  <Button size="sm" onClick={() => startDrill(ch, { fromCard: isCurrent })}>{primaryLabel}</Button>
+                  <Button size="sm" variant="neutral" onClick={() => go('preview', { chapter: ch })}>View words</Button>
                   {isCurrent && drilledAtPointer && next && opts.advance === 'explicit' && (
-                    <Button size="sm" variant="accent-outline" onClick={() => advance(ch)}>Start {next.label}</Button>
+                    <Button size="sm" variant="accent-outline" onClick={() => advance(ch)}>Continue to next lesson</Button>
                   )}
                   {!isCurrent && <Button size="sm" variant="ghost" onClick={() => setPointer(ch.id)}>Set as current</Button>}
                 </div>
