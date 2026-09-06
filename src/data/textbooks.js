@@ -59,9 +59,13 @@ function storeLinks(query, extra = []) {
   ]
 }
 
-// The publisher's own site for Genki, which is where the audio, answer keys and
-// errata live — more useful to a learner than either retailer.
-const GENKI_ONLINE = [{ label: 'Genki Online', href: 'https://genki3.japantimes.co.jp/en/' }]
+// The publisher's own links for Genki: Genki Online carries the audio, answer
+// keys and errata, and the JT Publishing store sells the ebook directly. Both
+// beat a retailer for a learner, so they lead. The ebook is per volume.
+const genkiLinks = ebookId => [
+  { label: 'Genki Online', href: 'https://genki3.japantimes.co.jp/en/' },
+  { label: 'Ebook', href: `https://store.jtpublishing.co.jp/en/products/${ebookId}` },
+]
 
 // ASK's own page for the revised N3 kanji volume, by ISBN — the edition whose
 // six-week structure the chapters here follow.
@@ -74,7 +78,7 @@ export const TEXTBOOKS = [
     subtitle: 'Beginner · N5',
     publisher: 'The Japan Times',
     description: 'The standard first-year course, 3rd edition. Twelve lessons of dialogue, grammar notes and drills, taught in kana and kanji from the very start.',
-    purchase: storeLinks('Genki 1 Japanese textbook third edition', GENKI_ONLINE),
+    purchase: storeLinks('Genki 1 Japanese textbook third edition', genkiLinks(1730)),
     icon: `${ICONS}/genki-1.svg`,
     chapters: lessons('genki-1', 1, 12),
   },
@@ -84,7 +88,7 @@ export const TEXTBOOKS = [
     subtitle: 'Beginner · N4',
     publisher: 'The Japan Times',
     description: 'The second half, lessons 13 to 23. Passive, causative and the polite registers that trip up most beginners, still 3rd edition.',
-    purchase: storeLinks('Genki 2 Japanese textbook third edition', GENKI_ONLINE),
+    purchase: storeLinks('Genki 2 Japanese textbook third edition', genkiLinks(1732)),
     icon: `${ICONS}/genki-2.svg`,
     chapters: lessons('genki-2', 13, 23),
   },
