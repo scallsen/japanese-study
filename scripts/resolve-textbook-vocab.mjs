@@ -305,9 +305,6 @@ for (const e of entries) {
 }
 
 // --- emit ----------------------------------------------------------------
-const tiers = {}
-for (const e of entries) tiers[e.tier] = (tiers[e.tier] ?? 0) + 1
-
 const resolved = entries.filter(e => e.jmdictId)
 const seen = new Map()
 const collapsed = []
@@ -316,12 +313,20 @@ for (const book of BOOKS) {
   const counters = {}
   for (const e of resolved) {
     if (e.book !== book) continue
-    // Two source entries can resolve to the same word in the same lesson —
-    // Genki lists both 知る and 知っています in lesson 7. Only one card can
-    // exist, but dropping the other silently would hide real data loss, so
-    // every collapse is recorded for the report.
+    // A textbook lists a word and its inflections as separate entries — Genki
+    // has 知る, 知っています and 知りません in lesson 7 — and they resolve to one
+    // JMdict entry, so only one card can exist. Skipping the inflected ones is
+    // right (the base word is already in that lesson, and what the extra
+    // entries teach is conjugation, which is grammar rather than vocabulary),
+    // but it is a deliberate outcome and gets its own tier rather than being
+    // quietly absorbed by the write loop.
     const dupKey = `${e.listKey}|${e.jmdictId}`
-    if (seen.has(dupKey)) { collapsed.push({ kept: seen.get(dupKey), lost: e }); continue }
+    if (seen.has(dupKey)) {
+      e.tier = 'skipped-inflection'
+      e.collapsedInto = seen.get(dupKey)
+      collapsed.push({ kept: seen.get(dupKey), lost: e })
+      continue
+    }
     seen.set(dupKey, e)
     counters[e.listKey] = (counters[e.listKey] ?? 0) + 1
     rows.push({
@@ -333,6 +338,11 @@ for (const book of BOOKS) {
   writeFileSync(book.file, `${JSON.stringify(rows, null, 2)}\n`)
   console.log(`Wrote ${rows.length} entries → ${book.file}`)
 }
+
+// Counted after the write loop, so a tier means the outcome an entry actually
+// reached. Tallying before it let 'auto' include entries that produced no card.
+const tiers = {}
+for (const e of entries) tiers[e.tier] = (tiers[e.tier] ?? 0) + 1
 
 const needsReview = entries.filter(e => e.tier.startsWith('review') || e.tier === 'unmatched')
 writeFileSync(REPORT, `${JSON.stringify({
@@ -386,5 +396,13 @@ for (const [k, v] of Object.entries(tiers).sort((a, b) => b[1] - a[1])) {
 }
 console.log(`\n${needsReview.length} entries need review → ${REPORT}`)
 if (collapsed.length) {
-  console.log(`${collapsed.length} entries collapsed into a word their lesson already had (see "collapsed" in the report)`)
+  console.log(`${collapsed.length} inflected entries skipped — their lesson already teaches the same word (see "collapsed" in the report)`)
+}
+
+// The three outcomes must account for every input row. A mismatch means an
+// entry reached no tier at all, which nothing else would surface.
+const cards = [...seen.values()].length
+const accounted = cards + collapsed.length + (tiers.unmatched ?? 0) + needsReview.filter(e => e.tier !== 'unmatched').length
+if (accounted !== entries.length) {
+  console.warn(`WARNING: ${accounted} entries accounted for, ${entries.length} read`)
 }
