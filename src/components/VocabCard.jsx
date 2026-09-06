@@ -52,16 +52,39 @@ function frontTextStyle(scale) {
   }
 }
 
-function FrontContent({ word, displayForm, resolvedEnglish, reviewMode, pixelFont }) {
+// Both faces annotate the same way; only whether they do it differs.
+function RubyText({ displayForm, reading, jaFont }) {
+  const parts = buildFurigana(displayForm, reading)
+  return (
+    <span>
+      {parts.map((part, i) => part.type === 'kanji' ? (
+        <ruby key={i}>
+          {part.text}
+          <rt style={{ fontSize: '0.45em', fontFamily: jaFont, letterSpacing: '0.05em', paddingBottom: '0.25em' }}>
+            {part.furigana}
+          </rt>
+        </ruby>
+      ) : (
+        <span key={i}>{part.text}</span>
+      ))}
+    </span>
+  )
+}
+
+function FrontContent({ word, displayForm, reading, resolvedEnglish, reviewMode, showFurigana, pixelFont }) {
   const jaFont = pixelFont ? FONT : 'system-ui, sans-serif'
   const isMeaningFront = reviewMode === 'meaning-front'
   const frontText = isMeaningFront ? resolvedEnglish : displayForm
   const scale = getMainTextScale(frontText)
+  // The setting decides whether the front hands over the reading. Nothing to
+  // annotate when the front is the English meaning, or when the word has no
+  // reading distinct from what is already written.
+  const annotateFront = showFurigana && !isMeaningFront && reading && reading !== displayForm
   return (
     <CardShell isReview={word.isReview} isSentenceVocab={word.isSentenceVocab} isModified={word.modified}>
       <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: isMeaningFront ? '0 16px' : 0 }}>
         <div style={{ ...frontTextStyle(scale), fontFamily: isMeaningFront ? FONT : jaFont }}>
-          {frontText}
+          {annotateFront ? <RubyText displayForm={displayForm} reading={reading} jaFont={jaFont} /> : frontText}
         </div>
       </div>
     </CardShell>
@@ -90,24 +113,15 @@ function KanjiMeaningBar({ chars, meanings, jaFont, scale }) {
   )
 }
 
-function BackContent({ word, displayForm, reading, resolvedEnglish, sentenceText, showFurigana, showTranslation, showSentence, showKanjiMeaning, pixelFont }) {
+function BackContent({ word, displayForm, reading, resolvedEnglish, sentenceText, showTranslation, showSentence, showKanjiMeaning, pixelFont }) {
   const jaFont = pixelFont ? FONT : 'system-ui, sans-serif'
-  const furiganaParts = showFurigana ? buildFurigana(displayForm, reading) : null
 
-  const kanjiDisplay = furiganaParts ? (
-    <span>
-      {furiganaParts.map((part, i) => part.type === 'kanji' ? (
-        <ruby key={i}>
-          {part.text}
-          <rt style={{ fontSize: '0.45em', fontFamily: jaFont, letterSpacing: '0.05em', paddingBottom: '0.25em' }}>
-            {part.furigana}
-          </rt>
-        </ruby>
-      ) : (
-        <span key={i}>{part.text}</span>
-      ))}
-    </span>
-  ) : displayForm
+  // The back is the answer, so it always carries the reading — the furigana
+  // setting only decides whether the front gives it away. Matches
+  // SrsCardFace's `isBack || showFurigana`, which has always worked this way.
+  const kanjiDisplay = reading && reading !== displayForm
+    ? <RubyText displayForm={displayForm} reading={reading} jaFont={jaFont} />
+    : displayForm
 
   const kanjiMeanings = useKanjiMeanings(displayForm, showKanjiMeaning)
   const kanjiChars = showKanjiMeaning ? kanjiCharsOf(displayForm) : []
@@ -200,8 +214,8 @@ export default function VocabCard({ word, flipped, onFlip, animate, reviewMode, 
     )
   }
 
-  const front = <FrontContent word={word} displayForm={displayForm} resolvedEnglish={resolvedEnglish} reviewMode={reviewMode} pixelFont={pixelFont} />
-  const back  = <BackContent word={word} displayForm={displayForm} reading={reading} resolvedEnglish={resolvedEnglish} sentenceText={sentenceText} showFurigana={showFurigana} showTranslation={showTranslation} showSentence={showSentence} showKanjiMeaning={showKanjiMeaning} pixelFont={pixelFont} />
+  const front = <FrontContent word={word} displayForm={displayForm} reading={reading} resolvedEnglish={resolvedEnglish} reviewMode={reviewMode} showFurigana={showFurigana} pixelFont={pixelFont} />
+  const back  = <BackContent word={word} displayForm={displayForm} reading={reading} resolvedEnglish={resolvedEnglish} sentenceText={sentenceText} showTranslation={showTranslation} showSentence={showSentence} showKanjiMeaning={showKanjiMeaning} pixelFont={pixelFont} />
 
   const ants = flipped && animate ? (
     <svg viewBox="0 0 380 280" className="mc-overlay" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 10, overflow: 'visible' }} aria-hidden="true">

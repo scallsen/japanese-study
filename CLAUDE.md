@@ -240,7 +240,9 @@ The dashboard is organised around two primary actions, **New** (work through one
 
 ## Vocabulary Drill (`#/vocab`)
 
-Mirrors katsuyou-drill's UI exactly. Speed-mode only (no text input). Card front: kanji. Card back: kanji + furigana (via `<ruby>/<rt>`, in-flow for correct vertical centering) + English meaning + optional example sentence.
+Mirrors katsuyou-drill's UI exactly. Speed-mode only (no text input). Card front: kanji, with furigana only if the Furigana setting is on. Card back: kanji + furigana (via `<ruby>/<rt>`, in-flow for correct vertical centering) + English meaning + optional example sentence.
+
+**Furigana on the back is not a setting** — the back is the answer, so it always carries the reading; the setting only decides whether the *front* gives it away. `SrsCardFace` has always worked this way (`isBack || showFurigana`), but `VocabCard` gated both faces on the one flag and never annotated its front at all, so turning the setting off silently stripped the answer's reading. Pinned by `VocabCard.test.jsx`.
 
 ### Key files — Vocab drill
 
@@ -875,7 +877,7 @@ All keys use `srs-` prefix. The VocabSrsModule reads these on mount; VocabSrsDri
 | `srs-voice` | `'male'` | Recorded voice — `'male'` \| `'female'`, mapped to a Voicevox speaker by `audioSourceForVoice()` |
 | `srs-backup-voice` | `''` | Browser speech voice name that reads words with no recording (`''` = device default) |
 | `srs-sfx-enabled` | `true` | Sound effects (correct/wrong beeps) |
-| `srs-show-furigana` | `false` | Show kana reading on card front; always shown on back |
+| `srs-show-furigana` | `false` | Show the reading on the card **front**. The back always shows it — see Furigana on the back, under Vocabulary Drill |
 | `srs-show-translation` | `true` | Show English translation on card back |
 | `srs-show-sentence` | `true` | Show example sentence on card back |
 | `srs-show-kanji-meaning` | `true` | Show per-kanji meaning bar on card back (see Per-kanji meanings under Vocabulary Drill) |
