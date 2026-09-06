@@ -23,6 +23,13 @@ const ROUTES = [
 // rather than a legitimately sparse screen.
 const MIN_ROOT_HTML = 200
 
+// Loading a route only exercises what renders on arrival. Both crashes this
+// script was written for got past that once: the first threw at import, the
+// second only when a control was pressed. So a few things also get opened.
+const INTERACTIONS = [
+  { route: '/', label: 'textbook picker', match: /change textbook|choose textbook|pick new textbook/i },
+]
+
 const browser = await chromium.launch()
 let failures = 0
 
@@ -54,6 +61,30 @@ for (const route of ROUTES) {
   await page.close()
 }
 
+for (const { route, label, match } of INTERACTIONS) {
+  const page = await browser.newPage()
+  const thrown = []
+  page.on('pageerror', e => thrown.push(e.message))
+  const url = route.startsWith('#') ? `${base}/${route}` : `${base}${route}`
+  await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 }).catch(e => thrown.push(`navigation: ${e.message}`))
+  await page.waitForTimeout(600)
+
+  const target = page.getByText(match).first()
+  const present = await target.count()
+  if (present) {
+    await target.click({ force: true }).catch(e => thrown.push(`click: ${e.message}`))
+    await page.waitForTimeout(900)
+  }
+  const size = await page.evaluate(() => document.getElementById('root')?.innerHTML?.length ?? 0)
+  const bad = thrown.length > 0 || size < MIN_ROOT_HTML
+  if (bad) failures++
+  console.log(`${bad ? 'FAIL' : ' ok '}  open ${label.padEnd(19)} root=${String(size).padStart(6)}` +
+    `${present ? '' : '  (control not present — skipped)'}${thrown.length ? `  ${thrown[0].slice(0, 80)}` : ''}`)
+  await page.close()
+}
+
 await browser.close()
-console.log(failures ? `\n${failures} route(s) failed` : `\nAll ${ROUTES.length} routes rendered cleanly`)
+console.log(failures
+  ? `\n${failures} check(s) failed`
+  : `\nAll ${ROUTES.length} routes and ${INTERACTIONS.length} interaction(s) passed`)
 process.exit(failures ? 1 : 0)

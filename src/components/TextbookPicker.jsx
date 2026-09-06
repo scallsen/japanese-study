@@ -209,19 +209,17 @@ export function TextbookBrowser({
             className={[
               'tb-row',
               isSelected ? 'tb-row--selected' : '',
-              !available ? 'tb-row--disabled' : '',
             ].filter(Boolean).join(' ')}
-            onClick={() => available && onSelectedChange(book.id)}
+            onClick={() => onSelectedChange(book.id)}
             style={{
               display: 'flex', alignItems: 'center', gap: SPACE_8,
-              width: '100%', textAlign: 'left', cursor: available ? 'pointer' : 'not-allowed',
+              width: '100%', textAlign: 'left', cursor: 'pointer',
               padding: stacked ? `${SPACE_8}px ${SPACE_12}px` : `10px ${SPACE_12}px`,
               border: 'none',
               borderLeft: `2px solid ${isSelected ? accent : 'transparent'}`,
               background: isSelected ? 'rgba(255,255,255,0.05)' : 'none',
               fontFamily: FONT, letterSpacing: TRACKING, fontSize: FS_CAPTION,
               color: isSelected ? TEXT : 'rgba(255,255,255,0.7)',
-              opacity: available ? 1 : 0.5,
               // The hover rule needs the module accent, and a CSS class can't
               // read a prop — so it travels as a custom property, the same way
               // TokenizedBody and TextInput pass theirs (settled decision #10).
@@ -230,7 +228,6 @@ export function TextbookBrowser({
           >
             {stacked && <Cover book={book} size={28} accent={accent} />}
             <span style={{ flex: 1, minWidth: 0 }}>{book.title}</span>
-            {!available && <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>Unavailable</span>}
             {book.id === currentId && <span style={{ color: accent }}>•</span>}
           </button>
         )
