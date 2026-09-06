@@ -31,6 +31,11 @@ const SUPABASE_URL = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.SUPABASE_SECRET_KEY
 const VOICEVOX_URL = process.env.VOICEVOX_URL ?? 'http://localhost:50021'
 
+// Clips in flight. The engine is CPU-bound and the uploads are independent, so
+// a handful at once is a large win; too many just queues inside the engine.
+// Override with AUDIO_CONCURRENCY when running against a beefier machine.
+const CONCURRENCY = Number(process.env.AUDIO_CONCURRENCY ?? 6)
+
 if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   console.error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY')
   process.exit(1)
@@ -154,6 +159,19 @@ async function reconcileVoice(speakerId, validEntryIds) {
   }
 }
 
+// Bounded worker pool: `limit` tasks in flight, results ignored (each task
+// handles its own failure), so one bad clip never aborts the run.
+async function inParallel(items, limit, worker) {
+  let next = 0
+  const runners = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (next < items.length) {
+      const item = items[next++]
+      await worker(item)
+    }
+  })
+  await Promise.all(runners)
+}
+
 async function generate() {
   await confirmSpeakers()
 
@@ -169,27 +187,42 @@ async function generate() {
       ? await fetchReadingsByJmdictId(needsFallback.map(e => e.jmdictId))
       : new Map()
 
+    // Build the work list first, then run it with a few clips in flight.
+    // Synthesis is CPU-bound in the engine and the uploads are network round
+    // trips, so a strictly sequential loop leaves both idle in turn — which
+    // only became obvious with a few thousand clips to make rather than a few.
+    const jobs = []
     for (const entry of entries) {
       allEntryIds.push(entry.id)
       const text = entry[target.textField] ?? (entry.jmdictId ? readingByJmdictId.get(entry.jmdictId) : null)
       if (!text) continue
-
       entry.voicevoxVoices = entry.voicevoxVoices ?? []
-
       for (const voice of VOICES) {
-        if (entry.voicevoxVoices.includes(voice.id)) continue
+        if (!entry.voicevoxVoices.includes(voice.id)) jobs.push({ entry, voice, text })
+      }
+    }
 
-        console.log(`  Generating ${entry.id} (${voice.name}): ${text}`)
+    if (jobs.length) {
+      console.log(`  ${jobs.length} clip(s) to generate, ${CONCURRENCY} at a time`)
+      let done = 0
+      await inParallel(jobs, CONCURRENCY, async ({ entry, voice, text }) => {
         try {
           const wav = await synthesize(text, voice.id)
           const mp3 = await wavToMp3(wav)
           await uploadAudio(voice.id, entry.id, mp3)
+          // Single-threaded event loop, so this push cannot interleave badly
+          // even though several jobs for one entry may be in flight.
           entry.voicevoxVoices.push(voice.id)
           changed = true
         } catch (err) {
           console.warn(`  Failed (${entry.id}, ${voice.name}): ${err.message}`)
         }
-      }
+        done++
+        if (done % 25 === 0 || done === jobs.length) {
+          process.stdout.write(`\r  ${done}/${jobs.length}`)
+        }
+      })
+      process.stdout.write('\n')
     }
 
     if (changed) {
