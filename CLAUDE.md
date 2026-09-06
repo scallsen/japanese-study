@@ -7,8 +7,8 @@ When working in a git worktree (`.claude/worktrees/<name>/`), two things must be
 
 1. **Symlink `.env`** — the worktree has no `.env` file. Without it, Supabase is unconfigured and all DB queries fail silently or throw. Fix:
    ```
-   ln -s /Users/simoncallsen/Documents/GitHub/japanese-study/.env \
-         /Users/simoncallsen/Documents/GitHub/japanese-study/.claude/worktrees/<name>/.env
+   ln -s /Users/simoncallsen/Developer/Github/japanese-study/.env \
+         /Users/simoncallsen/Developer/Github/japanese-study/.claude/worktrees/<name>/.env
    ```
 2. **Run `npm run dev` from the worktree directory**, not from the repo root. Running from root serves committed files, not the worktree's edits.
 
