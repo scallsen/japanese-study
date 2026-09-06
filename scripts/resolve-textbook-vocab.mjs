@@ -365,6 +365,9 @@ for (const book of BOOKS) {
       // so the card can say the form differs rather than pretending otherwise.
       else row.modified = true
     }
+    // What the card will actually render, for the audit — which otherwise
+    // reports the dictionary's form and misses that the book's was kept.
+    e.renders = row.kanji ?? shown
     rows.push(row)
   }
   writeFileSync(book.file, `${JSON.stringify(rows, null, 2)}\n`)
@@ -420,7 +423,7 @@ writeFileSync(REPORT, `${JSON.stringify({
       via: e.via,
       candidates: (e.candidates ?? []).length,
       id: e.jmdictId,
-      shows: displayFormOf(e.pick ?? rowById.get(e.jmdictId)),
+      shows: e.renders ?? displayFormOf(e.pick ?? rowById.get(e.jmdictId)),
       dictGloss: ((e.pick ?? rowById.get(e.jmdictId))?.gloss_en ?? '').slice(0, 70),
     }))
     .sort((a, b) => (a.confidence ?? -1) - (b.confidence ?? -1) || b.candidates - a.candidates),
