@@ -16,7 +16,7 @@ import ActionBar, { ACTION_BAR_HEIGHT } from '../components/ActionBar.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_BADGE, FS_ENTRY_WORD, FS_STAT_VALUE, FS_DISPLAY_HEADING, KANJI_FONT, WARNING } from '../data/theme.js'
 import { MODULES } from '../data/modules.js'
 import { ModuleThemeProvider, useAccent } from '../context/ModuleThemeContext.jsx'
-import { WORD_SOURCES } from '../data/wordLists.js'
+import { WORD_SOURCES, visibleSources } from '../data/wordLists.js'
 import { SENTENCE_SOURCE_OPTIONS, DEFAULT_SENTENCE_SOURCE } from '../data/sentenceSource.js'
 import { useDrill } from '../hooks/useDrill.js'
 import { useTTS, useJaVoices } from '../hooks/useTTS.js'
@@ -26,13 +26,15 @@ import { useGamepad } from '../hooks/useGamepad.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useProgress } from '../hooks/useProgress.js'
 import { useAudioGenerationStatus } from '../hooks/useAudioGenerationStatus.js'
-import { useDictionaryEntries } from '../hooks/useDictionaryEntries.js'
-import { briefGloss } from '../utils/dictionaryEntryLookup.js'
+import { useDictionaryEntries, useSenseGlosses } from '../hooks/useDictionaryEntries.js'
+import { cardGloss } from '../utils/dictionaryEntryLookup.js'
+import { cardFormOf, speechTextOf } from '../lib/displayForm.js'
 import { useSentencesForWords } from '../hooks/useSentenceForWord.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../utils/storage.js'
 import { supabase } from '../lib/supabase.js'
 import * as SimpleQueue from '../engines/simpleQueue.js'
 import { WORD_DATA } from '../data/wordData.js'
+import { useCustomWords, useCustomWordCounts } from '../hooks/useCustomWords.js'
 import { createCard } from '../modules/vocab-srs/srs.js'
 import { ensureDeck, createDeck, deleteCards } from '../modules/vocab-srs/deckUtils.js'
 import DeckComboBox from '../components/DeckComboBox.jsx'
@@ -50,7 +52,6 @@ const REVIEW_MODE_OPTIONS = [
   { value: 'kanji-front', label: 'Japanese → English' },
   { value: 'meaning-front', label: 'English → Japanese' },
 ]
-const WORD_SOURCE_OPTIONS = WORD_SOURCES.map(source => ({ value: source.id, label: source.label }))
 
 function mistakeTier(count) {
   if (!count) return 'none'
@@ -63,7 +64,7 @@ function mistakeTier(count) {
 // (see CLAUDE.md's "Dictionary as source of truth" section), the word's own
 // kanji/kana are the fallback. reading is null when it'd just repeat displayForm.
 function resolveWordDisplay(word, dictEntry) {
-  const displayForm = word.kanji ?? dictEntry?.primary_form ?? word.kana
+  const displayForm = cardFormOf(word, dictEntry).form ?? word.kana
   const readingRaw = word.kana ?? dictEntry?.kana_forms?.[0]
   return { displayForm, reading: readingRaw && readingRaw !== displayForm ? readingRaw : null }
 }
@@ -173,20 +174,28 @@ function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, rev
     return word.kana ?? (word.jmdictId ? nearbyDictEntries[word.jmdictId]?.kana_forms?.[0] : undefined)
   }
 
+  // A word no longer records which clips exist for it: the clip is keyed by
+  // what the card says, so the URL is derivable and a miss falls back to speech
+  // synthesis rather than being predicted in advance.
   function voicevoxUrlForWord(word) {
     const speakerId = speakerIdFromAudioSource(audioSource)
-    return speakerId && word.voicevoxVoices?.includes(speakerId) ? getVoicevoxAudioUrl(speakerId, word.id) : null
+    if (!speakerId) return null
+    const entry = word.jmdictId ? nearbyDictEntries[word.jmdictId] : null
+    return getVoicevoxAudioUrl(speakerId, speechTextOf(word, entry) ?? word.kana)
   }
 
-  function playWordAudio(word) {
+  function speakWord(word) {
+    const reading = resolveReading(word)
+    if (reading) tts.speak(reading)
+  }
+
+  async function playWordAudio(word) {
     voicevox.stop()
     const url = voicevoxUrlForWord(word)
-    if (url) {
-      voicevox.play(url)
-    } else if (audioSource === 'browser') {
-      const reading = resolveReading(word)
-      if (reading) tts.speak(reading)
-    }
+    if (!url) { if (audioSource === 'browser') speakWord(word); return }
+    // Falls through to speech synthesis when a clip has not been generated yet,
+    // which is what the old voicevoxVoices check was really guarding against.
+    if (!await voicevox.play(url)) speakWord(word)
   }
 
   function stopWordAudio() {
@@ -384,6 +393,7 @@ function DoneScreen({
   )
   const jmdictIds = useMemo(() => rows.map(r => r.word.jmdictId).filter(Boolean), [rows])
   const { entries: dictEntries } = useDictionaryEntries(jmdictIds, true)
+  const senseGlosses = useSenseGlosses(useMemo(() => rows.map(r => r.word), [rows]))
   const defaultSelectedIds = useMemo(() => new Set(rows.filter(r => r.mistakes > 0).map(r => r.id)), [rows])
   const [selected, setSelected] = useState(() => new Set(defaultSelectedIds))
   const { showToast } = useToast()
@@ -425,7 +435,7 @@ function DoneScreen({
         const dictEntry = row.word.jmdictId ? dictEntries[row.word.jmdictId] : null
         return (
           <span style={{ lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-            {row.word.english ?? briefGloss(dictEntry)}
+            {row.word.english ?? cardGloss(row.word, dictEntry, senseGlosses)}
           </span>
         )
       },
@@ -434,7 +444,7 @@ function DoneScreen({
       key: 'mistakes', width: 36, align: 'right',
       render: row => row.mistakes > 0 ? <Badge variant="text" tone={MISTAKE_TIER_TONE[mistakeTier(row.mistakes)]}>{row.mistakes}×</Badge> : null,
     },
-  ], [dictEntries])
+  ], [dictEntries, senseGlosses])
 
   function showAddedToast(result) {
     if (!result) return
@@ -554,7 +564,7 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
     setExpandedKanji([])
     if (!next) return
 
-    const displayForm = word.kanji ?? dictEntries[word.jmdictId]?.primary_form ?? word.kana
+    const displayForm = cardFormOf(word, dictEntries[word.jmdictId]).form ?? word.kana
     const chars = (displayForm ?? '').split('').filter(ch => /\p{Script=Han}/u.test(ch))
     const missing = chars.filter(ch => !kanjiCache.current[ch])
     if (missing.length > 0 && supabase) {
@@ -673,7 +683,7 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
 
 // ── HomeScreen ────────────────────────────────────────────────────────────────
 
-function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selectedSubLists, onToggleSubList, wordCountByList, reviewWordCount, includeReview, onToggleIncludeReview, sentenceVocabWordCount, includeSentenceVocab, onToggleIncludeSentenceVocab, vocabProgress, reviewMode, onChangeReviewMode, onStart, onGlance }) {
+function HomeScreen({ sourceOptions, selectedSourceId, onSelectSource, availableSubLists, selectedSubLists, onToggleSubList, wordCountByList, reviewWordCount, includeReview, onToggleIncludeReview, sentenceVocabWordCount, includeSentenceVocab, onToggleIncludeSentenceVocab, vocabProgress, reviewMode, onChangeReviewMode, onStart, onGlance }) {
   const canStart = selectedSubLists.length > 0
 
   return (
@@ -700,7 +710,7 @@ function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selec
         <label style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, letterSpacing: '0.08em' }}>
           WORD LIST
         </label>
-      <Select value={selectedSourceId} onChange={onSelectSource} size="md" options={WORD_SOURCE_OPTIONS} />
+      <Select value={selectedSourceId} onChange={onSelectSource} size="md" options={sourceOptions} />
       {reviewWordCount > 0 && (
         <div style={{ marginTop: 4 }}>
           <Checkbox checked={includeReview} onChange={onToggleIncludeReview} label={`Include review words (${reviewWordCount})`} />
@@ -803,6 +813,13 @@ export default function VocabPage() {
 function VocabPageScreens() {
   const ACCENT = useAccent()
   const { user } = useAuth()
+  // A personal source belongs to one account, so the list of sources on offer
+  // depends on who is signed in.
+  const customCounts = useCustomWordCounts()
+  const sourceOptions = useMemo(
+    () => visibleSources(customCounts).map(source => ({ value: source.id, label: source.label })),
+    [customCounts],
+  )
   const { data: vocabProgress, save: saveVocabProgress } = useProgress('vocab-flashcard')
   const { data: srsData, save: saveSrs } = useProgress('vocab-srs')
 
@@ -889,38 +906,57 @@ function VocabPageScreens() {
     return source?.lists ?? [{ id: source?.id, label: source?.label }]
   }, [selectedSourceId])
 
+  // A personal source's words live in the learner's account, not the bundle.
+  // The whole selected source is loaded at once — a few hundred words — so
+  // counts, the review toggles and the drill all read one pool.
+  const personalSource = useMemo(
+    () => WORD_SOURCES.find(s => s.id === selectedSourceId)?.personal ?? false,
+    [selectedSourceId],
+  )
+  const customListKeys = useMemo(
+    () => (personalSource ? availableSubLists.map(l => l.id) : []),
+    [personalSource, availableSubLists],
+  )
+  const customWords = useCustomWords(customListKeys)
+  const wordPool = useMemo(
+    () => (customWords.length ? [...WORD_DATA, ...customWords] : WORD_DATA),
+    [customWords],
+  )
+
   const reviewWordCount = useMemo(() =>
-    WORD_DATA.filter(w => selectedSubLists.includes(w.listKey) && w.isReview).length,
+    wordPool.filter(w => selectedSubLists.includes(w.listKey) && w.isReview).length,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedSubLists.join(',')]
+    [selectedSubLists.join(','), wordPool]
   )
 
   const sentenceVocabWordCount = useMemo(() =>
-    WORD_DATA.filter(w => selectedSubLists.includes(w.listKey) && w.isSentenceVocab).length,
+    wordPool.filter(w => selectedSubLists.includes(w.listKey) && w.isSentenceVocab).length,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedSubLists.join(',')]
+    [selectedSubLists.join(','), wordPool]
   )
 
   const wordCountByList = useMemo(() => {
     const map = {}
-    for (const w of WORD_DATA) {
+    for (const w of wordPool) {
       if (!includeReview && w.isReview) continue
       if (!includeSentenceVocab && w.isSentenceVocab) continue
       map[w.listKey] = (map[w.listKey] ?? 0) + 1
     }
     return map
-  }, [includeReview, includeSentenceVocab])
+  }, [includeReview, includeSentenceVocab, wordPool])
 
   const glanceWords = useMemo(() =>
-    WORD_DATA.filter(w => selectedSubLists.includes(w.listKey) && (includeReview || !w.isReview) && (includeSentenceVocab || !w.isSentenceVocab)),
+    wordPool.filter(w => selectedSubLists.includes(w.listKey) && (includeReview || !w.isReview) && (includeSentenceVocab || !w.isSentenceVocab)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedSubLists.join(','), includeReview, includeSentenceVocab]
+    [selectedSubLists.join(','), includeReview, includeSentenceVocab, wordPool]
   )
 
+  // Depends on glanceWords itself, not on what glanceWords is derived from: a
+  // personal source's words arrive asynchronously, and keying on the selection
+  // alone would leave the drill holding the pool from before they loaded.
   const pool = useMemo(() =>
     glanceWords.map(w => ({ id: w.id, word: w })),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedSubLists.join(','), includeReview, includeSentenceVocab]
+    [glanceWords]
   )
 
   const drill = useDrill(pool, { engine: SimpleQueue })
@@ -931,6 +967,7 @@ function VocabPageScreens() {
   // cache instead of flashing a loading state per card.
   const poolJmdictIds = useMemo(() => pool.map(p => p.word.jmdictId).filter(Boolean), [pool])
   const { entries: poolDictEntries } = useDictionaryEntries(poolJmdictIds, true)
+  const poolSenseGlosses = useSenseGlosses(useMemo(() => pool.map(p => p.word), [pool]))
 
   useEffect(() => {
     if (window.location.hash.includes('?')) window.history.replaceState(null, '', '#/vocab')
@@ -968,20 +1005,16 @@ function VocabPageScreens() {
     const newCardIds = []
     words.forEach((word, i) => {
       const dictEntry = word.jmdictId ? poolDictEntries[word.jmdictId] : null
-      const front = word.kanji ?? dictEntry?.primary_form ?? word.kana
+      const front = cardFormOf(word, dictEntry).form ?? word.kana
       if (existingFronts.has(front)) return
       existingFronts.add(front)
       const cardId = `${targetDeckId}-${Date.now()}-${i}`
       const kana = word.kana ?? dictEntry?.kana_forms?.[0]
-      const english = word.english ?? briefGloss(dictEntry)
+      const english = word.english ?? cardGloss(word, dictEntry, poolSenseGlosses)
       const extras = {}
       if (kana) extras.kana = kana
       if (word.sentence) extras.sentence = word.sentence
       if (word.jmdictId) extras.jmdictId = word.jmdictId
-      if (word.voicevoxVoices?.length) {
-        extras.voicevoxVoices = word.voicevoxVoices
-        extras.voicevoxId = word.id
-      }
       newCards[cardId] = createCard(front, english, cardId, targetDeckId, extras)
       newCardIds.push(cardId)
     })
@@ -1198,6 +1231,7 @@ function VocabPageScreens() {
               </GlanceErrorBoundary>
             ) : (
               <HomeScreen
+                sourceOptions={sourceOptions}
                 selectedSourceId={selectedSourceId}
                 onSelectSource={handleSelectSource}
                 availableSubLists={availableSubLists}

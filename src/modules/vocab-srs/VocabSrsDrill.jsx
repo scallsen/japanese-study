@@ -257,9 +257,13 @@ export default function VocabSrsDrill({
   function resolveAudioUrl(card) {
     if (!card) return { word: null, sentence: null }
     if (card.wordAudio) return { word: getAudioUrl(card.wordAudio), sentence: getAudioUrl(card.sentenceAudio) }
+    // Generated clips are keyed by what is spoken, so a card derives its own
+    // URL from its reading and needs no record of which clips exist. A card
+    // whose clip has not been generated 404s and falls back to TTS.
     const speakerId = speakerIdFromAudioSource(audioSource)
-    if (speakerId && card.voicevoxVoices?.includes(speakerId)) {
-      return { word: getVoicevoxAudioUrl(speakerId, card.voicevoxId ?? card.id), sentence: null }
+    if (speakerId) {
+      const reading = card.kana ?? card.front
+      return { word: getVoicevoxAudioUrl(speakerId, reading), sentence: null }
     }
     return { word: null, sentence: null }
   }

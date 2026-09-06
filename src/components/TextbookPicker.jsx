@@ -12,6 +12,9 @@ import {
 
 const HAIRLINE = 'rgba(255,255,255,0.08)'
 const SURFACE = '#2A2A2A'
+// Fixed rather than a minimum: the modal's height must not depend on which
+// book is selected. Sized to fit the longest description without scrolling.
+const DESKTOP_HEIGHT = 470
 const LIST_WIDTH = 200
 
 // Temporary: most books have no bundled word data yet (see textbooks.js) —
@@ -22,7 +25,18 @@ function hasWords(book, wordCountFor) {
 }
 
 function firstAvailable(wordCountFor) {
-  return TEXTBOOKS.find(b => hasWords(b, wordCountFor)) ?? TEXTBOOKS[0]
+  return availableBooks(wordCountFor)[0] ?? TEXTBOOKS[0]
+}
+
+// Only books the viewer can actually study. A book with no words is not a
+// choice — picking one used to leave the New card saying "No words for this
+// book yet", so the row was rendered disabled. Showing a list mostly made of
+// things that cannot be picked is noise, so they are left out entirely; a book
+// reappears the moment it has words. Course material lives in the learner's
+// own account, so this is also what keeps one person's lists out of everyone
+// else's picker.
+function availableBooks(wordCountFor) {
+  return TEXTBOOKS.filter(b => hasWords(b, wordCountFor))
 }
 
 // The "Change textbook" surface. Picking a book replaces the current one —
@@ -126,6 +140,8 @@ export function TextbookBrowser({
       padding: SPACE_16,
       flex: stacked ? '0 0 auto' : 1,
       minWidth: 0,
+      // Lets the scrolling description inside actually shrink.
+      ...(stacked ? null : { minHeight: 0 }),
       // Pinned to the top of the modal body's scroll so browsing the list
       // never scrolls away the book you're reading about. SURFACE, not
       // transparent, or the list would show through it.
@@ -149,9 +165,16 @@ export function TextbookBrowser({
 
       <div style={{
         fontSize: FS_CAPTION, color: TEXT_MUTED, lineHeight: 1.5,
-        // Clamped on a phone so a long description can't crowd out the list;
-        // there's room for the whole thing beside the list on desktop.
-        ...(stacked ? { display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' } : null),
+        // Books describe themselves at different lengths, and letting that set
+        // the modal's height made it jump 45px as you moved down the list. On
+        // desktop the description is the one part that gives: it takes the
+        // leftover space and scrolls, so the cover, the buy links and the
+        // confirm button hold still. minHeight:0 because a flex child will not
+        // shrink below its content without it, which is what would push the
+        // button back off the bottom.
+        ...(stacked
+          ? { display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }
+          : { flex: 1, minHeight: 0, overflowY: 'auto' }),
       }}>
         {selected.description}
       </div>
@@ -174,7 +197,6 @@ export function TextbookBrowser({
 
       {showConfirm && (
         <>
-          {!stacked && <div style={{ flex: 1, minHeight: SPACE_8 }} />}
           <ConfirmButton selected={selected} currentId={currentId} onChoose={() => onChoose(selected.id)} withTitle={stacked} available={selectedAvailable} />
         </>
       )}
@@ -189,30 +211,26 @@ export function TextbookBrowser({
         ? { borderTop: `1px solid ${HAIRLINE}` }
         : { width: LIST_WIDTH, flexShrink: 0, borderRight: `1px solid ${HAIRLINE}` }),
     }}>
-      {TEXTBOOKS.map(book => {
+      {availableBooks(wordCountFor).map(book => {
         const isSelected = book.id === selected.id
-        const available = hasWords(book, wordCountFor)
         return (
           <button
             key={book.id}
             type="button"
-            disabled={!available}
             className={[
               'tb-row',
               isSelected ? 'tb-row--selected' : '',
-              !available ? 'tb-row--disabled' : '',
             ].filter(Boolean).join(' ')}
-            onClick={() => available && onSelectedChange(book.id)}
+            onClick={() => onSelectedChange(book.id)}
             style={{
               display: 'flex', alignItems: 'center', gap: SPACE_8,
-              width: '100%', textAlign: 'left', cursor: available ? 'pointer' : 'not-allowed',
+              width: '100%', textAlign: 'left', cursor: 'pointer',
               padding: stacked ? `${SPACE_8}px ${SPACE_12}px` : `10px ${SPACE_12}px`,
               border: 'none',
               borderLeft: `2px solid ${isSelected ? accent : 'transparent'}`,
               background: isSelected ? 'rgba(255,255,255,0.05)' : 'none',
               fontFamily: FONT, letterSpacing: TRACKING, fontSize: FS_CAPTION,
               color: isSelected ? TEXT : 'rgba(255,255,255,0.7)',
-              opacity: available ? 1 : 0.5,
               // The hover rule needs the module accent, and a CSS class can't
               // read a prop — so it travels as a custom property, the same way
               // TokenizedBody and TextInput pass theirs (settled decision #10).
@@ -221,7 +239,6 @@ export function TextbookBrowser({
           >
             {stacked && <Cover book={book} size={28} accent={accent} />}
             <span style={{ flex: 1, minWidth: 0 }}>{book.title}</span>
-            {!available && <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>Unavailable</span>}
             {book.id === currentId && <span style={{ color: accent }}>•</span>}
           </button>
         )
@@ -231,7 +248,7 @@ export function TextbookBrowser({
 
   if (!stacked) {
     return (
-      <div style={{ display: 'flex', minHeight: 380 }}>
+      <div style={{ display: 'flex', height: DESKTOP_HEIGHT }}>
         {list}
         {detail}
       </div>

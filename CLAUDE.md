@@ -296,7 +296,67 @@ Mirrors katsuyou-drill's UI exactly. Speed-mode only (no text input). Card front
 
 ### Word data format
 
-Each word object in a `src/data/words/*.json` file:
+**New word lists carry `{ id, listKey, jmdictId }`, plus an optional `kanji`** —
+no gloss, reading or sentence. The `dictionary` table is already the source of truth
+for all of those (see the Dictionary linkage section), so storing them again
+duplicates data that would then drift, and the raw textbook lists they come from
+are the publisher's content while this repo is public. `src/data/words/genki_1_vocab.json`
+and `genki_2_vocab.json` are the reference examples; the older So-Matome files
+still carry the fuller shape below and are read the same way, since every field
+is an override with a dictionary fallback rather than a required value.
+
+An override in `scripts/textbook-vocab-overrides.json` may also carry `form`
+(and `reading`), which is the **only** way a form JMdict does not list reaches a
+card, and is deliberately human-only. JMdict files lexemes, so a textbook's
+歩いて or いらっしゃいます has no entry and never will — it does carry
+いらっしゃいませ and いらっしゃい, which have lexicalised, which is the line it
+draws. Supplementing `dictionary` instead was rejected twice over: a new row
+needs an invented id that leaks through `jmdictId` into SRS cards and
+`#/dictionary/entry/:id`, while widening `kana_forms` would redefine the column
+that `backfill-vocab-jmdict.mjs`, `resolveJmdictIds.js` and the story lookup all
+reading-verify against — and `import-jmdict.mjs` is a destructive full refresh,
+so either would vanish on the next import. Five cards use it.
+
+`sense` names which of the entry's senses the textbook teaches. JMdict orders
+senses by general prominence rather than by what a beginner course wants —
+あげる's "to give" is sense 5 of 上げる, behind "to raise; to elevate" — so the
+leading glosses often answer a question the book never asked. 85 cards carry
+one; `cardGloss(word, entry)` in `dictionaryEntryLookup.js` renders it, falling
+back to `briefGloss` when no sense is named.
+
+`mark` carries the decoration a textbook puts around a word to show how it is
+used — 〜枚 for a counter, そんな〜 for a prenominal, きれい（な） for a
+na-adjective. Matching has to strip that to find the word, so it is stored as a
+template (`〜{}`, `{}（な）`) and re-applied at render time: whatever was
+stripped, back where the book had it. A template rather than per-shape flags
+because the decoration leads, trails or wraps depending on the word.
+
+`suru` marks a word the book teaches as a する-verb. JMdict files those under
+the bare noun (勉強 covers 勉強する), so the entry is right but the stored form is
+a stem; the card appends する to both form and reading, which is what stops
+勉強する being drilled as the noun 勉強. `src/lib/displayForm.js`'s
+`cardFormOf(word, entry)` is the one place that resolves a card's form and
+reading — use it rather than reading `kanji`/`kana` directly.
+
+`kanji` is present only when the textbook writes the word as one of the
+*several forms JMdict already lists for that entry* — のぼる is 上る/登る/昇る and
+Genki teaches 登る; 五日 and ５日 are one entry. Keeping the book's spelling makes
+the card match the book while still pointing at the same entry for reading and
+meaning, so it selects among JMdict's forms rather than storing textbook text,
+and the resolver revalidates it on every run. A card therefore has three
+possible renderings from one id — the book's spelling, JMdict's canonical form
+(`displayFormOf`), and the plain reading — which is the plumbing a display
+setting needs. `modified: true` marks the opposite case: nothing the entry lists
+is written the way the book writes it (勉強する against 勉強), and the card shows
+an M so the difference is stated rather than hidden.
+
+Two consequences worth knowing before adding a list this way: an entry with no
+`jmdictId` cannot render at all (there is nothing to fall back to), and a
+する-verb resolves to its noun entry, so 勉強する is stored — and displayed — as
+勉強. See `scripts/resolve-textbook-vocab.mjs` for the import pipeline and
+`scripts/textbook-vocab-overrides.json` for the human decisions it defers to.
+
+Each word object in an older `src/data/words/*.json` file:
 
 ```js
 {
@@ -362,6 +422,41 @@ Third-party data/asset credits (JMdict/EDICT, KANJIDIC2, Tanaka Corpus, Voicevox
 
 `jmdictId` write sites for SRS cards (all pass it through `createCard`'s `extras`): `VocabPage.jsx`'s `handleAddToSrs`, `WordImportPanel.jsx`, `ImmersionReader.jsx`, `StoryReviewPage.jsx`. `IMPORTED_CONTENT_FIELDS` in `srs.js` includes `jmdictId` so it survives `resetCardProgress`.
 
+### Personal word lists (`custom_words`)
+
+A learner's own course material — one class's re-chunking of a book, with its
+own example sentences and review markers — belongs to an account, not to the
+bundle. It lives in `custom_words` (one row per word, `payload` holding the word
+itself) rather than in `src/data/words/`, so it is not downloaded by every
+visitor: moving 5,277 of these words out took 1.1 MB of JSON off the bundle.
+
+| File | Purpose |
+|---|---|
+| `supabase/migrations/*_add_custom_words.sql` | Table + RLS. `user_id` cascades from `auth.users`, so `delete-account` needs no change |
+| `supabase/migrations/*_custom_word_counts.sql` | `custom_word_counts()` — per-chapter counts for the picker, so drawing 36 tiles doesn't fetch 5,277 rows |
+| `scripts/upload-custom-words.mjs` | Moves lists from the repo into an account. Idempotent; keyed `(user_id, id)` |
+| `src/hooks/useCustomWords.js` | `useCustomWordCounts()` for the picker, `useCustomWords(listKeys)` for the chapters actually selected |
+
+A source in `WORD_SOURCES` marked `personal: true` has no words in the bundle.
+`visibleSources(customCounts)` decides whether to offer it, and ownership
+answers itself — the source appears when the viewer has words in it, so there is
+no identity to configure. `VocabPage` loads the whole selected personal source
+(a few hundred words) so counts, the review toggles and the drill all read one
+pool; `DashboardPage` uses the counts RPC alone.
+
+**`scripts/audio-keep.json` is what stops this deleting audio.**
+`generate-audio.mjs` reconciles storage by *absence* — any file without a
+matching word in `src/data/words/*.json` is pruned — and these words are no
+longer there. That file names their ids (ids only, no content) and
+reconciliation unions them in. Without it the next push to `main` deletes
+~10,000 generated files. Any future list that leaves the repo needs the same
+treatment **before** it goes.
+
+Note the maintenance scripts that hard-code word-file paths
+(`backfill-vocab-jmdict`, `validate-word-lists`, `strip-redundant-vocab-english`,
+`extract-sentence-vocab`) now skip paths that no longer exist rather than
+failing to start.
+
 ### Adding a word list
 
 **Flat source (no sublists):**
@@ -387,7 +482,7 @@ Word audio is pre-generated via [Voicevox](https://voicevox.hiroshiba.jp/) (neur
 - Speaker id `2` — 四国めたん (Shikoku Metan), Normal style
 - Speaker id `11` — 玄野武宏 (Kurono Takehiro), Normal style
 
-**Storage layout**: `audio/voicevox/<speakerId>/<entryId>.mp3` in the same public Supabase Storage `audio` bucket used by Vocab SRS's `audio/imported/` (Anki-uploaded audio) — kept in a separate prefix so the two can never collide or interfere with each other's cleanup.
+**Storage layout**: `audio/voicevox/<speakerId>/<key>.mp3`, where the key is a hash of **the text spoken** (`audioKeyFor` in `src/lib/displayForm.js`), not of the word that wanted it. One reading is stored once however many lists teach it — 7,138 words reduce to 2,272 clips — while two cards of one dictionary entry that say different things (勉強, 勉強する) keep separate clips. A hash because Supabase Storage rejects a non-ASCII object key and decodes percent-escapes before validating; non-cryptographic because a card needs the URL synchronously while rendering. The generator asserts no two readings share a key rather than trusting the hash. Words carry **no** record of their own audio: a card derives the URL from its reading and falls back to browser TTS when the clip 404s, which is also why a word list leaving the repo can no longer orphan audio another list still speaks. `scripts/rekey-audio.mjs` performed the one-off move from the old per-word layout. Formerly `audio/voicevox/<speakerId>/<entryId>.mp3` in the same public Supabase Storage `audio` bucket used by Vocab SRS's `audio/imported/` (Anki-uploaded audio) — kept in a separate prefix so the two can never collide or interfere with each other's cleanup.
 
 **Generation** (`scripts/generate-audio.mjs`): reads `src/data/words/*.json` and `src/modules/vocab-srs/decks/keigo.json`, generates audio for any entry missing a voice in its `voicevoxVoices` array (using `kana` as the TTS text for word-list entries, `front` for `keigo.json` entries which have no separate kana field), uploads to Storage, and writes the updated `voicevoxVoices` array back into the source JSON. Every run also **reconciles** each voice folder against the current entries and deletes any orphaned file — this is what makes removing a word/card from the JSON automatically delete its audio too, no separate cleanup step needed. Requires a running Voicevox engine (desktop app, or the headless `voicevox/voicevox_engine` Docker image) reachable at `VOICEVOX_URL` (default `http://localhost:50021`).
 

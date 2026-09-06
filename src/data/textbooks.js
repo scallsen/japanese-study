@@ -34,15 +34,44 @@ const ICONS = '/placeholder-svg'
 // misalignment. Recheck this if a new cover is drawn to different bounds.
 export const COVER_GUTTER_FRACTION = 5 / 32
 
-// Retailer *search* links, not product pages: a search URL keeps working
-// where a hardcoded product id rots as soon as an edition changes. Swap in
-// real product links per book if you'd rather point at exact editions.
-function storeLinks(query) {
+// Amazon runs a separate storefront per country and a search on the wrong one
+// finds nothing you can actually buy. Timezone is the best proxy available:
+// navigator.language commonly reports en-US for someone living in Japan, while
+// the timezone follows where the machine is. A wrong guess still lands on a
+// working search, so this errs toward the larger catalogue.
+function amazonHost() {
+  try {
+    if (Intl.DateTimeFormat().resolvedOptions().timeZone === 'Asia/Tokyo') return 'www.amazon.co.jp'
+  } catch { /* no Intl — fall through */ }
+  return 'www.amazon.com'
+}
+
+// Retailer *search* links, not product pages: a search URL keeps working where
+// a hardcoded product id rots as soon as an edition changes. `extra` is for a
+// publisher's own page, which is the better first link when a book has one.
+// Kinokuniya is named for its US storefront because that is the one linked —
+// kinokuniya.co.jp is a separate site and does not answer the same URL shape.
+function storeLinks(query, extra = []) {
   return [
-    { label: 'Amazon', href: `https://www.amazon.com/s?k=${encodeURIComponent(query)}` },
-    { label: 'Kinokuniya', href: `https://united-states.kinokuniya.com/products?keyword=${encodeURIComponent(query)}` },
+    ...extra,
+    { label: 'Amazon', href: `https://${amazonHost()}/s?k=${encodeURIComponent(query)}` },
+    { label: 'Kinokuniya US', href: `https://united-states.kinokuniya.com/products?keyword=${encodeURIComponent(query)}` },
   ]
 }
+
+// The publisher's own links for Genki. Its stockist page lists the book's
+// regional storefronts — 36 Amazons and 36 Kinokuniyas — which serves a reader
+// anywhere better than the two direct searches below can. Only the Japanese
+// version of that page exists (/en/bookstores/ is a 404), but it is a table of
+// store names, so it reads regardless. The ebook is sold per volume.
+const genkiLinks = ebookId => [
+  { label: 'Where to buy', href: 'https://genki3.japantimes.co.jp/bookstores/#OL' },
+  { label: 'Ebook', href: `https://store.jtpublishing.co.jp/en/products/${ebookId}` },
+]
+
+// ASK's own page for the revised N3 kanji volume, by ISBN — the edition whose
+// six-week structure the chapters here follow.
+const SOMATOME_N3_KANJI = [{ label: 'ASK Publishing', href: 'https://ask-books.com/book-details/?slug=9784866394961' }]
 
 export const TEXTBOOKS = [
   {
@@ -50,8 +79,8 @@ export const TEXTBOOKS = [
     title: 'Genki 1',
     subtitle: 'Beginner · N5',
     publisher: 'The Japan Times',
-    description: 'The standard first-year course. Twelve lessons of dialogue, grammar notes and drills, taught in kana and kanji from the start.',
-    purchase: storeLinks('Genki 1 Japanese textbook third edition'),
+    description: 'The standard all-round beginner course: grammar, vocabulary, kanji and listening in one book. Twelve lessons built around a recurring cast whose conversations introduce each grammar point before it is explained, with drills, reading and writing sections and audio throughout. 3rd edition.',
+    purchase: storeLinks('Genki 1 Japanese textbook third edition', genkiLinks(1730)),
     icon: `${ICONS}/genki-1.svg`,
     chapters: lessons('genki-1', 1, 12),
   },
@@ -60,8 +89,8 @@ export const TEXTBOOKS = [
     title: 'Genki 2',
     subtitle: 'Beginner · N4',
     publisher: 'The Japan Times',
-    description: 'Picks up at lesson 13 and runs to 23, working through passive, causative and the polite registers that trip up most beginners.',
-    purchase: storeLinks('Genki 2 Japanese textbook third edition'),
+    description: 'Continues straight on from Genki 1, lessons 13 to 23, with the same cast and the same shape to each lesson. Carries a beginner through passive and causative forms, honorific and humble speech, and longer reading passages. 3rd edition.',
+    purchase: storeLinks('Genki 2 Japanese textbook third edition', genkiLinks(1732)),
     icon: `${ICONS}/genki-2.svg`,
     chapters: lessons('genki-2', 13, 23),
   },
@@ -105,37 +134,85 @@ export const TEXTBOOKS = [
     icon: `${ICONS}/marugoto-a1-katsudou.svg`,
     chapters: topics('marugoto-a1-katsudou', 9),
   },
-  // The two So-Matome entries are the only books with word data today — their
-  // chapter ids are the existing nsm-n3-* / n2-* listKeys.
+  // So-Matome N3 Kanji follows the book: 6 weeks of 6 vocabulary days. (The
+  // book's day 7 each week is review and introduces nothing, so it has no
+  // chapter.) It was rebuilt from a course's own re-chunking of the same book —
+  // see scripts/migrate-somatome-kanji.mjs.
+  {
+    id: 'nsm-n3-kanji',
+    title: 'Nihongo So-Matome N3 Kanji',
+    subtitle: 'Kanji · N3',
+    publisher: 'ASK Publishing',
+    description: 'The kanji volume of a study series written around the JLPT. Characters are grouped by theme — signage, transport, the body — and taught with the vocabulary that uses them, with exercises and a test in each section. Sister volumes cover grammar, vocabulary, reading and listening.',
+    purchase: storeLinks('Nihongo So-matome N3 kanji', SOMATOME_N3_KANJI),
+    icon: `${ICONS}/nihongo-so-matome-kanji-n3.svg`,
+    chapters: weekDays('nsm-n3-kanji', 6, 6),
+  },
+  // Course material rather than published books: one class's own chunking of a
+  // So-Matome volume, with its own example sentences. The words live in the
+  // learner's account (custom_words), so these appear only for whoever owns
+  // them — the picker offers a book when it has words for the viewer, and for
+  // everyone else these have none.
+  //
+  // `personal: true` says so outright, for anything that can't ask about word
+  // counts. The empty card's cover carousel is the case: it has no viewer to
+  // count words for, so without the flag it advertised all five to everybody —
+  // and since they reuse the two So-Matome covers between them, as four
+  // identical N3 spines and two identical N2 ones.
   {
     id: 'nsm-n3',
-    title: 'Nihongo So-Matome N3',
-    subtitle: 'Vocabulary · N3',
-    publisher: 'ASK Publishing',
-    description: 'JLPT N3 vocabulary drilling, split into short daily sets rather than long chapters. Built for a steady pace toward the test.',
-    purchase: storeLinks('Nihongo So-matome N3 vocabulary'),
+    personal: true,
+    title: 'Coto Intermediate 3',
+    subtitle: 'N3',
+    publisher: 'Coto Academy',
+    description: 'Coto Academy\'s own chunking of the N3 kanji book, with its own example sentences and review markers.',
+    purchase: [],
     icon: `${ICONS}/nihongo-so-matome-kanji-n3.svg`,
     chapters: weekDays('nsm-n3', 4),
   },
   {
-    id: 'nsm-n2',
-    title: 'Nihongo So-Matome N2',
-    subtitle: 'Vocabulary · N2',
-    publisher: 'ASK Publishing',
-    description: 'The N2 volume of the same series — denser vocabulary in the same daily-set format.',
-    purchase: storeLinks('Nihongo So-matome N2 vocabulary'),
+    id: 'nsm-n3-i4',
+    personal: true,
+    title: 'Coto Intermediate 4',
+    subtitle: 'N3',
+    publisher: 'Coto Academy',
+    description: 'The second term of the same N3 material.',
+    purchase: [],
+    icon: `${ICONS}/nihongo-so-matome-kanji-n3.svg`,
+    chapters: weekDays('nsm-n3-i4', 4),
+  },
+  {
+    id: 'nsm-n3-i5',
+    personal: true,
+    title: 'Coto Intermediate 5',
+    subtitle: 'N3',
+    publisher: 'Coto Academy',
+    description: 'The third term of the same N3 material.',
+    purchase: [],
+    icon: `${ICONS}/nihongo-so-matome-kanji-n3.svg`,
+    chapters: weekDays('nsm-n3-i5', 4),
+  },
+  {
+    id: 'nsm-n2-a1',
+    personal: true,
+    title: 'Coto Advanced 1',
+    subtitle: 'N2',
+    publisher: 'Coto Academy',
+    description: 'Coto Academy\'s own chunking of the N2 material, with its own example sentences.',
+    purchase: [],
     icon: `${ICONS}/nihongo-so-matome-kanji-n2.svg`,
     chapters: weekDays('n2', 4),
   },
   {
-    id: 'nsm-n1',
-    title: 'Nihongo So-Matome N1',
-    subtitle: 'Vocabulary · N1',
-    publisher: 'ASK Publishing',
-    description: 'The N1 volume: the widest vocabulary range in the series, including formal and written-only words.',
-    purchase: storeLinks('Nihongo So-matome N1 vocabulary'),
-    icon: `${ICONS}/nihongo-so-matome-kanji-n1.svg`,
-    chapters: weekDays('nsm-n1', 8),
+    id: 'nsm-n2-a2',
+    personal: true,
+    title: 'Coto Advanced 2',
+    subtitle: 'N2',
+    publisher: 'Coto Academy',
+    description: 'The second term of the same N2 material.',
+    purchase: [],
+    icon: `${ICONS}/nihongo-so-matome-kanji-n2.svg`,
+    chapters: weekDays('n2-a2', 4),
   },
 ]
 

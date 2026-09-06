@@ -26,7 +26,13 @@ export function useVoicevoxPlayer() {
     let entry = cache.get(url)
     if (!entry) {
       entry = fetch(url)
-        .then(res => res.arrayBuffer())
+        .then(res => {
+          // A missing clip returns a JSON error body with 200-ish framing from
+          // some CDNs; without this it reaches decodeAudioData and fails there,
+          // which reads as a decode bug rather than "no audio for this word".
+          if (!res.ok) throw new Error(`audio ${res.status}`)
+          return res.arrayBuffer()
+        })
         .then(async data => (await getCtx(ctxRef)).decodeAudioData(data))
       cache.set(url, entry)
     }
@@ -52,19 +58,23 @@ export function useVoicevoxPlayer() {
     }
   }
 
+  // Resolves true when something was actually played, so a caller can fall back
+  // to speech synthesis. It used to swallow every failure, which meant a word
+  // whose clip was missing played nothing at all rather than falling back.
   async function play(url) {
     stop()
     const token = tokenRef.current
     try {
       const [ctx, buffer] = await Promise.all([getCtx(ctxRef), loadBuffer(url)])
-      if (token !== tokenRef.current) return // superseded by a newer play()/stop() while loading
+      if (token !== tokenRef.current) return true // superseded by a newer play()/stop(); not a failure
       const source = ctx.createBufferSource()
       source.buffer = buffer
       source.connect(ctx.destination)
       source.start()
       sourceRef.current = source
+      return true
     } catch {
-      // network/decode failure — nothing to play
+      return false
     }
   }
 

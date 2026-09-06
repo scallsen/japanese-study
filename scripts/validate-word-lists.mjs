@@ -13,7 +13,7 @@
  * No Supabase/network access needed — pure local JSON validation.
  */
 
-import { readFileSync } from 'fs'
+import { readFileSync, existsSync } from 'fs'
 
 const TARGETS = [
   'src/data/words/nsm_n3_vocab.json',
@@ -22,6 +22,13 @@ const TARGETS = [
   'src/data/words/nsm_n2_a1_vocab.json',
   'src/data/words/sentence-vocab.json',
 ]
+
+// The course word lists moved to per-account storage, so these paths may no
+// longer exist. Skip what is absent rather than failing to start.
+const TARGETS_PRESENT = TARGETS.filter(t => existsSync(typeof t === 'string' ? t : t.path))
+if (TARGETS_PRESENT.length < TARGETS.length) {
+  console.warn(`Skipping ${TARGETS.length - TARGETS_PRESENT.length} word list(s) that are no longer in this repo`)
+}
 
 function validateFile(path) {
   const entries = JSON.parse(readFileSync(path, 'utf8'))
@@ -45,7 +52,7 @@ function validateFile(path) {
 
 function main() {
   let anyProblems = false
-  for (const path of TARGETS) {
+  for (const path of TARGETS_PRESENT) {
     const { total, problems } = validateFile(path)
     if (problems.length === 0) {
       console.log(`${path}: OK (${total} entries)`)

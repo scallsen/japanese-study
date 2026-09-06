@@ -1,0 +1,16 @@
+-- The form a word should actually be displayed as.
+--
+-- `primary_form` is "first kanji form, else first kana form", and
+-- jmdict-simplified orders those without regard to whether anyone writes them.
+-- JMdict tags a rarely-used kanji spelling rK (also sK search-only, oK
+-- outdated, iK irregular); the original import dropped those tags, so それから
+-- became 其れから, カレー became 咖哩 and ゆうべ became 昨夜.
+--
+-- Distinct from the sense-level `uk` ("usually written using kana alone"),
+-- which is what correctly renders ちょっと and たくさん. `uk` says how a word is
+-- written; rK says this particular kanji spelling is not the one in use.
+-- 其れから carries no `uk` on any sense.
+--
+-- NULL means primary_form was already correct, which is the common case —
+-- only rows that differ are backfilled. See scripts/backfill-preferred-form.mjs.
+alter table dictionary add column if not exists preferred_form text;

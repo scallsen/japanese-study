@@ -1,0 +1,6 @@
+# The raw textbook lists are the publisher's content — and this repo is public.
+# Only the resolved output (JMdict ids + lesson keys) is committed; the source
+# glosses stay local and are used purely as matching input.
+*
+!.gitignore
+!README.md

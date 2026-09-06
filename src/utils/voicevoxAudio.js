@@ -2,6 +2,7 @@
 // id <-> audio-source-setting mapping and Supabase Storage URL construction in one place.
 
 import { ATTRIBUTIONS } from '../data/attributions.js'
+import { audioKeyFor } from '../lib/displayForm.js'
 
 export const VOICEVOX_VOICES = [
   { id: 2, name: 'shikoku-metan', label: 'Female (Shikoku Metan)', credit: ATTRIBUTIONS['voicevox-2'] },
@@ -19,8 +20,12 @@ const VOICEVOX_AUDIO_BASE = import.meta.env.VITE_SUPABASE_URL
   ? `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/audio/voicevox`
   : null
 
-export function getVoicevoxAudioUrl(speakerId, entryId) {
-  return speakerId && entryId && VOICEVOX_AUDIO_BASE ? `${VOICEVOX_AUDIO_BASE}/${speakerId}/${entryId}.mp3` : null
+// Keyed by what is spoken, not by which word asked for it — so one reading is
+// stored once however many lists use it, and a word carries no record of its
+// own audio. `speechText` is what the card says (see speechTextOf).
+export function getVoicevoxAudioUrl(speakerId, speechText) {
+  const key = audioKeyFor(speechText)
+  return speakerId && key && VOICEVOX_AUDIO_BASE ? `${VOICEVOX_AUDIO_BASE}/${speakerId}/${key}.mp3` : null
 }
 
 // 'voicevox-2' -> 2, 'browser' / 'none' -> null
