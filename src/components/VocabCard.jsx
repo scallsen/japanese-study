@@ -4,7 +4,7 @@ import { FONT } from '../data/theme.js'
 import { useKanjiMeanings } from '../hooks/useKanjiMeanings.js'
 import { kanjiCharsOf } from '../utils/kanjiMeaningLookup.js'
 import { useDictionaryEntry } from '../hooks/useDictionaryEntries.js'
-import { briefGloss } from '../utils/dictionaryEntryLookup.js'
+import { briefGloss, displayFormOf } from '../utils/dictionaryEntryLookup.js'
 import { useSentenceForWord } from '../hooks/useSentenceForWord.js'
 import { getMainTextScale, getSecondaryTextScale, cqw } from '../utils/cardTextFit.js'
 
@@ -164,7 +164,7 @@ export default function VocabCard({ word, flipped, onFlip, animate, reviewMode, 
   // a dictionary match.
   const { entry: dictEntry, loading: dictLoading } = useDictionaryEntry(word.jmdictId, true)
   const resolvedEnglish = briefGloss(dictEntry) ?? word.english
-  const displayForm = word.kanji ?? dictEntry?.primary_form
+  const displayForm = word.kanji ?? displayFormOf(dictEntry)
   const reading = word.kana ?? dictEntry?.kana_forms?.[0]
 
   // The word's own curated sentence wins by default ('custom'); a Tanaka

@@ -27,7 +27,7 @@ import { useAuth } from '../context/AuthContext.jsx'
 import { useProgress } from '../hooks/useProgress.js'
 import { useAudioGenerationStatus } from '../hooks/useAudioGenerationStatus.js'
 import { useDictionaryEntries } from '../hooks/useDictionaryEntries.js'
-import { briefGloss } from '../utils/dictionaryEntryLookup.js'
+import { briefGloss, displayFormOf } from '../utils/dictionaryEntryLookup.js'
 import { useSentencesForWords } from '../hooks/useSentenceForWord.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../utils/storage.js'
 import { supabase } from '../lib/supabase.js'
@@ -63,7 +63,7 @@ function mistakeTier(count) {
 // (see CLAUDE.md's "Dictionary as source of truth" section), the word's own
 // kanji/kana are the fallback. reading is null when it'd just repeat displayForm.
 function resolveWordDisplay(word, dictEntry) {
-  const displayForm = word.kanji ?? dictEntry?.primary_form ?? word.kana
+  const displayForm = word.kanji ?? displayFormOf(dictEntry) ?? word.kana
   const readingRaw = word.kana ?? dictEntry?.kana_forms?.[0]
   return { displayForm, reading: readingRaw && readingRaw !== displayForm ? readingRaw : null }
 }
@@ -554,7 +554,7 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
     setExpandedKanji([])
     if (!next) return
 
-    const displayForm = word.kanji ?? dictEntries[word.jmdictId]?.primary_form ?? word.kana
+    const displayForm = word.kanji ?? displayFormOf(dictEntries[word.jmdictId]) ?? word.kana
     const chars = (displayForm ?? '').split('').filter(ch => /\p{Script=Han}/u.test(ch))
     const missing = chars.filter(ch => !kanjiCache.current[ch])
     if (missing.length > 0 && supabase) {
@@ -968,7 +968,7 @@ function VocabPageScreens() {
     const newCardIds = []
     words.forEach((word, i) => {
       const dictEntry = word.jmdictId ? poolDictEntries[word.jmdictId] : null
-      const front = word.kanji ?? dictEntry?.primary_form ?? word.kana
+      const front = word.kanji ?? displayFormOf(dictEntry) ?? word.kana
       if (existingFronts.has(front)) return
       existingFronts.add(front)
       const cardId = `${targetDeckId}-${Date.now()}-${i}`

@@ -1,6 +1,22 @@
+import { TEXTBOOKS } from './textbooks.js'
+
 // Each source is either flat (lists: null — the source id is the listKey)
 // or hierarchical (lists: array — each sublist id is a listKey).
+//
+// A textbook source is derived from textbooks.js rather than restated here:
+// one book has chapters, and that file already owns the chapter list. The
+// So-Matome entries below predate that model (they split one book across
+// several sources, mirroring a class rather than the book) and still spell
+// their sublists out; they collapse into `fromTextbook` once their listKeys
+// are re-chaptered to match.
+function fromTextbook(id) {
+  const book = TEXTBOOKS.find(t => t.id === id)
+  return { id: book.id, label: book.title, lists: book.chapters }
+}
+
 export const WORD_SOURCES = [
+  fromTextbook('genki-1'),
+  fromTextbook('genki-2'),
   {
     id: 'nsm-n3',
     label: 'Nihongo So-Matome N3 (I-3)',

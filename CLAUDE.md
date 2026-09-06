@@ -296,7 +296,22 @@ Mirrors katsuyou-drill's UI exactly. Speed-mode only (no text input). Card front
 
 ### Word data format
 
-Each word object in a `src/data/words/*.json` file:
+**New word lists carry only `{ id, listKey, jmdictId }`** — no gloss, reading,
+display form or sentence. The `dictionary` table is already the source of truth
+for all of those (see the Dictionary linkage section), so storing them again
+duplicates data that would then drift, and the raw textbook lists they come from
+are the publisher's content while this repo is public. `src/data/words/genki_1_vocab.json`
+and `genki_2_vocab.json` are the reference examples; the older So-Matome files
+still carry the fuller shape below and are read the same way, since every field
+is an override with a dictionary fallback rather than a required value.
+
+Two consequences worth knowing before adding a list this way: an entry with no
+`jmdictId` cannot render at all (there is nothing to fall back to), and a
+する-verb resolves to its noun entry, so 勉強する is stored — and displayed — as
+勉強. See `scripts/resolve-textbook-vocab.mjs` for the import pipeline and
+`scripts/textbook-vocab-overrides.json` for the human decisions it defers to.
+
+Each word object in an older `src/data/words/*.json` file:
 
 ```js
 {
