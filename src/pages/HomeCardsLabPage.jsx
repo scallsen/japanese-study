@@ -160,6 +160,7 @@ export default function HomeCardsLabPage() {
   // Real handlers would navigate away from the lab; these just report.
   const handlers = {
     onStart: chapter => setLastAction(`onStart(${chapter.id})`),
+    onAdvance: () => setLastAction('onAdvance()'),
     onChangeTextbook: () => setLastAction('onChangeTextbook()'),
     onSignIn: () => setLastAction('onSignIn()'),
   }
@@ -195,7 +196,7 @@ export default function HomeCardsLabPage() {
             title="New card"
             width={width}
             states={NEW_STATES}
-            render={props => <NewCard {...props} onStart={handlers.onStart} onChangeTextbook={handlers.onChangeTextbook} />}
+            render={props => <NewCard {...props} onStart={handlers.onStart} onAdvance={handlers.onAdvance} onChangeTextbook={handlers.onChangeTextbook} />}
           />
 
           <StateGrid
@@ -219,6 +220,7 @@ export default function HomeCardsLabPage() {
                     <NewCard
                       {...byKey(NEW_STATES, pair.newKey).props}
                       onStart={handlers.onStart}
+                      onAdvance={handlers.onAdvance}
                       onChangeTextbook={handlers.onChangeTextbook}
                     />
                     <ReviewCard {...byKey(REVIEW_STATES, pair.reviewKey).props} onSignIn={handlers.onSignIn} />

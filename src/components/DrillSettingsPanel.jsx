@@ -25,7 +25,10 @@ const VOICE_OPTIONS = [
   { value: 'female', label: 'Female' },
 ]
 
-function Row({ label, control, onActivate }) {
+// Exported for other settings-style panels (VocabSrsModule's overview) that
+// want the same label-left/control-right row inside their own FilterCard,
+// rather than a lookalike copy of this markup.
+export function Row({ label, control, onActivate }) {
   return (
     <div
       onClick={onActivate}
