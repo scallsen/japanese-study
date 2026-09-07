@@ -29,6 +29,12 @@ export default function Popover({
   anchorRect,
   isMobile = false,
   title,
+  // 'start' lines the panel's left edge up with the anchor's; 'end' lines the
+  // right edges up instead. A trigger near the right of the viewport needs
+  // 'end' — otherwise 'start' overflows, the clamp below shoves the panel to
+  // the viewport margin, and it reads as pinned to the window edge rather
+  // than belonging to the thing that opened it.
+  align = 'start',
   width = 260,
   zIndex = 200,
   bodyPadding = 0,
@@ -74,7 +80,7 @@ export default function Popover({
     const vh = window.innerHeight
 
     let top = rect.bottom + GAP
-    let left = rect.left
+    let left = align === 'end' ? rect.right - w : rect.left
 
     if (left + w + MARGIN > vw) left = vw - w - MARGIN
     left = Math.max(MARGIN, left)
@@ -106,7 +112,9 @@ export default function Popover({
         // First guess; useLayoutEffect corrects it before paint, so there's
         // no visible jump even when the panel has to flip above the anchor.
         top: rect ? rect.bottom + GAP : 0,
-        left: rect ? rect.left : 0,
+        // `width` is only an estimate of the real panel width, which is why
+        // the layout effect above recomputes this before paint.
+        left: rect ? (align === 'end' ? rect.right - width : rect.left) : 0,
         width,
         maxWidth: `calc(100vw - ${MARGIN * 2}px)`,
         zIndex,

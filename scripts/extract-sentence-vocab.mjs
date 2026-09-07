@@ -46,7 +46,7 @@ import { createClient } from '@supabase/supabase-js'
 import kuromoji from 'kuromoji'
 import { createRequire } from 'module'
 import { dirname, join } from 'path'
-import { readFileSync, writeFileSync } from 'fs'
+import { readFileSync, writeFileSync, existsSync } from 'fs'
 import { resolveJmdictMatches, matchKey } from '../src/lib/dictionaryLookup.js'
 
 const SELECT = 'id, primary_form, kana_forms, gloss_en, pos, common'
@@ -70,6 +70,13 @@ const SOURCE_FILES = [
   'src/data/words/nsm_n3_i5_vocab.json',
   'src/data/words/nsm_n2_a1_vocab.json',
 ]
+
+// The course word lists moved to per-account storage, so these paths may
+// no longer exist. Skip what is absent rather than failing to start.
+const SOURCE_FILES_PRESENT = SOURCE_FILES.filter(x => existsSync(x))
+if (SOURCE_FILES_PRESENT.length < SOURCE_FILES.length) {
+  console.warn(`Skipping ${SOURCE_FILES.length - SOURCE_FILES_PRESENT.length} word list(s) that are no longer in this repo`)
+}
 
 const OUTPUT_FILE = 'src/data/words/sentence-vocab.json'
 const REPORT_FILE = 'extract-sentence-vocab-report.json'
@@ -144,7 +151,7 @@ async function main() {
   const tokenizer = await buildTokenizerInstance()
   console.log('Tokenizer ready.')
 
-  const filesEntries = SOURCE_FILES.map(path => ({ path, entries: JSON.parse(readFileSync(path, 'utf8')) }))
+  const filesEntries = SOURCE_FILES_PRESENT.map(path => ({ path, entries: JSON.parse(readFileSync(path, 'utf8')) }))
 
   // Existing headwords per listKey, across every source file — used to drop a
   // candidate that's already being drilled directly in the same list.

@@ -58,7 +58,7 @@ function StoryReview({ storyId }) {
     setStoryLoading(true)
     supabase
       .from('stories')
-      .select('id, title, story, tokens, questions, format, created_at')
+      .select('id, title, story, tokens, format, created_at')
       .eq('id', storyId)
       .maybeSingle()
       .then(({ data, error: err }) => {

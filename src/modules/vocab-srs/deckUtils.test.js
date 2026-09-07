@@ -23,7 +23,7 @@ const {
   deleteCards,
 } = await import('./deckUtils.js')
 
-const bundledDeck = { id: 'core2000', name: 'Core 2000', source: 'bundled', active: true, addedAt: 1 }
+const bundledDeck = { id: 'keigo', name: 'Keigo', source: 'bundled', active: true, addedAt: 1 }
 const importedDeck = { id: 'story-words', name: 'Story Words', source: 'imported', active: true, addedAt: 2 }
 
 beforeEach(() => {
@@ -49,7 +49,7 @@ describe('isBundledDeck', () => {
 })
 
 describe('resolveTargetDeckId', () => {
-  const decks = { core2000: bundledDeck, 'story-words': importedDeck }
+  const decks = { keigo: bundledDeck, 'story-words': importedDeck }
 
   it('falls back to bootstrap default when nothing stored', () => {
     expect(resolveTargetDeckId(decks, null, 'immersion-words')).toBe('immersion-words')
@@ -64,7 +64,7 @@ describe('resolveTargetDeckId', () => {
   })
 
   it('falls back when the stored deck is bundled', () => {
-    expect(resolveTargetDeckId(decks, 'core2000', 'immersion-words')).toBe('immersion-words')
+    expect(resolveTargetDeckId(decks, 'keigo', 'immersion-words')).toBe('immersion-words')
   })
 })
 
@@ -95,8 +95,8 @@ describe('renameDeck', () => {
   })
 
   it('no-ops on a bundled deck', () => {
-    const decks = { core2000: bundledDeck }
-    expect(renameDeck(decks, 'core2000', 'Hacked')).toBe(decks)
+    const decks = { keigo: bundledDeck }
+    expect(renameDeck(decks, 'keigo', 'Hacked')).toBe(decks)
   })
 
   it('no-ops on a missing deck', () => {
@@ -108,22 +108,22 @@ describe('renameDeck', () => {
 describe('deleteDeck', () => {
   it('cascades to remove the deck and its cards', () => {
     const progress = {
-      decks: { 'story-words': importedDeck, core2000: bundledDeck },
+      decks: { 'story-words': importedDeck, keigo: bundledDeck },
       cards: {
         c1: { id: 'c1', deckId: 'story-words' },
-        c2: { id: 'c2', deckId: 'core2000' },
+        c2: { id: 'c2', deckId: 'keigo' },
       },
     }
     const result = deleteDeck(progress, 'story-words')
     expect(result.decks['story-words']).toBeUndefined()
-    expect(result.decks.core2000).toBeDefined()
+    expect(result.decks.keigo).toBeDefined()
     expect(result.cards.c1).toBeUndefined()
     expect(result.cards.c2).toBeDefined()
   })
 
   it('no-ops on a bundled deck', () => {
-    const progress = { decks: { core2000: bundledDeck }, cards: {} }
-    expect(deleteDeck(progress, 'core2000')).toBe(progress)
+    const progress = { decks: { keigo: bundledDeck }, cards: {} }
+    expect(deleteDeck(progress, 'keigo')).toBe(progress)
   })
 
   it('no-ops on a missing deck', () => {

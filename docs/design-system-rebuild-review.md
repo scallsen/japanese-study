@@ -645,3 +645,51 @@ phone, and the rest scroll under a detail that stays put.
   the Modal's child. `TextbookBrowser` is now controlled
   (`selectedId`/`onSelectedChange`) with a `showConfirm` escape hatch, and
   the bench mirrors the same arrangement.
+
+### Home redesign — `SectionLabel` merged into `SectionHeader` and deleted
+
+Answers open question 3 above ("two heading components, or one with a
+`divider` flag?"): **one component, no flag.** Your call, taken after
+swapping the home page's four headings by hand and preferring the result.
+
+- **What actually differed** between the two: a trailing hairline rule, and
+  `FS_BADGE`/50%-muted versus `FS_BASE`/35%-white. That is one rule and 3px
+  of type — not a component's worth of difference, and not worth a `divider`
+  prop either, since the uppercase-and-dimmed treatment already reads as a
+  group divider without the line.
+- **`SectionHeader` gained `marginTop` (default 0)**, the one prop
+  `SectionLabel` had that its callers genuinely used — Dictionary's entry
+  page passes `marginTop={28}` to separate stacked groups. Existing
+  `SectionHeader` callers (settings drawers, done screens) are unchanged at
+  0; ex-`SectionLabel` callers that relied on its default 4 lose 4px, which
+  is invisible in situ.
+- **Call sites converted** (all `label=` → `title=`): `DashboardPage`
+  (More tools + the three stats-rail groups), `DictionaryPage` (Kanji /
+  Words), `DictionaryEntryPage` (Your Decks / Kanji / Example Sentences),
+  `VocabPage` (preview groups), `HomeCardsLabPage`, `TextbookPickerLabPage`,
+  and the style guide's own demo.
+- **`src/components/SectionLabel.jsx` deleted**, along with its re-export
+  from `pages/dictionaryShared.jsx` — the two Dictionary pages now import
+  `SectionHeader` straight from `src/components/`, which is where a shared
+  component should have been imported from anyway. The style guide's
+  Section Label nav entry and demo are gone; the Section Header page now
+  demonstrates both roles (with-action, and a second stacked group).
+- **Visible change to accept:** every Dictionary and Vocab Drill group
+  divider loses its hairline. Verified live on `#/dictionary` (Kanji /
+  Words) and the style guide.
+
+## Home flow concepts (`worktree-home-flow-concepts`, on main after #101)
+
+Bench at `#/dev/home-flow` (`src/pages/HomeFlowLabPage.jsx`) with three
+click-through concepts for what the Vocab and SRS index pages are for now
+that the home cards carry both primary actions. Written up with trade-offs
+and a recommendation in `docs/home-flow-concepts.md`. **[INPUT]** pick a
+direction (A recommended: pointer control on the card, free-drill sheet,
+one Decks page; both index homes deleted) and answer the three open
+questions at the end of that doc before the build starts.
+
+**Round two (B chosen):** `#/dev/textbook-flow` puts each follow-up
+question — advance model, SRS gate, rewind, glyphs, cropped covers, free
+drill placement, lesson word list, Decks header — on its own switch over
+one mock. Recommendations per question are in the same doc. **[INPUT]**
+pick per switch; the build order at the end of the doc follows.

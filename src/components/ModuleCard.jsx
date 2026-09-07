@@ -50,8 +50,9 @@ export default function ModuleCard({ module, disabled }) {
             {sublabel}
           </div>
         </div>
+        {/* 32 is 2x the 16px icon art, so it lands on whole pixels — 36 smears it. */}
         {icon && (
-          <img src={icon} alt="" style={{ width: 36, height: 36, flexShrink: 0 }} />
+          <img src={icon} alt="" style={{ width: 32, height: 32, flexShrink: 0, imageRendering: 'pixelated' }} />
         )}
       </div>
     </Tag>

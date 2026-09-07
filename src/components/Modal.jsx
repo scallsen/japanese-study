@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_HEADING, SPACE_8, SPACE_16 } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_HEADING, SPACE_8, SPACE_16 } from '../data/theme.js'
 
 const SURFACE = '#2A2A2A'
 const HAIRLINE = 'rgba(255,255,255,0.08)'
@@ -117,14 +117,17 @@ export default function Modal({
             {showClose && (
               <button
                 onClick={handleClose}
+                aria-label={closeLabel}
+                title={closeLabel}
                 className="modal-close-btn"
                 style={{
-                  background: 'none', border: 'none', color: TEXT_MUTED,
-                  fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING,
-                  cursor: 'pointer', padding: 4,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  width: 28, height: 28, flexShrink: 0,
+                  background: 'none', border: 'none', borderRadius: 6, color: TEXT_MUTED,
+                  fontSize: 20, lineHeight: 1, cursor: 'pointer', padding: 0,
                 }}
               >
-                {closeLabel}
+                ×
               </button>
             )}
           </div>

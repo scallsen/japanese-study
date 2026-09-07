@@ -11,7 +11,7 @@
  * No Supabase/network access needed — pure local JSON edit.
  */
 
-import { readFileSync, writeFileSync } from 'fs'
+import { readFileSync, writeFileSync, existsSync } from 'fs'
 
 const TARGETS = [
   'src/data/words/nsm_n3_vocab.json',
@@ -19,6 +19,13 @@ const TARGETS = [
   'src/data/words/nsm_n3_i5_vocab.json',
   'src/data/words/nsm_n2_a1_vocab.json',
 ]
+
+// The course word lists moved to per-account storage, so these paths may no
+// longer exist. Skip what is absent rather than failing to start.
+const TARGETS_PRESENT = TARGETS.filter(t => existsSync(typeof t === 'string' ? t : t.path))
+if (TARGETS_PRESENT.length < TARGETS.length) {
+  console.warn(`Skipping ${TARGETS.length - TARGETS_PRESENT.length} word list(s) that are no longer in this repo`)
+}
 
 function processFile(path) {
   const entries = JSON.parse(readFileSync(path, 'utf8'))
@@ -35,4 +42,4 @@ function processFile(path) {
   console.log(`${path}: stripped english from ${stripped}/${entries.length} entries`)
 }
 
-for (const path of TARGETS) processFile(path)
+for (const path of TARGETS_PRESENT) processFile(path)

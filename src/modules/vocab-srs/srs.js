@@ -1,5 +1,4 @@
 import { createEmptyCard, fsrs, generatorParameters, Rating, State } from 'ts-fsrs'
-import CORE2000 from './decks/core2000.json'
 import KEIGO from './decks/keigo.json'
 
 const f = fsrs(generatorParameters({ enable_fuzz: true }))
@@ -8,7 +7,6 @@ export { Rating, State }
 
 // Maps deckId → (cardId → word object) for bundled decks
 const DECK_FILES = {
-  'core2000': new Map(CORE2000.map(w => [w.id, w])),
   'keigo': new Map(KEIGO.map(w => [w.id, w])),
 }
 

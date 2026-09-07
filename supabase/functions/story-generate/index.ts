@@ -1,5 +1,8 @@
 import Anthropic from 'npm:@anthropic-ai/sdk@0.104.1'
 import * as kuromoji from 'npm:@patdx/kuromoji@1.0.4'
+import { requireUser, authErrorResponse } from '../_shared/auth.ts'
+import { consumeAiBudget, refundAiBudget, quotaErrorResponse } from '../_shared/quota.ts'
+import { getUserApiKey } from '../_shared/userKey.ts'
 
 const DEFAULT_MODEL = Deno.env.get('STORY_MODEL') || 'claude-sonnet-5'
 
@@ -59,34 +62,19 @@ Hard constraints:
 - Write the content in Japanese, using ONLY vocabulary from the learner's known-word list, plus: particles, pronouns, numbers, common greetings, proper nouns, and basic grammatical function words (including です/ます, する, ある, いる, なる and their conjugations).
 - Keep grammar at or below the learner's stated JLPT level.
 - Reuse the learner's words often — the goal is reading practice that reinforces them.
-- The content must be ORIGINAL. When the request says it should be inspired by an existing work, setting, or style, write an original piece that evokes that setting or style — never a retelling, adaptation, or reproduction of an existing copyrighted plot, characters, or text.
-
-Comprehension questions:
-- Write the questions in Japanese, using the same vocabulary constraints, answerable from the content alone.
-- correct_answer is the ideal answer in Japanese (a short phrase or sentence).
-- acceptable_variations lists 2-4 alternative correct phrasings (kana-only versions, shorter forms, synonyms from the known-word list).`
+- The content must be ORIGINAL. When the request says it should be inspired by an existing work, setting, or style, write an original piece that evokes that setting or style — never a retelling, adaptation, or reproduction of an existing copyrighted plot, characters, or text.`
 
 const STORY_SCHEMA = {
   type: 'object',
   properties: {
     title: { type: 'string', description: 'Short Japanese title' },
     story: { type: 'string', description: 'The full Japanese content, with paragraph breaks as \\n\\n' },
-    questions: {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          id: { type: 'string' },
-          question: { type: 'string' },
-          correct_answer: { type: 'string' },
-          acceptable_variations: { type: 'array', items: { type: 'string' } },
-        },
-        required: ['id', 'question', 'correct_answer', 'acceptable_variations'],
-        additionalProperties: false,
-      },
-    },
   },
-  required: ['title', 'story', 'questions'],
+  // Comprehension questions were removed along with the UI that showed them.
+  // They were still being generated and stored long after nothing rendered
+  // them — paying output tokens and latency on every generation for data no
+  // one saw. Don't add them back without a reader to display them.
+  required: ['title', 'story'],
   additionalProperties: false,
 }
 
@@ -117,13 +105,17 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS_HEADERS })
 
   try {
+    // Must stay ahead of the ReadableStream below: once the stream opens the
+    // response is committed to 200 text/plain, and a rejection could only be
+    // smuggled into the payload instead of being a real status code.
+    const user = await requireUser(req)
+
     const {
       learnerContext,
       mode = 'new',
       basedOn = '',
       format = 'story',
       length = 'short',
-      questionCount = 3,
       model = DEFAULT_MODEL,
     } = await req.json()
 
@@ -134,14 +126,20 @@ Deno.serve(async (req) => {
       return jsonResponse({ error: 'basedOn is required when mode is "based-on"' }, 400)
     }
 
-    const client = new Anthropic({ apiKey: Deno.env.get('ANTHROPIC_API_KEY') })
+    // A user on their own key pays Anthropic directly, so there is nothing to
+    // meter. Like requireUser, the quota check has to precede the stream: once
+    // that opens the response is committed to 200 and a 429 is no longer
+    // expressible.
+    const userKey = await getUserApiKey(user.id)
+    await consumeAiBudget(user.id, 'story-generate', Boolean(userKey))
+
+    const client = new Anthropic({ apiKey: userKey ?? Deno.env.get('ANTHROPIC_API_KEY') })
 
     const request = [
       `Write ${FORMAT_HINTS[format] || FORMAT_HINTS.story}, ${LENGTH_HINTS[length] || LENGTH_HINTS.short}.`,
       mode === 'based-on'
         ? `It should be an original piece inspired by the following theme, setting, or style: ${basedOn.trim()}`
         : 'Choose any theme that works well with the learner\'s vocabulary.',
-      `Include ${questionCount} comprehension questions.`,
     ].join('\n')
 
     // Generation can exceed the edge gateway's 150s idle limit (IDLE_TIMEOUT
@@ -200,6 +198,10 @@ Deno.serve(async (req) => {
           controller.enqueue(encoder.encode('\n' + JSON.stringify(payload)))
         } catch (err) {
           console.error('[story-generate]', err)
+          // The quota was taken before the stream opened, so a failure here
+          // would otherwise cost one of the day's few generations for a story
+          // the user never received.
+          await refundAiBudget(user.id, 'story-generate', Boolean(userKey))
           controller.enqueue(encoder.encode('\n' + JSON.stringify({ error: err?.message || 'Generation failed' })))
         } finally {
           clearInterval(heartbeat)
@@ -212,6 +214,8 @@ Deno.serve(async (req) => {
       headers: { ...CORS_HEADERS, 'Content-Type': 'text/plain; charset=utf-8' },
     })
   } catch (err) {
+    const denied = authErrorResponse(err, jsonResponse) ?? quotaErrorResponse(err, jsonResponse)
+    if (denied) return denied
     console.error('[story-generate]', err)
     return jsonResponse({ error: err?.message || 'Generation failed' }, 500)
   }

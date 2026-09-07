@@ -16,7 +16,9 @@ import CenteredLoadingMessage from '../components/CenteredLoadingMessage.jsx'
 import DataList from '../components/DataList.jsx'
 import { MODULES } from '../data/modules.js'
 import { ModuleThemeProvider } from '../context/ModuleThemeContext.jsx'
-import { SectionLabel, KanjiBreakdownEntry } from './dictionaryShared.jsx'
+import SectionHeader from '../components/SectionHeader.jsx'
+import { KanjiBreakdownEntry } from './dictionaryShared.jsx'
+import { displayFormOf } from '../lib/displayForm.js'
 
 const BG = '#1E1E1E'
 const DICTIONARY_ACCENT = MODULES.find(m => m.id === 'dictionary').accent
@@ -33,7 +35,7 @@ async function fetchEntry(id) {
   if (!supabase) throw new Error('Supabase not configured')
   const { data, error } = await supabase
     .from('dictionary')
-    .select('id, primary_form, kanji_forms, kana_forms, gloss_en, pos, common, senses')
+    .select('id, primary_form, preferred_form, kanji_forms, kana_forms, gloss_en, pos, common, senses, misc0:senses->0->misc')
     .eq('id', id)
     .single()
   if (error) throw error
@@ -214,7 +216,7 @@ export default function DictionaryEntryPage({ entryId }) {
         if (cancelled) return
         setEntry(data)
         const [kd, sentenceRows] = await Promise.all([
-          fetchKanjiDetails(extractKanjiChars(data.primary_form)),
+          fetchKanjiDetails(extractKanjiChars(displayFormOf(data))),
           fetchSentences(data.id),
         ])
         if (!cancelled) {
@@ -273,7 +275,10 @@ export default function DictionaryEntryPage({ entryId }) {
       ])]
     : []
 
-  const altForms = allForms.filter(f => f !== entry?.primary_form)
+  const shownForm = entry ? displayFormOf(entry) : null
+  // The headword is shown above, so it is not repeated here — but the spelling
+  // it displaces (其れから for それから) is a genuine alternate form and stays.
+  const altForms = allForms.filter(f => f !== shownForm)
 
   return (
     <ModuleThemeProvider accent={DICTIONARY_ACCENT}>
@@ -282,7 +287,7 @@ export default function DictionaryEntryPage({ entryId }) {
         crumbs={[
           { label: 'Japanese Study', href: '#/' },
           { label: 'Dictionary', href: '#/dictionary' },
-          { label: entry?.primary_form ?? '…' },
+          { label: shownForm ?? '…' },
         ]}
         rightSlot={<AuthSlot />}
       />
@@ -303,7 +308,7 @@ export default function DictionaryEntryPage({ entryId }) {
               <div style={{ marginBottom: 28 }}>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, flexWrap: 'wrap', marginBottom: 10 }}>
                   <span style={{ fontSize: FS_ENTRY_HEADING, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, lineHeight: 1.1 }}>
-                    {entry.primary_form}
+                    {shownForm}
                   </span>
                   {entry.common && <Badge variant="text" tone="accent">common</Badge>}
                 </div>
@@ -334,7 +339,7 @@ export default function DictionaryEntryPage({ entryId }) {
               {/* Your decks */}
               {showDecksSection && (
                 <>
-                  <SectionLabel label="Your Decks" marginTop={28} />
+                  <SectionHeader title="Your Decks" marginTop={28} />
                   {deckRows.length > 0 && (
                     <DataList
                       columns={DECK_ROW_COLUMNS}
@@ -356,7 +361,7 @@ export default function DictionaryEntryPage({ entryId }) {
               {/* Kanji breakdown */}
               {kanjiDetails.length > 0 && (
                 <>
-                  <SectionLabel label="Kanji" marginTop={28} />
+                  <SectionHeader title="Kanji" marginTop={28} />
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {kanjiDetails.map(k => <KanjiCard key={k.literal} entry={k} />)}
                   </div>
@@ -366,7 +371,7 @@ export default function DictionaryEntryPage({ entryId }) {
               {/* Example sentences */}
               {sentences.length > 0 && (
                 <>
-                  <SectionLabel label="Example Sentences" marginTop={28} />
+                  <SectionHeader title="Example Sentences" marginTop={28} />
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {sentences.map(s => <SentenceCard key={s.id} sentence={s} />)}
                   </div>

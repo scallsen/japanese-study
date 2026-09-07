@@ -18,8 +18,8 @@ import DrillHUD from '../components/DrillHUD.jsx'
 import Select from '../components/Select.jsx'
 import Checkbox from '../components/Checkbox.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
-import SectionLabel from '../components/SectionLabel.jsx'
 import FileButton from '../components/FileButton.jsx'
+import Switch from '../components/Switch.jsx'
 import DeckComboBox from '../components/DeckComboBox.jsx'
 import SignInGate from '../components/SignInGate.jsx'
 import { WordPopup } from '../components/JapaneseReader.jsx'
@@ -59,13 +59,13 @@ const NAV = [
       { key: 'number-field', label: 'Number Field', built: true },
       { key: 'select', label: 'Select', built: true },
       { key: 'file-button', label: 'File Button', built: true },
+      { key: 'switch', label: 'Switch', built: true },
     ],
   },
   {
     section: 'Layout',
     items: [
       { key: 'section-header', label: 'Section Header', built: true },
-      { key: 'section-label', label: 'Section Label', built: true },
       { key: 'sign-in-gate', label: 'Sign-in Gate', built: true },
     ],
   },
@@ -113,14 +113,14 @@ const DESCRIPTIONS = {
   'number-field': 'A small bounded number — a count, a threshold, a day offset.',
   select: 'A native select with the app’s chrome. `sm` is the settings-drawer row it was extracted from; `md` lines up with a TextInput in a form. Options can be grouped ({ label, options }) → native optgroups.',
   'file-button': 'A Button that opens a file picker. Keeps the hidden input, shows the real Button; `accept` and `capture` pass through. Replaced two label-wrapping-an-input helpers.',
-  'section-header': 'Uppercase section title with an optional control on the right — settings drawers, done screens. `action` takes any node; the older Deselect-all pair still works.',
-  'section-label': 'Small uppercase label with a trailing hairline — separates groups inside page content (Dictionary’s Kanji / Words, Vocab Drill’s preview groups). Distinct from Section Header, which is the bigger heading with an action slot.',
+  'section-header': 'The one section heading — settings drawers, done screens, and the in-page group dividers the retired Section Label used to draw (Dictionary’s Kanji / Words, Vocab Drill’s preview groups, the home page’s stats rail). `action` takes any node; `marginTop` separates stacked groups; the older Deselect-all pair still works.',
   'sign-in-gate': 'Full-page "sign in to use this" screen for modules whose progress lives only in Supabase. The Module and Browse page each hand-rolled it.',
   chip: 'Pick one, several, or a threshold from a small visible set. Three selection models, not three styles — threshold is cumulative because "N3 and above" genuinely means N3/N2/N1, and rendering only N3 as active would misrepresent the filter.',
   'data-list': 'Every list in the app. Columns are configured per call site; selection, row-click, search, and footer are independent opt-in slots. A read-only list is just this with none of them — which is why there is no separate InfoRow component.',
   modal: 'The scrim + panel shell for every overlay: centred dialog on desktop, bottom sheet on mobile. ConfirmDialog is now a thin composition of this + Button rather than its own implementation.',
   toast: 'A transient confirmation with an optional inline action. Four placement variants; the dedicated Toast lab compares them side by side.',
   'feed-card': 'One item in a browsable feed. Reconciles Immersion’s ArticleCard and Story’s RecentCard, which had drifted on padding, hover mechanism, transition timing, and title font.',
+  switch: 'The on/off control for a settings row. Not a Toggle Button (that renames itself between states and reads as an action) and not a Checkbox (which leads with its control and carries its own label). A switch trails a row whose label is on the left, and only ever reports state — so the label column stays scannable while values change. Takes the module accent.',
   'toggle-button': 'A standalone on/off control whose label changes with its state — Follow/Unfollow, deck On/Off. Not a Button variant (its hover can mean the opposite action, which no resting-state variant expresses) and not a Chip (a chip picks one of a set and keeps a fixed label). Composes Chip so both share one visual language.',
   'distribution-bar': 'How a collection divides across states. Distinct from the progress bar, which shows one value’s completion.',
   'deck-picker': 'Pick an existing deck, or create one and pick it, in a single control — type to filter, and a "+ Create «typed»" row appears inline as soon as the query doesn’t match. Popover on desktop, bottom sheet on mobile. Chosen over DeckPickerSheet and SegmentedDeckAdd, which are retired.',
@@ -143,7 +143,7 @@ const HEADING_TYPE_TOKENS = [
 ]
 
 const CONTENT_TYPE_TOKENS = [
-  { names: ['FS_LIST_TITLE'], px: FS_LIST_TITLE, watch: 'promote if FeedCard reuses this for its title', usage: 'article card title in list view', sample: 'Core 2000' },
+  { names: ['FS_LIST_TITLE'], px: FS_LIST_TITLE, watch: 'promote if FeedCard reuses this for its title', usage: 'article card title in list view', sample: 'Keigo' },
   { names: ['FS_ENTRY_ALT'], px: FS_ENTRY_ALT, usage: 'dictionary entry page alternate word forms', sample: '為る' },
   { names: ['FS_ARTICLE_BODY'], px: FS_ARTICLE_BODY, usage: 'article body text (reading-optimised, do not normalise)', sample: '今日は天気がいいです。' },
   { names: ['FS_ENTRY_WORD'], px: FS_ENTRY_WORD, usage: 'word form in dictionary results & word popup', sample: '世界' },
@@ -439,7 +439,7 @@ function CardDemo() {
   const [padding, setPadding] = useState(SPACE_16)
   const preview = (
     <Card padding={padding} style={{ width: 320 }}>
-      <div style={{ fontSize: FS_BASE, color: TEXT, marginBottom: SPACE_4 }}>Core 2000</div>
+      <div style={{ fontSize: FS_BASE, color: TEXT, marginBottom: SPACE_4 }}>Keigo</div>
       <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>2,007 cards · bundled deck</div>
     </Card>
   )
@@ -810,6 +810,37 @@ function ToggleButtonDemo() {
   return <ComponentPage title="Toggle Button" description={DESCRIPTIONS['toggle-button']} built preview={preview} controls={controls} notes={notes} />
 }
 
+function SwitchDemo() {
+  const [furigana, setFurigana] = useState(true)
+  const [disabled, setDisabled] = useState(false)
+
+  const preview = (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE_16, width: '100%', maxWidth: 320 }}>
+      <div style={{ fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.3)' }}>A settings row — the row is the mouse hit target, the switch keeps its own keyboard focus</div>
+      <div
+        className="settings-row"
+        onClick={() => setDisabled(d => d)}
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8 }}
+      >
+        <span style={{ fontSize: FS_BASE }}>Furigana</span>
+        <Switch checked={furigana} onChange={() => setFurigana(v => !v)} disabled={disabled} label="Furigana" />
+      </div>
+      <ModuleThemeProvider accent="#E06C9F">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8 }}>
+          <span style={{ fontSize: FS_BASE }}>Inside a pink module</span>
+          <Switch checked={furigana} onChange={() => setFurigana(v => !v)} disabled={disabled} label="Furigana" />
+        </div>
+      </ModuleThemeProvider>
+    </div>
+  )
+
+  const controls = <Checkbox checked={disabled} onChange={() => setDisabled(v => !v)} label="Disabled" />
+
+  const notes = <>The track takes the module accent, like Chip and Toggle Button, so a switch in Anime Vocab is pink for the same reason its chips are. Hover lights the track from the row as well as from the switch itself, since the row is what most people aim at.</>
+
+  return <ComponentPage title="Switch" description={DESCRIPTIONS['switch']} built preview={preview} controls={controls} notes={notes} />
+}
+
 const DECK_SEGMENTS = [
   { key: 'new', label: 'Unlearned', count: 412, description: 'Never reviewed — waiting for its first study session' },
   { key: 'learning', label: 'Learning', count: 38, description: 'Answered correctly once, not yet graduated' },
@@ -987,7 +1018,7 @@ const SELECT_SIZE_OPTIONS = ['sm', 'md'].map(v => ({ value: v, label: v }))
 const SELECT_VARIANT_OPTIONS = ['default', 'inline'].map(v => ({ value: v, label: v }))
 const SELECT_DEMO_OPTIONS = [
   { label: 'Nihongo So-Matome N3', options: [{ value: 'all', label: 'All lists' }, { value: 'w1d1', label: 'Week 1, Day 1' }] },
-  { label: 'SRS decks', options: [{ value: 'core', label: 'Core 2000' }] },
+  { label: 'SRS decks', options: [{ value: 'core', label: 'Keigo' }] },
 ]
 
 function SelectDemo() {
@@ -1029,23 +1060,13 @@ function SectionHeaderDemo() {
   const preview = (
     <div style={{ width: 360 }}>
       <SectionHeader title="Review words" action={withAction ? <Button variant="accent-outline" size="sm">Add 2 to SRS</Button> : undefined} />
-      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>…section content…</div>
+      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: SPACE_16 }}>…section content…</div>
+      <SectionHeader title="Kanji" marginTop={28} />
+      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>…the next group…</div>
     </div>
   )
   const controls = <Checkbox checked={withAction} onChange={() => setWithAction(v => !v)} label="With action" />
   return <ComponentPage title="Section Header" description={DESCRIPTIONS['section-header']} built preview={preview} controls={controls} />
-}
-
-function SectionLabelDemo() {
-  const preview = (
-    <div style={{ width: 360 }}>
-      <SectionLabel label="Kanji" />
-      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: SPACE_16 }}>…a list…</div>
-      <SectionLabel label="Words" marginTop={28} />
-      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>…another list…</div>
-    </div>
-  )
-  return <ComponentPage title="Section Label" description={DESCRIPTIONS['section-label']} built preview={preview} />
 }
 
 function SignInGateDemo() {
@@ -1068,8 +1089,8 @@ const PAGES = {
   'number-field': NumberFieldDemo,
   select: SelectDemo,
   'file-button': FileButtonDemo,
+  switch: SwitchDemo,
   'section-header': SectionHeaderDemo,
-  'section-label': SectionLabelDemo,
   'sign-in-gate': SignInGateDemo,
   chip: ChipDemo,
   'data-list': DataListDemo,

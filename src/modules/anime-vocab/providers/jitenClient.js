@@ -1,8 +1,12 @@
 // Thin fetch wrapper over the Jiten.moe API (https://api.jiten.moe, source:
 // github.com/Sirush/Jiten). Public search/read endpoints work anonymously;
-// missing a JITEN_API_KEY just puts the caller in the shared/lower rate-limit
-// bucket (300 req/min ordinary, ~10/min for the vocabulary endpoint) rather
-// than failing. Jiten's CORS policy only allowlists jiten.moe/localhost, so
+// missing a JITEN_API_KEY doesn't fail — it just partitions you by IP instead
+// of by account. Verified against Jiten's source (Jiten.Api/Program.cs): the
+// endpoints used here (get-media-decks, {id}/detail, {id}/vocabulary) are all
+// on the `fixed` policy at 300 req/min, keyed or not. The ~10/min figure once
+// recorded here for the vocabulary endpoint was WRONG — that is the `download`
+// policy, which covers deck downloads, frequency lists and the custom-deck
+// parser, none of which this client calls. Jiten's CORS policy only allowlists jiten.moe/localhost, so
 // every call here must run server-side (Node ingest script or Supabase edge
 // function) — never imported into client React code.
 
@@ -222,7 +226,7 @@ export async function browseMedia(params = {}, { apiKey } = {}) {
 const VOCAB_PAGE_SIZE = 200
 
 // Fetches every word for one episode/child-deck, paginating the heavy
-// vocabulary endpoint (max 200/page, rate-limited to ~10 req/min by Jiten).
+// vocabulary endpoint (max 200/page; 300 req/min under Jiten's `fixed` policy).
 export async function fetchVocabList(episodeExternalId, { apiKey, sortBy = 'deckFreq' } = {}) {
   const words = []
   const seenWordIds = new Set()

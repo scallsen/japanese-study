@@ -6,6 +6,8 @@ import Button from '../../components/Button.jsx'
 import FileButton from '../../components/FileButton.jsx'
 import DataList from '../../components/DataList.jsx'
 import ChipSelector from '../../components/Chip.jsx'
+import Notice from '../../components/Notice.jsx'
+import { useAiAvailability } from '../../hooks/useAiAvailability.js'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_HEADING, DANGER } from '../../data/theme.js'
 
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024
@@ -25,6 +27,7 @@ const EDITABLE_FIELDS = ['surface', 'reading', 'meaning']
 
 export default function WordImportPanel({ open, onClose, decks, isMobile, onAdd, onCreateAndAdd }) {
   const [tab, setTab] = useState('text')
+  const aiAvailable = useAiAvailability('word-import-image')
   const [text, setText] = useState('')
   const [imageFile, setImageFile] = useState(null)
   const [stage, setStage] = useState('input') // 'input' | 'loading' | 'review' | 'done'
@@ -223,10 +226,23 @@ export default function WordImportPanel({ open, onClose, decks, isMobile, onAdd,
               </div>
             )}
 
+            {/* Scoped to the image tab: pasted text is tokenized locally and
+                never reaches Anthropic, so it stays available regardless. */}
+            {tab === 'image' && !aiAvailable && (
+              <Notice style={{ marginTop: 12 }} title="AI generation is temporarily unavailable">
+                The app has reached its daily limit for reading words out of photos. It resets tomorrow.
+                Pasting text still works, and adding your own Anthropic API key on your account page lifts the limit.
+              </Notice>
+            )}
+
             {error && <div style={{ color: DANGER, fontSize: FS_CAPTION, marginTop: 12 }}>{error}</div>}
 
             <div style={{ marginTop: 18 }}>
-              <Button variant="accent-outline" onClick={handleExtract} disabled={stage === 'loading'}>
+              <Button
+                variant="accent-outline"
+                onClick={handleExtract}
+                disabled={stage === 'loading' || (tab === 'image' && !aiAvailable)}
+              >
                 {stage === 'loading' ? 'Extracting...' : 'Extract words'}
               </Button>
             </div>

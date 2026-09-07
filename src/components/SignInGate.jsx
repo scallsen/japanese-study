@@ -16,7 +16,7 @@ export default function SignInGate({ crumbs, title, subtitle, onSignIn, fullScre
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
         <div style={{ fontSize: FS_BASE, color: TEXT }}>{title}</div>
         {subtitle && <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginBottom: 8 }}>{subtitle}</div>}
-        <Button size="lg" onClick={onSignIn}>Sign in with GitHub</Button>
+        <Button size="lg" onClick={onSignIn}>Sign in</Button>
       </div>
     </div>
   )

@@ -1,22 +1,28 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import ModuleCard from '../components/ModuleCard.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import DistributionBar from '../components/DistributionBar.jsx'
-import SectionLabel from '../components/SectionLabel.jsx'
+import SectionHeader from '../components/SectionHeader.jsx'
 import TextbookPicker from '../components/TextbookPicker.jsx'
+import SrsGateDialog from '../components/SrsGateDialog.jsx'
 import { NewCard, ReviewCard } from './homeCards.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
+import { useToast } from '../context/ToastContext.jsx'
 import { ModuleThemeProvider } from '../context/ModuleThemeContext.jsx'
 import { useProgress } from '../hooks/useProgress.js'
 import { useIsMobile } from '../hooks/useIsMobile.js'
+import { useTextbookAdvance } from '../hooks/useTextbookAdvance.js'
 import { MODULES } from '../data/modules.js'
-import { WORD_DATA } from '../data/wordData.js'
+import { bundledWordCountFor } from '../data/wordData.js'
+import { useCustomWordCounts } from '../hooks/useCustomWords.js'
 import { resolveTextbookState } from '../lib/textbookProgress.js'
+import { getTextbook } from '../data/textbooks.js'
 import { migrateProgress } from '../modules/vocab-srs/migrate.js'
 import { getGlobalStats, getStateDistribution, getTodaysQueue } from '../modules/vocab-srs/srs.js'
 import { STATE_SEGMENTS } from '../modules/vocab-srs/cardStates.js'
 import { safeLocalStorageGet } from '../utils/storage.js'
+import { takePendingToast } from '../utils/pendingToast.js'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE,
   SPACE_4, SPACE_12, SPACE_16, SPACE_24,
@@ -30,14 +36,6 @@ const SIDEBAR_WIDTH = 280
 // tall, narrow slivers, so it moves under them as a full-width stats strip
 // and the cards get their squarer proportions back.
 const SIDEBAR_BREAKPOINT = 1100
-
-// Sentence-review words are extras layered onto a list, not part of the
-// textbook's own chapter — they don't count toward a chapter's size.
-const WORD_COUNT_BY_LIST = WORD_DATA.reduce((map, w) => {
-  if (!w.isSentenceVocab) map[w.listKey] = (map[w.listKey] ?? 0) + 1
-  return map
-}, {})
-const wordCountFor = id => WORD_COUNT_BY_LIST[id] ?? 0
 
 function readDailyNewCards() {
   const raw = safeLocalStorageGet('srs-daily-new-cards')
@@ -67,6 +65,7 @@ function summariseSrs(raw) {
     totalReviews: progress.totalReviews ?? 0,
     distribution: getStateDistribution(cards, decks),
     canStart: due.length > 0 || newCards.length > 0 || rescheduled.length > 0,
+    estimatedMinutes: global.estimatedMinutes,
   }
 }
 
@@ -81,25 +80,59 @@ export default function DashboardPage() {
   const signedOut = !authLoading && !user
 
   const { data: vocabProgress, save: saveVocabProgress, loading: vocabLoading } = useProgress('vocab-flashcard')
-  const { data: srsRaw, loading: srsLoading } = useProgress('vocab-srs')
+  const { data: srsRaw, save: saveSrs, loading: srsLoading } = useProgress('vocab-srs')
   const { data: immersionProgress } = useProgress('immersion')
   const { data: animeTracking } = useProgress('anime-vocab-tracking')
 
   const [pickerOpen, setPickerOpen] = useState(false)
 
+  // Shows a toast handed over by a page that redirected here and then
+  // unmounted — currently account deletion. Reading clears it, so StrictMode's
+  // double-invoke shows it once.
+  const { showToast } = useToast()
+  useEffect(() => {
+    const message = takePendingToast()
+    if (message) showToast({ message })
+  }, [showToast])
+
+  // A learner's own chapters are counted from their account rather than the
+  // bundle; everything else still comes from the bundled lists.
+  const customCounts = useCustomWordCounts()
+  const wordCountFor = useCallback(
+    id => bundledWordCountFor(id) || (customCounts[id] ?? 0),
+    [customCounts],
+  )
   const textbookState = vocabLoading ? null : resolveTextbookState(vocabProgress, wordCountFor)
   const srs = user && !srsLoading && srsRaw ? summariseSrs(srsRaw) : null
 
+  const { gate, unsentWords, requestAdvance, skipGate, sendAndAdvance, closeGate } = useTextbookAdvance({
+    state: textbookState,
+    vocabProgress,
+    saveVocabProgress,
+    srsData: srsRaw,
+    saveSrs,
+  })
+
+  // Pins the pointer to the book's first chapter rather than leaving it null:
+  // resolveTextbookState falls back to "first undrilled chapter" for a null
+  // pointer, and without an explicit pin here that fallback would silently
+  // re-derive "current" as soon as chapter one is drilled — the null pointer
+  // never gets an entry to be gated on, so the advance dialog never fires for
+  // a freshly-chosen book's first chapter.
   function chooseTextbook(id) {
-    saveVocabProgress({ ...(vocabProgress ?? {}), textbook: { id, currentChapterId: null } })
+    saveVocabProgress({ ...(vocabProgress ?? {}), textbook: { id, currentChapterId: getTextbook(id)?.chapters[0]?.id ?? null } })
   }
 
+  // The tracker itself never moves from starting a drill — only from
+  // advanceChapter's deliberate, gated step below — so this just navigates.
   function startChapter(chapter) {
-    const textbook = vocabProgress?.textbook
-    if (textbook && textbook.currentChapterId !== chapter.id) {
-      saveVocabProgress({ ...vocabProgress, textbook: { ...textbook, currentChapterId: chapter.id } })
-    }
     navigate(`#/vocab?chapter=${encodeURIComponent(chapter.id)}&start=1`)
+  }
+
+  function advanceChapter() {
+    const next = textbookState?.next
+    if (!next) return
+    requestAdvance(next, () => navigate(`#/vocab?chapter=${encodeURIComponent(next.id)}&start=1`))
   }
 
   const stats = (
@@ -142,13 +175,15 @@ export default function DashboardPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE_24, minWidth: 0 }}>
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, minmax(0, 1fr))',
+                gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'repeat(2, minmax(0, 1fr))',
                 gap: SPACE_12,
               }}>
                 <NewCard
                   loading={vocabLoading}
                   state={textbookState}
+                  signedOut={signedOut}
                   onStart={startChapter}
+                  onAdvance={advanceChapter}
                   onChangeTextbook={() => setPickerOpen(true)}
                 />
                 <ReviewCard
@@ -163,7 +198,7 @@ export default function DashboardPage() {
               {sidebarBelow && stats}
 
               <div>
-                <SectionLabel label="More tools" />
+                <SectionHeader title="More tools" />
                 <div style={{
                   display: 'grid',
                   gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(240px, 1fr))',
@@ -183,8 +218,9 @@ export default function DashboardPage() {
         <Footer />
       </main>
 
-      {/* The picker is opened from the New card, so it wears that card's
-          accent rather than the dashboard's ambient core teal. */}
+      {/* The picker and the advance gate are both opened from the New card, so
+          they wear that card's accent rather than the dashboard's ambient
+          core teal. */}
       <ModuleThemeProvider accent={VOCAB_ACCENT}>
         <TextbookPicker
           open={pickerOpen}
@@ -192,6 +228,16 @@ export default function DashboardPage() {
           currentId={textbookState?.textbook.id ?? null}
           onSelect={chooseTextbook}
           wordCountFor={wordCountFor}
+        />
+        <SrsGateDialog
+          gate={gate}
+          chapterLabel={textbookState?.current?.label}
+          unsentCount={unsentWords.length}
+          totalCount={textbookState?.current?.wordCount}
+          onCancel={closeGate}
+          onSkip={skipGate}
+          onSend={sendAndAdvance}
+          isMobile={isMobile}
         />
       </ModuleThemeProvider>
     </div>
@@ -212,7 +258,7 @@ function StatsPanel({ columns, textbookState, signedOut, srs, articlesRead, seri
       minWidth: 0,
     }}>
       <div>
-        <SectionLabel label="Textbook" />
+        <SectionHeader title="Textbook" />
         {textbookState ? (
           <>
             <StatRow label="Chapters done" value={`${textbookState.doneCount} / ${textbookState.chapters.length}`} />
@@ -225,7 +271,7 @@ function StatsPanel({ columns, textbookState, signedOut, srs, articlesRead, seri
       </div>
 
       <div>
-        <SectionLabel label="Reviews" />
+        <SectionHeader title="Reviews" />
         {signedOut ? (
           <Muted>Sign in to see review stats.</Muted>
         ) : srs && srs.totalCards > 0 ? (
@@ -243,7 +289,7 @@ function StatsPanel({ columns, textbookState, signedOut, srs, articlesRead, seri
       </div>
 
       <div>
-        <SectionLabel label="Reading" />
+        <SectionHeader title="Reading" />
         <StatRow label="Articles read" value={articlesRead} />
         <StatRow label="Series tracked" value={seriesTracked} />
       </div>

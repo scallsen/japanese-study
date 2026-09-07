@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import PageHeader from '../components/PageHeader.jsx'
-import SectionLabel from '../components/SectionLabel.jsx'
+import SectionHeader from '../components/SectionHeader.jsx'
 import ChipSelector from '../components/Chip.jsx'
 import { NewCard, ReviewCard } from './homeCards.jsx'
 import { resolveTextbookState } from '../lib/textbookProgress.js'
@@ -30,6 +30,9 @@ const wordCountFor = id => (id.startsWith('genki') ? 0 : 20)
 // drift from it.
 function textbookState(bookId, { drilledCount = 0, pointer = null } = {}) {
   const book = getTextbook(bookId)
+  // These fixtures are built at module scope, so a stale book id here throws
+  // during import and takes the whole app down — not just this dev-only page.
+  if (!book) throw new Error(`HomeCardsLabPage fixture references unknown textbook "${bookId}"`)
   const sublists = {}
   for (const chapter of book.chapters.slice(0, drilledCount)) {
     sublists[chapter.id] = { 'kanji-front': { lastReviewed: '2026-09-01T00:00:00Z', correct: 18, total: 20 } }
@@ -54,25 +57,25 @@ const NEW_STATES = [
     key: 'fresh',
     label: 'Chosen, nothing started',
     note: 'One primary action',
-    props: { state: textbookState('nsm-n3') },
+    props: { state: textbookState('nsm-n3-kanji') },
   },
   {
     key: 'in-progress',
     label: 'Current chapter drilled',
     note: 'Start next + Continue current',
-    props: { state: textbookState('nsm-n3', { drilledCount: 4, pointer: 'nsm-n3-w2d1' }) },
+    props: { state: textbookState('nsm-n3-kanji', { drilledCount: 4, pointer: 'nsm-n3-kanji-w1d5' }) },
   },
   {
     key: 'next-untouched',
     label: 'Mid-book, current not drilled',
     note: 'Progress made, one action again',
-    props: { state: textbookState('nsm-n3', { drilledCount: 5 }) },
+    props: { state: textbookState('nsm-n3-kanji', { drilledCount: 5 }) },
   },
   {
     key: 'complete',
     label: 'Book complete',
     note: 'Every chapter drilled',
-    props: { state: textbookState('nsm-n3', { drilledCount: 12 }) },
+    props: { state: textbookState('nsm-n3-kanji', { drilledCount: 36 }) },
   },
   {
     key: 'no-words',
@@ -85,6 +88,12 @@ const NEW_STATES = [
     label: 'Long title + long labels',
     note: 'Wrapping stress test',
     props: { state: textbookState('marugoto-a1-katsudou', { drilledCount: 3, pointer: 'marugoto-a1-katsudou-t3' }) },
+  },
+  {
+    key: 'signed-out',
+    label: 'Signed out, textbook picked',
+    note: 'Local-only — the sign-in nudge',
+    props: { state: textbookState('nsm-n3-kanji', { drilledCount: 4, pointer: 'nsm-n3-kanji-w1d5' }), signedOut: true },
   },
 ]
 
@@ -157,6 +166,7 @@ export default function HomeCardsLabPage() {
   // Real handlers would navigate away from the lab; these just report.
   const handlers = {
     onStart: chapter => setLastAction(`onStart(${chapter.id})`),
+    onAdvance: () => setLastAction('onAdvance()'),
     onChangeTextbook: () => setLastAction('onChangeTextbook()'),
     onSignIn: () => setLastAction('onSignIn()'),
   }
@@ -192,7 +202,7 @@ export default function HomeCardsLabPage() {
             title="New card"
             width={width}
             states={NEW_STATES}
-            render={props => <NewCard {...props} onStart={handlers.onStart} onChangeTextbook={handlers.onChangeTextbook} />}
+            render={props => <NewCard {...props} onStart={handlers.onStart} onAdvance={handlers.onAdvance} onChangeTextbook={handlers.onChangeTextbook} />}
           />
 
           <StateGrid
@@ -203,7 +213,7 @@ export default function HomeCardsLabPage() {
           />
 
           <div style={{ marginTop: SPACE_32 }}>
-            <SectionLabel label="Pairs — as they sit on the home page" />
+            <SectionHeader title="Pairs — as they sit on the home page" />
             <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE_24 }}>
               {PAIRS.map(pair => (
                 <div key={pair.key}>
@@ -216,6 +226,7 @@ export default function HomeCardsLabPage() {
                     <NewCard
                       {...byKey(NEW_STATES, pair.newKey).props}
                       onStart={handlers.onStart}
+                      onAdvance={handlers.onAdvance}
                       onChangeTextbook={handlers.onChangeTextbook}
                     />
                     <ReviewCard {...byKey(REVIEW_STATES, pair.reviewKey).props} onSignIn={handlers.onSignIn} />
@@ -233,7 +244,7 @@ export default function HomeCardsLabPage() {
 function StateGrid({ title, width, states, render }) {
   return (
     <div style={{ marginTop: SPACE_32 }}>
-      <SectionLabel label={title} />
+      <SectionHeader title={title} />
       {/* flex-start, not the default stretch: a stretched cell would make the
           card's own height: 100% resolve against a box that includes this
           caption, and the card would overflow it. Equal heights are what the

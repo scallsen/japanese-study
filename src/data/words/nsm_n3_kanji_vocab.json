@@ -1,0 +1,3916 @@
+[
+  {
+    "id": "nsm-n3-kanji-w1d1-001",
+    "listKey": "nsm-n3-kanji-w1d1",
+    "jmdictId": "1426910"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d1-002",
+    "listKey": "nsm-n3-kanji-w1d1",
+    "jmdictId": "1426920"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d1-003",
+    "listKey": "nsm-n3-kanji-w1d1",
+    "jmdictId": "1529800"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d1-004",
+    "listKey": "nsm-n3-kanji-w1d1",
+    "jmdictId": "1531040"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d1-005",
+    "listKey": "nsm-n3-kanji-w1d1",
+    "jmdictId": "1530970",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d1-006",
+    "listKey": "nsm-n3-kanji-w1d1",
+    "jmdictId": "1529520",
+    "kanji": "無い"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d1-007",
+    "listKey": "nsm-n3-kanji-w1d1",
+    "jmdictId": "1812490"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d1-008",
+    "listKey": "nsm-n3-kanji-w1d1",
+    "jmdictId": "1526720"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d1-009",
+    "listKey": "nsm-n3-kanji-w1d1",
+    "jmdictId": "1494970",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d1-010",
+    "listKey": "nsm-n3-kanji-w1d1",
+    "jmdictId": "1516990"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d1-011",
+    "listKey": "nsm-n3-kanji-w1d1",
+    "jmdictId": "1277140"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d1-012",
+    "listKey": "nsm-n3-kanji-w1d1",
+    "jmdictId": "1604800"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d1-013",
+    "listKey": "nsm-n3-kanji-w1d1",
+    "kanji": "〇〇向き",
+    "kana": "〇〇むき",
+    "english": "facing ~~ / suited for ~~"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d1-014",
+    "listKey": "nsm-n3-kanji-w1d1",
+    "jmdictId": "1241550"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d1-015",
+    "listKey": "nsm-n3-kanji-w1d1",
+    "jmdictId": "1241470"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d1-016",
+    "listKey": "nsm-n3-kanji-w1d1",
+    "jmdictId": "1215870"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d1-017",
+    "listKey": "nsm-n3-kanji-w1d1",
+    "jmdictId": "1215790"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d1-018",
+    "listKey": "nsm-n3-kanji-w1d1",
+    "jmdictId": "1215810"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d1-019",
+    "listKey": "nsm-n3-kanji-w1d1",
+    "jmdictId": "1589840"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d1-020",
+    "listKey": "nsm-n3-kanji-w1d1",
+    "jmdictId": "1530600"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d1-021",
+    "listKey": "nsm-n3-kanji-w1d1",
+    "jmdictId": "1419660"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d1-022",
+    "listKey": "nsm-n3-kanji-w1d1",
+    "jmdictId": "1419570"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d2-001",
+    "listKey": "nsm-n3-kanji-w1d2",
+    "jmdictId": "1180900"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d2-002",
+    "listKey": "nsm-n3-kanji-w1d2",
+    "jmdictId": "1180910"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d2-003",
+    "listKey": "nsm-n3-kanji-w1d2",
+    "jmdictId": "1180570"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d2-004",
+    "listKey": "nsm-n3-kanji-w1d2",
+    "jmdictId": "1180470"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d2-005",
+    "listKey": "nsm-n3-kanji-w1d2",
+    "jmdictId": "1589080"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d2-006",
+    "listKey": "nsm-n3-kanji-w1d2",
+    "jmdictId": "1589110",
+    "kanji": "押し入れ"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d2-007",
+    "listKey": "nsm-n3-kanji-w1d2",
+    "kanji": "押しボタン式",
+    "kana": "おしぼたんしき",
+    "english": "push-button type"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d2-008",
+    "listKey": "nsm-n3-kanji-w1d2",
+    "jmdictId": "1465910"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d2-009",
+    "listKey": "nsm-n3-kanji-w1d2",
+    "jmdictId": "1373070"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d2-010",
+    "listKey": "nsm-n3-kanji-w1d2",
+    "jmdictId": "1402820"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d2-011",
+    "listKey": "nsm-n3-kanji-w1d2",
+    "jmdictId": "1359040"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d2-012",
+    "listKey": "nsm-n3-kanji-w1d2",
+    "jmdictId": "1317970"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d2-013",
+    "listKey": "nsm-n3-kanji-w1d2",
+    "jmdictId": "1359620"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d2-014",
+    "listKey": "nsm-n3-kanji-w1d2",
+    "jmdictId": "1359240"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d2-015",
+    "listKey": "nsm-n3-kanji-w1d2",
+    "jmdictId": "1284270",
+    "mark": "～{}"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d2-016",
+    "listKey": "nsm-n3-kanji-w1d2",
+    "jmdictId": "1376760",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d2-017",
+    "listKey": "nsm-n3-kanji-w1d2",
+    "jmdictId": "1205780"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d2-018",
+    "listKey": "nsm-n3-kanji-w1d2",
+    "jmdictId": "1596930",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d2-019",
+    "listKey": "nsm-n3-kanji-w1d2",
+    "jmdictId": "1205900"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d2-020",
+    "listKey": "nsm-n3-kanji-w1d2",
+    "jmdictId": "1467530"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d2-021",
+    "listKey": "nsm-n3-kanji-w1d2",
+    "jmdictId": "1485520"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d2-022",
+    "listKey": "nsm-n3-kanji-w1d2",
+    "jmdictId": "1429700"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d3-001",
+    "listKey": "nsm-n3-kanji-w1d3",
+    "jmdictId": "1484920",
+    "mark": "{}（の）"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d3-002",
+    "listKey": "nsm-n3-kanji-w1d3",
+    "jmdictId": "1484930"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d3-003",
+    "listKey": "nsm-n3-kanji-w1d3",
+    "jmdictId": "1484950"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d3-004",
+    "listKey": "nsm-n3-kanji-w1d3",
+    "jmdictId": "1464180",
+    "mark": "{}（の）"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d3-005",
+    "listKey": "nsm-n3-kanji-w1d3",
+    "jmdictId": "1377390",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d3-006",
+    "listKey": "nsm-n3-kanji-w1d3",
+    "jmdictId": "2017770",
+    "modified": true,
+    "mark": "～{}"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d3-007",
+    "listKey": "nsm-n3-kanji-w1d3",
+    "jmdictId": "1203090"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d3-008",
+    "listKey": "nsm-n3-kanji-w1d3",
+    "jmdictId": "1419980"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d3-009",
+    "listKey": "nsm-n3-kanji-w1d3",
+    "jmdictId": "1585650"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d3-010",
+    "listKey": "nsm-n3-kanji-w1d3",
+    "jmdictId": "1005010",
+    "kanji": "ごみ箱"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d3-011",
+    "listKey": "nsm-n3-kanji-w1d3",
+    "jmdictId": "1218560",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d3-012",
+    "listKey": "nsm-n3-kanji-w1d3",
+    "jmdictId": "1218380"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d3-013",
+    "listKey": "nsm-n3-kanji-w1d3",
+    "jmdictId": "1260530"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d3-014",
+    "listKey": "nsm-n3-kanji-w1d3",
+    "jmdictId": "1322320"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d3-015",
+    "listKey": "nsm-n3-kanji-w1d3",
+    "jmdictId": "1307250"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-001",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "jmdictId": "1391780"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-002",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "jmdictId": "1482330",
+    "mark": "～{}"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-003",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "jmdictId": "1396260"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-004",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "jmdictId": "1197610"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-005",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "kanji": "〇〇方面",
+    "kana": "〇〇ほうめん",
+    "english": "direction of ~~ / bound for ~~"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-006",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "jmdictId": "1497190",
+    "mark": "{}（の）"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-007",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "jmdictId": "1497110"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-008",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "jmdictId": "1204890"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-009",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "jmdictId": "1204980"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-010",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "jmdictId": "1205010"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-011",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "jmdictId": "1535460"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-012",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "jmdictId": "1316470"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-013",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "jmdictId": "1316380"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-014",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "jmdictId": "1200080"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-015",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "jmdictId": "1200120"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-016",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "jmdictId": "1283720"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-017",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "jmdictId": "1405050"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-018",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "jmdictId": "1404975",
+    "kanji": "速い"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-019",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "jmdictId": "1433070"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-020",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "jmdictId": "1196030"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-021",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "jmdictId": "1195970"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-022",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "jmdictId": "1420900"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-023",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "jmdictId": "1437960"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d4-024",
+    "listKey": "nsm-n3-kanji-w1d4",
+    "jmdictId": "1437780"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-001",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "1309910"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-002",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "1309930"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-003",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "1309650"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-004",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "1310050"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-005",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "1435540"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-006",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "1154120"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-007",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "1491190"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-008",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "1382250"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-009",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "1339460"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-010",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "1254020"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-011",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "1318720",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-012",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "1318790"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-013",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "1550140"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-014",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "1482290"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-015",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "2022640",
+    "mark": "～{}"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-016",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "1482330",
+    "mark": "～{}"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-017",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "1401400"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-018",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "1401420"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-019",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "1585140"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-020",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "2011970"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-021",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "1576400"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-022",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "1433600"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-023",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "1454290"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d5-024",
+    "listKey": "nsm-n3-kanji-w1d5",
+    "jmdictId": "1391880"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-001",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1434960"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-002",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1098580"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-003",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1376250"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-004",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1376260"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-005",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1376140"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-006",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "2839227"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-007",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1355290"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-008",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1199520"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-009",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1263550"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-010",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1489510"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-011",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1263510"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-012",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1602710"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-013",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "2080720",
+    "mark": "～{}"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-014",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1326830"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-015",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1553820"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-016",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1423170"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-017",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1947880"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-018",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1345430"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-019",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1539040"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-020",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1291880"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-021",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1595990"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-022",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1291800"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-023",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1844810"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-024",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1155110"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-025",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1589500"
+  },
+  {
+    "id": "nsm-n3-kanji-w1d6-026",
+    "listKey": "nsm-n3-kanji-w1d6",
+    "jmdictId": "1282790"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d1-001",
+    "listKey": "nsm-n3-kanji-w2d1",
+    "jmdictId": "1341670"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d1-002",
+    "listKey": "nsm-n3-kanji-w2d1",
+    "jmdictId": "2022560"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d1-003",
+    "listKey": "nsm-n3-kanji-w2d1",
+    "jmdictId": "1543320"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d1-004",
+    "listKey": "nsm-n3-kanji-w2d1",
+    "jmdictId": "1244960"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d1-005",
+    "listKey": "nsm-n3-kanji-w2d1",
+    "jmdictId": "1173430"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d1-006",
+    "listKey": "nsm-n3-kanji-w2d1",
+    "jmdictId": "1173420"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d1-007",
+    "listKey": "nsm-n3-kanji-w2d1",
+    "jmdictId": "1202940"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d1-008",
+    "listKey": "nsm-n3-kanji-w2d1",
+    "jmdictId": "1436560"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d1-009",
+    "listKey": "nsm-n3-kanji-w2d1",
+    "jmdictId": "1508590"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d1-010",
+    "listKey": "nsm-n3-kanji-w2d1",
+    "jmdictId": "1154860"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d1-011",
+    "listKey": "nsm-n3-kanji-w2d1",
+    "jmdictId": "1154770"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d1-012",
+    "listKey": "nsm-n3-kanji-w2d1",
+    "jmdictId": "1192420"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d1-013",
+    "listKey": "nsm-n3-kanji-w2d1",
+    "jmdictId": "1155180"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d1-014",
+    "listKey": "nsm-n3-kanji-w2d1",
+    "jmdictId": "1458770"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d1-015",
+    "listKey": "nsm-n3-kanji-w2d1",
+    "jmdictId": "1286930"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d1-016",
+    "listKey": "nsm-n3-kanji-w2d1",
+    "jmdictId": "1543240"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d1-017",
+    "listKey": "nsm-n3-kanji-w2d1",
+    "jmdictId": "1543070"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d1-018",
+    "listKey": "nsm-n3-kanji-w2d1",
+    "jmdictId": "1543750"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d1-019",
+    "listKey": "nsm-n3-kanji-w2d1",
+    "jmdictId": "1538100",
+    "mark": "{}～"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d2-001",
+    "listKey": "nsm-n3-kanji-w2d2",
+    "jmdictId": "1241490"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d2-002",
+    "listKey": "nsm-n3-kanji-w2d2",
+    "jmdictId": "1177180"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d2-003",
+    "listKey": "nsm-n3-kanji-w2d2",
+    "jmdictId": "1523060"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d2-004",
+    "listKey": "nsm-n3-kanji-w2d2",
+    "kanji": "当〇〇",
+    "kana": "とう〇〇",
+    "english": "this ~~ / the said ~~"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d2-005",
+    "listKey": "nsm-n3-kanji-w2d2",
+    "jmdictId": "1448810"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d2-006",
+    "listKey": "nsm-n3-kanji-w2d2",
+    "jmdictId": "1448800"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d2-007",
+    "listKey": "nsm-n3-kanji-w2d2",
+    "jmdictId": "1396130"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d2-008",
+    "listKey": "nsm-n3-kanji-w2d2",
+    "jmdictId": "1395600"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d2-009",
+    "listKey": "nsm-n3-kanji-w2d2",
+    "jmdictId": "1153930",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d2-010",
+    "listKey": "nsm-n3-kanji-w2d2",
+    "jmdictId": "1226630"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d2-011",
+    "listKey": "nsm-n3-kanji-w2d2",
+    "jmdictId": "1001770"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d2-012",
+    "listKey": "nsm-n3-kanji-w2d2",
+    "jmdictId": "1545820"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d2-013",
+    "listKey": "nsm-n3-kanji-w2d2",
+    "kanji": "〇〇様",
+    "kana": "〇〇さま",
+    "english": "Mr. / Ms. ~~ (honorific)"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d2-014",
+    "listKey": "nsm-n3-kanji-w2d2",
+    "jmdictId": "1549910"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d2-015",
+    "listKey": "nsm-n3-kanji-w2d2",
+    "jmdictId": "1199160"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d2-016",
+    "listKey": "nsm-n3-kanji-w2d2",
+    "jmdictId": "1199080"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d2-017",
+    "listKey": "nsm-n3-kanji-w2d2",
+    "jmdictId": "1503210"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d2-018",
+    "listKey": "nsm-n3-kanji-w2d2",
+    "jmdictId": "1591720"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d2-019",
+    "listKey": "nsm-n3-kanji-w2d2",
+    "jmdictId": "1408510"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d2-020",
+    "listKey": "nsm-n3-kanji-w2d2",
+    "jmdictId": "1217950"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d2-021",
+    "listKey": "nsm-n3-kanji-w2d2",
+    "jmdictId": "1577710"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d3-001",
+    "listKey": "nsm-n3-kanji-w2d3",
+    "jmdictId": "1214840"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d3-002",
+    "listKey": "nsm-n3-kanji-w2d3",
+    "jmdictId": "1214810"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d3-003",
+    "listKey": "nsm-n3-kanji-w2d3",
+    "jmdictId": "1451490"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d3-004",
+    "listKey": "nsm-n3-kanji-w2d3",
+    "jmdictId": "1245570"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d3-005",
+    "listKey": "nsm-n3-kanji-w2d3",
+    "kanji": "〇〇港",
+    "kana": "〇〇こう",
+    "english": "port of ~~ / ~~ harbour"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d3-006",
+    "listKey": "nsm-n3-kanji-w2d3",
+    "jmdictId": "1279990"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d3-007",
+    "listKey": "nsm-n3-kanji-w2d3",
+    "jmdictId": "1542170"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d3-008",
+    "listKey": "nsm-n3-kanji-w2d3",
+    "jmdictId": "1542160"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d3-009",
+    "listKey": "nsm-n3-kanji-w2d3",
+    "jmdictId": "1486460"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d3-010",
+    "listKey": "nsm-n3-kanji-w2d3",
+    "jmdictId": "1486530"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d3-011",
+    "listKey": "nsm-n3-kanji-w2d3",
+    "jmdictId": "1486360"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d3-012",
+    "listKey": "nsm-n3-kanji-w2d3",
+    "jmdictId": "1486440"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d3-013",
+    "listKey": "nsm-n3-kanji-w2d3",
+    "jmdictId": "1225130"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d3-014",
+    "listKey": "nsm-n3-kanji-w2d3",
+    "jmdictId": "1327790"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d3-015",
+    "listKey": "nsm-n3-kanji-w2d3",
+    "jmdictId": "1364670"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d3-016",
+    "listKey": "nsm-n3-kanji-w2d3",
+    "jmdictId": "1364600",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d3-017",
+    "listKey": "nsm-n3-kanji-w2d3",
+    "jmdictId": "1364920"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d3-018",
+    "listKey": "nsm-n3-kanji-w2d3",
+    "kanji": "〇〇寺",
+    "kana": "〇〇じ",
+    "english": "~~ temple"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d3-019",
+    "listKey": "nsm-n3-kanji-w2d3",
+    "jmdictId": "2271230"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d4-001",
+    "listKey": "nsm-n3-kanji-w2d4",
+    "jmdictId": "1308760"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d4-002",
+    "listKey": "nsm-n3-kanji-w2d4",
+    "jmdictId": "1537980"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d4-003",
+    "listKey": "nsm-n3-kanji-w2d4",
+    "jmdictId": "1537990"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d4-004",
+    "listKey": "nsm-n3-kanji-w2d4",
+    "jmdictId": "1605680"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d4-005",
+    "listKey": "nsm-n3-kanji-w2d4",
+    "jmdictId": "1542380"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d4-006",
+    "listKey": "nsm-n3-kanji-w2d4",
+    "jmdictId": "1542430"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d4-007",
+    "listKey": "nsm-n3-kanji-w2d4",
+    "jmdictId": "1538200"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d4-008",
+    "listKey": "nsm-n3-kanji-w2d4",
+    "jmdictId": "1272500"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d4-009",
+    "listKey": "nsm-n3-kanji-w2d4",
+    "jmdictId": "1272280"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d4-010",
+    "listKey": "nsm-n3-kanji-w2d4",
+    "jmdictId": "1271750"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d4-011",
+    "listKey": "nsm-n3-kanji-w2d4",
+    "jmdictId": "1291070"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d4-012",
+    "listKey": "nsm-n3-kanji-w2d4",
+    "jmdictId": "1291230"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d4-013",
+    "listKey": "nsm-n3-kanji-w2d4",
+    "jmdictId": "1593760"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d4-014",
+    "listKey": "nsm-n3-kanji-w2d4",
+    "jmdictId": "1592970"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d4-015",
+    "listKey": "nsm-n3-kanji-w2d4",
+    "jmdictId": "1441660"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d4-016",
+    "listKey": "nsm-n3-kanji-w2d4",
+    "jmdictId": "1441390",
+    "mark": "～{}"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d4-017",
+    "listKey": "nsm-n3-kanji-w2d4",
+    "jmdictId": "1514430"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d4-018",
+    "listKey": "nsm-n3-kanji-w2d4",
+    "jmdictId": "1237410"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d4-019",
+    "listKey": "nsm-n3-kanji-w2d4",
+    "jmdictId": "1273270"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d4-020",
+    "listKey": "nsm-n3-kanji-w2d4",
+    "jmdictId": "1274820"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-001",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1329810"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-002",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1329740"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-003",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1329590"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-004",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1495770",
+    "kanji": "付ける"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-005",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1511790"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-006",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1588060"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-007",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1495740"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-008",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1192700"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-009",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1203380"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-010",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1457830"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-011",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1237020"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-012",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1317310"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-013",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1486720"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-014",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1496670"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-015",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1303850"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-016",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1326160"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-017",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1250310"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-018",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1370380"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-019",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1376160"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-020",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1367120"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-021",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1250220"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-022",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1288640"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-023",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1288550"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-024",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1171150"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-025",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1290930"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-026",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1385910"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-027",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1589450"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d5-028",
+    "listKey": "nsm-n3-kanji-w2d5",
+    "jmdictId": "1385920"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d6-001",
+    "listKey": "nsm-n3-kanji-w2d6",
+    "jmdictId": "1289590"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d6-002",
+    "listKey": "nsm-n3-kanji-w2d6",
+    "jmdictId": "1289620",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d6-003",
+    "listKey": "nsm-n3-kanji-w2d6",
+    "jmdictId": "1350340"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d6-004",
+    "listKey": "nsm-n3-kanji-w2d6",
+    "jmdictId": "1350040"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d6-005",
+    "listKey": "nsm-n3-kanji-w2d6",
+    "jmdictId": "1350110"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d6-006",
+    "listKey": "nsm-n3-kanji-w2d6",
+    "jmdictId": "1350080"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d6-007",
+    "listKey": "nsm-n3-kanji-w2d6",
+    "jmdictId": "1543660"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d6-008",
+    "listKey": "nsm-n3-kanji-w2d6",
+    "jmdictId": "1520190"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d6-009",
+    "listKey": "nsm-n3-kanji-w2d6",
+    "jmdictId": "1229100"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d6-010",
+    "listKey": "nsm-n3-kanji-w2d6",
+    "jmdictId": "1229060"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d6-011",
+    "listKey": "nsm-n3-kanji-w2d6",
+    "jmdictId": "1252330"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d6-012",
+    "listKey": "nsm-n3-kanji-w2d6",
+    "jmdictId": "1252520"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d6-013",
+    "listKey": "nsm-n3-kanji-w2d6",
+    "jmdictId": "1252390"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d6-014",
+    "listKey": "nsm-n3-kanji-w2d6",
+    "jmdictId": "1252410"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d6-015",
+    "listKey": "nsm-n3-kanji-w2d6",
+    "jmdictId": "1313850"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d6-016",
+    "listKey": "nsm-n3-kanji-w2d6",
+    "jmdictId": "1267180"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d6-017",
+    "listKey": "nsm-n3-kanji-w2d6",
+    "kanji": "故〇〇",
+    "kana": "こ〇〇",
+    "english": "the late ~~ (deceased)"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d6-018",
+    "listKey": "nsm-n3-kanji-w2d6",
+    "jmdictId": "1582180"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d6-019",
+    "listKey": "nsm-n3-kanji-w2d6",
+    "jmdictId": "1441870"
+  },
+  {
+    "id": "nsm-n3-kanji-w2d6-020",
+    "listKey": "nsm-n3-kanji-w2d6",
+    "jmdictId": "1328190"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d1-001",
+    "listKey": "nsm-n3-kanji-w3d1",
+    "jmdictId": "1487660",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d1-002",
+    "listKey": "nsm-n3-kanji-w3d1",
+    "jmdictId": "1546640",
+    "kanji": "要る"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d1-003",
+    "listKey": "nsm-n3-kanji-w3d1",
+    "jmdictId": "1336820",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d1-004",
+    "listKey": "nsm-n3-kanji-w3d1",
+    "jmdictId": "1557290"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d1-005",
+    "listKey": "nsm-n3-kanji-w3d1",
+    "jmdictId": "1556730"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d1-006",
+    "listKey": "nsm-n3-kanji-w3d1",
+    "jmdictId": "1556770"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d1-007",
+    "listKey": "nsm-n3-kanji-w3d1",
+    "jmdictId": "1556630"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d1-008",
+    "listKey": "nsm-n3-kanji-w3d1",
+    "jmdictId": "1556750"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d1-009",
+    "listKey": "nsm-n3-kanji-w3d1",
+    "jmdictId": "1556740"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d1-010",
+    "listKey": "nsm-n3-kanji-w3d1",
+    "jmdictId": "1557110"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d1-011",
+    "listKey": "nsm-n3-kanji-w3d1",
+    "jmdictId": "1557210"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d1-012",
+    "listKey": "nsm-n3-kanji-w3d1",
+    "jmdictId": "1593100"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d1-013",
+    "listKey": "nsm-n3-kanji-w3d1",
+    "jmdictId": "1242850"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d1-014",
+    "listKey": "nsm-n3-kanji-w3d1",
+    "jmdictId": "1323120"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d1-015",
+    "listKey": "nsm-n3-kanji-w3d1",
+    "jmdictId": "1346370"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d1-016",
+    "listKey": "nsm-n3-kanji-w3d1",
+    "kanji": "保存する",
+    "kana": "ほぞんする",
+    "english": "to preserve / to save"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d1-017",
+    "listKey": "nsm-n3-kanji-w3d1",
+    "jmdictId": "1513300"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d1-018",
+    "listKey": "nsm-n3-kanji-w3d1",
+    "kanji": "ご存じです",
+    "kana": "ごぞんじです",
+    "english": "do you know (honorific)"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d1-019",
+    "listKey": "nsm-n3-kanji-w3d1",
+    "kanji": "存じません",
+    "kana": "ぞんじません",
+    "english": "I don't know (humble)"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d1-020",
+    "listKey": "nsm-n3-kanji-w3d1",
+    "jmdictId": "1601890",
+    "mark": "{}（に）"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d1-021",
+    "listKey": "nsm-n3-kanji-w3d1",
+    "jmdictId": "1487400"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-001",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1484620"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-002",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1350300"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-003",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1553250"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-004",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1198860"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-005",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1220550"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-006",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1435510"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-007",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1429850"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-008",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1418640"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-009",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1220560"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-010",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1264690"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-011",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1264640"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-012",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1264670"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-013",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "kanji": "〇〇製",
+    "kana": "〇〇せい",
+    "english": "made of ~~ / ~~ made"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-014",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1380760"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-015",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1380690"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-016",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1597890",
+    "kanji": "造る"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-017",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1351910"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-018",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1351980"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-019",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1351930"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-020",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1351960"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-021",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1517090"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-022",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1505600"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-023",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1183510"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-024",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1221950"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-025",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1586420",
+    "kanji": "温かい"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d2-026",
+    "listKey": "nsm-n3-kanji-w3d2",
+    "jmdictId": "1798230"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d3-001",
+    "listKey": "nsm-n3-kanji-w3d3",
+    "jmdictId": "1481800"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d3-002",
+    "listKey": "nsm-n3-kanji-w3d3",
+    "jmdictId": "1318480"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d3-003",
+    "listKey": "nsm-n3-kanji-w3d3",
+    "jmdictId": "1485470"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d3-004",
+    "listKey": "nsm-n3-kanji-w3d3",
+    "jmdictId": "1220810"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d3-005",
+    "listKey": "nsm-n3-kanji-w3d3",
+    "jmdictId": "1220800"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d3-006",
+    "listKey": "nsm-n3-kanji-w3d3",
+    "jmdictId": "1403160"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d3-007",
+    "listKey": "nsm-n3-kanji-w3d3",
+    "jmdictId": "1602440"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d3-008",
+    "listKey": "nsm-n3-kanji-w3d3",
+    "jmdictId": "1602880"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d3-009",
+    "listKey": "nsm-n3-kanji-w3d3",
+    "jmdictId": "1263210"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d3-010",
+    "listKey": "nsm-n3-kanji-w3d3",
+    "jmdictId": "1263120"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d3-011",
+    "listKey": "nsm-n3-kanji-w3d3",
+    "jmdictId": "1263110"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d3-012",
+    "listKey": "nsm-n3-kanji-w3d3",
+    "jmdictId": "1554640"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d3-013",
+    "listKey": "nsm-n3-kanji-w3d3",
+    "jmdictId": "1373320"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d3-014",
+    "listKey": "nsm-n3-kanji-w3d3",
+    "jmdictId": "1771780"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d3-015",
+    "listKey": "nsm-n3-kanji-w3d3",
+    "jmdictId": "1263350"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d3-016",
+    "listKey": "nsm-n3-kanji-w3d3",
+    "jmdictId": "1488840"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d3-017",
+    "listKey": "nsm-n3-kanji-w3d3",
+    "jmdictId": "1552530"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d3-018",
+    "listKey": "nsm-n3-kanji-w3d3",
+    "jmdictId": "1512220"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d3-019",
+    "listKey": "nsm-n3-kanji-w3d3",
+    "jmdictId": "1512180"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d3-020",
+    "listKey": "nsm-n3-kanji-w3d3",
+    "jmdictId": "1512130"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d3-021",
+    "listKey": "nsm-n3-kanji-w3d3",
+    "jmdictId": "1448580",
+    "mark": "（お）{}"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d3-022",
+    "listKey": "nsm-n3-kanji-w3d3",
+    "jmdictId": "1467960"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-001",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1296670"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-002",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1237110"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-003",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1549140"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-004",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1597170"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-005",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1231590"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-006",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1465260"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-007",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1504770"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-008",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1348650"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-009",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1411070"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-010",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1311580"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-011",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "2106370",
+    "kanji": "ごみ袋"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-012",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1328090"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-013",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1404920"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-014",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1290390"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-015",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1290310"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-016",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1350600"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-017",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1350610"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-018",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1489350"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-019",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1489880"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-020",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1477840"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-021",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1412170"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-022",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1489340"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-023",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1263490"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-024",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1550190"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d4-025",
+    "listKey": "nsm-n3-kanji-w3d4",
+    "jmdictId": "1550630"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-001",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "jmdictId": "1552740"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-002",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "jmdictId": "1552800"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-003",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "jmdictId": "1514030"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-004",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "jmdictId": "1589960"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-005",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "jmdictId": "1327180"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-006",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "jmdictId": "1552760"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-007",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "jmdictId": "1327120"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-008",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "jmdictId": "1469890"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-009",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "jmdictId": "1475480"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-010",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "jmdictId": "1499490"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-011",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "jmdictId": "1207080"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-012",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "jmdictId": "1499460"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-013",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "jmdictId": "1499320"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-014",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "jmdictId": "1373060"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-015",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "jmdictId": "1372980"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-016",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "jmdictId": "1580820"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-017",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "jmdictId": "1372900"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-018",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "jmdictId": "1255960"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-019",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "jmdictId": "1313830"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-020",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "jmdictId": "1546250"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-021",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "jmdictId": "1293320"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-022",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "kanji": "再ダイヤル",
+    "kana": "さいダイヤル",
+    "english": "redial"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-023",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "jmdictId": "1292960"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d5-024",
+    "listKey": "nsm-n3-kanji-w3d5",
+    "jmdictId": "1293650"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d6-001",
+    "listKey": "nsm-n3-kanji-w3d6",
+    "jmdictId": "1385480"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d6-002",
+    "listKey": "nsm-n3-kanji-w3d6",
+    "jmdictId": "1533510"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d6-003",
+    "listKey": "nsm-n3-kanji-w3d6",
+    "jmdictId": "1405790"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d6-004",
+    "listKey": "nsm-n3-kanji-w3d6",
+    "jmdictId": "1405800"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d6-005",
+    "listKey": "nsm-n3-kanji-w3d6",
+    "jmdictId": "1489610"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d6-006",
+    "listKey": "nsm-n3-kanji-w3d6",
+    "jmdictId": "1309800"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d6-007",
+    "listKey": "nsm-n3-kanji-w3d6",
+    "jmdictId": "1317110"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d6-008",
+    "listKey": "nsm-n3-kanji-w3d6",
+    "jmdictId": "1535880"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d6-009",
+    "listKey": "nsm-n3-kanji-w3d6",
+    "jmdictId": "1535850"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d6-010",
+    "listKey": "nsm-n3-kanji-w3d6",
+    "jmdictId": "1211630"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d6-011",
+    "listKey": "nsm-n3-kanji-w3d6",
+    "jmdictId": "1211510",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d6-012",
+    "listKey": "nsm-n3-kanji-w3d6",
+    "jmdictId": "1553310"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d6-013",
+    "listKey": "nsm-n3-kanji-w3d6",
+    "jmdictId": "1333040"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d6-014",
+    "listKey": "nsm-n3-kanji-w3d6",
+    "jmdictId": "1444810"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d6-015",
+    "listKey": "nsm-n3-kanji-w3d6",
+    "jmdictId": "1444780"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d6-016",
+    "listKey": "nsm-n3-kanji-w3d6",
+    "jmdictId": "1352570",
+    "kanji": "登る"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d6-017",
+    "listKey": "nsm-n3-kanji-w3d6",
+    "jmdictId": "1223440"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d6-018",
+    "listKey": "nsm-n3-kanji-w3d6",
+    "jmdictId": "1561590"
+  },
+  {
+    "id": "nsm-n3-kanji-w3d6-019",
+    "listKey": "nsm-n3-kanji-w3d6",
+    "jmdictId": "1561610"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d1-001",
+    "listKey": "nsm-n3-kanji-w4d1",
+    "jmdictId": "1291600"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d1-002",
+    "listKey": "nsm-n3-kanji-w4d1",
+    "jmdictId": "1291500"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d1-003",
+    "listKey": "nsm-n3-kanji-w4d1",
+    "jmdictId": "1358410"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d1-004",
+    "listKey": "nsm-n3-kanji-w4d1",
+    "jmdictId": "1576630"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d1-005",
+    "listKey": "nsm-n3-kanji-w4d1",
+    "jmdictId": "1595020"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d1-006",
+    "listKey": "nsm-n3-kanji-w4d1",
+    "jmdictId": "1382830"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d1-007",
+    "listKey": "nsm-n3-kanji-w4d1",
+    "jmdictId": "1448760"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d1-008",
+    "listKey": "nsm-n3-kanji-w4d1",
+    "jmdictId": "1538590"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d1-009",
+    "listKey": "nsm-n3-kanji-w4d1",
+    "jmdictId": "1644870"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d1-010",
+    "listKey": "nsm-n3-kanji-w4d1",
+    "jmdictId": "1555300",
+    "mark": "{}（色）"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d1-011",
+    "listKey": "nsm-n3-kanji-w4d1",
+    "jmdictId": "1280770"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d1-012",
+    "listKey": "nsm-n3-kanji-w4d1",
+    "jmdictId": "1276110"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d1-013",
+    "listKey": "nsm-n3-kanji-w4d1",
+    "jmdictId": "1298520",
+    "mark": "～{}"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d1-014",
+    "listKey": "nsm-n3-kanji-w4d1",
+    "jmdictId": "1298550"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d1-015",
+    "listKey": "nsm-n3-kanji-w4d1",
+    "jmdictId": "1264740",
+    "mark": "～{}"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d1-016",
+    "listKey": "nsm-n3-kanji-w4d1",
+    "jmdictId": "1593250"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d1-017",
+    "listKey": "nsm-n3-kanji-w4d1",
+    "jmdictId": "1264770"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d1-018",
+    "listKey": "nsm-n3-kanji-w4d1",
+    "jmdictId": "1419270"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d1-019",
+    "listKey": "nsm-n3-kanji-w4d1",
+    "jmdictId": "1524610",
+    "mark": "～{}"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d1-020",
+    "listKey": "nsm-n3-kanji-w4d1",
+    "jmdictId": "1524630"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d2-001",
+    "listKey": "nsm-n3-kanji-w4d2",
+    "jmdictId": "1278510"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d2-002",
+    "listKey": "nsm-n3-kanji-w4d2",
+    "jmdictId": "1286060"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d2-003",
+    "listKey": "nsm-n3-kanji-w4d2",
+    "jmdictId": "1512610",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d2-004",
+    "listKey": "nsm-n3-kanji-w4d2",
+    "jmdictId": "1549660"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d2-005",
+    "listKey": "nsm-n3-kanji-w4d2",
+    "jmdictId": "1208000"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d2-006",
+    "listKey": "nsm-n3-kanji-w4d2",
+    "jmdictId": "1606810"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d2-007",
+    "listKey": "nsm-n3-kanji-w4d2",
+    "jmdictId": "1208020"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d2-008",
+    "listKey": "nsm-n3-kanji-w4d2",
+    "jmdictId": "1606950"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d2-009",
+    "listKey": "nsm-n3-kanji-w4d2",
+    "jmdictId": "1473230",
+    "mark": "～{}"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d2-010",
+    "listKey": "nsm-n3-kanji-w4d2",
+    "jmdictId": "1473230"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d2-011",
+    "listKey": "nsm-n3-kanji-w4d2",
+    "jmdictId": "1600160"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d2-012",
+    "listKey": "nsm-n3-kanji-w4d2",
+    "jmdictId": "1600030"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d2-013",
+    "listKey": "nsm-n3-kanji-w4d2",
+    "jmdictId": "1600100"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d2-014",
+    "listKey": "nsm-n3-kanji-w4d2",
+    "jmdictId": "1347310"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d2-015",
+    "listKey": "nsm-n3-kanji-w4d2",
+    "jmdictId": "1347180"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d2-016",
+    "listKey": "nsm-n3-kanji-w4d2",
+    "jmdictId": "1310230"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d2-017",
+    "listKey": "nsm-n3-kanji-w4d2",
+    "jmdictId": "1523020"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d2-018",
+    "listKey": "nsm-n3-kanji-w4d2",
+    "jmdictId": "1310170"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d2-019",
+    "listKey": "nsm-n3-kanji-w4d2",
+    "jmdictId": "1522630"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d2-020",
+    "listKey": "nsm-n3-kanji-w4d2",
+    "jmdictId": "1501620"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d2-021",
+    "listKey": "nsm-n3-kanji-w4d2",
+    "jmdictId": "1594480"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d3-001",
+    "listKey": "nsm-n3-kanji-w4d3",
+    "jmdictId": "1508900"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d3-002",
+    "listKey": "nsm-n3-kanji-w4d3",
+    "jmdictId": "1508750"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d3-003",
+    "listKey": "nsm-n3-kanji-w4d3",
+    "jmdictId": "1283400"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d3-004",
+    "listKey": "nsm-n3-kanji-w4d3",
+    "jmdictId": "1423870"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d3-005",
+    "listKey": "nsm-n3-kanji-w4d3",
+    "jmdictId": "1352930"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d3-006",
+    "listKey": "nsm-n3-kanji-w4d3",
+    "jmdictId": "1304560"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d3-007",
+    "listKey": "nsm-n3-kanji-w4d3",
+    "jmdictId": "1304480"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d3-008",
+    "listKey": "nsm-n3-kanji-w4d3",
+    "jmdictId": "1304510"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d3-009",
+    "listKey": "nsm-n3-kanji-w4d3",
+    "jmdictId": "1600260"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d3-010",
+    "listKey": "nsm-n3-kanji-w4d3",
+    "jmdictId": "1413530"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d3-011",
+    "listKey": "nsm-n3-kanji-w4d3",
+    "jmdictId": "1620810"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d3-012",
+    "listKey": "nsm-n3-kanji-w4d3",
+    "jmdictId": "1361770"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d3-013",
+    "listKey": "nsm-n3-kanji-w4d3",
+    "jmdictId": "1350320"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d3-014",
+    "listKey": "nsm-n3-kanji-w4d3",
+    "jmdictId": "1382100"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d3-015",
+    "listKey": "nsm-n3-kanji-w4d3",
+    "jmdictId": "1593410"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d3-016",
+    "listKey": "nsm-n3-kanji-w4d3",
+    "jmdictId": "1361210"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d3-017",
+    "listKey": "nsm-n3-kanji-w4d3",
+    "jmdictId": "1596250",
+    "kanji": "税込"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d3-018",
+    "listKey": "nsm-n3-kanji-w4d3",
+    "jmdictId": "1189500"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d3-019",
+    "listKey": "nsm-n3-kanji-w4d3",
+    "jmdictId": "1435410"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d3-020",
+    "listKey": "nsm-n3-kanji-w4d3",
+    "jmdictId": "1284600"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d3-021",
+    "listKey": "nsm-n3-kanji-w4d3",
+    "jmdictId": "1205280"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-001",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1362890"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-002",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1605150"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-003",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1363100"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-004",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1363130"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-005",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1363090"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-006",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1362950"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-007",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1223330"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-008",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1463930"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-009",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1223210"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-010",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1223240"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-011",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1585230"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-012",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1556370"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-013",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1600240"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-014",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1284030"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-015",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1294940",
+    "mark": "～{}"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-016",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1600790",
+    "kanji": "二十歳"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-017",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1375520"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-018",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1375290"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-019",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1345250"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-020",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1420160"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-021",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1559380"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-022",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1598220"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-023",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1610460",
+    "kanji": "連れて来る"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d4-024",
+    "listKey": "nsm-n3-kanji-w4d4",
+    "jmdictId": "1559900"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d5-001",
+    "listKey": "nsm-n3-kanji-w4d5",
+    "jmdictId": "1457210"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d5-002",
+    "listKey": "nsm-n3-kanji-w4d5",
+    "jmdictId": "1457200"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d5-003",
+    "listKey": "nsm-n3-kanji-w4d5",
+    "jmdictId": "1318260"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d5-004",
+    "listKey": "nsm-n3-kanji-w4d5",
+    "jmdictId": "1002400"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d5-005",
+    "listKey": "nsm-n3-kanji-w4d5",
+    "jmdictId": "1415780"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d5-006",
+    "listKey": "nsm-n3-kanji-w4d5",
+    "jmdictId": "1473140"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d5-007",
+    "listKey": "nsm-n3-kanji-w4d5",
+    "jmdictId": "2794600"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d5-008",
+    "listKey": "nsm-n3-kanji-w4d5",
+    "jmdictId": "1360930"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d5-009",
+    "listKey": "nsm-n3-kanji-w4d5",
+    "jmdictId": "1472990"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d5-010",
+    "listKey": "nsm-n3-kanji-w4d5",
+    "jmdictId": "1219910"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d5-011",
+    "listKey": "nsm-n3-kanji-w4d5",
+    "jmdictId": "1320170"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d5-012",
+    "listKey": "nsm-n3-kanji-w4d5",
+    "jmdictId": "1519630"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d5-013",
+    "listKey": "nsm-n3-kanji-w4d5",
+    "jmdictId": "1465780"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d5-014",
+    "listKey": "nsm-n3-kanji-w4d5",
+    "jmdictId": "1338350"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d5-015",
+    "listKey": "nsm-n3-kanji-w4d5",
+    "jmdictId": "1195430"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d5-016",
+    "listKey": "nsm-n3-kanji-w4d5",
+    "jmdictId": "1327360"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d5-017",
+    "listKey": "nsm-n3-kanji-w4d5",
+    "jmdictId": "1271750"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d5-018",
+    "listKey": "nsm-n3-kanji-w4d5",
+    "jmdictId": "1411800"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d5-019",
+    "listKey": "nsm-n3-kanji-w4d5",
+    "jmdictId": "1600460"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d5-020",
+    "listKey": "nsm-n3-kanji-w4d5",
+    "jmdictId": "1242700"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d5-021",
+    "listKey": "nsm-n3-kanji-w4d5",
+    "jmdictId": "1479050"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d6-001",
+    "listKey": "nsm-n3-kanji-w4d6",
+    "jmdictId": "1492460"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d6-002",
+    "listKey": "nsm-n3-kanji-w4d6",
+    "jmdictId": "1263650"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d6-003",
+    "listKey": "nsm-n3-kanji-w4d6",
+    "jmdictId": "1326980"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d6-004",
+    "listKey": "nsm-n3-kanji-w4d6",
+    "jmdictId": "1329650"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d6-005",
+    "listKey": "nsm-n3-kanji-w4d6",
+    "jmdictId": "1629260"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d6-006",
+    "listKey": "nsm-n3-kanji-w4d6",
+    "jmdictId": "1545020"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d6-007",
+    "listKey": "nsm-n3-kanji-w4d6",
+    "jmdictId": "1544990"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d6-008",
+    "listKey": "nsm-n3-kanji-w4d6",
+    "jmdictId": "1613280"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d6-009",
+    "listKey": "nsm-n3-kanji-w4d6",
+    "jmdictId": "1158810"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d6-010",
+    "listKey": "nsm-n3-kanji-w4d6",
+    "jmdictId": "1302090"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d6-011",
+    "listKey": "nsm-n3-kanji-w4d6",
+    "jmdictId": "1302300"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d6-012",
+    "listKey": "nsm-n3-kanji-w4d6",
+    "jmdictId": "1302070",
+    "kanji": "参る"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d6-013",
+    "listKey": "nsm-n3-kanji-w4d6",
+    "jmdictId": "1353850"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d6-014",
+    "listKey": "nsm-n3-kanji-w4d6",
+    "jmdictId": "1405030"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d6-015",
+    "listKey": "nsm-n3-kanji-w4d6",
+    "jmdictId": "1540170"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d6-016",
+    "listKey": "nsm-n3-kanji-w4d6",
+    "jmdictId": "1433140"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d6-017",
+    "listKey": "nsm-n3-kanji-w4d6",
+    "jmdictId": "1240825"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d6-018",
+    "listKey": "nsm-n3-kanji-w4d6",
+    "jmdictId": "1250680",
+    "mark": "{}（電話）"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d6-019",
+    "listKey": "nsm-n3-kanji-w4d6",
+    "jmdictId": "1316010"
+  },
+  {
+    "id": "nsm-n3-kanji-w4d6-020",
+    "listKey": "nsm-n3-kanji-w4d6",
+    "jmdictId": "1410410"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d1-001",
+    "listKey": "nsm-n3-kanji-w5d1",
+    "jmdictId": "1270810"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d1-002",
+    "listKey": "nsm-n3-kanji-w5d1",
+    "jmdictId": "1305700"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d1-003",
+    "listKey": "nsm-n3-kanji-w5d1",
+    "jmdictId": "1422050"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d1-004",
+    "listKey": "nsm-n3-kanji-w5d1",
+    "jmdictId": "1421970"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d1-005",
+    "listKey": "nsm-n3-kanji-w5d1",
+    "jmdictId": "1589040"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d1-006",
+    "listKey": "nsm-n3-kanji-w5d1",
+    "jmdictId": "1320230",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d1-007",
+    "listKey": "nsm-n3-kanji-w5d1",
+    "kanji": "失礼する",
+    "kana": "しつれいする",
+    "english": "to excuse oneself"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d1-008",
+    "listKey": "nsm-n3-kanji-w5d1",
+    "jmdictId": "1320140"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d1-009",
+    "listKey": "nsm-n3-kanji-w5d1",
+    "jmdictId": "1213060"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d1-010",
+    "listKey": "nsm-n3-kanji-w5d1",
+    "jmdictId": "1213080"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d1-011",
+    "listKey": "nsm-n3-kanji-w5d1",
+    "jmdictId": "1304680",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d1-012",
+    "listKey": "nsm-n3-kanji-w5d1",
+    "jmdictId": "1223340"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d1-013",
+    "listKey": "nsm-n3-kanji-w5d1",
+    "jmdictId": "1555930"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d1-014",
+    "listKey": "nsm-n3-kanji-w5d1",
+    "jmdictId": "1899300"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d1-015",
+    "listKey": "nsm-n3-kanji-w5d1",
+    "jmdictId": "1351360"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d1-016",
+    "listKey": "nsm-n3-kanji-w5d1",
+    "jmdictId": "1351280"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d1-017",
+    "listKey": "nsm-n3-kanji-w5d1",
+    "jmdictId": "1351400"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d2-001",
+    "listKey": "nsm-n3-kanji-w5d2",
+    "jmdictId": "1429170"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d2-002",
+    "listKey": "nsm-n3-kanji-w5d2",
+    "jmdictId": "1236470"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d2-003",
+    "listKey": "nsm-n3-kanji-w5d2",
+    "jmdictId": "1429060"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d2-004",
+    "listKey": "nsm-n3-kanji-w5d2",
+    "jmdictId": "1429120"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d2-005",
+    "listKey": "nsm-n3-kanji-w5d2",
+    "jmdictId": "1158400"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d2-006",
+    "listKey": "nsm-n3-kanji-w5d2",
+    "jmdictId": "1158210"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d2-007",
+    "listKey": "nsm-n3-kanji-w5d2",
+    "jmdictId": "1158160"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d2-008",
+    "listKey": "nsm-n3-kanji-w5d2",
+    "jmdictId": "1289620",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d2-009",
+    "listKey": "nsm-n3-kanji-w5d2",
+    "jmdictId": "1461130"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d2-010",
+    "listKey": "nsm-n3-kanji-w5d2",
+    "jmdictId": "1460850"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d2-011",
+    "listKey": "nsm-n3-kanji-w5d2",
+    "jmdictId": "1214330",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d2-012",
+    "listKey": "nsm-n3-kanji-w5d2",
+    "jmdictId": "1417330"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d2-013",
+    "listKey": "nsm-n3-kanji-w5d2",
+    "jmdictId": "1417040"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d2-014",
+    "listKey": "nsm-n3-kanji-w5d2",
+    "jmdictId": "1212260"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d2-015",
+    "listKey": "nsm-n3-kanji-w5d2",
+    "jmdictId": "1212570"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d2-016",
+    "listKey": "nsm-n3-kanji-w5d2",
+    "jmdictId": "1212480"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d2-017",
+    "listKey": "nsm-n3-kanji-w5d2",
+    "jmdictId": "1543130"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-001",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1559160"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-002",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1293780"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-003",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1293990"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-004",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1293810"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-005",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1293700"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-006",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1437450",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-007",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1200120",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-008",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1392190"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-009",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1392250"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-010",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1588730"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-011",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1158880"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-012",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1215320"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-013",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1611610"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-014",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1215330"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-015",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1431310"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-016",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1431110"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-017",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "2846390"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-018",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1599390"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-019",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1500800"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-020",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1179760"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-021",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1199720"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-022",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1318970"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-023",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1318950"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-024",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1337270"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-025",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1185290"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d3-026",
+    "listKey": "nsm-n3-kanji-w5d3",
+    "jmdictId": "1337190"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-001",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "jmdictId": "1579260"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-002",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "jmdictId": "1579260"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-003",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "jmdictId": "2863052"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-004",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "jmdictId": "1298230"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-005",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "kanji": "〇〇君",
+    "kana": "〇〇くん",
+    "english": "suffix for names (familiar)"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-006",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "jmdictId": "1247250"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-007",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "jmdictId": "1254760",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-008",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "kanji": "「いいえ、結構です」",
+    "kana": "「いいえ、けっこうです」",
+    "english": "no thank you"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-009",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "jmdictId": "1254730"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-010",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "jmdictId": "1254670"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-011",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "jmdictId": "1254790"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-012",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "jmdictId": "1361830"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-013",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "jmdictId": "1289710"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-014",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "jmdictId": "1337500"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-015",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "jmdictId": "1337390"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-016",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "jmdictId": "1612770"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-017",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "jmdictId": "1239700"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-018",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "jmdictId": "1239970"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-019",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "jmdictId": "1239730"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-020",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "jmdictId": "1239740"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-021",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "jmdictId": "1179330"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-022",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "jmdictId": "1179320"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-023",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "jmdictId": "1360010"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-024",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "jmdictId": "1360320"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d4-025",
+    "listKey": "nsm-n3-kanji-w5d4",
+    "jmdictId": "1426370"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d5-001",
+    "listKey": "nsm-n3-kanji-w5d5",
+    "jmdictId": "1450890"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d5-002",
+    "listKey": "nsm-n3-kanji-w5d5",
+    "jmdictId": "1501230"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d5-003",
+    "listKey": "nsm-n3-kanji-w5d5",
+    "jmdictId": "1432680"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d5-004",
+    "listKey": "nsm-n3-kanji-w5d5",
+    "jmdictId": "1467710"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d5-005",
+    "listKey": "nsm-n3-kanji-w5d5",
+    "jmdictId": "1467910",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d5-006",
+    "listKey": "nsm-n3-kanji-w5d5",
+    "jmdictId": "1467720"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d5-007",
+    "listKey": "nsm-n3-kanji-w5d5",
+    "jmdictId": "1426680"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d5-008",
+    "listKey": "nsm-n3-kanji-w5d5",
+    "jmdictId": "1313110"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d5-009",
+    "listKey": "nsm-n3-kanji-w5d5",
+    "jmdictId": "1313000"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d5-010",
+    "listKey": "nsm-n3-kanji-w5d5",
+    "jmdictId": "1313080"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d5-011",
+    "listKey": "nsm-n3-kanji-w5d5",
+    "jmdictId": "1604850"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d5-012",
+    "listKey": "nsm-n3-kanji-w5d5",
+    "jmdictId": "1375970"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d5-013",
+    "listKey": "nsm-n3-kanji-w5d5",
+    "jmdictId": "1316890"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d5-014",
+    "listKey": "nsm-n3-kanji-w5d5",
+    "jmdictId": "1599400"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d5-015",
+    "listKey": "nsm-n3-kanji-w5d5",
+    "jmdictId": "2856318"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d5-016",
+    "listKey": "nsm-n3-kanji-w5d5",
+    "jmdictId": "1178940"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d5-017",
+    "listKey": "nsm-n3-kanji-w5d5",
+    "jmdictId": "1179005"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d5-018",
+    "listKey": "nsm-n3-kanji-w5d5",
+    "jmdictId": "1508380"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d5-019",
+    "listKey": "nsm-n3-kanji-w5d5",
+    "jmdictId": "1508390"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d5-020",
+    "listKey": "nsm-n3-kanji-w5d5",
+    "jmdictId": "1313490"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d5-021",
+    "listKey": "nsm-n3-kanji-w5d5",
+    "jmdictId": "1949190",
+    "mark": "{}（の）"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d5-022",
+    "listKey": "nsm-n3-kanji-w5d5",
+    "jmdictId": "1203260",
+    "mark": "{}（の）"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d5-023",
+    "listKey": "nsm-n3-kanji-w5d5",
+    "jmdictId": "1006900"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d6-001",
+    "listKey": "nsm-n3-kanji-w5d6",
+    "jmdictId": "1365770"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d6-002",
+    "listKey": "nsm-n3-kanji-w5d6",
+    "jmdictId": "1455850",
+    "mark": "{}（の）"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d6-003",
+    "listKey": "nsm-n3-kanji-w5d6",
+    "jmdictId": "1365810"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d6-004",
+    "listKey": "nsm-n3-kanji-w5d6",
+    "jmdictId": "1306570"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d6-005",
+    "listKey": "nsm-n3-kanji-w5d6",
+    "jmdictId": "1464670"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d6-006",
+    "listKey": "nsm-n3-kanji-w5d6",
+    "jmdictId": "2669420"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d6-007",
+    "listKey": "nsm-n3-kanji-w5d6",
+    "jmdictId": "1329015"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d6-008",
+    "listKey": "nsm-n3-kanji-w5d6",
+    "jmdictId": "1329040"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d6-009",
+    "listKey": "nsm-n3-kanji-w5d6",
+    "jmdictId": "1266470"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d6-010",
+    "listKey": "nsm-n3-kanji-w5d6",
+    "jmdictId": "1228260"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d6-011",
+    "listKey": "nsm-n3-kanji-w5d6",
+    "jmdictId": "1358660"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d6-012",
+    "listKey": "nsm-n3-kanji-w5d6",
+    "jmdictId": "1587690"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d6-013",
+    "listKey": "nsm-n3-kanji-w5d6",
+    "jmdictId": "1547330"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d6-014",
+    "listKey": "nsm-n3-kanji-w5d6",
+    "jmdictId": "1372370"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d6-015",
+    "listKey": "nsm-n3-kanji-w5d6",
+    "jmdictId": "1529330"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d6-016",
+    "listKey": "nsm-n3-kanji-w5d6",
+    "jmdictId": "1529390"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d6-017",
+    "listKey": "nsm-n3-kanji-w5d6",
+    "jmdictId": "1483740"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d6-018",
+    "listKey": "nsm-n3-kanji-w5d6",
+    "jmdictId": "1404320"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d6-019",
+    "listKey": "nsm-n3-kanji-w5d6",
+    "jmdictId": "1404420"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d6-020",
+    "listKey": "nsm-n3-kanji-w5d6",
+    "jmdictId": "1404390"
+  },
+  {
+    "id": "nsm-n3-kanji-w5d6-021",
+    "listKey": "nsm-n3-kanji-w5d6",
+    "jmdictId": "1266440"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d1-001",
+    "listKey": "nsm-n3-kanji-w6d1",
+    "jmdictId": "1543630"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d1-002",
+    "listKey": "nsm-n3-kanji-w6d1",
+    "jmdictId": "1515670"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d1-003",
+    "listKey": "nsm-n3-kanji-w6d1",
+    "jmdictId": "1376470"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d1-004",
+    "listKey": "nsm-n3-kanji-w6d1",
+    "jmdictId": "1376460"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d1-005",
+    "listKey": "nsm-n3-kanji-w6d1",
+    "jmdictId": "1173100"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d1-006",
+    "listKey": "nsm-n3-kanji-w6d1",
+    "jmdictId": "1370760"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d1-007",
+    "listKey": "nsm-n3-kanji-w6d1",
+    "jmdictId": "1419860"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d1-008",
+    "listKey": "nsm-n3-kanji-w6d1",
+    "jmdictId": "1586420"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d1-009",
+    "listKey": "nsm-n3-kanji-w6d1",
+    "jmdictId": "1386500"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d1-010",
+    "listKey": "nsm-n3-kanji-w6d1",
+    "jmdictId": "1421210"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d1-011",
+    "listKey": "nsm-n3-kanji-w6d1",
+    "jmdictId": "1366380"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d1-012",
+    "listKey": "nsm-n3-kanji-w6d1",
+    "jmdictId": "1443720"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d1-013",
+    "listKey": "nsm-n3-kanji-w6d1",
+    "jmdictId": "1470970"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d1-014",
+    "listKey": "nsm-n3-kanji-w6d1",
+    "jmdictId": "1432220"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d2-001",
+    "listKey": "nsm-n3-kanji-w6d2",
+    "jmdictId": "1546680"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d2-002",
+    "listKey": "nsm-n3-kanji-w6d2",
+    "jmdictId": "1229500"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d2-003",
+    "listKey": "nsm-n3-kanji-w6d2",
+    "jmdictId": "1381330"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d2-004",
+    "listKey": "nsm-n3-kanji-w6d2",
+    "jmdictId": "1229350"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d2-005",
+    "listKey": "nsm-n3-kanji-w6d2",
+    "jmdictId": "1514830"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d2-006",
+    "listKey": "nsm-n3-kanji-w6d2",
+    "jmdictId": "1357540"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d2-007",
+    "listKey": "nsm-n3-kanji-w6d2",
+    "jmdictId": "1357510"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d2-008",
+    "listKey": "nsm-n3-kanji-w6d2",
+    "jmdictId": "1441210"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d2-009",
+    "listKey": "nsm-n3-kanji-w6d2",
+    "jmdictId": "1357490"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d2-010",
+    "listKey": "nsm-n3-kanji-w6d2",
+    "jmdictId": "1486680"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d2-011",
+    "listKey": "nsm-n3-kanji-w6d2",
+    "jmdictId": "1459400"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d2-012",
+    "listKey": "nsm-n3-kanji-w6d2",
+    "jmdictId": "1225130"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d2-013",
+    "listKey": "nsm-n3-kanji-w6d2",
+    "jmdictId": "1225170"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d2-014",
+    "listKey": "nsm-n3-kanji-w6d2",
+    "jmdictId": "1165790"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d2-015",
+    "listKey": "nsm-n3-kanji-w6d2",
+    "jmdictId": "1165800"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d2-016",
+    "listKey": "nsm-n3-kanji-w6d2",
+    "jmdictId": "1314270"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d2-017",
+    "listKey": "nsm-n3-kanji-w6d2",
+    "jmdictId": "1274820"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d2-018",
+    "listKey": "nsm-n3-kanji-w6d2",
+    "jmdictId": "1314400"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d2-019",
+    "listKey": "nsm-n3-kanji-w6d2",
+    "jmdictId": "1382190"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d2-020",
+    "listKey": "nsm-n3-kanji-w6d2",
+    "kanji": "第1課",
+    "kana": "だいいっか",
+    "english": "Lesson 1"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d2-021",
+    "listKey": "nsm-n3-kanji-w6d2",
+    "jmdictId": "1195840"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d3-001",
+    "listKey": "nsm-n3-kanji-w6d3",
+    "jmdictId": "1420970"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d3-002",
+    "listKey": "nsm-n3-kanji-w6d3",
+    "jmdictId": "1537300"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d3-003",
+    "listKey": "nsm-n3-kanji-w6d3",
+    "jmdictId": "1443170"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d3-004",
+    "listKey": "nsm-n3-kanji-w6d3",
+    "jmdictId": "1254130"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d3-005",
+    "listKey": "nsm-n3-kanji-w6d3",
+    "jmdictId": "1254380"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d3-006",
+    "listKey": "nsm-n3-kanji-w6d3",
+    "jmdictId": "1254180"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d3-007",
+    "listKey": "nsm-n3-kanji-w6d3",
+    "jmdictId": "1591420"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d3-008",
+    "listKey": "nsm-n3-kanji-w6d3",
+    "jmdictId": "1539280"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d3-009",
+    "listKey": "nsm-n3-kanji-w6d3",
+    "jmdictId": "1254320"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d3-010",
+    "listKey": "nsm-n3-kanji-w6d3",
+    "jmdictId": "1346150"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d3-011",
+    "listKey": "nsm-n3-kanji-w6d3",
+    "kanji": "1対2",
+    "kana": "1たい2",
+    "english": "score of 1 to 2"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d3-012",
+    "listKey": "nsm-n3-kanji-w6d3",
+    "jmdictId": "1480670"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d3-013",
+    "listKey": "nsm-n3-kanji-w6d3",
+    "jmdictId": "1552140"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d3-014",
+    "listKey": "nsm-n3-kanji-w6d3",
+    "jmdictId": "1552120"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d3-015",
+    "listKey": "nsm-n3-kanji-w6d3",
+    "jmdictId": "1346230"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d3-016",
+    "listKey": "nsm-n3-kanji-w6d3",
+    "jmdictId": "1497980"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d3-017",
+    "listKey": "nsm-n3-kanji-w6d3",
+    "jmdictId": "1447260"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d3-018",
+    "listKey": "nsm-n3-kanji-w6d3",
+    "jmdictId": "1447000"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d3-019",
+    "listKey": "nsm-n3-kanji-w6d3",
+    "jmdictId": "1254690"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d3-020",
+    "listKey": "nsm-n3-kanji-w6d3",
+    "jmdictId": "1193060"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d4-001",
+    "listKey": "nsm-n3-kanji-w6d4",
+    "jmdictId": "1607450"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d4-002",
+    "listKey": "nsm-n3-kanji-w6d4",
+    "jmdictId": "1390360"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d4-003",
+    "listKey": "nsm-n3-kanji-w6d4",
+    "jmdictId": "1596960"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d4-004",
+    "listKey": "nsm-n3-kanji-w6d4",
+    "jmdictId": "1251270"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d4-005",
+    "listKey": "nsm-n3-kanji-w6d4",
+    "jmdictId": "1251130"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d4-006",
+    "listKey": "nsm-n3-kanji-w6d4",
+    "jmdictId": "1251320"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d4-007",
+    "listKey": "nsm-n3-kanji-w6d4",
+    "jmdictId": "1295070"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d4-008",
+    "listKey": "nsm-n3-kanji-w6d4",
+    "jmdictId": "1375790"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d4-009",
+    "listKey": "nsm-n3-kanji-w6d4",
+    "jmdictId": "1211490"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d4-010",
+    "listKey": "nsm-n3-kanji-w6d4",
+    "jmdictId": "1520120"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d4-011",
+    "listKey": "nsm-n3-kanji-w6d4",
+    "jmdictId": "1157000",
+    "kanji": "易しい"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d4-012",
+    "listKey": "nsm-n3-kanji-w6d4",
+    "jmdictId": "1538820"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d4-013",
+    "listKey": "nsm-n3-kanji-w6d4",
+    "jmdictId": "1538870"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d4-014",
+    "listKey": "nsm-n3-kanji-w6d4",
+    "jmdictId": "1538850"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d4-015",
+    "listKey": "nsm-n3-kanji-w6d4",
+    "jmdictId": "1401210"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d4-016",
+    "listKey": "nsm-n3-kanji-w6d4",
+    "jmdictId": "1329300"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d4-017",
+    "listKey": "nsm-n3-kanji-w6d4",
+    "jmdictId": "1401000"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d5-001",
+    "listKey": "nsm-n3-kanji-w6d5",
+    "jmdictId": "1505120"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d5-002",
+    "listKey": "nsm-n3-kanji-w6d5",
+    "kanji": "〇〇化",
+    "kana": "〇〇か",
+    "english": "~ification / becoming ~"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d5-003",
+    "listKey": "nsm-n3-kanji-w6d5",
+    "jmdictId": "1186760"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d5-004",
+    "listKey": "nsm-n3-kanji-w6d5",
+    "jmdictId": "1577040"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d5-005",
+    "listKey": "nsm-n3-kanji-w6d5",
+    "jmdictId": "1483540"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d5-006",
+    "listKey": "nsm-n3-kanji-w6d5",
+    "jmdictId": "1262490"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d5-007",
+    "listKey": "nsm-n3-kanji-w6d5",
+    "jmdictId": "1261190"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d5-008",
+    "listKey": "nsm-n3-kanji-w6d5",
+    "jmdictId": "1286400",
+    "mark": "{}（の）"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d5-009",
+    "listKey": "nsm-n3-kanji-w6d5",
+    "jmdictId": "1271990"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d5-010",
+    "listKey": "nsm-n3-kanji-w6d5",
+    "jmdictId": "1198360"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d5-011",
+    "listKey": "nsm-n3-kanji-w6d5",
+    "jmdictId": "1226020"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d5-012",
+    "listKey": "nsm-n3-kanji-w6d5",
+    "jmdictId": "1378860"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d5-013",
+    "listKey": "nsm-n3-kanji-w6d5",
+    "jmdictId": "1208360"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d5-014",
+    "listKey": "nsm-n3-kanji-w6d5",
+    "jmdictId": "1415000",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d5-015",
+    "listKey": "nsm-n3-kanji-w6d5",
+    "jmdictId": "1510890"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d5-016",
+    "listKey": "nsm-n3-kanji-w6d5",
+    "jmdictId": "1510790"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d5-017",
+    "listKey": "nsm-n3-kanji-w6d5",
+    "jmdictId": "1510650"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d6-001",
+    "listKey": "nsm-n3-kanji-w6d6",
+    "jmdictId": "1375970"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d6-002",
+    "listKey": "nsm-n3-kanji-w6d6",
+    "jmdictId": "1375980"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d6-003",
+    "listKey": "nsm-n3-kanji-w6d6",
+    "jmdictId": "1376070"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d6-004",
+    "listKey": "nsm-n3-kanji-w6d6",
+    "jmdictId": "1445030"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d6-005",
+    "listKey": "nsm-n3-kanji-w6d6",
+    "jmdictId": "1200930"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d6-006",
+    "listKey": "nsm-n3-kanji-w6d6",
+    "jmdictId": "1200850"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d6-007",
+    "listKey": "nsm-n3-kanji-w6d6",
+    "jmdictId": "1200750"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d6-008",
+    "listKey": "nsm-n3-kanji-w6d6",
+    "jmdictId": "1482990"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d6-009",
+    "listKey": "nsm-n3-kanji-w6d6",
+    "jmdictId": "1483020",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d6-010",
+    "listKey": "nsm-n3-kanji-w6d6",
+    "jmdictId": "1535560"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d6-011",
+    "listKey": "nsm-n3-kanji-w6d6",
+    "jmdictId": "1286520",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d6-012",
+    "listKey": "nsm-n3-kanji-w6d6",
+    "jmdictId": "1264890",
+    "mark": "{}（な）"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d6-013",
+    "listKey": "nsm-n3-kanji-w6d6",
+    "jmdictId": "1321120"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d6-014",
+    "listKey": "nsm-n3-kanji-w6d6",
+    "jmdictId": "1320830"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d6-015",
+    "listKey": "nsm-n3-kanji-w6d6",
+    "jmdictId": "1320970"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d6-016",
+    "listKey": "nsm-n3-kanji-w6d6",
+    "jmdictId": "1254050"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d6-017",
+    "listKey": "nsm-n3-kanji-w6d6",
+    "jmdictId": "1254020"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d6-018",
+    "listKey": "nsm-n3-kanji-w6d6",
+    "jmdictId": "1253920"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d6-019",
+    "listKey": "nsm-n3-kanji-w6d6",
+    "jmdictId": "1389880"
+  },
+  {
+    "id": "nsm-n3-kanji-w6d6-020",
+    "listKey": "nsm-n3-kanji-w6d6",
+    "jmdictId": "1389890"
+  }
+]

@@ -1,24 +1,30 @@
-import { useState, useMemo, useEffect, useRef, Component } from 'react'
+import { useState, useMemo, useEffect, useRef, useCallback, Component } from 'react'
 import VocabCard from '../components/VocabCard.jsx'
 import DrillHUD from '../components/DrillHUD.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
-import SectionLabel from '../components/SectionLabel.jsx'
 import ChipSelector from '../components/Chip.jsx'
 import Checkbox from '../components/Checkbox.jsx'
 import Select from '../components/Select.jsx'
 import Button from '../components/Button.jsx'
 import Badge from '../components/Badge.jsx'
 import DataList from '../components/DataList.jsx'
+import Modal from '../components/Modal.jsx'
+import TextbookPicker from '../components/TextbookPicker.jsx'
+import SrsGateDialog from '../components/SrsGateDialog.jsx'
 import SpeedModeControls from '../components/SpeedModeControls.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
 import SettingsSidebar, { SidebarHeaderToggle } from '../components/SettingsSidebar.jsx'
+import DrillSettingsPanel from '../components/DrillSettingsPanel.jsx'
+import { useDrillSettings, audioSourceForVoice } from '../hooks/useDrillSettings.js'
 import ActionBar, { ACTION_BAR_HEIGHT } from '../components/ActionBar.jsx'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_BADGE, FS_ENTRY_WORD, FS_STAT_VALUE, FS_DISPLAY_HEADING, KANJI_FONT, WARNING } from '../data/theme.js'
+import {
+  FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_BADGE, FS_ENTRY_WORD, FS_STAT_VALUE,
+  FS_DISPLAY_HEADING, FS_CONTENT_HEADING, KANJI_FONT, WARNING,
+} from '../data/theme.js'
 import { MODULES } from '../data/modules.js'
 import { ModuleThemeProvider, useAccent } from '../context/ModuleThemeContext.jsx'
-import { WORD_SOURCES } from '../data/wordLists.js'
-import { SENTENCE_SOURCE_OPTIONS, DEFAULT_SENTENCE_SOURCE } from '../data/sentenceSource.js'
+import { WORD_SOURCES, visibleSources } from '../data/wordLists.js'
 import { useDrill } from '../hooks/useDrill.js'
 import { useTTS, useJaVoices } from '../hooks/useTTS.js'
 import { useSFX } from '../hooks/useSFX.js'
@@ -27,21 +33,28 @@ import { useGamepad } from '../hooks/useGamepad.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useProgress } from '../hooks/useProgress.js'
 import { useAudioGenerationStatus } from '../hooks/useAudioGenerationStatus.js'
-import { useDictionaryEntries } from '../hooks/useDictionaryEntries.js'
-import { briefGloss } from '../utils/dictionaryEntryLookup.js'
+import { useDictionaryEntries, useSenseGlosses } from '../hooks/useDictionaryEntries.js'
+import { cardGloss } from '../utils/dictionaryEntryLookup.js'
+import { cardFormOf, speechTextOf } from '../lib/displayForm.js'
 import { useSentencesForWords } from '../hooks/useSentenceForWord.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../utils/storage.js'
 import { supabase } from '../lib/supabase.js'
 import * as SimpleQueue from '../engines/simpleQueue.js'
-import { WORD_DATA } from '../data/wordData.js'
-import { createCard } from '../modules/vocab-srs/srs.js'
-import { ensureDeck, createDeck, deleteCards } from '../modules/vocab-srs/deckUtils.js'
+import { WORD_DATA, bundledWordCountFor } from '../data/wordData.js'
+import { useCustomWords, useCustomWordCounts } from '../hooks/useCustomWords.js'
+import { createDeck, deleteCards } from '../modules/vocab-srs/deckUtils.js'
+import { addWordsToSrs } from '../modules/vocab-srs/addWordsToDeck.js'
 import DeckComboBox from '../components/DeckComboBox.jsx'
 import { useToast } from '../context/ToastContext.jsx'
-import { AUDIO_SOURCE_OPTIONS, DEFAULT_AUDIO_SOURCE, getVoicevoxAudioUrl, getVoicevoxCredit, speakerIdFromAudioSource } from '../utils/voicevoxAudio.js'
+import { getVoicevoxAudioUrl, getVoicevoxCredit, speakerIdFromAudioSource } from '../utils/voicevoxAudio.js'
 import AttributionFooter from '../components/AttributionFooter.jsx'
 import { renderAttributionSegments } from '../utils/attributionSegments.jsx'
 import { useIsMobile } from '../hooks/useIsMobile.js'
+import { useTextbookAdvance } from '../hooks/useTextbookAdvance.js'
+import { resolveTextbookState } from '../lib/textbookProgress.js'
+import { getTextbook } from '../data/textbooks.js'
+import { chapterPrimaryAction } from './chapterAction.jsx'
+import { SegmentedPrimary, TextbookCover } from './homeCards.jsx'
 
 const VOCAB_ACCENT = MODULES.find(m => m.id === 'school-vocab').accent
 
@@ -51,7 +64,6 @@ const REVIEW_MODE_OPTIONS = [
   { value: 'kanji-front', label: 'Japanese → English' },
   { value: 'meaning-front', label: 'English → Japanese' },
 ]
-const WORD_SOURCE_OPTIONS = WORD_SOURCES.map(source => ({ value: source.id, label: source.label }))
 
 function mistakeTier(count) {
   if (!count) return 'none'
@@ -64,7 +76,7 @@ function mistakeTier(count) {
 // (see CLAUDE.md's "Dictionary as source of truth" section), the word's own
 // kanji/kana are the fallback. reading is null when it'd just repeat displayForm.
 function resolveWordDisplay(word, dictEntry) {
-  const displayForm = word.kanji ?? dictEntry?.primary_form ?? word.kana
+  const displayForm = cardFormOf(word, dictEntry).form ?? word.kana
   const readingRaw = word.kana ?? dictEntry?.kana_forms?.[0]
   return { displayForm, reading: readingRaw && readingRaw !== displayForm ? readingRaw : null }
 }
@@ -105,12 +117,18 @@ function chapterFromHash() {
   return chapter && WORD_DATA.some(w => w.listKey === chapter) ? chapter : null
 }
 
+// A textbook chapter's listKey is also a WORD_SOURCES sublist id (or, for a
+// flat source, the source id itself) — this is what lets a personal source's
+// words (useCustomWords) load correctly when a chapter row starts or
+// previews a chapter that belongs to one.
+function sourceIdForListKey(listKey) {
+  const source = WORD_SOURCES.find(s => s.id === listKey || s.lists?.some(l => l.id === listKey))
+  return source?.id ?? listKey
+}
+
 function defaultSelectedSource() {
   const chapter = chapterFromHash()
-  if (chapter) {
-    const source = WORD_SOURCES.find(s => s.id === chapter || s.lists?.some(l => l.id === chapter))
-    if (source) return source.id
-  }
+  if (chapter) return sourceIdForListKey(chapter)
   return safeLocalStorageGet('vocab-selected-source') ?? WORD_SOURCES[0].id
 }
 
@@ -154,7 +172,7 @@ function relativeTime(isoStr) {
 
 const AUDIO_PRELOAD_COUNT = 3
 
-function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, reviewMode, showFurigana, showTranslation, showSentence, sentenceSource, showKanjiMeaning, pixelFont, showVisualEffects, onPulse, isShort }) {
+function ActiveDrill({ drill, audioSource, playOnFront, playOnBack, sfxEnabled, ttsVoice, showStreak, reviewMode, showFurigana, showTranslation, showSentence, showKanjiMeaning, pixelFont, showVisualEffects, onPulse, isShort }) {
   const [flippedCardId, setFlippedCardId] = useState(null)
   const [transitioning, setTransitioning] = useState(false)
   const [exitDir, setExitDir] = useState(null)
@@ -174,20 +192,30 @@ function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, rev
     return word.kana ?? (word.jmdictId ? nearbyDictEntries[word.jmdictId]?.kana_forms?.[0] : undefined)
   }
 
+  // A word no longer records which clips exist for it: the clip is keyed by
+  // what the card says, so the URL is derivable and a miss falls back to speech
+  // synthesis rather than being predicted in advance.
   function voicevoxUrlForWord(word) {
     const speakerId = speakerIdFromAudioSource(audioSource)
-    return speakerId && word.voicevoxVoices?.includes(speakerId) ? getVoicevoxAudioUrl(speakerId, word.id) : null
+    if (!speakerId) return null
+    const entry = word.jmdictId ? nearbyDictEntries[word.jmdictId] : null
+    return getVoicevoxAudioUrl(speakerId, speechTextOf(word, entry) ?? word.kana)
   }
 
-  function playWordAudio(word) {
+  function speakWord(word) {
+    const reading = resolveReading(word)
+    if (reading) tts.speak(reading)
+  }
+
+  async function playWordAudio(word) {
     voicevox.stop()
     const url = voicevoxUrlForWord(word)
-    if (url) {
-      voicevox.play(url)
-    } else if (audioSource === 'browser') {
-      const reading = resolveReading(word)
-      if (reading) tts.speak(reading)
-    }
+    // No clip for this word — the backup voice reads it, rather than the
+    // silence you got unless you had picked the old 'Browser TTS' source.
+    if (!url) { speakWord(word); return }
+    // Falls through to speech synthesis when a clip has not been generated yet,
+    // which is what the old voicevoxVoices check was really guarding against.
+    if (!await voicevox.play(url)) speakWord(word)
   }
 
   function stopWordAudio() {
@@ -256,14 +284,24 @@ function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, rev
   }
 
   useEffect(() => {
-    if (isFlipped) {
+    if (isFlipped && playOnBack) {
       playWordAudio(currentCard.word)
     } else {
       stopWordAudio()
     }
     return () => stopWordAudio()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFlipped, currentCard.id, audioSource])
+  }, [isFlipped, currentCard.id, audioSource, playOnBack])
+
+  // Front audio speaks the word as the card arrives. Off by default for this
+  // drill: the front is the kanji and the reading is what you are recalling,
+  // so hearing it unprompted hands over the answer.
+  useEffect(() => {
+    if (!playOnFront) return
+    playWordAudio(currentCard.word)
+    return () => stopWordAudio()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentCard.id, audioSource, playOnFront])
 
   useEffect(() => { setFlippedCardId(null) }, [currentCard.id])
 
@@ -358,7 +396,6 @@ function ActiveDrill({ drill, audioSource, sfxEnabled, ttsVoice, showStreak, rev
             showFurigana={showFurigana}
             showTranslation={showTranslation}
             showSentence={showSentence}
-            sentenceSource={sentenceSource}
             showKanjiMeaning={showKanjiMeaning}
             pixelFont={pixelFont}
           />
@@ -385,6 +422,7 @@ function DoneScreen({
   )
   const jmdictIds = useMemo(() => rows.map(r => r.word.jmdictId).filter(Boolean), [rows])
   const { entries: dictEntries } = useDictionaryEntries(jmdictIds, true)
+  const senseGlosses = useSenseGlosses(useMemo(() => rows.map(r => r.word), [rows]))
   const defaultSelectedIds = useMemo(() => new Set(rows.filter(r => r.mistakes > 0).map(r => r.id)), [rows])
   const [selected, setSelected] = useState(() => new Set(defaultSelectedIds))
   const { showToast } = useToast()
@@ -426,7 +464,7 @@ function DoneScreen({
         const dictEntry = row.word.jmdictId ? dictEntries[row.word.jmdictId] : null
         return (
           <span style={{ lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-            {row.word.english ?? briefGloss(dictEntry)}
+            {row.word.english ?? cardGloss(row.word, dictEntry, senseGlosses)}
           </span>
         )
       },
@@ -435,7 +473,7 @@ function DoneScreen({
       key: 'mistakes', width: 36, align: 'right',
       render: row => row.mistakes > 0 ? <Badge variant="text" tone={MISTAKE_TIER_TONE[mistakeTier(row.mistakes)]}>{row.mistakes}×</Badge> : null,
     },
-  ], [dictEntries])
+  ], [dictEntries, senseGlosses])
 
   function showAddedToast(result) {
     if (!result) return
@@ -539,7 +577,7 @@ class GlanceErrorBoundary extends Component {
   }
 }
 
-function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSource }) {
+function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSource = 'custom' }) {
   const jmdictIds = useMemo(() => words.map(w => w.jmdictId).filter(Boolean), [words])
   const { entries: dictEntries } = useDictionaryEntries(jmdictIds, true)
   const tanakaSentences = useSentencesForWords(jmdictIds, true)
@@ -555,7 +593,7 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
     setExpandedKanji([])
     if (!next) return
 
-    const displayForm = word.kanji ?? dictEntries[word.jmdictId]?.primary_form ?? word.kana
+    const displayForm = cardFormOf(word, dictEntries[word.jmdictId]).form ?? word.kana
     const chars = (displayForm ?? '').split('').filter(ch => /\p{Script=Han}/u.test(ch))
     const missing = chars.filter(ch => !kanjiCache.current[ch])
     if (missing.length > 0 && supabase) {
@@ -657,7 +695,7 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
     <div style={{ width: '100%', maxWidth: 680, margin: '0 auto', padding: '32px 24px 48px' }}>
       {grouped.map(group => (
         <div key={group.listId} style={{ marginBottom: 40 }}>
-          <SectionLabel label={group.label} />
+          <SectionHeader title={group.label} />
           <DataList
             columns={columns}
             rows={group.words}
@@ -672,9 +710,206 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
   )
 }
 
+// ── Textbook chapter path ────────────────────────────────────────────────────
+//
+// The book-featured landing screen for #/vocab once a textbook is chosen —
+// this book, its progress, and its chapter list, rather than a bare source
+// picker. Ported from the #/dev/textbook-flow concept bench: cropped cover,
+// the segmented primary (redo lives in its chevron menu), and a gate dialog
+// before advancing past a chapter with words still unsent to the SRS.
+
+const HAIRLINE = 'rgba(255,255,255,0.08)'
+const DONE_GREY = '#8A8A8A'
+
+function ChapterGlyph({ kind, accent }) {
+  const size = 12
+  const base = { width: size, height: size, borderRadius: '50%', boxSizing: 'border-box', flexShrink: 0 }
+  if (kind === 'done') return <span style={{ ...base, background: DONE_GREY }} />
+  if (kind === 'todo') return <span style={{ ...base, border: '1.5px solid rgba(255,255,255,0.3)' }} />
+  return <span style={{ ...base, background: accent, boxShadow: `0 0 0 5px ${accent}40` }} />
+}
+
+// One chapter row, expandable to its actions — "Continue to next lesson"
+// only ever appears on the current row (that's the same gated advance the
+// header's segmented primary triggers), and "Set as current" only on a row
+// that isn't already the tracker's own.
+function ChapterRow({ chapter, isCurrent, hasNext, accent, open, onToggleOpen, onStart, onAdvance, onSetCurrent, onViewWords }) {
+  const kind = isCurrent ? 'current' : chapter.drilled ? 'done' : 'todo'
+  const meta = [`${chapter.wordCount} words`, chapter.drilled ? 'drilled' : null].filter(Boolean).join(' · ')
+  const primaryLabel = isCurrent ? (chapter.drilled ? 'Redo chapter' : 'Start chapter') : 'Drill chapter'
+  return (
+    <div style={{ borderTop: `1px solid rgba(255,255,255,0.06)` }}>
+      <div
+        className="data-list-row"
+        onClick={onToggleOpen}
+        style={{ display: 'grid', gridTemplateColumns: '28px minmax(0, 1fr) auto', alignItems: 'center', gap: 12, padding: '10px 14px', cursor: 'pointer' }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <ChapterGlyph kind={kind} accent={accent} />
+        </div>
+        <div style={{ minWidth: 0 }}>
+          <div style={{ fontSize: FS_BASE, color: chapter.drilled || isCurrent ? TEXT : TEXT_MUTED }}>{chapter.label}</div>
+          <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: 2 }}>{meta}</div>
+        </div>
+        <span style={{
+          display: 'inline-block', color: TEXT_MUTED, fontSize: FS_CAPTION,
+          transform: open ? 'rotate(90deg)' : 'none', transition: 'transform 120ms',
+        }}>›</span>
+      </div>
+      {open && (
+        <div style={{ padding: '0 14px 12px 54px', display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          <Button size="sm" onClick={() => onStart(chapter)}>{primaryLabel}</Button>
+          <Button size="sm" variant="neutral" onClick={() => onViewWords(chapter)}>View words</Button>
+          {isCurrent && chapter.drilled && hasNext && (
+            <Button size="sm" variant="accent-outline" onClick={onAdvance}>Continue to next lesson</Button>
+          )}
+          {!isCurrent && <Button size="sm" variant="ghost" onClick={() => onSetCurrent(chapter.id)}>Set as current</Button>}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ChapterList({ chapters, current, hasNext, accent, onStart, onAdvance, onSetCurrent, onViewWords }) {
+  const [openId, setOpenId] = useState(current.id)
+  return (
+    <div style={{ background: '#2A2A2A', border: `1px solid ${HAIRLINE}`, borderRadius: 8, overflow: 'hidden' }}>
+      {chapters.map(chapter => (
+        <ChapterRow
+          key={chapter.id}
+          chapter={chapter}
+          isCurrent={chapter.id === current.id}
+          hasNext={hasNext}
+          accent={accent}
+          open={openId === chapter.id}
+          onToggleOpen={() => setOpenId(id => (id === chapter.id ? null : chapter.id))}
+          onStart={onStart}
+          onAdvance={onAdvance}
+          onSetCurrent={onSetCurrent}
+          onViewWords={onViewWords}
+        />
+      ))}
+    </div>
+  )
+}
+
+function TextbookHomeScreen({ state, accent, onStart, onAdvance, onSetCurrent, onViewWords, onChangeTextbook, onOpenFreeDrill }) {
+  const { textbook, chapters, current, next, doneCount, wordsDrilled } = state
+  const { label, onClick, menuItems } = chapterPrimaryAction(state, { onStart, onAdvance, onChangeTextbook })
+
+  return (
+    <div style={{ width: '100%', maxWidth: 820, margin: '0 auto', padding: '32px 24px 48px', display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', flex: 1, minWidth: 260 }}>
+          <TextbookCover icon={textbook.icon} accent={accent} onChangeTextbook={onChangeTextbook} />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: FS_CONTENT_HEADING, color: TEXT }}>{textbook.title}</div>
+            <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginTop: 4 }}>
+              {doneCount} of {chapters.length} chapters · {wordsDrilled} words drilled
+            </div>
+            <div style={{ height: 4, borderRadius: 2, background: HAIRLINE, overflow: 'hidden', marginTop: 12 }}>
+              <div style={{ height: '100%', width: `${Math.round((doneCount / chapters.length) * 100)}%`, background: accent }} />
+            </div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+          <Button variant="ghost" size="lg" onClick={onOpenFreeDrill}>Free drill</Button>
+          <SegmentedPrimary size="lg" label={label} onClick={onClick} menuItems={menuItems} />
+        </div>
+      </div>
+
+      <div>
+        <SectionHeader title="Chapters" />
+        <ChapterList
+          chapters={chapters}
+          current={current}
+          hasNext={!!next}
+          accent={accent}
+          onStart={onStart}
+          onAdvance={onAdvance}
+          onSetCurrent={onSetCurrent}
+          onViewWords={onViewWords}
+        />
+      </div>
+    </div>
+  )
+}
+
+// ── Free drill ────────────────────────────────────────────────────────────────
+//
+// A compact modal for drilling anything other than the featured textbook's
+// own chapters — a different book, a So-Matome week, a personal list —
+// without leaving the vocab training page. Reuses the page's own
+// selectedSourceId/selectedSubLists state rather than a separate picker
+// engine: Start/Preview here are the same actions the old full-page source
+// picker offered, just in a narrower modal shape.
+function FreeDrillModal({
+  open, onClose, isMobile,
+  sourceOptions, selectedSourceId, onSelectSource,
+  reviewMode, onChangeReviewMode,
+  availableSubLists, selectedSubLists, onToggleSubList,
+  wordCountByList, reviewWordCount, includeReview, onToggleIncludeReview,
+  sentenceVocabWordCount, includeSentenceVocab, onToggleIncludeSentenceVocab,
+  onStart, onGlance,
+}) {
+  const rows = availableSubLists.map(l => ({ ...l, wordCount: wordCountByList[l.id] ?? 0 }))
+  const selected = useMemo(() => new Set(selectedSubLists), [selectedSubLists])
+  const totalWords = selectedSubLists.reduce((sum, id) => sum + (wordCountByList[id] ?? 0), 0)
+  const canStart = selectedSubLists.length > 0
+
+  const columns = [
+    { key: 'label', flex: 1, render: l => l.label },
+    { key: 'count', width: 90, align: 'right', tone: 'muted', render: l => `${l.wordCount ?? 0} words` },
+  ]
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title="Drill any list"
+      size="md"
+      isMobile={isMobile}
+      footer={
+        <>
+          <Button variant="neutral" disabled={!canStart} onClick={() => { onClose(); onGlance() }}>Preview</Button>
+          <Button disabled={!canStart} onClick={() => { onClose(); onStart() }}>
+            Start{totalWords ? ` (${totalWords} words)` : ''}
+          </Button>
+        </>
+      }
+    >
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 12 }}>
+          <div>
+            <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: 4 }}>Word list</div>
+            <Select size="md" value={selectedSourceId} onChange={onSelectSource} options={sourceOptions} />
+          </div>
+          <div>
+            <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: 4 }}>Drill mode</div>
+            <Select size="md" value={reviewMode} onChange={onChangeReviewMode} options={REVIEW_MODE_OPTIONS} />
+          </div>
+        </div>
+        <DataList
+          columns={columns}
+          rows={rows}
+          rowKey={l => l.id}
+          selection={{ selected, onToggle: onToggleSubList, bulkHeader: true }}
+          maxWidth="100%"
+        />
+        {reviewWordCount > 0 && (
+          <Checkbox checked={includeReview} onChange={onToggleIncludeReview} label={`Include review words (${reviewWordCount})`} />
+        )}
+        {sentenceVocabWordCount > 0 && (
+          <Checkbox checked={includeSentenceVocab} onChange={onToggleIncludeSentenceVocab} label={`Include sentence review words (${sentenceVocabWordCount})`} />
+        )}
+      </div>
+    </Modal>
+  )
+}
+
 // ── HomeScreen ────────────────────────────────────────────────────────────────
 
-function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selectedSubLists, onToggleSubList, wordCountByList, reviewWordCount, includeReview, onToggleIncludeReview, sentenceVocabWordCount, includeSentenceVocab, onToggleIncludeSentenceVocab, vocabProgress, reviewMode, onChangeReviewMode, onStart, onGlance }) {
+function HomeScreen({ sourceOptions, selectedSourceId, onSelectSource, availableSubLists, selectedSubLists, onToggleSubList, wordCountByList, reviewWordCount, includeReview, onToggleIncludeReview, sentenceVocabWordCount, includeSentenceVocab, onToggleIncludeSentenceVocab, vocabProgress, reviewMode, onChangeReviewMode, onStart, onGlance }) {
   const canStart = selectedSubLists.length > 0
 
   return (
@@ -701,7 +936,7 @@ function HomeScreen({ selectedSourceId, onSelectSource, availableSubLists, selec
         <label style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, letterSpacing: '0.08em' }}>
           WORD LIST
         </label>
-      <Select value={selectedSourceId} onChange={onSelectSource} size="md" options={WORD_SOURCE_OPTIONS} />
+      <Select value={selectedSourceId} onChange={onSelectSource} size="md" options={sourceOptions} />
       {reviewWordCount > 0 && (
         <div style={{ marginTop: 4 }}>
           <Checkbox checked={includeReview} onChange={onToggleIncludeReview} label={`Include review words (${reviewWordCount})`} />
@@ -804,8 +1039,34 @@ export default function VocabPage() {
 function VocabPageScreens() {
   const ACCENT = useAccent()
   const { user } = useAuth()
+  // A personal source belongs to one account, so the list of sources on offer
+  // depends on who is signed in.
+  const customCounts = useCustomWordCounts()
+  const sourceOptions = useMemo(
+    () => visibleSources(customCounts).map(source => ({ value: source.id, label: source.label })),
+    [customCounts],
+  )
   const { data: vocabProgress, save: saveVocabProgress } = useProgress('vocab-flashcard')
   const { data: srsData, save: saveSrs } = useProgress('vocab-srs')
+
+  // A learner's own chapters are counted from their account rather than the
+  // bundle; everything else comes from the bundled lists — same helper the
+  // dashboard's textbook state uses, so the two never disagree on a count.
+  const wordCountFor = useCallback(
+    id => bundledWordCountFor(id) || (customCounts[id] ?? 0),
+    [customCounts],
+  )
+  const textbookState = useMemo(() => resolveTextbookState(vocabProgress, wordCountFor), [vocabProgress, wordCountFor])
+  const showTextbookScreen = !!textbookState && textbookState.hasWords
+  const { gate, unsentWords, requestAdvance, skipGate, sendAndAdvance, closeGate, setCurrent: setCurrentChapter } = useTextbookAdvance({
+    state: textbookState,
+    vocabProgress,
+    saveVocabProgress,
+    srsData,
+    saveSrs,
+  })
+  const [pickerOpen, setPickerOpen] = useState(false)
+  const [freeDrillOpen, setFreeDrillOpen] = useState(false)
 
   const [showOptions,       setShowOptions]       = useState(() => window.innerWidth > 768)
   const [selectedSourceId,  setSelectedSourceId]  = useState(defaultSelectedSource)
@@ -816,36 +1077,10 @@ function VocabPageScreens() {
   const [reviewMode,       setReviewMode]       = useState(() => safeLocalStorageGet('vocab-review-mode') ?? 'kanji-front')
   const [isDrilling,       setIsDrilling]       = useState(() => !!chapterFromHash() && hashQuery().get('start') === '1')
   const [isGlancing,       setIsGlancing]       = useState(false)
-  const [audioEnabled,     setAudioEnabled]     = useState(() => {
-    const s = safeLocalStorageGet('vocab-audio-enabled'); return s === null ? true : s === 'true'
-  })
-  const [audioSource,      setAudioSource]      = useState(() => safeLocalStorageGet('vocab-audio-source') ?? DEFAULT_AUDIO_SOURCE)
-  const [sfxEnabled,       setSfxEnabled]       = useState(() => {
-    const s = safeLocalStorageGet('vocab-sfx-enabled'); return s === null ? true : s === 'true'
-  })
-  const [ttsVoice,         setTtsVoice]         = useState(() => safeLocalStorageGet('vocab-tts-voice') ?? '')
-  const [showStreak,       setShowStreak]       = useState(() => {
-    const s = safeLocalStorageGet('vocab-show-streak'); return s === null ? true : s === 'true'
-  })
-  const [showFurigana,     setShowFurigana]     = useState(() => {
-    const s = safeLocalStorageGet('vocab-show-furigana'); return s === null ? true : s === 'true'
-  })
-  const [showVisualEffects, setShowVisualEffects] = useState(() => {
-    const s = safeLocalStorageGet('vocab-visual-effects'); return s === null ? true : s === 'true'
-  })
-  const [pixelFont,        setPixelFont]        = useState(() => {
-    const s = safeLocalStorageGet('vocab-pixel-font'); return s === null ? true : s === 'true'
-  })
-  const [showTranslation,  setShowTranslation]  = useState(() => {
-    const s = safeLocalStorageGet('vocab-show-translation'); return s === null ? true : s === 'true'
-  })
-  const [showSentence,     setShowSentence]     = useState(() => {
-    const s = safeLocalStorageGet('vocab-show-sentence'); return s === null ? false : s === 'true'
-  })
-  const [sentenceSource, setSentenceSource] = useState(() => safeLocalStorageGet('vocab-sentence-source') ?? DEFAULT_SENTENCE_SOURCE)
-  const [showKanjiMeaning, setShowKanjiMeaning] = useState(() => {
-    const s = safeLocalStorageGet('vocab-show-kanji-meaning'); return s === null ? false : s === 'true'
-  })
+  const { settings, set: setSetting } = useDrillSettings('vocab')
+  const anyAudio = settings.frontAudio || settings.backAudio
+  const audioSource = anyAudio ? audioSourceForVoice(settings.voice) : 'none'
+  const voicevoxCredit = anyAudio ? getVoicevoxCredit(audioSource) : null
   const [includeReview, setIncludeReview] = useState(() => {
     const s = safeLocalStorageGet('vocab-include-review'); return s === null ? true : s === 'true'
   })
@@ -862,18 +1097,6 @@ function VocabPageScreens() {
 
   useEffect(() => { safeLocalStorageSet('vocab-selected-source', selectedSourceId) }, [selectedSourceId])
   useEffect(() => { safeLocalStorageSet('vocab-review-mode',     reviewMode) },       [reviewMode])
-  useEffect(() => { safeLocalStorageSet('vocab-audio-enabled',  audioEnabled) },     [audioEnabled])
-  useEffect(() => { safeLocalStorageSet('vocab-audio-source',   audioSource) },      [audioSource])
-  useEffect(() => { safeLocalStorageSet('vocab-sfx-enabled',    sfxEnabled) },       [sfxEnabled])
-  useEffect(() => { safeLocalStorageSet('vocab-tts-voice',      ttsVoice) },         [ttsVoice])
-  useEffect(() => { safeLocalStorageSet('vocab-show-streak',    showStreak) },       [showStreak])
-  useEffect(() => { safeLocalStorageSet('vocab-show-furigana',  showFurigana) },     [showFurigana])
-  useEffect(() => { safeLocalStorageSet('vocab-visual-effects', showVisualEffects) },[showVisualEffects])
-  useEffect(() => { safeLocalStorageSet('vocab-pixel-font',     pixelFont) },        [pixelFont])
-  useEffect(() => { safeLocalStorageSet('vocab-show-translation', showTranslation) },[showTranslation])
-  useEffect(() => { safeLocalStorageSet('vocab-show-sentence',    showSentence) },   [showSentence])
-  useEffect(() => { safeLocalStorageSet('vocab-sentence-source', sentenceSource) }, [sentenceSource])
-  useEffect(() => { safeLocalStorageSet('vocab-show-kanji-meaning', showKanjiMeaning) }, [showKanjiMeaning])
   useEffect(() => { safeLocalStorageSet('vocab-include-review', includeReview) }, [includeReview])
   useEffect(() => { safeLocalStorageSet('vocab-include-sentence-vocab', includeSentenceVocab) }, [includeSentenceVocab])
 
@@ -890,41 +1113,64 @@ function VocabPageScreens() {
     return source?.lists ?? [{ id: source?.id, label: source?.label }]
   }, [selectedSourceId])
 
+  // A personal source's words live in the learner's account, not the bundle.
+  // The whole selected source is loaded at once — a few hundred words — so
+  // counts, the review toggles and the drill all read one pool.
+  const personalSource = useMemo(
+    () => WORD_SOURCES.find(s => s.id === selectedSourceId)?.personal ?? false,
+    [selectedSourceId],
+  )
+  const customListKeys = useMemo(
+    () => (personalSource ? availableSubLists.map(l => l.id) : []),
+    [personalSource, availableSubLists],
+  )
+  const customWords = useCustomWords(customListKeys)
+  const wordPool = useMemo(
+    () => (customWords.length ? [...WORD_DATA, ...customWords] : WORD_DATA),
+    [customWords],
+  )
+
   const reviewWordCount = useMemo(() =>
-    WORD_DATA.filter(w => selectedSubLists.includes(w.listKey) && w.isReview).length,
+    wordPool.filter(w => selectedSubLists.includes(w.listKey) && w.isReview).length,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedSubLists.join(',')]
+    [selectedSubLists.join(','), wordPool]
   )
 
   const sentenceVocabWordCount = useMemo(() =>
-    WORD_DATA.filter(w => selectedSubLists.includes(w.listKey) && w.isSentenceVocab).length,
+    wordPool.filter(w => selectedSubLists.includes(w.listKey) && w.isSentenceVocab).length,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedSubLists.join(',')]
+    [selectedSubLists.join(','), wordPool]
   )
 
   const wordCountByList = useMemo(() => {
     const map = {}
-    for (const w of WORD_DATA) {
+    for (const w of wordPool) {
       if (!includeReview && w.isReview) continue
       if (!includeSentenceVocab && w.isSentenceVocab) continue
       map[w.listKey] = (map[w.listKey] ?? 0) + 1
     }
     return map
-  }, [includeReview, includeSentenceVocab])
+  }, [includeReview, includeSentenceVocab, wordPool])
 
   const glanceWords = useMemo(() =>
-    WORD_DATA.filter(w => selectedSubLists.includes(w.listKey) && (includeReview || !w.isReview) && (includeSentenceVocab || !w.isSentenceVocab)),
+    wordPool.filter(w => selectedSubLists.includes(w.listKey) && (includeReview || !w.isReview) && (includeSentenceVocab || !w.isSentenceVocab)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedSubLists.join(','), includeReview, includeSentenceVocab]
+    [selectedSubLists.join(','), includeReview, includeSentenceVocab, wordPool]
   )
 
+  // Depends on glanceWords itself, not on what glanceWords is derived from: a
+  // personal source's words arrive asynchronously, and keying on the selection
+  // alone would leave the drill holding the pool from before they loaded.
   const pool = useMemo(() =>
     glanceWords.map(w => ({ id: w.id, word: w })),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedSubLists.join(','), includeReview, includeSentenceVocab]
+    [glanceWords]
   )
 
   const drill = useDrill(pool, { engine: SimpleQueue })
+  // The card-settings sidebar only means anything while a drill is actually
+  // on screen — showing it over the chapter list, a preview, or the done
+  // screen reads as controls for a card that isn't there.
+  const showingDrillSettings = isDrilling && !drill.done
 
   // Warm the shared dictionary-entry cache for the whole selected pool as
   // soon as it's chosen — well before "Start Drill" — so ActiveDrill/
@@ -932,6 +1178,7 @@ function VocabPageScreens() {
   // cache instead of flashing a loading state per card.
   const poolJmdictIds = useMemo(() => pool.map(p => p.word.jmdictId).filter(Boolean), [pool])
   const { entries: poolDictEntries } = useDictionaryEntries(poolJmdictIds, true)
+  const poolSenseGlosses = useSenseGlosses(useMemo(() => pool.map(p => p.word), [pool]))
 
   useEffect(() => {
     if (window.location.hash.includes('?')) window.history.replaceState(null, '', '#/vocab')
@@ -957,55 +1204,18 @@ function VocabPageScreens() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [drill.done, isDrilling, user, reviewMode])
 
-  // Shared by handleAddToSrs/handleCreateDeckAndAddToSrs — builds new card
-  // entries for words not already in the target deck (deduped by front form).
-  function buildCardsForWords(words, targetDeckId, existingCardsObj) {
-    const existingFronts = new Set(
-      Object.values(existingCardsObj)
-        .filter(c => c.deckId === targetDeckId)
-        .map(c => c.front)
-    )
-    const newCards = {}
-    const newCardIds = []
-    words.forEach((word, i) => {
-      const dictEntry = word.jmdictId ? poolDictEntries[word.jmdictId] : null
-      const front = word.kanji ?? dictEntry?.primary_form ?? word.kana
-      if (existingFronts.has(front)) return
-      existingFronts.add(front)
-      const cardId = `${targetDeckId}-${Date.now()}-${i}`
-      const kana = word.kana ?? dictEntry?.kana_forms?.[0]
-      const english = word.english ?? briefGloss(dictEntry)
-      const extras = {}
-      if (kana) extras.kana = kana
-      if (word.sentence) extras.sentence = word.sentence
-      if (word.jmdictId) extras.jmdictId = word.jmdictId
-      if (word.voicevoxVoices?.length) {
-        extras.voicevoxVoices = word.voicevoxVoices
-        extras.voicevoxId = word.id
-      }
-      newCards[cardId] = createCard(front, english, cardId, targetDeckId, extras)
-      newCardIds.push(cardId)
-    })
-    return { newCards, newCardIds }
-  }
-
   function handleAddToSrs(words, deckId) {
-    const current = srsData ?? { decks: {}, cards: {}, lastSession: null, totalReviews: 0, newCardDay: { date: '', count: 0 } }
-    const decks = ensureDeck(current.decks, deckId, current.decks[deckId]?.name ?? 'Deck')
-    const { newCards, newCardIds } = buildCardsForWords(words, deckId, current.cards)
-    const deckName = decks[deckId]?.name ?? 'Deck'
-    if (newCardIds.length > 0) {
-      saveSrs({ ...current, decks, cards: { ...current.cards, ...newCards } })
-    }
-    return { count: newCardIds.length, cardIds: newCardIds, deckName }
+    const result = addWordsToSrs(srsData, words, deckId, 'Deck', poolDictEntries, poolSenseGlosses)
+    if (result.count > 0) saveSrs(result.data)
+    return result
   }
 
   function handleCreateDeckAndAddToSrs(words, name) {
     const current = srsData ?? { decks: {}, cards: {}, lastSession: null, totalReviews: 0, newCardDay: { date: '', count: 0 } }
     const { decks, deckId } = createDeck(current.decks, name)
-    const { newCards, newCardIds } = buildCardsForWords(words, deckId, current.cards)
-    saveSrs({ ...current, decks, cards: { ...current.cards, ...newCards } })
-    return { count: newCardIds.length, cardIds: newCardIds, deckName: name }
+    const result = addWordsToSrs({ ...current, decks }, words, deckId, name, poolDictEntries, poolSenseGlosses)
+    saveSrs(result.data)
+    return result
   }
 
   function handleUndoAdd(cardIds) {
@@ -1019,72 +1229,50 @@ function VocabPageScreens() {
     setSelectedSubLists([])
   }
 
+  // See DashboardPage's chooseTextbook for why the pointer is pinned to the
+  // first chapter here rather than left null.
+  function chooseTextbook(id) {
+    saveVocabProgress({ ...(vocabProgress ?? {}), textbook: { id, currentChapterId: getTextbook(id)?.chapters[0]?.id ?? null } })
+  }
+
+  // The tracker itself never moves from starting a drill — only from
+  // advanceCurrentChapter's deliberate, gated step below.
+  function startChapterDrill(chapter) {
+    setSelectedSourceId(sourceIdForListKey(chapter.id))
+    setSelectedSubLists([chapter.id])
+    setIsDrilling(true)
+  }
+
+  function viewChapterWords(chapter) {
+    setSelectedSourceId(sourceIdForListKey(chapter.id))
+    setSelectedSubLists([chapter.id])
+    setIsGlancing(true)
+  }
+
+  function advanceCurrentChapter() {
+    const next = textbookState?.next
+    if (!next) return
+    requestAdvance(next, () => startChapterDrill(next))
+  }
+
+  // Rendered only when there is something to credit — an empty footnote block
+  // would still occupy space under the audio group.
+  const audioFootnote = (voicevoxCredit || audioProcessing) ? (
+    <>
+      {voicevoxCredit && <div>{renderAttributionSegments(voicevoxCredit)}</div>}
+      {audioProcessing && <div>Audio is being generated</div>}
+    </>
+  ) : null
+
   function renderPanelContent(paddingH) {
     return (
       <div style={{ padding: `16px ${paddingH}px 16px` }}>
-
-        <SectionHeader title="Settings" />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <Checkbox checked={showStreak}        onChange={() => setShowStreak(v => !v)}        label="Show streak" />
-          <Checkbox checked={showFurigana}      onChange={() => setShowFurigana(v => !v)}      label="Show furigana" />
-          <Checkbox checked={showVisualEffects} onChange={() => setShowVisualEffects(v => !v)} label="Show visual effects" />
-          <Checkbox checked={pixelFont}         onChange={() => setPixelFont(v => !v)}         label="Use pixel font" />
-          <Checkbox checked={showTranslation}   onChange={() => setShowTranslation(v => !v)}   label="Show translation" />
-          <Checkbox checked={showSentence}      onChange={() => setShowSentence(v => !v)}       label="Show sentence" />
-          {showSentence && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
-              <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Sentence source</span>
-              <Select
-                value={sentenceSource}
-                onChange={setSentenceSource}
-                options={SENTENCE_SOURCE_OPTIONS}
-                label="Sentence source"
-              />
-            </div>
-          )}
-          <Checkbox checked={showKanjiMeaning}  onChange={() => setShowKanjiMeaning(v => !v)}   label="Show kanji meaning" />
-          <Checkbox
-            checked={audioEnabled}
-            onChange={() => setAudioEnabled(v => !v)}
-            label="Enable audio"
-          />
-          {audioEnabled && (
-            <>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
-                <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Text to speech</span>
-                <Select
-                  value={audioSource}
-                  onChange={setAudioSource}
-                  options={AUDIO_SOURCE_OPTIONS}
-                  label="Text to speech"
-                />
-                {getVoicevoxCredit(audioSource) && (
-                  <span style={{ fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.35)' }}>{renderAttributionSegments(getVoicevoxCredit(audioSource))}</span>
-                )}
-                {audioProcessing && (
-                  <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>Audio is being generated</span>
-                )}
-                {audioSource === 'browser' && jaVoices.length > 0 && (
-                  <Select
-                    value={ttsVoice}
-                    onChange={setTtsVoice}
-                    options={[{ value: '', label: 'Default' }, ...jaVoices.map(v => ({ value: v.name, label: v.name }))]}
-                    label="Voice"
-                    subtext="Availability based on your device or browser"
-                  />
-                )}
-              </div>
-              <Checkbox
-                checked={sfxEnabled}
-                onChange={() => setSfxEnabled(v => !v)}
-                label="Sound effects"
-                subtext="Silent mode may mute sound effects"
-                indent={1}
-              />
-            </>
-          )}
-        </div>
-
+        <DrillSettingsPanel
+          settings={settings}
+          onChange={setSetting}
+          backupVoices={jaVoices}
+          audioFootnote={audioFootnote}
+        />
       </div>
     )
   }
@@ -1106,7 +1294,7 @@ function VocabPageScreens() {
 
         {/* Verdict pulse */}
         <div
-          className={showVisualEffects && pulseColor ? `stage-pulse-${pulseColor}` : ''}
+          className={settings.visualEffects && pulseColor ? `stage-pulse-${pulseColor}` : ''}
           style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }}
         />
 
@@ -1123,7 +1311,7 @@ function VocabPageScreens() {
             rightSlot={(
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <AuthSlot />
-                {isMobile && <SidebarHeaderToggle onClick={() => setShowOptions(true)} />}
+                {isMobile && showingDrillSettings && <SidebarHeaderToggle onClick={() => setShowOptions(true)} />}
               </div>
             )}
           />
@@ -1172,18 +1360,19 @@ function VocabPageScreens() {
               ) : (
                 <ActiveDrill
                   drill={drill}
-                  audioSource={audioEnabled ? audioSource : 'none'}
-                  sfxEnabled={audioEnabled && sfxEnabled}
-                  ttsVoice={ttsVoice}
-                  showStreak={showStreak}
+                  audioSource={audioSource}
+                  playOnFront={settings.frontAudio}
+                  playOnBack={settings.backAudio}
+                  sfxEnabled={settings.sfx}
+                  ttsVoice={settings.backupVoice}
+                  showStreak={settings.streak}
                   reviewMode={reviewMode}
-                  showFurigana={showFurigana}
-                  showTranslation={showTranslation}
-                  showSentence={showSentence}
-                  sentenceSource={sentenceSource}
-                  showKanjiMeaning={showKanjiMeaning}
-                  pixelFont={pixelFont}
-                  showVisualEffects={showVisualEffects}
+                  showFurigana={settings.furigana}
+                  showTranslation={settings.translation}
+                  showSentence={settings.sentence}
+                  showKanjiMeaning={settings.kanjiMeanings}
+                  pixelFont={settings.pixelFont}
+                  showVisualEffects={settings.visualEffects}
                   onPulse={setPulseColor}
                   isShort={isShort}
                 />
@@ -1194,11 +1383,22 @@ function VocabPageScreens() {
                   words={glanceWords}
                   availableSubLists={availableSubLists}
                   selectedSubLists={selectedSubLists}
-                  sentenceSource={sentenceSource}
                 />
               </GlanceErrorBoundary>
+            ) : showTextbookScreen ? (
+              <TextbookHomeScreen
+                state={textbookState}
+                accent={ACCENT}
+                onStart={startChapterDrill}
+                onAdvance={advanceCurrentChapter}
+                onSetCurrent={setCurrentChapter}
+                onViewWords={viewChapterWords}
+                onChangeTextbook={() => setPickerOpen(true)}
+                onOpenFreeDrill={() => setFreeDrillOpen(true)}
+              />
             ) : (
               <HomeScreen
+                sourceOptions={sourceOptions}
                 selectedSourceId={selectedSourceId}
                 onSelectSource={handleSelectSource}
                 availableSubLists={availableSubLists}
@@ -1222,19 +1422,63 @@ function VocabPageScreens() {
           <AttributionFooter sources={[
             'dictionary',
             'tanaka-corpus',
-            ...(audioEnabled && speakerIdFromAudioSource(audioSource) ? ['voicevox'] : []),
+            ...(speakerIdFromAudioSource(audioSource) ? ['voicevox'] : []),
           ]} />
         </div>
       </div>
 
-      <SettingsSidebar
-        open={showOptions}
-        onToggle={() => setShowOptions(v => !v)}
-        onClose={() => setShowOptions(false)}
+      {showingDrillSettings && (
+        <SettingsSidebar
+          open={showOptions}
+          onToggle={() => setShowOptions(v => !v)}
+          onClose={() => setShowOptions(false)}
+          isMobile={isMobile}
+        >
+          {paddingH => renderPanelContent(paddingH)}
+        </SettingsSidebar>
+      )}
+
+      <TextbookPicker
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        currentId={textbookState?.textbook.id ?? null}
+        onSelect={chooseTextbook}
+        wordCountFor={wordCountFor}
+      />
+      <SrsGateDialog
+        gate={gate}
+        chapterLabel={textbookState?.current?.label}
+        unsentCount={unsentWords.length}
+        totalCount={textbookState?.current?.wordCount}
+        onCancel={closeGate}
+        onSkip={skipGate}
+        onSend={sendAndAdvance}
         isMobile={isMobile}
-      >
-        {paddingH => renderPanelContent(paddingH)}
-      </SettingsSidebar>
+      />
+      {showTextbookScreen && (
+        <FreeDrillModal
+          open={freeDrillOpen}
+          onClose={() => setFreeDrillOpen(false)}
+          isMobile={isMobile}
+          sourceOptions={sourceOptions}
+          selectedSourceId={selectedSourceId}
+          onSelectSource={handleSelectSource}
+          reviewMode={reviewMode}
+          onChangeReviewMode={setReviewMode}
+          availableSubLists={availableSubLists}
+          selectedSubLists={selectedSubLists}
+          onToggleSubList={id => setSelectedSubLists(prev => toggle(prev, id))}
+          wordCountByList={wordCountByList}
+          reviewWordCount={reviewWordCount}
+          includeReview={includeReview}
+          onToggleIncludeReview={() => setIncludeReview(v => !v)}
+          sentenceVocabWordCount={sentenceVocabWordCount}
+          includeSentenceVocab={includeSentenceVocab}
+          onToggleIncludeSentenceVocab={() => setIncludeSentenceVocab(v => !v)}
+          onStart={() => setIsDrilling(true)}
+          onGlance={() => setIsGlancing(true)}
+        />
+      )}
 
     </div>
   )

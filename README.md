@@ -1,6 +1,8 @@
 # japanese-study
 
-My personal collection of tools to support my Japanese studies. Each module is kept separate, with integrations when relevant.  
+<img width="1118" height="761" alt="image" src="https://github.com/user-attachments/assets/90b46c0d-8d6c-4707-9d02-b447fd30b98e" />
+
+My personal collection of tools to support my Japanese studies. Working towards a public release – feel free to use in the interim! 
 
 ## Modules
 

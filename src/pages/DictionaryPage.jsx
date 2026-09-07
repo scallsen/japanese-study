@@ -16,7 +16,9 @@ import Button from '../components/Button.jsx'
 import DataList from '../components/DataList.jsx'
 import { MODULES } from '../data/modules.js'
 import { ModuleThemeProvider, useAccent } from '../context/ModuleThemeContext.jsx'
-import { SectionLabel, KanjiBreakdownEntry } from './dictionaryShared.jsx'
+import SectionHeader from '../components/SectionHeader.jsx'
+import { KanjiBreakdownEntry } from './dictionaryShared.jsx'
+import { displayFormOf } from '../lib/displayForm.js'
 
 const BG = '#1E1E1E'
 const DICTIONARY_ACCENT = MODULES.find(m => m.id === 'dictionary').accent
@@ -133,7 +135,7 @@ async function doSearch(term, offset, commonOnly) {
   const buildBase = () => {
     let q = supabase
       .from('dictionary')
-      .select('id, primary_form, kana_forms, gloss_en, pos, common')
+      .select('id, primary_form, preferred_form, kana_forms, gloss_en, pos, common, misc0:senses->0->misc')
       .order('common', { ascending: false })
     if (commonOnly) q = q.eq('common', true)
     return q
@@ -231,7 +233,7 @@ function KanjiSection({ entries, hasWords }) {
 
   return (
     <>
-      <SectionLabel label="Kanji" />
+      <SectionHeader title="Kanji" />
       <Card padding={0} style={{ overflow: expanded ? 'hidden' : 'visible', marginBottom: hasWords ? 20 : 0 }}>
         {!expanded ? (
           <div
@@ -297,15 +299,16 @@ function KanjiSection({ entries, hasWords }) {
 // Content-only — DataList's Cell wraps this; the row's own <a> and
 // hover/divider treatment come from DataList itself (navigate.href below).
 function entryRowContent(entry) {
+  const shown = displayFormOf(entry)
   const kana = entry.kana_forms?.[0]
-  const showKana = kana && kana !== entry.primary_form
+  const showKana = kana && kana !== shown
   const posLabel = shortPos(Array.isArray(entry.pos) ? entry.pos[0] : null)
   const meaning = entry.gloss_en?.split('; ').slice(0, 3).join('; ') ?? ''
 
   return (
     <div style={{ width: '100%' }}>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 5 }}>
-        <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{entry.primary_form}</span>
+        <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{shown}</span>
         {showKana && (
           <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{kana}</span>
         )}
@@ -516,7 +519,7 @@ export default function DictionaryPage() {
 
           {showResults && !loading && (
             <>
-              {kanjiResults.length > 0 && <SectionLabel label="Words" />}
+              {kanjiResults.length > 0 && <SectionHeader title="Words" />}
               <DataList
                 columns={ENTRY_ROW_COLUMNS}
                 rows={results}

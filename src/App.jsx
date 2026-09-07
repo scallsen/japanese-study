@@ -7,13 +7,17 @@ import ImmersionModule from './modules/immersion/ImmersionModule.jsx'
 import GrammarMapModule from './modules/grammar-map/GrammarMapModule.jsx'
 import StoryModule from './modules/story/StoryModule.jsx'
 import StoryReviewPage from './modules/story/StoryReviewPage.jsx'
+import AccountPage from './pages/AccountPage.jsx'
 import DictionaryPage from './pages/DictionaryPage.jsx'
 import DictionaryEntryPage from './pages/DictionaryEntryPage.jsx'
 import AnimeVocabModule from './modules/anime-vocab/AnimeVocabModule.jsx'
 import ToastLabPage from './pages/ToastLabPage.jsx'
 import StyleGuideLabPage from './pages/StyleGuideLabPage.jsx'
+import SettingsLabPage from './pages/SettingsLabPage.jsx'
 import HomeCardsLabPage from './pages/HomeCardsLabPage.jsx'
 import TextbookPickerLabPage from './pages/TextbookPickerLabPage.jsx'
+import HomeFlowLabPage from './pages/HomeFlowLabPage.jsx'
+import TextbookFlowLabPage from './pages/TextbookFlowLabPage.jsx'
 
 function getRoute() {
   // Strip any query string (e.g. '/vocab-srs/browse?deck=x&manage=1') before
@@ -47,6 +51,7 @@ export default function App() {
   if (route === '/grammar-map') return <GrammarMapModule />
   if (route === '/story') return <StoryModule />
   if (route.startsWith('/story/')) return <StoryReviewPage storyId={route.slice('/story/'.length)} />
+  if (route === '/account') return <AccountPage />
   if (route === '/dictionary') return <DictionaryPage />
   if (route.startsWith('/dictionary/entry/')) return <DictionaryEntryPage entryId={route.slice('/dictionary/entry/'.length)} />
   if (route === '/anime-vocab') return <AnimeVocabModule />
@@ -56,9 +61,15 @@ export default function App() {
   if (route === '/dev/toast-lab') return <ToastLabPage />
   // Living style guide for shared components (DataList, and whatever joins it next), not linked from the dashboard
   if (route === '/dev/style-guide') return <StyleGuideLabPage />
+  // Exploration of alternative drill-settings sidebar layouts, not linked from the dashboard
+  if (route === '/dev/settings-lab') return <SettingsLabPage />
   // Dev-only harness for the home page's two primary cards in every state, not linked from the dashboard
   if (route === '/dev/home-cards') return <HomeCardsLabPage />
   // Dev-only bench for change-textbook layout options, not linked from the dashboard
   if (route === '/dev/textbook-picker') return <TextbookPickerLabPage />
+  // Dev-only bench comparing three shapes for the learn → remember loop (home cards, Vocab/SRS indexes), not linked from the dashboard
+  if (route === '/dev/home-flow') return <HomeFlowLabPage />
+  // Round two of the above for concept B: every open question as a switch on one mock, not linked from the dashboard
+  if (route === '/dev/textbook-flow') return <TextbookFlowLabPage />
   return <DashboardPage />
 }

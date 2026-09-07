@@ -14,7 +14,7 @@ export function clearLastUsedDeckId() {
   safeLocalStorageSet(LAST_USED_DECK_KEY, '')
 }
 
-// core2000/keigo cards never store front/back inline — content is resolved from
+// Bundled-deck cards never store front/back inline — content is resolved from
 // static JSON at read time, and resolvedArrayToCardsObj strips inline content back
 // out for bundled decks on save. Any card added/moved into a bundled deck would
 // have its content silently destroyed on the next save, so callers must exclude

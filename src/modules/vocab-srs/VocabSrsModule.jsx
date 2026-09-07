@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
+import Popover from '../../components/Popover.jsx'
+import Menu from '../../components/Menu.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useProgress } from '../../hooks/useProgress.js'
-import { getDeckStats, getGlobalStats, getStateDistribution, tallyCardStates, getTodaysQueue, resolveCard, resetCardProgress, createCard, State } from './srs.js'
+import { getDeckStats, getGlobalStats, getStateDistribution, getTodaysQueue, resolveCard, resetCardProgress, createCard, State } from './srs.js'
 import { parseAnkiExport } from './import.js'
 import { initSession } from './session.js'
 import { migrateProgress, initializeDeckCards } from './migrate.js'
@@ -10,27 +12,28 @@ import WordImportPanel from './WordImportPanel.jsx'
 import { ensureDeck, createDeck, renameDeck, deleteCards } from './deckUtils.js'
 import PageHeader from '../../components/PageHeader.jsx'
 import AuthSlot from '../../components/AuthSlot.jsx'
-import SettingsSidebar, { SidebarHeaderToggle } from '../../components/SettingsSidebar.jsx'
+import SettingsSidebar from '../../components/SettingsSidebar.jsx'
 import SignInGate from '../../components/SignInGate.jsx'
 import Button from '../../components/Button.jsx'
-import FileButton from '../../components/FileButton.jsx'
 import NumberField from '../../components/NumberField.jsx'
 import ToggleButton from '../../components/ToggleButton.jsx'
 import Badge from '../../components/Badge.jsx'
 import DistributionBar from '../../components/DistributionBar.jsx'
+import DataList from '../../components/DataList.jsx'
 import { useToast } from '../../context/ToastContext.jsx'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_NAV, SUBHEADING_STYLE, FS_CAPTION, FS_CONTENT_HEADING, SUCCESS } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_NAV, FS_CAPTION, FS_CONTENT_HEADING } from '../../data/theme.js'
 import { MODULES } from '../../data/modules.js'
 import { ModuleThemeProvider, useAccent } from '../../context/ModuleThemeContext.jsx'
 import { STATE_SEGMENTS, SUSPENDED_DESCRIPTION } from './cardStates.js'
 import SectionHeader from '../../components/SectionHeader.jsx'
-import Checkbox from '../../components/Checkbox.jsx'
-import Select from '../../components/Select.jsx'
+import DrillSettingsPanel, { Row as SettingsRow } from '../../components/DrillSettingsPanel.jsx'
+import FilterCard from '../../components/FilterCard.jsx'
+import Switch from '../../components/Switch.jsx'
+import { useDrillSettings, audioSourceForVoice } from '../../hooks/useDrillSettings.js'
 import { useJaVoices } from '../../hooks/useTTS.js'
 import { useAudioGenerationStatus } from '../../hooks/useAudioGenerationStatus.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
-import { AUDIO_SOURCE_OPTIONS, DEFAULT_AUDIO_SOURCE, getVoicevoxCredit, speakerIdFromAudioSource } from '../../utils/voicevoxAudio.js'
-import { SENTENCE_SOURCE_OPTIONS, DEFAULT_SENTENCE_SOURCE } from '../../data/sentenceSource.js'
+import { getVoicevoxCredit, speakerIdFromAudioSource } from '../../utils/voicevoxAudio.js'
 import AttributionFooter from '../../components/AttributionFooter.jsx'
 import { renderAttributionSegments } from '../../utils/attributionSegments.jsx'
 import { useIsMobile } from '../../hooks/useIsMobile.js'
@@ -55,13 +58,17 @@ function DeckProgressBar({ distribution }) {
   )
 }
 
-function DeckRow({ deck, stats, onToggle, onRename }) {
-  const ACCENT = useAccent()
+// The Decks list's name column — click-to-rename (imported decks only),
+// same inline-edit behaviour the old sidebar DeckRow had. The row itself
+// navigates to the deck's browse view, so every click here has to stop that:
+// preventDefault (an ancestor <a>'s navigation is gated on the click event's
+// canceled flag) and stopPropagation both, same reasoning DataList's own
+// RowCheckbox uses for a selection control inside a navigable row.
+function DeckNameCell({ deck, stats, onRename }) {
   const [editing, setEditing] = useState(false)
   const [draftName, setDraftName] = useState(deck.name)
   const canManage = deck.source === 'imported'
-  const notStarted = stats.total === 0
-  const infoText = notStarted
+  const infoText = stats.total === 0
     ? 'not started'
     : `${stats.total} cards · ${stats.dueToday} due · ${stats.newAvailable} new`
 
@@ -73,66 +80,72 @@ function DeckRow({ deck, stats, onToggle, onRename }) {
   }
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 4,
-      padding: '8px 0',
-      borderBottom: '1px solid rgba(255,255,255,0.05)',
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ fontSize: 9, color: deck.active ? ACCENT : 'rgba(255,255,255,0.2)', flexShrink: 0 }}>
-              {deck.active ? '●' : '○'}
-            </span>
-            {editing ? (
-              <input
-                autoFocus
-                value={draftName}
-                onChange={e => setDraftName(e.target.value)}
-                onBlur={commitRename}
-                onKeyDown={e => {
-                  if (e.key === 'Enter') commitRename()
-                  if (e.key === 'Escape') { setDraftName(deck.name); setEditing(false) }
-                }}
-                style={{
-                  minWidth: 0,
-                  flex: 1,
-                  fontSize: FS_BASE,
-                  color: TEXT,
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.15)',
-                  borderRadius: 4,
-                  padding: '2px 6px',
-                  fontFamily: 'inherit',
-                  letterSpacing: TRACKING,
-                }}
-              />
-            ) : (
-              <span
-                onClick={canManage ? () => setEditing(true) : undefined}
-                title={canManage ? 'Click to rename' : undefined}
-                style={{ fontSize: FS_BASE, color: TEXT, cursor: canManage ? 'text' : 'default' }}
-              >
-                {deck.name}
-              </span>
-            )}
-          </div>
-          <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: 2 }}>{infoText}</div>
-        </div>
-        <ToggleButton active={deck.active} labels={{ on: 'On', off: 'Off' }} onClick={onToggle} />
-      </div>
-      {canManage && (
-        <a
-          href={`#/vocab-srs/browse?deck=${deck.id}&manage=1`}
-          className="srs-browse-link"
-          style={{ fontSize: FS_CAPTION, color: ACCENT }}
+    <div style={{ minWidth: 0 }}>
+      {editing ? (
+        <input
+          autoFocus
+          value={draftName}
+          onClick={e => { e.preventDefault(); e.stopPropagation() }}
+          onChange={e => setDraftName(e.target.value)}
+          onBlur={commitRename}
+          onKeyDown={e => {
+            if (e.key === 'Enter') commitRename()
+            if (e.key === 'Escape') { setDraftName(deck.name); setEditing(false) }
+          }}
+          style={{
+            minWidth: 0, width: '100%', fontSize: FS_BASE, color: TEXT,
+            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)',
+            borderRadius: 4, padding: '2px 6px', fontFamily: 'inherit', letterSpacing: TRACKING,
+          }}
+        />
+      ) : (
+        <span
+          onClick={canManage ? e => { e.preventDefault(); e.stopPropagation(); setEditing(true) } : undefined}
+          title={canManage ? 'Click to rename' : undefined}
+          style={{ fontSize: FS_BASE, color: deck.active ? TEXT : TEXT_MUTED, cursor: canManage ? 'text' : 'default' }}
         >
-          Manage cards →
-        </a>
+          {deck.name}
+        </span>
       )}
+      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: 2 }}>{infoText}</div>
     </div>
+  )
+}
+
+// A single "Import" trigger opening the two existing import flows in a
+// popover menu, rather than two separate buttons sitting side by side.
+// "Choose .txt file" still needs a real file picker, which a Menu item's
+// plain onClick can't open by itself — so this keeps its own hidden
+// <input type="file"> (the same pattern FileButton uses) and clicks it from
+// the menu selection instead of rendering FileButton inside the popover.
+function ImportMenuButton({ onFile, onOpenWordImport, isMobile }) {
+  const [open, setOpen] = useState(false)
+  const btnRef = useRef(null)
+  const inputRef = useRef(null)
+
+  const items = [
+    { id: 'txt', label: 'Choose .txt file', onClick: () => inputRef.current?.click() },
+    { id: 'text-image', label: 'Import from text / image', onClick: onOpenWordImport },
+  ]
+
+  return (
+    <>
+      <Button ref={btnRef} variant="neutral" onClick={() => setOpen(o => !o)}>Import ▾</Button>
+      <Popover open={open} onClose={() => setOpen(false)} anchorRef={btnRef} isMobile={isMobile} align="start" width={220} bodyPadding={0}>
+        <Menu items={items} onSelect={id => { setOpen(false); items.find(i => i.id === id)?.onClick() }} />
+      </Popover>
+      <input
+        ref={inputRef}
+        type="file"
+        accept=".txt"
+        style={{ display: 'none' }}
+        onChange={e => {
+          const file = e.target.files?.[0]
+          if (file) onFile(file)
+          e.target.value = ''
+        }}
+      />
+    </>
   )
 }
 
@@ -174,48 +187,14 @@ function VocabSrsHome() {
   // cards merely queued. Bumping the count at session start let an abandoned
   // session consume the day's new-card allowance without any card being studied.
   const sessionNewCardsRef = useRef(null)
-  const [importMsg, setImportMsg] = useState(null)
-  const [ankiSyncMsg, setAnkiSyncMsg] = useState(null)
   const [showWordImport, setShowWordImport] = useState(false)
   const [advanceDays, setAdvanceDays] = useState(3)
   const [showOptions, setShowOptions] = useState(() => window.innerWidth > 768)
 
-  const [showVisualEffects, setShowVisualEffects] = useState(() => {
-    const s = safeLocalStorageGet('srs-visual-effects'); return s === null ? true : s === 'true'
-  })
-  const [pixelFont, setPixelFont] = useState(() => {
-    const s = safeLocalStorageGet('srs-pixel-font'); return s === null ? true : s === 'true'
-  })
-  const [showTranslation, setShowTranslation] = useState(() => {
-    const s = safeLocalStorageGet('srs-show-translation'); return s === null ? true : s === 'true'
-  })
-  const [showFurigana, setShowFurigana] = useState(() => {
-    const s = safeLocalStorageGet('srs-show-furigana'); return s === null ? true : s === 'true'
-  })
-  const [showSentence, setShowSentence] = useState(() => {
-    const s = safeLocalStorageGet('srs-show-sentence'); return s === null ? true : s === 'true'
-  })
-  const [sentenceSource, setSentenceSource] = useState(() => safeLocalStorageGet('srs-sentence-source') ?? DEFAULT_SENTENCE_SOURCE)
-  const [showKanjiMeaning, setShowKanjiMeaning] = useState(() => {
-    const s = safeLocalStorageGet('srs-show-kanji-meaning'); return s === null ? false : s === 'true'
-  })
-  const [audioEnabled, setAudioEnabled] = useState(() => {
-    const s = safeLocalStorageGet('srs-audio-enabled'); return s === null ? true : s === 'true'
-  })
-  const [autoplayAudio, setAutoplayAudio] = useState(() => {
-    const s = safeLocalStorageGet('srs-autoplay-audio'); return s === null ? true : s === 'true'
-  })
-  const [autoplayFront, setAutoplayFront] = useState(() => {
-    const s = safeLocalStorageGet('srs-autoplay-front'); return s === null ? true : s === 'true'
-  })
-  const [autoplayBack, setAutoplayBack] = useState(() => {
-    const s = safeLocalStorageGet('srs-autoplay-back'); return s === null ? true : s === 'true'
-  })
-  const [audioSource, setAudioSource] = useState(() => safeLocalStorageGet('srs-audio-source') ?? DEFAULT_AUDIO_SOURCE)
-  const [sfxEnabled, setSfxEnabled] = useState(() => {
-    const s = safeLocalStorageGet('srs-sfx-enabled'); return s === null ? true : s === 'true'
-  })
-  const [ttsVoice, setTtsVoice] = useState(() => safeLocalStorageGet('srs-tts-voice') ?? '')
+  const { settings, set: setSetting } = useDrillSettings('srs')
+  const anyAudio = settings.frontAudio || settings.backAudio
+  const audioSource = anyAudio ? audioSourceForVoice(settings.voice) : 'none'
+  const voicevoxCredit = anyAudio ? getVoicevoxCredit(audioSource) : null
   const [dailyNewCards, setDailyNewCards] = useState(() => {
     const s = safeLocalStorageGet('srs-daily-new-cards'); return s ? parseInt(s, 10) : 10
   })
@@ -226,20 +205,6 @@ function VocabSrsHome() {
     const s = safeLocalStorageGet('srs-leech-threshold'); return s ? parseInt(s, 10) : 8
   })
 
-  useEffect(() => { safeLocalStorageSet('srs-visual-effects', showVisualEffects) }, [showVisualEffects])
-  useEffect(() => { safeLocalStorageSet('srs-pixel-font', pixelFont) }, [pixelFont])
-  useEffect(() => { safeLocalStorageSet('srs-show-translation', showTranslation) }, [showTranslation])
-  useEffect(() => { safeLocalStorageSet('srs-show-furigana', showFurigana) }, [showFurigana])
-  useEffect(() => { safeLocalStorageSet('srs-show-sentence', showSentence) }, [showSentence])
-  useEffect(() => { safeLocalStorageSet('srs-sentence-source', sentenceSource) }, [sentenceSource])
-  useEffect(() => { safeLocalStorageSet('srs-show-kanji-meaning', showKanjiMeaning) }, [showKanjiMeaning])
-  useEffect(() => { safeLocalStorageSet('srs-audio-enabled', audioEnabled) }, [audioEnabled])
-  useEffect(() => { safeLocalStorageSet('srs-autoplay-audio', autoplayAudio) }, [autoplayAudio])
-  useEffect(() => { safeLocalStorageSet('srs-autoplay-front', autoplayFront) }, [autoplayFront])
-  useEffect(() => { safeLocalStorageSet('srs-autoplay-back', autoplayBack) }, [autoplayBack])
-  useEffect(() => { safeLocalStorageSet('srs-audio-source', audioSource) }, [audioSource])
-  useEffect(() => { safeLocalStorageSet('srs-sfx-enabled', sfxEnabled) }, [sfxEnabled])
-  useEffect(() => { safeLocalStorageSet('srs-tts-voice', ttsVoice) }, [ttsVoice])
   useEffect(() => { safeLocalStorageSet('srs-daily-new-cards', dailyNewCards) }, [dailyNewCards])
   useEffect(() => { safeLocalStorageSet('srs-show-hard-easy', showHardEasy) }, [showHardEasy])
   useEffect(() => { safeLocalStorageSet('srs-leech-threshold', leechThreshold) }, [leechThreshold])
@@ -288,6 +253,14 @@ function VocabSrsHome() {
   const isMobile = useIsMobile()
   const jaVoices = useJaVoices()
   const { isProcessing: audioProcessing } = useAudioGenerationStatus()
+  // Rendered only when there is something to credit — an empty footnote block
+  // would still occupy space under the audio group.
+  const audioFootnote = (voicevoxCredit || audioProcessing) ? (
+    <>
+      {voicevoxCredit && <div>{renderAttributionSegments(voicevoxCredit)}</div>}
+      {audioProcessing && <div>Audio is being generated</div>}
+    </>
+  ) : null
 
   if (loading && !progress) return null
 
@@ -315,10 +288,39 @@ function VocabSrsHome() {
   const effectiveNewPerDay = Math.max(0, dailyNewCards - newCardsIntroducedToday)
   const { due, newCards, rescheduled } = getTodaysQueue(cardsObj, decks, { newPerDay: effectiveNewPerDay })
   const canStart = due.length > 0 || newCards.length > 0 || rescheduled.length > 0
-  // Distribution of the cards that would actually be studied if "Start review"
-  // were pressed right now — distinct from stateDistribution's whole-deck view.
-  const queueDistribution = tallyCardStates([...due, ...rescheduled, ...newCards])
   const activeDecks = deckList.filter(d => d.active)
+
+  // The Decks list's columns — name (+ inline rename), a per-deck learning-
+  // stage bar, and the on/off toggle. Both the toggle and the name's rename
+  // affordance stop the click from also firing the row's own navigate.
+  const deckColumns = [
+    {
+      key: 'name', flex: 2,
+      render: deck => <DeckNameCell deck={deck} stats={getDeckStats(cardsObj, deck.id)} onRename={name => handleRenameDeck(deck.id, name)} />,
+    },
+    {
+      key: 'dist', flex: 1.4,
+      render: deck => (
+        <div style={{ width: '100%' }}>
+          {/* getStateDistribution filters to active decks — force it here so
+              a toggled-off deck's bar still reflects its real cards, matching
+              the count text beside it (getDeckStats doesn't gate on active). */}
+          <DistributionBar
+            segments={STATE_SEGMENTS.map(s => ({ ...s, count: getStateDistribution(cardsObj, { [deck.id]: { ...deck, active: true } })[s.key] ?? 0 }))}
+            showLegend={false}
+          />
+        </div>
+      ),
+    },
+    {
+      key: 'toggle', width: 64, align: 'right',
+      render: deck => (
+        <span onClick={e => e.stopPropagation()}>
+          <ToggleButton active={deck.active} labels={{ on: 'On', off: 'Off' }} onClick={() => handleToggleDeck(deck.id)} />
+        </span>
+      ),
+    },
+  ]
 
   // Recomputes today's new-card count from cards actually introduced this
   // session — a session card that has left State.New has been studied. Returns
@@ -418,7 +420,7 @@ function VocabSrsHome() {
     const imported = parseAnkiExport(text, existingIds)
 
     if (imported.length === 0) {
-      setImportMsg('No new cards found')
+      showToast({ message: 'No new cards found' })
       return
     }
 
@@ -433,7 +435,7 @@ function VocabSrsHome() {
     const newProgress = { ...progress, decks: newDecks, cards: newCardsObj }
     setProgress(newProgress)
     await save(newProgress)
-    setImportMsg(`${imported.length} card${imported.length === 1 ? '' : 's'} imported`)
+    showToast({ message: `${imported.length} card${imported.length === 1 ? '' : 's'} imported` })
   }
 
   function buildWordImportCards(words, deckId) {
@@ -490,187 +492,45 @@ function VocabSrsHome() {
     save(newProgress)
   }
 
-  async function handleAnkiSyncFileChange(file) {
-    let syncCards
-    try {
-      syncCards = JSON.parse(await file.text())
-    } catch {
-      setAnkiSyncMsg('Invalid JSON file')
-      return
-    }
-
-    if (typeof syncCards !== 'object' || Array.isArray(syncCards)) {
-      setAnkiSyncMsg('Expected a JSON object')
-      return
-    }
-
-    // Ensure all core2000 cards exist as New before overwriting reviewed ones
-    let newProgress = progress
-    const hasCore2000Cards = Object.values(cardsObj).some(c => c.deckId === 'core2000')
-    if (!hasCore2000Cards) {
-      newProgress = initializeDeckCards(newProgress, 'core2000')
-    }
-
-    const newCardsObj = { ...newProgress.cards }
-    let count = 0
-    for (const [id, cardState] of Object.entries(syncCards)) {
-      if (typeof cardState !== 'object' || !cardState.id || !cardState.deckId) continue
-      newCardsObj[id] = cardState
-      count++
-    }
-
-    const merged = { ...newProgress, cards: newCardsObj }
-    setProgress(merged)
-    await save(merged)
-    setAnkiSyncMsg(`${count} card${count === 1 ? '' : 's'} synced`)
-  }
-
+  // Card front/back/audio/interface settings only mean something with a card
+  // actually on screen, so this is only ever mounted during an active
+  // session — see the sidebar's conditional render below. SRS Settings and
+  // Dev tools live inline in the overview's main content instead (see
+  // OverviewSettings), since there's no sidebar to put them in there.
   function renderPanelContent(paddingH) {
-    const hairline = { height: 1, background: 'rgba(255,255,255,0.08)', margin: '20px 0' }
     return (
       <div style={{ padding: `16px ${paddingH}px 16px` }}>
+        <DrillSettingsPanel
+          settings={settings}
+          onChange={setSetting}
+          backupVoices={jaVoices}
+          audioFootnote={audioFootnote}
+        />
+      </div>
+    )
+  }
 
-        {/* ── Deck Stats (global) ── */}
-        <SectionHeader title="Deck Stats" />
-        {stateDistribution.total === 0 ? (
-          <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, padding: '4px 0 8px' }}>
-            No cards yet
-          </div>
-        ) : (
-          <>
-            <DeckProgressBar distribution={stateDistribution} />
-            <a href="#/vocab-srs/browse" className="srs-browse-link" style={{ display: 'inline-block', marginTop: 12, fontSize: FS_BASE, color: ACCENT }}>
-              View all cards →
-            </a>
-          </>
-        )}
-
-        <div style={hairline} />
-
-        {/* ── Decks ── */}
-        <SectionHeader title="Decks" />
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {deckList.map(deck => (
-            <DeckRow
-              key={deck.id}
-              deck={deck}
-              stats={getDeckStats(cardsObj, deck.id)}
-              onToggle={() => handleToggleDeck(deck.id)}
-              onRename={newName => handleRenameDeck(deck.id, newName)}
-            />
-          ))}
-        </div>
-
-        <div style={hairline} />
-
-        {/* ── SRS Settings ── */}
+  function renderOverviewSettings() {
+    const hairline = { height: 1, background: 'rgba(255,255,255,0.08)', margin: '20px 0' }
+    return (
+      <div>
         <SectionHeader title="SRS Settings" />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Daily new cards</span>
-            <NumberField value={dailyNewCards} min={1} onChange={v => setDailyNewCards(Math.max(1, parseInt(v) || 1))} />
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>
-              Leech threshold
-              <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginLeft: 6 }}>lapses (0 = off)</span>
-            </span>
-            <NumberField value={leechThreshold} min={0} onChange={v => setLeechThreshold(Math.max(0, parseInt(v) || 0))} />
-          </div>
-          <Checkbox
-            checked={showHardEasy}
-            onChange={() => setShowHardEasy(v => !v)}
+        <FilterCard>
+          <SettingsRow
+            label="Daily new cards"
+            control={<NumberField value={dailyNewCards} min={1} onChange={v => setDailyNewCards(Math.max(1, parseInt(v) || 1))} />}
+          />
+          <SettingsRow
+            label={<>Leech threshold<span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginLeft: 6 }}>lapses (0 = off)</span></>}
+            control={<NumberField value={leechThreshold} min={0} onChange={v => setLeechThreshold(Math.max(0, parseInt(v) || 0))} />}
+          />
+          <SettingsRow
             label="Show Hard / Easy buttons"
+            onActivate={() => setShowHardEasy(v => !v)}
+            control={<Switch checked={showHardEasy} onChange={() => setShowHardEasy(v => !v)} label="Show Hard / Easy buttons" />}
           />
-        </div>
+        </FilterCard>
 
-        <div style={hairline} />
-
-        {/* ── Additional Settings ── */}
-        <SectionHeader title="Additional Settings" />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <Checkbox checked={showVisualEffects} onChange={() => setShowVisualEffects(v => !v)} label="Show visual effects" />
-          <Checkbox checked={pixelFont} onChange={() => setPixelFont(v => !v)} label="Use pixel font" />
-          <Checkbox checked={showTranslation} onChange={() => setShowTranslation(v => !v)} label="Show translation" />
-          <Checkbox checked={showFurigana} onChange={() => setShowFurigana(v => !v)} label="Show furigana on front" />
-          <Checkbox checked={showSentence} onChange={() => setShowSentence(v => !v)} label="Show sentence" />
-          {showSentence && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
-              <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Sentence source</span>
-              <Select
-                value={sentenceSource}
-                onChange={setSentenceSource}
-                options={SENTENCE_SOURCE_OPTIONS}
-                label="Sentence source"
-              />
-            </div>
-          )}
-          <Checkbox checked={showKanjiMeaning} onChange={() => setShowKanjiMeaning(v => !v)} label="Show kanji meaning" />
-          <Checkbox
-            checked={audioEnabled}
-            onChange={() => setAudioEnabled(v => !v)}
-            label="Enable audio"
-          />
-          {audioEnabled && (
-            <>
-              <Checkbox
-                checked={autoplayAudio}
-                onChange={() => setAutoplayAudio(v => !v)}
-                label="Auto-play"
-                indent={1}
-              />
-              {autoplayAudio && (
-                <>
-                  <Checkbox
-                    checked={autoplayFront}
-                    onChange={() => setAutoplayFront(v => !v)}
-                    label="On front"
-                    indent={2}
-                  />
-                  <Checkbox
-                    checked={autoplayBack}
-                    onChange={() => setAutoplayBack(v => !v)}
-                    label="On back (word then sentence)"
-                    indent={2}
-                  />
-                </>
-              )}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 20 }}>
-                <span style={{ fontSize: FS_BASE, color: 'rgba(255,255,255,0.7)', fontFamily: FONT }}>Text to speech</span>
-                <Select
-                  value={audioSource}
-                  onChange={setAudioSource}
-                  options={AUDIO_SOURCE_OPTIONS}
-                  label="Text to speech"
-                />
-                {getVoicevoxCredit(audioSource) && (
-                  <span style={{ fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.35)' }}>{renderAttributionSegments(getVoicevoxCredit(audioSource))}</span>
-                )}
-                {audioProcessing && (
-                  <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>Audio is being generated</span>
-                )}
-                {audioSource === 'browser' && jaVoices.length > 0 && (
-                  <Select
-                    value={ttsVoice}
-                    onChange={setTtsVoice}
-                    options={[{ value: '', label: 'Default' }, ...jaVoices.map(v => ({ value: v.name, label: v.name }))]}
-                    label="Voice"
-                    subtext="Availability based on your device or browser"
-                  />
-                )}
-              </div>
-              <Checkbox
-                checked={sfxEnabled}
-                onChange={() => setSfxEnabled(v => !v)}
-                label="Sound effects"
-                subtext="Silent mode may mute sound effects"
-                indent={1}
-              />
-            </>
-          )}
-        </div>
-
-        {/* ── Dev (DEV only) ── */}
         {import.meta.env.DEV && globalStats.totalCards > 0 && (
           <>
             <div style={hairline} />
@@ -718,7 +578,6 @@ function VocabSrsHome() {
             </div>
           </>
         )}
-
       </div>
     )
   }
@@ -743,19 +602,18 @@ function VocabSrsHome() {
             initialSession={session}
             onCardSave={handleCardSave}
             onDone={handleDrillDone}
-            showTranslation={showTranslation}
-            showFurigana={showFurigana}
-            showSentence={showSentence}
-            sentenceSource={sentenceSource}
-            showKanjiMeaning={showKanjiMeaning}
-            pixelFont={pixelFont}
-            showVisualEffects={showVisualEffects}
-            audioEnabled={audioEnabled}
-            autoplayFront={audioEnabled && autoplayAudio && autoplayFront}
-            autoplayBack={audioEnabled && autoplayAudio && autoplayBack}
+            showTranslation={settings.translation}
+            showFurigana={settings.furigana}
+            showSentence={settings.sentence}
+            showKanjiMeaning={settings.kanjiMeanings}
+            pixelFont={settings.pixelFont}
+            showVisualEffects={settings.visualEffects}
+            audioEnabled={anyAudio}
+            autoplayFront={settings.frontAudio}
+            autoplayBack={settings.backAudio}
             audioSource={audioSource}
-            sfxEnabled={audioEnabled && sfxEnabled}
-            ttsVoice={ttsVoice}
+            sfxEnabled={settings.sfx}
+            ttsVoice={settings.backupVoice}
             showHardEasy={showHardEasy}
             leechThreshold={leechThreshold}
             isMobile={isMobile}
@@ -766,98 +624,74 @@ function VocabSrsHome() {
           <div style={{ height: '100%', display: 'flex', flexDirection: 'column', color: TEXT }}>
             <PageHeader
               crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'SRS' }]}
-              rightSlot={(
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <AuthSlot />
-                  {isMobile && <SidebarHeaderToggle onClick={() => setShowOptions(true)} />}
-                </div>
-              )}
+              rightSlot={<AuthSlot />}
             />
 
             <main style={{ flex: 1, overflowY: 'auto', padding: '28px 24px', display: 'flex', flexDirection: 'column' }}>
-              <div style={{ maxWidth: 480, margin: '0 auto', width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <div style={{ maxWidth: 820, margin: '0 auto', width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
                 <div style={{ flex: 1 }}>
 
                 {activeDecks.length === 0 ? (
-                  <div style={{ textAlign: 'center', paddingTop: 60 }}>
+                  <div style={{ textAlign: 'center', padding: '40px 0 32px' }}>
                     <div style={{ fontSize: FS_NAV, color: TEXT, marginBottom: 8 }}>No active decks</div>
-                    <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>
-                      Enable a deck in the settings panel to begin
-                    </div>
+                    <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>Turn one on below to begin.</div>
                   </div>
                 ) : (
-                  <>
-                    {/* Global summary */}
-                    <div style={{ marginBottom: 20 }}>
-                      <div style={{ fontSize: FS_CONTENT_HEADING, color: TEXT, letterSpacing: TRACKING, marginBottom: 14 }}>
-                        {canStart
-                          ? `${due.length + rescheduled.length} due · ${newCards.length} new · ~${Math.ceil((due.length + rescheduled.length + newCards.length) * 0.25) || '<1'} min`
-                          : 'Nothing due'}
+                  <div style={{ marginBottom: 28 }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+                      <div>
+                        <div style={{ fontSize: FS_CONTENT_HEADING, color: TEXT, letterSpacing: TRACKING }}>
+                          {canStart
+                            ? `${due.length + rescheduled.length} due · ${newCards.length} new · ~${Math.ceil((due.length + rescheduled.length + newCards.length) * 0.25) || '<1'} min`
+                            : 'Nothing due'}
+                        </div>
+                        <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginTop: 4 }}>
+                          {activeDecks.length} active {activeDecks.length === 1 ? 'deck' : 'decks'} · {globalStats.totalCards} cards
+                        </div>
                       </div>
-                      <DeckProgressBar distribution={queueDistribution} />
-                    </div>
-
-                    {/* Per-deck breakdown */}
-                    {activeDecks.length > 1 && (
-                      <div style={{ marginBottom: 24 }}>
-                        {activeDecks.map(deck => {
-                          const ds = getDeckStats(cardsObj, deck.id)
-                          return (
-                            <div key={deck.id} style={{
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                              padding: '5px 0',
-                              borderBottom: '1px solid rgba(255,255,255,0.05)',
-                            }}>
-                              <span style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>{deck.name}</span>
-                              <span style={{ fontSize: FS_BASE, color: TEXT }}>
-                                {ds.dueToday} due · {ds.newAvailable} new
-                              </span>
-                            </div>
-                          )
-                        })}
-                      </div>
-                    )}
-
-                    <div style={{ marginBottom: 28 }}>
-                      <Button variant="accent-outline" size="lg" fullWidth onClick={() => handleStartReview(effectiveNewPerDay)} disabled={!canStart}>
+                      <Button variant="accent-outline" size="lg" onClick={() => handleStartReview(effectiveNewPerDay)} disabled={!canStart}>
                         {canStart ? `Start review (${due.length + rescheduled.length + newCards.length})` : 'Nothing due'}
                       </Button>
                     </div>
-
-                    <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 20 }}>
-                      <div style={{ ...SUBHEADING_STYLE, color: TEXT_MUTED, marginBottom: 10 }}>
-                        Import
+                    {stateDistribution.total > 0 && (
+                      <div style={{ marginTop: 16 }}>
+                        <DeckProgressBar distribution={stateDistribution} />
+                        <a href="#/vocab-srs/browse" className="srs-browse-link" style={{ display: 'inline-block', marginTop: 12, fontSize: FS_BASE, color: ACCENT }}>
+                          View all cards →
+                        </a>
                       </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-                          <FileButton accept=".txt" onFile={handleFileChange}>Choose .txt file</FileButton>
-                          {importMsg && (
-                            <span style={{ fontSize: FS_BASE, color: SUCCESS }}>{importMsg}</span>
-                          )}
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-                          <FileButton accept=".json" onFile={handleAnkiSyncFileChange}>Sync from Anki (.json)</FileButton>
-                          {ankiSyncMsg && (
-                            <span style={{ fontSize: FS_BASE, color: SUCCESS }}>{ankiSyncMsg}</span>
-                          )}
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-                          <Button variant="neutral" onClick={() => setShowWordImport(true)}>Import from text / image</Button>
-                        </div>
-                      </div>
-                      <div style={{ marginTop: 8, fontSize: 12, color: 'rgba(255,255,255,0.2)' }}>
-                        {Object.keys(cardsObj).length} total cards
-                      </div>
-                    </div>
-                  </>
+                    )}
+                  </div>
                 )}
+
+                <div style={{ marginBottom: 28 }}>
+                  <SectionHeader title={`Decks · ${activeDecks.length} of ${deckList.length} on`} />
+                  <DataList
+                    columns={deckColumns}
+                    rows={deckList}
+                    maxWidth="100%"
+                    navigate={{ href: deck => `#/vocab-srs/browse?deck=${deck.id}` }}
+                  />
+                </div>
+
+                <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 20, marginBottom: 28 }}>
+                  {renderOverviewSettings()}
+                </div>
+
+                <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 20 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                    <ImportMenuButton onFile={handleFileChange} onOpenWordImport={() => setShowWordImport(true)} isMobile={isMobile} />
+                  </div>
+                  <div style={{ marginTop: 8, fontSize: 12, color: 'rgba(255,255,255,0.2)' }}>
+                    {Object.keys(cardsObj).length} total cards
+                  </div>
+                </div>
                 </div>
 
                 <AttributionFooter sources={[
                   'dictionary',
                   'tanaka-corpus',
-                  ...(audioEnabled && speakerIdFromAudioSource(audioSource) ? ['voicevox'] : []),
+                  ...(speakerIdFromAudioSource(audioSource) ? ['voicevox'] : []),
                 ]} />
               </div>
             </main>
@@ -865,14 +699,19 @@ function VocabSrsHome() {
         )}
       </div>
 
-      <SettingsSidebar
-        open={showOptions}
-        onToggle={() => setShowOptions(v => !v)}
-        onClose={() => setShowOptions(false)}
-        isMobile={isMobile}
-      >
-        {renderPanelContent}
-      </SettingsSidebar>
+      {/* Card front/back/audio/interface settings only mean something with a
+          card on screen — no sidebar at all on the overview; SRS Settings
+          and Dev tools live inline there instead (renderOverviewSettings). */}
+      {session && (
+        <SettingsSidebar
+          open={showOptions}
+          onToggle={() => setShowOptions(v => !v)}
+          onClose={() => setShowOptions(false)}
+          isMobile={isMobile}
+        >
+          {renderPanelContent}
+        </SettingsSidebar>
+      )}
 
       <WordImportPanel
         open={showWordImport}
