@@ -2,10 +2,10 @@ import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../../lib/supabase.js'
 import { syncEpisodeVocab } from './api.js'
 import { useDictionaryEntries } from '../../hooks/useDictionaryEntries.js'
-import { briefGloss } from '../../utils/dictionaryEntryLookup.js'
 import { useProgress } from '../../hooks/useProgress.js'
 import { migrateProgress } from '../vocab-srs/migrate.js'
 import { buildJmdictIdCardIndex, resolveStatus } from './srsStatusResolver.js'
+import { isDictReady, buildEpisodeVocabRow, buildDrillWords } from './episodeVocabRows.js'
 import Button from '../../components/Button.jsx'
 import DataList from '../../components/DataList.jsx'
 import ActionBar from '../../components/ActionBar.jsx'
@@ -98,6 +98,11 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
 
   const jmdictIds = useMemo(() => occurrences.map(o => o.jmdict_id).filter(Boolean), [occurrences])
   const { entries: dictEntries } = useDictionaryEntries(jmdictIds, true)
+  // Every jmdict_id must have resolved before a drill can start — rows built
+  // from a not-yet-loaded dictEntry fall back to raw Jiten surface_form/no
+  // gloss (see episodeVocabRows.js), and Start Drill snapshots `rows` at
+  // click time with no re-resolution once the drill is running.
+  const dictReady = isDictReady(jmdictIds, dictEntries)
 
   useEffect(() => {
     let cancelled = false
@@ -124,19 +129,9 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
     return () => { cancelled = true }
   }, [episode.id, episode.synced_at])
 
-  const rows = useMemo(() => occurrences.map(o => {
-    const dictEntry = o.jmdict_id ? dictEntries[o.jmdict_id] : null
-    const status = resolveStatus(o.jmdict_id, cardIndex)
-    return {
-      ...o,
-      displayForm: dictEntry?.primary_form ?? o.surface_form,
-      reading: dictEntry?.kana_forms?.[0] ?? null,
-      gloss: briefGloss(dictEntry),
-      jlptLevel: dictEntry?.jlpt_level ?? null,
-      jlptLevelInferred: dictEntry?.jlpt_level_inferred ?? false,
-      status,
-    }
-  }), [occurrences, dictEntries, cardIndex])
+  const rows = useMemo(() => occurrences.map(o =>
+    buildEpisodeVocabRow(o, o.jmdict_id ? dictEntries[o.jmdict_id] : null, resolveStatus(o.jmdict_id, cardIndex))
+  ), [occurrences, dictEntries, cardIndex])
 
   const candidateRows = useMemo(() => rows.filter(r => r.jmdict_id), [rows])
   const grammarCount = useMemo(() => candidateRows.filter(r => r.is_grammar).length, [candidateRows])
@@ -222,16 +217,7 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
   }
 
   function handleStartDrill() {
-    const words = rows
-      .filter(r => selected.has(r.id))
-      .map(r => ({
-        id: `anime-vocab-${r.id}`,
-        kanji: r.displayForm,
-        kana: r.reading ?? r.displayForm,
-        english: r.gloss ?? '',
-        sentence: null,
-        jmdictId: r.jmdict_id,
-      }))
+    const words = buildDrillWords(rows, selected)
     if (words.length) onStartDrill(words)
   }
 
@@ -300,8 +286,8 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
       />
 
       <ActionBar>
-        <Button variant="primary" size="xl" onClick={handleStartDrill} disabled={selected.size === 0}>
-          Start Drill ({selected.size})
+        <Button variant="primary" size="xl" onClick={handleStartDrill} disabled={selected.size === 0 || !dictReady}>
+          {dictReady ? `Start Drill (${selected.size})` : 'Loading definitions…'}
         </Button>
       </ActionBar>
     </div>
