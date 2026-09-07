@@ -31,9 +31,9 @@ function formatDate(iso) {
   return new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
 }
 
-export default function ImmersionReader({ article, onBack }) {
+export default function ImmersionReader({ article, defaultLevel = 'simplified', onBack }) {
   const { user, signIn } = useAuth()
-  const [showSimplified, setShowSimplified] = useState(!!article.body_simple)
+  const [showSimplified, setShowSimplified] = useState(defaultLevel !== 'original' && !!article.body_simple)
   const [popup, setPopup] = useState(null) // { token, vocabEntry, anchorRect, idx }
   const [showFurigana, setShowFurigana] = useState(true)
   const { data: srsData, save: saveSrs } = useProgress('vocab-srs')
