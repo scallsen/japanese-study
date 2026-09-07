@@ -61,7 +61,10 @@ export function useVoicevoxPlayer() {
   // Resolves true when something was actually played, so a caller can fall back
   // to speech synthesis. It used to swallow every failure, which meant a word
   // whose clip was missing played nothing at all rather than falling back.
-  async function play(url) {
+  // `onEnded` (e.g. SRS's word-then-sentence sequencing) fires once this clip
+  // finishes on its own — guarded by the same token check so a later
+  // play()/stop() that superseded this one doesn't also fire a stale chain.
+  async function play(url, { onEnded } = {}) {
     stop()
     const token = tokenRef.current
     try {
@@ -70,6 +73,7 @@ export function useVoicevoxPlayer() {
       const source = ctx.createBufferSource()
       source.buffer = buffer
       source.connect(ctx.destination)
+      if (onEnded) source.onended = () => { if (token === tokenRef.current) onEnded() }
       source.start()
       sourceRef.current = source
       return true

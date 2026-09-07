@@ -11,6 +11,7 @@ import { answerCard, undoLastAnswer, isComplete, getSessionStats, getCurrentCard
 import { useTTS } from '../../hooks/useTTS.js'
 import { useSFX } from '../../hooks/useSFX.js'
 import { useGamepad } from '../../hooks/useGamepad.js'
+import { useVoicevoxPlayer } from '../../hooks/useVoicevoxPlayer.js'
 import { useKanjiMeanings } from '../../hooks/useKanjiMeanings.js'
 import { getVoicevoxAudioUrl, speakerIdFromAudioSource } from '../../utils/voicevoxAudio.js'
 import { kanjiCharsOf } from '../../utils/kanjiMeaningLookup.js'
@@ -252,6 +253,7 @@ export default function VocabSrsDrill({
 
   const tts = useTTS(ttsVoice)
   const sfx = useSFX()
+  const voicevox = useVoicevoxPlayer()
 
   // Priority: real recorded audio (imported Anki decks) > generated Voicevox audio > browser TTS.
   function resolveAudioUrl(card) {
@@ -274,85 +276,29 @@ export default function VocabSrsDrill({
   const transitioningRef = useRef(false)
   useEffect(() => { transitioningRef.current = transitioning }, [transitioning])
 
-  const audioCurrentRef = useRef(null)
-  const audioPreloadRef = useRef({ audio: null, filename: null })
-
-  // These two take resolved URLs directly (not filenames) so they work for both
+  // Web Audio API playback (via the shared useVoicevoxPlayer hook), not
+  // HTMLMediaElement.play() — the latter re-checks the browser's
+  // autoplay/user-activation policy on every call, and a gamepad button press
+  // never grants user activation per spec, so play() intermittently rejected
+  // and silently fell back to TTS even when the Voicevox clip existed (the
+  // same bug VocabPage's useVoicevoxPlayer.js was built to fix; this module
+  // just hadn't been migrated to it). The old pause()-on-supersede approach
+  // also raced: pausing an in-flight <audio> before its 'playing' event fired
+  // aborted its play() promise and looked exactly like a failed clip, which
+  // is why undoing/re-showing a card intermittently played TTS too — the
+  // hook's token-based cancellation treats a superseded in-flight play as
+  // "not a failure" instead.
+  // These take resolved URLs directly (not filenames) so they work for both
   // the imported-audio bucket (via getAudioUrl) and the voicevox bucket (via getVoicevoxAudioUrl).
-  // Generated clips are keyed by what is spoken and are not recorded per card,
-  // so any given URL may 404 — resolveAudioUrl below can no longer predict it.
-  // Resolves false in that case so the caller can hand the word to the backup
-  // voice instead of playing nothing, which is what a learner hears otherwise.
-  function started(audio) {
-    if (audio.error) return Promise.resolve(false)
-    return new Promise(resolve => {
-      let settled = false
-      const done = ok => { if (!settled) { settled = true; resolve(ok) } }
-      audio.addEventListener('error', () => done(false), { once: true })
-      audio.addEventListener('playing', () => done(true), { once: true })
-      audio.play().then(() => {}, () => done(false))
-    })
-  }
-
-  const playAudioRef = useRef()
-  playAudioRef.current = (url) => {
-    if (!url) return Promise.resolve(false)
-    if (audioCurrentRef.current) {
-      audioCurrentRef.current.onended = null
-      audioCurrentRef.current.pause()
-    }
-    if (audioPreloadRef.current.filename === url && audioPreloadRef.current.audio) {
-      audioCurrentRef.current = audioPreloadRef.current.audio
-      audioPreloadRef.current = { audio: null, filename: null }
-    } else {
-      audioCurrentRef.current = new Audio(url)
-    }
-    return started(audioCurrentRef.current)
-  }
-
-  // Plays wordUrl, then sentenceUrl when word finishes.
-  const playSequenceRef = useRef()
-  playSequenceRef.current = (wordUrl, sentenceUrl) => {
-    if (!wordUrl) return Promise.resolve(false)
-    if (audioCurrentRef.current) {
-      audioCurrentRef.current.onended = null
-      audioCurrentRef.current.pause()
-    }
-    let wordAudio
-    if (audioPreloadRef.current.filename === wordUrl && audioPreloadRef.current.audio) {
-      wordAudio = audioPreloadRef.current.audio
-      audioPreloadRef.current = { audio: null, filename: null }
-    } else {
-      wordAudio = new Audio(wordUrl)
-    }
-    audioCurrentRef.current = wordAudio
-    if (sentenceUrl) {
-      wordAudio.onended = () => {
-        const sentAudio = new Audio(sentenceUrl)
-        audioCurrentRef.current = sentAudio
-        sentAudio.play().catch(() => {})
-      }
-    }
-    return started(wordAudio)
-  }
 
   // The clip first, the backup voice when there is no clip or it fails to
   // load. `sequence` also plays the sentence clip after the word one.
   async function speakCard(card, urls, { sequence } = {}) {
     if (!card) return
-    const played = sequence
-      ? await playSequenceRef.current(urls.word, urls.sentence)
-      : await playAudioRef.current(urls.word)
+    if (!urls.word) { voicevox.stop(); tts.speak(card.kana ?? card.front ?? ''); return }
+    const chainSentence = sequence && urls.sentence ? () => voicevox.play(urls.sentence) : undefined
+    const played = await voicevox.play(urls.word, { onEnded: chainSentence })
     if (!played) tts.speak(card.kana ?? card.front ?? '')
-  }
-
-  const stopAudioRef = useRef()
-  stopAudioRef.current = () => {
-    if (audioCurrentRef.current) {
-      audioCurrentRef.current.onended = null
-      audioCurrentRef.current.pause()
-      audioCurrentRef.current = null
-    }
   }
 
   const sessionRef = useRef(session)
@@ -367,7 +313,7 @@ export default function VocabSrsDrill({
     if (!currentCard) return
     if (sfxEnabled) sfx.play(rating === Rating.Again ? 'flip_card_wrong' : 'flip_card_correct')
     tts.cancel()
-    stopAudioRef.current()
+    voicevox.stop()
     seenRef.current.add(currentCard.id)
     const { session: newSession, updatedCard, isLeech } = answerCard(
       sessionRef.current, currentCard, rating, { leechThreshold }
@@ -407,7 +353,7 @@ export default function VocabSrsDrill({
     if (transitioningRef.current) return
     const { session: prevSession, revertedCard } = undoLastAnswer(sessionRef.current)
     if (prevSession === sessionRef.current) return
-    stopAudioRef.current()
+    voicevox.stop()
     setTransitioning(true)
     setExitDir('undo')
     const exitDelay = showVisualEffects ? UNDO_EXIT_MS : 0
@@ -490,10 +436,8 @@ export default function VocabSrsDrill({
   // Preload the current card's word audio as soon as the card appears.
   useEffect(() => {
     const url = resolveAudioUrl(currentCardForMemo).word
-    if (!url || audioPreloadRef.current.filename === url) return
-    const audio = new Audio(url)
-    audio.preload = 'auto'
-    audioPreloadRef.current = { audio, filename: url }
+    voicevox.trimPreload(url ? [url] : [])
+    if (url) voicevox.preload(url)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentCardForMemo?.id, audioSource])
 
@@ -501,7 +445,7 @@ export default function VocabSrsDrill({
   useEffect(() => {
     if (!audioEnabled || !autoplayFront) return
     const urls = resolveAudioUrl(currentCardForMemo)
-    stopAudioRef.current()
+    voicevox.stop()
     const t = setTimeout(() => {
       if (flippedRef.current) return
       speakCard(currentCardForMemo, urls)
@@ -686,7 +630,7 @@ export default function VocabSrsDrill({
               <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
                 <Button variant="ghost-muted" size="sm" onClick={() => speakCard(currentCard, currentAudioUrls)}>▶ Word</Button>
                 {currentAudioUrls.sentence && (
-                  <Button variant="ghost-muted" size="sm" onClick={() => playAudioRef.current(currentAudioUrls.sentence)}>▶ Sentence</Button>
+                  <Button variant="ghost-muted" size="sm" onClick={() => voicevox.play(currentAudioUrls.sentence)}>▶ Sentence</Button>
                 )}
               </div>
             )}
