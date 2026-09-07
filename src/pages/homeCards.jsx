@@ -279,7 +279,19 @@ export function SegmentedPrimary({ size = 'lg', label, onClick, menuItems = [], 
   )
 }
 
-export function NewCard({ loading, state, onStart, onAdvance, onChangeTextbook }) {
+// Signed-out progress on this card lives in this browser only (see the
+// storage audit in CLAUDE.md) — it's never at risk of leaking anyone else's
+// data, but it also vanishes if the learner clears their browser or switches
+// devices, so the card says so rather than letting that be a surprise.
+function SignedOutNotice() {
+  return (
+    <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>
+      Sign in to save this progress across devices.
+    </div>
+  )
+}
+
+export function NewCard({ loading, state, signedOut, onStart, onAdvance, onChangeTextbook }) {
   const accent = VOCAB_MODULE.accent
 
   if (loading) {
@@ -338,6 +350,7 @@ export function NewCard({ loading, state, onStart, onAdvance, onChangeTextbook }
       }
     >
       {body}
+      {signedOut && <SignedOutNotice />}
     </PrimaryCard>
   )
 }

@@ -89,6 +89,12 @@ const NEW_STATES = [
     note: 'Wrapping stress test',
     props: { state: textbookState('marugoto-a1-katsudou', { drilledCount: 3, pointer: 'marugoto-a1-katsudou-t3' }) },
   },
+  {
+    key: 'signed-out',
+    label: 'Signed out, textbook picked',
+    note: 'Local-only — the sign-in nudge',
+    props: { state: textbookState('nsm-n3-kanji', { drilledCount: 4, pointer: 'nsm-n3-kanji-w1d5' }), signedOut: true },
+  },
 ]
 
 const REVIEW_STATES = [
