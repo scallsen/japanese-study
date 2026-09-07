@@ -48,7 +48,7 @@ export default function SignInDialog({ open, onClose, onProvider, onEmail }) {
   }
 
   return (
-    <Modal open={open} onClose={onClose} title="Sign in" size="sm" isMobile={isMobile}>
+    <Modal open={open} onClose={onClose} title="Sign in or create account" size="sm" isMobile={isMobile}>
       {sent ? (
         <div style={{ fontSize: FS_BASE, lineHeight: 1.6 }}>
           Check your email for a sign-in link.
