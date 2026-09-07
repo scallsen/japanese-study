@@ -150,6 +150,10 @@ export default function ImmersionReader({ article, onBack }) {
             </div>
           )}
 
+          <div style={{ fontSize: FS_BASE - 2, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.7, marginBottom: 12 }}>
+            This article was written by AI based on real news topics and may contain inaccuracies.
+          </div>
+
           <div style={{ marginBottom: 40 }}>
             <NewspaperLayout
               title={article.title}

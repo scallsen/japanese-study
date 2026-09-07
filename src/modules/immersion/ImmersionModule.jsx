@@ -135,9 +135,12 @@ function ImmersionScreens() {
             </div>
           ) : (
             <>
-              <div style={{ marginBottom: 8 }}>
+              <div style={{ marginBottom: 8, display: 'flex', flexDirection: 'column', gap: 4 }}>
                 <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
                   Recent reading — {articles.length} {articles.length === 1 ? 'item' : 'items'}
+                </div>
+                <div style={{ fontSize: FS_BASE - 2, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.7 }}>
+                  Articles are written by AI based on real news topics and may contain inaccuracies.
                 </div>
               </div>
               {articles.map(article => (
