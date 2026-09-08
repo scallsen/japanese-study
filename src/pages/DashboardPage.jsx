@@ -23,9 +23,10 @@ import { getGlobalStats, getStateDistribution, getTodaysQueue } from '../modules
 import { STATE_SEGMENTS } from '../modules/vocab-srs/cardStates.js'
 import { safeLocalStorageGet } from '../utils/storage.js'
 import { takePendingToast } from '../utils/pendingToast.js'
+import { supabase } from '../lib/supabase.js'
 import {
-  FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE,
-  SPACE_4, SPACE_12, SPACE_16, SPACE_24,
+  FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION,
+  SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SEGMENT_COLORS,
 } from '../data/theme.js'
 
 const SECONDARY_MODULES = MODULES.filter(m => m.tier !== 'primary')
@@ -63,6 +64,7 @@ function summariseSrs(raw) {
     activeDecks: global.activeDecks,
     learned: global.learned,
     totalReviews: progress.totalReviews ?? 0,
+    reviewLog: progress.reviewLog ?? {},
     distribution: getStateDistribution(cards, decks),
     canStart: due.length > 0 || newCards.length > 0 || rescheduled.length > 0,
     estimatedMinutes: global.estimatedMinutes,
@@ -85,6 +87,22 @@ export default function DashboardPage() {
   const { data: animeTracking } = useProgress('anime-vocab-tracking')
 
   const [pickerOpen, setPickerOpen] = useState(false)
+
+  // Stories aren't a useProgress namespace (they're rows in their own shared
+  // `stories` table, see CLAUDE.md), so the sidebar's count is its own
+  // head-only query rather than reusing StoryModule's list fetch.
+  const [storiesGenerated, setStoriesGenerated] = useState(null)
+  useEffect(() => {
+    if (!user) { setStoriesGenerated(null); return }
+    let cancelled = false
+    supabase.from('stories').select('id', { count: 'exact', head: true }).eq('user_id', user.id)
+      .then(({ count, error }) => {
+        if (cancelled) return
+        if (error) { console.error('[DashboardPage] stories count failed:', error); return }
+        setStoriesGenerated(count ?? 0)
+      })
+    return () => { cancelled = true }
+  }, [user])
 
   // Shows a toast handed over by a page that redirected here and then
   // unmounted — currently account deletion. Reading clears it, so StrictMode's
@@ -138,11 +156,11 @@ export default function DashboardPage() {
   const stats = (
     <StatsPanel
       columns={sidebarBelow && !isMobile ? 3 : 1}
-      textbookState={textbookState}
       signedOut={signedOut}
       srs={srs}
       articlesRead={Object.keys(immersionProgress?.read ?? {}).length}
       seriesTracked={Object.keys(animeTracking?.tracked ?? {}).length}
+      storiesGenerated={storiesGenerated}
     />
   )
 
@@ -155,7 +173,20 @@ export default function DashboardPage() {
       letterSpacing: TRACKING,
       color: TEXT,
     }}>
-      <PageHeader crumbs={[{ label: 'Japanese Study' }]} rightSlot={<AuthSlot />} />
+      <PageHeader crumbs={[{ label: 'Japanese Study' }]} rightSlot={<AuthSlot />}>
+        {/* Home page only — PageHeader's crumb row alone is what every other
+            page uses for navigation, so the tagline lives here rather than
+            inside PageHeader itself. */}
+        <div style={{
+          padding: `0 calc(24px + env(safe-area-inset-right)) ${SPACE_16}px calc(24px + env(safe-area-inset-left))`,
+          fontFamily: FONT,
+          letterSpacing: TRACKING,
+          fontSize: FS_BASE,
+          color: TEXT_MUTED,
+        }}>
+          Drill and memorize Japanese vocabulary.
+        </div>
+      </PageHeader>
 
       <main style={{
         flex: 1,
@@ -198,7 +229,7 @@ export default function DashboardPage() {
               {sidebarBelow && stats}
 
               <div>
-                <SectionHeader title="More tools" />
+                <SectionHeader title="Explore" />
                 <div style={{
                   display: 'grid',
                   gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(240px, 1fr))',
@@ -248,7 +279,16 @@ export default function DashboardPage() {
 
 // Same three groups either way — `columns` only decides whether they stack in
 // the right-hand rail or sit side by side in the strip under the cards.
-function StatsPanel({ columns, textbookState, signedOut, srs, articlesRead, seriesTracked }) {
+//
+// Signed-out is the only state that dims the whole block (a real signed-in
+// learner with zero cards still has real Modules/Activity data worth
+// showing at full strength — only "–" placeholders there, not the dormant
+// treatment). Reuses ModuleCard's existing disabled opacity rather than
+// inventing a second "dormant" visual language (grayscale/desaturation has
+// no precedent anywhere else in the app).
+function StatsPanel({ columns, signedOut, srs, articlesRead, seriesTracked, storiesGenerated }) {
+  const hasVocabData = !signedOut && srs && srs.totalCards > 0
+
   return (
     <aside style={{
       display: columns > 1 ? 'grid' : 'flex',
@@ -256,42 +296,46 @@ function StatsPanel({ columns, textbookState, signedOut, srs, articlesRead, seri
       flexDirection: 'column',
       gap: SPACE_24,
       minWidth: 0,
+      opacity: signedOut ? 0.45 : 1,
     }}>
       <div>
-        <SectionHeader title="Textbook" />
-        {textbookState ? (
-          <>
-            <StatRow label="Chapters done" value={`${textbookState.doneCount} / ${textbookState.chapters.length}`} />
-            <StatRow label="Words drilled" value={textbookState.wordsDrilled} />
-            <StatRow label="Up next" value={textbookState.current?.drilled && textbookState.next ? textbookState.next.label : textbookState.current?.label ?? '—'} />
-          </>
-        ) : (
-          <Muted>No textbook chosen yet.</Muted>
-        )}
-      </div>
-
-      <div>
-        <SectionHeader title="Reviews" />
-        {signedOut ? (
-          <Muted>Sign in to see review stats.</Muted>
-        ) : srs && srs.totalCards > 0 ? (
+        <SectionHeader title="Vocabulary" />
+        {hasVocabData ? (
           <>
             <div style={{ marginBottom: SPACE_12 }}>
               <DistributionBar segments={STATE_SEGMENTS.map(s => ({ ...s, count: srs.distribution[s.key] ?? 0 }))} />
             </div>
             <StatRow label="Cards" value={srs.totalCards} />
             <StatRow label="Learned" value={srs.learned} />
-            <StatRow label="Reviews done" value={srs.totalReviews} />
           </>
         ) : (
-          <Muted>No cards yet.</Muted>
+          <>
+            <StatRow label="Cards" value="–" />
+            <StatRow label="Learned" value="–" />
+          </>
         )}
       </div>
 
       <div>
-        <SectionHeader title="Reading" />
-        <StatRow label="Articles read" value={articlesRead} />
-        <StatRow label="Series tracked" value={seriesTracked} />
+        <SectionHeader title="Activity" />
+        <ActivityGrid reviewLog={signedOut ? {} : (srs?.reviewLog ?? {})} />
+      </div>
+
+      <div>
+        <SectionHeader title="Modules" />
+        {signedOut ? (
+          <>
+            <ModuleLine label="Articles read" capability="Reads real news articles" />
+            <ModuleLine label="Series tracked" capability="Tracks series you follow" />
+            <ModuleLine label="Stories generated" capability="Generates stories from words you know" />
+          </>
+        ) : (
+          <>
+            <ModuleLine label="Articles read" value={articlesRead} />
+            <ModuleLine label="Series tracked" value={seriesTracked} />
+            <ModuleLine label="Stories generated" value={storiesGenerated ?? '–'} />
+          </>
+        )}
       </div>
     </aside>
   )
@@ -306,8 +350,85 @@ function StatRow({ label, value }) {
   )
 }
 
-function Muted({ children }) {
-  return <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>{children}</div>
+// "Unit tracked — count", one flowing line rather than a two-column stat row
+// — deliberately different from StatRow above, since the unit-first phrasing
+// only reads naturally as a sentence fragment, not split to opposite edges.
+// Signed out, there's nothing to count for any of these (Articles
+// read/Series tracked normally have a local-only value even signed out, but
+// showing that here would undercut the sign-in nudge the rest of the
+// sidebar is making) — `capability` swaps the count for what the module does.
+function ModuleLine({ label, value, capability }) {
+  return (
+    <div style={{ padding: `${SPACE_4}px 0`, fontSize: FS_BASE }}>
+      {capability ? (
+        <span style={{ color: TEXT_MUTED }}>{capability}</span>
+      ) : (
+        <>
+          <span style={{ color: TEXT_MUTED }}>{label}</span>
+          <span style={{ color: TEXT_MUTED }}> — </span>
+          <span style={{ color: TEXT }}>{value}</span>
+        </>
+      )}
+    </div>
+  )
+}
+
+const ACTIVITY_WEEKS = 12
+const ACTIVITY_CELL = 12
+const ACTIVITY_GAP = 3
+
+// Reuses SEGMENT_COLORS' learning→young→mature ramp — the app's one
+// "progressively more" ordinal green scale — for a different ordinal
+// quantity (review volume instead of SRS card maturity) rather than
+// inventing a second green scale for the same visual idea.
+function activityColor(count) {
+  if (count <= 0) return 'rgba(255,255,255,0.06)'
+  if (count <= 3) return SEGMENT_COLORS.learning
+  if (count <= 7) return SEGMENT_COLORS.young
+  return SEGMENT_COLORS.mature
+}
+
+// GitHub-contributions-style grid: one column per week, one row per weekday,
+// most recent week trailing on the right. `reviewLog` is a sparse
+// { 'YYYY-MM-DD': count } map (see vocab-srs progress shape in CLAUDE.md) —
+// an empty map (signed out, or no reviews yet) renders every cell at the
+// zero tier rather than hiding the grid, so the layout stays identical.
+function ActivityGrid({ reviewLog }) {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const totalDays = ACTIVITY_WEEKS * 7
+  const days = []
+  for (let i = totalDays - 1; i >= 0; i--) {
+    const d = new Date(today)
+    d.setDate(d.getDate() - i)
+    const key = d.toISOString().split('T')[0]
+    days.push({ key, count: reviewLog[key] ?? 0 })
+  }
+
+  const weeks = []
+  for (let i = 0; i < days.length; i += 7) weeks.push(days.slice(i, i + 7))
+  const total = days.reduce((sum, d) => sum + d.count, 0)
+
+  return (
+    <div>
+      <div style={{ display: 'flex', gap: ACTIVITY_GAP, overflowX: 'auto' }}>
+        {weeks.map((week, wi) => (
+          <div key={wi} style={{ display: 'flex', flexDirection: 'column', gap: ACTIVITY_GAP }}>
+            {week.map(day => (
+              <div
+                key={day.key}
+                title={`${day.key}: ${day.count} review${day.count === 1 ? '' : 's'}`}
+                style={{ width: ACTIVITY_CELL, height: ACTIVITY_CELL, borderRadius: 2, background: activityColor(day.count), flexShrink: 0 }}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: SPACE_8 }}>
+        {total} review{total === 1 ? '' : 's'} in the last {ACTIVITY_WEEKS} weeks
+      </div>
+    </div>
+  )
 }
 
 // ── Footer ────────────────────────────────────────────────────────────────────

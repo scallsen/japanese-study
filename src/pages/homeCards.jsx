@@ -307,6 +307,7 @@ export function NewCard({ loading, state, signedOut, onStart, onAdvance, onChang
       <PrimaryCard
         accent={accent}
         title="Practice"
+        subtitle="Drill words from your study materials."
         actions={<ActionsRow><Button size="lg" onClick={onChangeTextbook}>Choose textbook</Button></ActionsRow>}
       >
         <TextbookCarousel />
@@ -371,8 +372,10 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
       <PrimaryCard
         accent={accent}
         title="Review"
-        subtitle="Spaced repetition for the words you've studied. Sign in to sync your decks across devices."
-        actions={<ActionsRow><Button size="lg" onClick={onSignIn}>Create account</Button></ActionsRow>}
+        subtitle="Long-term memorization for the words you've drilled."
+        // Weaker than Practice's "Choose textbook" on purpose — this is the
+        // optional card, not the primary action on the page.
+        actions={<ActionsRow><Button size="lg" variant="neutral" onClick={onSignIn}>Create account</Button></ActionsRow>}
       />
     )
   }

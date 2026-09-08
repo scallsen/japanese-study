@@ -375,11 +375,16 @@ function VocabSrsHome() {
   function handleDrillDone(updatedSessionCards, goodCount) {
     const newCardsObj = { ...cardsObj, ...resolvedArrayToCardsObj(updatedSessionCards, decks) }
     const newCardDayUpdate = computeNewCardDay(newCardsObj)
+    // Same goodCount the dashboard's Activity grid and totalReviews both read
+    // from, so the two numbers can never drift apart.
+    const reviewLog = { ...(progress.reviewLog ?? {}) }
+    if (goodCount > 0) reviewLog[todayStr] = (reviewLog[todayStr] ?? 0) + goodCount
     const newProgress = {
       ...progress,
       cards: newCardsObj,
       lastSession: new Date().toISOString(),
       totalReviews: (progress.totalReviews ?? 0) + goodCount,
+      reviewLog,
       ...(newCardDayUpdate ? { newCardDay: newCardDayUpdate } : {}),
     }
     sessionNewCardsRef.current = null
