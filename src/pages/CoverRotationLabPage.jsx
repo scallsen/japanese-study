@@ -100,8 +100,24 @@ function useCoverRotation(count, intervalMs) {
 
 // Same crop TextbookCover already uses (the 5/32-per-side transparent
 // gutter trimmed off), just centered inside a square wrapper instead of
-// abutting a rectangular one — so the artwork itself is never distorted or
-// cropped any further than it already is everywhere else in the app.
+// abutting a rectangular one. The image itself must always render at its
+// full natural square size — shrinking *its own* width to the cropped
+// width (rather than the crop window's width) is what stretched it
+// non-uniformly the first time around. The crop window does the clipping;
+// the image never changes shape.
+function CroppedArt({ book, className, artWidth, artLeft, gutter }) {
+  return (
+    <div style={{ position: 'absolute', top: 0, left: artLeft, width: artWidth, height: COVER_SIZE, overflow: 'hidden' }}>
+      <img
+        src={book.icon}
+        alt=""
+        className={className}
+        style={{ width: COVER_SIZE, height: COVER_SIZE, marginLeft: -gutter, imageRendering: 'pixelated', display: 'block' }}
+      />
+    </div>
+  )
+}
+
 function CoverSquare({ current, outgoing, enterClass, exitClass, size = COVER_SIZE }) {
   const scale = size / COVER_SIZE
   const gutter = COVER_GUTTER_FRACTION * COVER_SIZE
@@ -112,20 +128,22 @@ function CoverSquare({ current, outgoing, enterClass, exitClass, size = COVER_SI
     <div style={{ width: size, height: size, position: 'relative', flexShrink: 0, overflow: 'hidden', perspective: 500 }}>
       <div style={{ position: 'absolute', inset: 0, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
         {outgoing && (
-          <img
+          <CroppedArt
             key={`out-${outgoing.cycleId}`}
-            src={COVERS[outgoing.index].icon}
-            alt=""
+            book={COVERS[outgoing.index]}
             className={exitClass}
-            style={{ position: 'absolute', top: 0, left: artLeft, width: artWidth, height: COVER_SIZE, imageRendering: 'pixelated' }}
+            artWidth={artWidth}
+            artLeft={artLeft}
+            gutter={gutter}
           />
         )}
-        <img
+        <CroppedArt
           key={`in-${current}`}
-          src={COVERS[current].icon}
-          alt=""
+          book={COVERS[current]}
           className={enterClass}
-          style={{ position: 'absolute', top: 0, left: artLeft, width: artWidth, height: COVER_SIZE, imageRendering: 'pixelated' }}
+          artWidth={artWidth}
+          artLeft={artLeft}
+          gutter={gutter}
         />
       </div>
     </div>
