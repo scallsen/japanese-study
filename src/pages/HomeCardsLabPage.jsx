@@ -63,7 +63,7 @@ const NEW_STATES = [
     key: 'in-progress',
     label: 'Current chapter drilled',
     note: 'Start next + Continue current',
-    props: { state: textbookState('nsm-n3-kanji', { drilledCount: 4, pointer: 'nsm-n3-kanji-w1d5' }) },
+    props: { state: textbookState('nsm-n3-kanji', { drilledCount: 4, pointer: 'nsm-n3-kanji-w1d4' }) },
   },
   {
     key: 'next-untouched',

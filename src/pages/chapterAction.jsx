@@ -17,9 +17,9 @@ export function chapterPrimaryAction(state, { onStart, onAdvance, onChangeTextbo
   }
   if (current.drilled && next) {
     return {
-      label: `Start ${next.label}`,
-      onClick: onAdvance,
-      menuItems: [{ id: 'redo', label: `Redo ${current.label}`, onClick: () => onStart(current) }],
+      label: `Redo ${current.label}`,
+      onClick: () => onStart(current),
+      menuItems: [{ id: 'next', label: 'Next chapter', onClick: onAdvance }],
       body: <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>{current.label} drilled ✓</div>,
     }
   }
