@@ -1147,7 +1147,7 @@ Populated by `scripts/import-kanjidic2.mjs` (accepts raw XML zip or pre-converte
 **Self-contained module** — `src/modules/story/`. Generates original Japanese written content (stories, fake news articles, dialogue transcripts) constrained to vocabulary the learner already knows.
 
 Two routes, two components:
-- `#/story` → `StoryModule.jsx` — the overview: vocabulary source / format / length / grammar picker, "Generate", and a "Recent stories" section listing the most recently generated stories **across all users** (public feed, visible whether signed in or not).
+- `#/story` → `StoryModule.jsx` — the overview: vocabulary source / format / length / grammar picker, "Generate", and a single "Stories" section merging the signed-in user's own stories with curated shared examples into one recency-ordered list (visible whether signed in or not — signed-out visitors see just the examples).
 - `#/story/:id` → `StoryReviewPage.jsx` — the reading + comprehension-question view for one generated story. Breadcrumb is `Japanese Study / Story generator / Review story`.
 
 **Generation requires sign-in** — the Generate button is disabled (with an inline "Sign in to generate stories" hint) until `useAuth()` returns a `user`; everything else on the page (source/format pickers, context preview, browsing recent stories) works signed out. On generate, `StoryModule` inserts the result directly into the `stories` table (see below) with `user_id: user.id` and a client-generated `crypto.randomUUID()`, then navigates to `#/story/<id>` (`window.location.hash = ...`, the same cross-page navigation pattern used by breadcrumb links — `App.jsx`'s `hashchange` listener picks it up). `StoryReviewPage` fetches the story by id directly from `stories` (`supabase.from('stories').select(...).eq('id', storyId).maybeSingle()`) — it does not refetch or regenerate anything, and works for any visitor regardless of who generated the story. "New content" on the review page navigates back to `#/story`.
@@ -1168,7 +1168,7 @@ Two routes, two components:
 
 Stories are **not** stored via `useProgress` — they live in their own table, unlike every other module's private per-user `progress` payload. Only the owner (`user_id`) can insert; there is no update/delete policy (no edit/delete UI).
 
-**A story is private to its author unless `shared` is set.** This was not always so — the table originally had a `using (true)` select policy and the module showed one "Recent stories" feed of *everyone's* stories, which is wrong once the app has more than one user. `shared` is a curation flag, flipped by hand in the SQL editor on the handful of stories meant as public examples; there is deliberately no UI for it, since users are not publishing to each other. `StoryModule` renders the two groups separately ("Your stories" / "Examples") using two queries rather than one filtered client-side, so a long example list can't crowd out the user's own work. Signed-out visitors see only the examples, which RLS enforces on its own — the client does no filtering of its own for access.
+**A story is private to its author unless `shared` is set.** This was not always so — the table originally had a `using (true)` select policy and the module showed one "Recent stories" feed of *everyone's* stories, which is wrong once the app has more than one user. `shared` is a curation flag, flipped by hand in the SQL editor on the handful of stories meant as public examples (seeded via `scripts/seed-example-stories.mjs`); there is deliberately no UI for it, since users are not publishing to each other. `StoryModule` fetches the two sets via separate queries (so a long example list can't push the user's own recent stories out of the top N before the merge happens), then merges and re-sorts them by `created_at` into one "Stories" list — there is no separate "Examples" section. Signed-out visitors see only the examples, which RLS enforces on its own — the client does no filtering of its own for access.
 
 ```sql
 create table if not exists stories (
@@ -1201,7 +1201,7 @@ grant select, delete on stories to service_role;
 create index if not exists stories_created_at_idx on stories (created_at desc);
 ```
 
-`StoryModule.jsx` runs two queries, each for the newest `MAX_RECENT_STORIES` (20) rows (`id, title, format, created_at` only — full content is fetched lazily per-story by `StoryReviewPage`) ordered by `created_at desc`: one filtered to `user_id`, one to `shared`. Older stories are simply excluded from the list, not deleted — there is no cleanup job (same reasoning as `articles`, see Immersion section).
+`StoryModule.jsx` runs two queries, each for the newest `MAX_RECENT_STORIES` (20) rows (`id, title, format, created_at` only — full content is fetched lazily per-story by `StoryReviewPage`) ordered by `created_at desc`: one filtered to `user_id`, one to `shared`. The two results are deduped (an own story flagged `shared` counts once), merged, re-sorted by `created_at`, and truncated back to `MAX_RECENT_STORIES` for display as one list under a single `SectionHeader title="Stories"`. Older stories are simply excluded from the list, not deleted — there is no cleanup job (same reasoning as `articles`, see Immersion section).
 
 ### Key files
 
