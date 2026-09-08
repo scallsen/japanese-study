@@ -231,6 +231,14 @@ export default function DashboardPage() {
                 <div style={{
                   display: 'grid',
                   gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(240px, 1fr))',
+                  // 1fr rows on an intrinsically-sized grid resolve to the
+                  // tallest row's own height, applied to every row — the
+                  // standard trick for equal-height cards across wrapped
+                  // rows. Grid's default per-row stretch already does this
+                  // within a single row; this is what's needed once a row
+                  // only has one card in it (the single-column mobile stack)
+                  // and there's no neighbour in that row to stretch against.
+                  gridAutoRows: '1fr',
                   gap: 10,
                 }}>
                   {SECONDARY_MODULES.map(mod => (
