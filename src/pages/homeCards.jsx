@@ -259,18 +259,17 @@ function ReviewPlaceholder() {
 // breakpoint the row becomes a column and every child is stretched to fill
 // it (`fullWidth` cloned onto each — both Button and SegmentedPrimary
 // support it), same shape as a modal's stacked primary/secondary actions.
-// The secondary (always the second child — a ghost Button, never
-// SegmentedPrimary) also drops to `size="md"`: stacked on its own row, its
-// own padding sits directly against the card's bottom padding, and being
-// transparent that padding reads as dead space rather than as a button —
-// shrinking it tightens that without shrinking the primary's tap target.
+// Both keep the size they were given (`lg`, at every real call site) rather
+// than shrinking the secondary to `md` — that used to be here to tighten a
+// transparent `ghost` button's own dead-space padding, but the secondary is
+// `variant="quiet"` now (a real bordered button, see Button.jsx), so
+// shrinking it just made it a visibly different height from the primary
+// above it for no reason.
 export function ActionsRow({ children }) {
   const isMobile = useIsMobile()
   const items = isMobile
-    ? Children.map(children, (child, i) => (
-        isValidElement(child)
-          ? cloneElement(child, { fullWidth: true, ...(i > 0 ? { size: 'md' } : {}) })
-          : child
+    ? Children.map(children, child => (
+        isValidElement(child) ? cloneElement(child, { fullWidth: true }) : child
       ))
     : children
   return (
@@ -375,7 +374,7 @@ export function NewCard({ loading, state, onStart, onAdvance, onChangeTextbook }
   const { textbook, chapters, doneCount, hasWords } = state
   const complete = doneCount === chapters.length
   const cover = <TextbookCover icon={textbook.icon} accent={accent} onChangeTextbook={onChangeTextbook} />
-  const viewChapters = <Button variant="ghost" size="lg" onClick={() => navigate('#/vocab')}>View all</Button>
+  const viewChapters = <Button variant="quiet" size="lg" onClick={() => navigate('#/vocab')}>View all</Button>
 
   if (!hasWords) {
     return (
@@ -460,7 +459,7 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
           <Button size="lg" disabled={!canStart} onClick={() => navigate('#/vocab-srs?start=1')}>
             {canStart ? `Review ${due + newToday} cards` : 'Nothing due'}
           </Button>
-          <Button variant="ghost" size="lg" onClick={() => navigate('#/vocab-srs')}>Manage decks</Button>
+          <Button variant="quiet" size="lg" onClick={() => navigate('#/vocab-srs')}>Manage decks</Button>
         </ActionsRow>
       }
     />
