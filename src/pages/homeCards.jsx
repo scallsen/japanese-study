@@ -37,7 +37,7 @@ function navigate(hash) {
 // deliberate, not incidental: it makes the two cards match heights because
 // they're told to, rather than relying on the parent grid's default stretch
 // staying that way.
-export function PrimaryCard({ accent, title, subtitle, cover, progress, actions, children, tightActions = false }) {
+export function PrimaryCard({ accent, title, subtitle, cover, progress, actions, children }) {
   // Stacked one-per-row, a card has no neighbour to line up with, so the
   // floor that keeps the pair squarish side by side would only add dead air.
   const isMobile = useIsMobile()
@@ -65,10 +65,7 @@ export function PrimaryCard({ accent, title, subtitle, cover, progress, actions,
         )}
 
         {children}
-        {/* Try-it, easy to revert: tightActions skips the bottom-pinning
-            spacer above so actions sit right after content instead — used
-            only on the two true empty states for now. */}
-        {!tightActions && <div style={{ flex: 1, minHeight: SPACE_8 }} />}
+        <div style={{ flex: 1, minHeight: SPACE_8 }} />
         {actions}
       </Card>
     </ModuleThemeProvider>
@@ -349,7 +346,6 @@ export function NewCard({ loading, state, signedOut, onStart, onAdvance, onChang
         title="Practice"
         subtitle="Drill words from your study materials"
         actions={<ActionsRow><Button size="lg" onClick={onChangeTextbook}>Choose textbook</Button></ActionsRow>}
-        tightActions
       >
         <TextbookCarousel />
       </PrimaryCard>
@@ -417,7 +413,6 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
         // Weaker than Practice's "Choose textbook" on purpose — this is the
         // optional card, not the primary action on the page.
         actions={<ActionsRow><Button size="lg" variant="neutral" onClick={onSignIn}>Create account</Button></ActionsRow>}
-        tightActions
       >
         <ReviewPlaceholder />
       </PrimaryCard>

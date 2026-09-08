@@ -471,6 +471,9 @@ button, input, select, textarea {
 .textbook-marquee__track {
   animation: textbook-marquee-drift 42s linear infinite;
 }
+.textbook-marquee:hover .textbook-marquee__track {
+  animation-play-state: paused;
+}
 @media (prefers-reduced-motion: reduce) {
   .textbook-marquee__track { animation: none; }
 }
