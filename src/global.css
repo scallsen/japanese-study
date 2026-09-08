@@ -471,41 +471,8 @@ button, input, select, textarea {
 .textbook-marquee__track {
   animation: textbook-marquee-drift 42s linear infinite;
 }
-.textbook-marquee:hover .textbook-marquee__track {
-  animation-play-state: paused;
-}
 @media (prefers-reduced-motion: reduce) {
   .textbook-marquee__track { animation: none; }
-}
-
-/* Review card placeholder — hover-only 3D flip between a front/back SVG
-   pair, CSS-only so it needs no useState (see the StrictMode hover rule
-   above). Try-it: delete this block plus ReviewPlaceholder in
-   homeCards.jsx to fall back to a single static image. */
-.review-flip-card {
-  perspective: 600px;
-}
-.review-flip-card__inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transition: transform 400ms;
-  transform-style: preserve-3d;
-}
-.review-flip-card:hover .review-flip-card__inner {
-  transform: rotateY(180deg);
-}
-.review-flip-card__face {
-  position: absolute;
-  inset: 0;
-  display: block;
-  backface-visibility: hidden;
-}
-.review-flip-card__face--back {
-  transform: rotateY(180deg);
-}
-@media (prefers-reduced-motion: reduce) {
-  .review-flip-card__inner { transition: none; }
 }
 
 /* Textbook picker rows (the real picker and the layout bench). Every one of
