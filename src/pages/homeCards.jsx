@@ -37,7 +37,7 @@ function navigate(hash) {
 // deliberate, not incidental: it makes the two cards match heights because
 // they're told to, rather than relying on the parent grid's default stretch
 // staying that way.
-export function PrimaryCard({ accent, title, subtitle, cover, progress, actions, children }) {
+export function PrimaryCard({ accent, title, subtitle, cover, progress, actions, children, tightActions = false }) {
   // Stacked one-per-row, a card has no neighbour to line up with, so the
   // floor that keeps the pair squarish side by side would only add dead air.
   const isMobile = useIsMobile()
@@ -65,7 +65,10 @@ export function PrimaryCard({ accent, title, subtitle, cover, progress, actions,
         )}
 
         {children}
-        <div style={{ flex: 1, minHeight: SPACE_8 }} />
+        {/* Try-it, easy to revert: tightActions skips the bottom-pinning
+            spacer above so actions sit right after content instead — used
+            only on the two true empty states for now. */}
+        {!tightActions && <div style={{ flex: 1, minHeight: SPACE_8 }} />}
         {actions}
       </Card>
     </ModuleThemeProvider>
@@ -182,22 +185,40 @@ function TextbookCarousel() {
   )
 }
 
-const REVIEW_PLACEHOLDER_SRC = '/placeholder-svg/review-flashcards.svg'
+const REVIEW_PLACEHOLDER_FRONT = '/placeholder-svg/review-flashcard-front.svg'
+const REVIEW_PLACEHOLDER_BACK = '/placeholder-svg/review-flashcard-back.svg'
 
-// Review's empty-state image — a flashcard pile, same pixel-art treatment
-// and size as TextbookCover's own artwork so the two empty states read as
-// one visual language. Placeholder per the redesign brief; swapped for a
-// final asset separately.
+// Both faces share the same empty top/bottom margin baked into their 32px
+// source canvas (rows 0-5 and 26-32 are blank on both) — cropped out the
+// same way TextbookCover crops its covers' horizontal gutter: render each
+// face at full size, clip the excess via a shorter overflow:hidden
+// container, shift up with a negative margin so the visible art starts at
+// the container's own top edge.
+const CARD_ART_SOURCE = 32
+const CARD_ART_TOP = 5
+const CARD_ART_BOTTOM = 26
+const CARD_ART_SCALE = COVER_SIZE / CARD_ART_SOURCE
+const CARD_ART_HEIGHT = Math.round((CARD_ART_BOTTOM - CARD_ART_TOP) * CARD_ART_SCALE)
+const CARD_ART_OFFSET = Math.round(CARD_ART_TOP * CARD_ART_SCALE)
+
+// Review's empty-state image — a flashcard, front/back as separate SVGs,
+// hover-flipping between them (CSS-only 3D flip, see .review-flip-card* in
+// global.css — no useState per the StrictMode hover rule). Placeholder per
+// the redesign brief; swapped for a final asset separately. Try-it, easy to
+// discard: delete this component (render <img src={REVIEW_PLACEHOLDER_FRONT}
+// .../> instead) plus the CSS block if the flip doesn't earn its place.
 function ReviewPlaceholder() {
+  const faceStyle = {
+    width: COVER_SIZE, height: COVER_SIZE, marginTop: -CARD_ART_OFFSET,
+    imageRendering: 'pixelated',
+  }
   return (
-    <img
-      src={REVIEW_PLACEHOLDER_SRC}
-      alt=""
-      // marginLeft: auto pushes it to the card's right edge — same trick
-      // PageHeader's rightSlot uses — since Card's body is a column flex
-      // container this item doesn't otherwise get horizontal alignment.
-      style={{ width: COVER_SIZE, height: COVER_SIZE, imageRendering: 'pixelated', display: 'block', marginLeft: 'auto' }}
-    />
+    <div className="review-flip-card" style={{ width: COVER_SIZE, height: CARD_ART_HEIGHT, overflow: 'hidden' }}>
+      <div className="review-flip-card__inner">
+        <img src={REVIEW_PLACEHOLDER_FRONT} alt="" className="review-flip-card__face" style={faceStyle} />
+        <img src={REVIEW_PLACEHOLDER_BACK} alt="" className="review-flip-card__face review-flip-card__face--back" style={faceStyle} />
+      </div>
+    </div>
   )
 }
 
@@ -326,8 +347,9 @@ export function NewCard({ loading, state, signedOut, onStart, onAdvance, onChang
       <PrimaryCard
         accent={accent}
         title="Practice"
-        subtitle="Drill words from your study materials."
+        subtitle="Drill words from your study materials"
         actions={<ActionsRow><Button size="lg" onClick={onChangeTextbook}>Choose textbook</Button></ActionsRow>}
+        tightActions
       >
         <TextbookCarousel />
       </PrimaryCard>
@@ -391,10 +413,11 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
       <PrimaryCard
         accent={accent}
         title="Review"
-        subtitle="Long-term memorization for the words you've drilled."
+        subtitle="Long-term memorization for vocabulary"
         // Weaker than Practice's "Choose textbook" on purpose — this is the
         // optional card, not the primary action on the page.
         actions={<ActionsRow><Button size="lg" variant="neutral" onClick={onSignIn}>Create account</Button></ActionsRow>}
+        tightActions
       >
         <ReviewPlaceholder />
       </PrimaryCard>
