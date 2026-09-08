@@ -398,6 +398,7 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
         accent={accent}
         title="Review"
         subtitle="No cards yet. Finish a chapter and send its words here."
+        cover={<ReviewPlaceholder />}
         actions={<ActionsRow><Button size="lg" variant="neutral" onClick={() => navigate('#/vocab-srs')}>Manage decks</Button></ActionsRow>}
       />
     )
@@ -411,6 +412,7 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
       accent={accent}
       title="Reviews"
       subtitle={headline}
+      cover={<ReviewPlaceholder />}
       actions={
         <ActionsRow>
           <Button size="lg" disabled={!canStart} onClick={() => navigate('#/vocab-srs?start=1')}>
