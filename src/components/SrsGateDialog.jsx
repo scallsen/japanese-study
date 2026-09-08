@@ -13,13 +13,13 @@ export default function SrsGateDialog({ gate, chapterLabel, unsentCount, totalCo
     <Modal
       open
       onClose={onCancel}
-      title={`Send ${chapterLabel} to the SRS first?`}
+      title={`Send ${chapterLabel} to your review deck first?`}
       size="sm"
       isMobile={isMobile}
       footer={
         <>
           <Button variant="neutral" onClick={onSkip}>Skip</Button>
-          <Button onClick={onSend}>Add {unsentCount} to SRS</Button>
+          <Button onClick={onSend}>Add {unsentCount} to review deck</Button>
         </>
       }
     >

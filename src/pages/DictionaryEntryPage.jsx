@@ -259,7 +259,7 @@ export default function DictionaryEntryPage({ entryId }) {
   const showDecksSection = vocabDrillMatches.length > 0 || !!user
 
   const deckRows = useMemo(() => {
-    const rows = vocabDrillMatches.map(label => ({ id: `vocab-${label}`, label, href: '#/vocab', meta: 'Vocab Drill' }))
+    const rows = vocabDrillMatches.map(label => ({ id: `vocab-${label}`, label, href: '#/vocab', meta: 'Vocabulary' }))
     if (user) {
       for (const m of srsMatches) {
         rows.push({ id: m.cardId, label: m.deckName, href: '#/vocab-srs', meta: SRS_STATE_LABELS[m.state] ?? m.state })
@@ -352,7 +352,7 @@ export default function DictionaryEntryPage({ entryId }) {
                   )}
                   {user && srsMatches.length === 0 && (
                     <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.6, padding: '2px 2px', marginTop: deckRows.length > 0 ? 8 : 0 }}>
-                      Not in any of your SRS decks yet.
+                      Not in any of your review decks yet.
                     </div>
                   )}
                 </>

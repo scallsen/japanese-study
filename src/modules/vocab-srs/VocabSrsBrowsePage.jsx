@@ -280,8 +280,8 @@ function BrowseCards() {
   if (!user) {
     return (
       <SignInGate
-        crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'SRS', href: '#/vocab-srs' }, { label: 'Browse cards' }]}
-        title="Sign in to browse your SRS cards"
+        crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Reviews', href: '#/vocab-srs' }, { label: 'Browse cards' }]}
+        title="Sign in to browse your review cards"
         onSignIn={signIn}
       />
     )
@@ -300,7 +300,7 @@ function BrowseCards() {
       <PageHeader
         crumbs={[
           { label: 'Japanese Study', href: '#/' },
-          { label: 'SRS', onClick: () => { window.location.hash = '#/vocab-srs' } },
+          { label: 'Reviews', onClick: () => { window.location.hash = '#/vocab-srs' } },
           { label: 'Browse cards' },
         ]}
         rightSlot={<AuthSlot />}

@@ -202,7 +202,7 @@ function StoryGenerator() {
         ...(src.lists ?? []).map(l => ({ value: `vocab:${l.id}`, label: l.label })),
       ],
     })),
-    { label: 'SRS decks', options: srsDecks.map(d => ({ value: `srs:${d.id}`, label: d.name })) },
+    { label: 'Review decks', options: srsDecks.map(d => ({ value: `srs:${d.id}`, label: d.name })) },
   ], [srsDecks])
 
   const isSrsSource = source.startsWith('srs:')
@@ -284,7 +284,7 @@ function StoryGenerator() {
             <FilterRow key="source" label="Vocabulary">
               <Select value={source} onChange={setSource} variant="inline" options={sourceOptions} />
               {isSrsSource && !user && (
-                <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: 8 }}>Sign in to use SRS decks as a source.</div>
+                <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: 8 }}>Sign in to use review decks as a source.</div>
               )}
             </FilterRow>
             {isSrsSource && user && (
@@ -320,7 +320,7 @@ function StoryGenerator() {
                     : context
                       ? `${context.wordCount} words in context`
                       : isSrsSource && srsLoading
-                        ? 'Loading SRS data…'
+                        ? 'Loading review data…'
                         : 'No words available'}
                 </span>
                 {/* Held back until the key status resolves, so a user on their

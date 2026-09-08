@@ -174,7 +174,7 @@ export default function WordImportPanel({ open, onClose, decks, isMobile, onAdd,
                 decks={decks}
                 isMobile={isMobile}
                 disabled={selectedCount === 0}
-                buttonLabel={`Add ${selectedCount} word${selectedCount === 1 ? '' : 's'} to SRS`}
+                buttonLabel={`Add ${selectedCount} word${selectedCount === 1 ? '' : 's'} to review deck`}
                 onAdd={handleAdd}
                 onCreateAndAdd={handleCreateAndAdd}
               />

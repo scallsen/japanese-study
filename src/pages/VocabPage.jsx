@@ -541,7 +541,7 @@ function DoneScreen({
                 decks={decks}
                 isMobile={isMobile}
                 disabled={selected.size === 0}
-                buttonLabel={`Add ${selected.size} to SRS`}
+                buttonLabel={`Add ${selected.size} to review deck`}
                 onAdd={handleAdd}
                 onCreateAndAdd={handleCreateAndAdd}
               />
@@ -969,7 +969,7 @@ function HomeScreen({ sourceOptions, selectedSourceId, onSelectSource, available
       </div>
 
       <ActionBar maxWidth={680}>
-        <Button variant="neutral" size="xl" disabled>Send to SRS</Button>
+        <Button variant="neutral" size="xl" disabled>Send to review deck</Button>
         <Button variant="neutral" size="xl" onClick={onGlance} disabled={!canStart}>Preview</Button>
         <Button size="xl" onClick={onStart} disabled={!canStart}>
           Start review
@@ -1303,10 +1303,10 @@ function VocabPageScreens() {
           <PageHeader
             crumbs={
               isDrilling
-                ? [{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary Training', onClick: () => setIsDrilling(false) }, { label: 'Reviewing' }]
+                ? [{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary', onClick: () => setIsDrilling(false) }, { label: 'Reviewing' }]
                 : isGlancing
-                ? [{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary Training', onClick: () => setIsGlancing(false) }, { label: 'Preview' }]
-                : [{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary Training' }]
+                ? [{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary', onClick: () => setIsGlancing(false) }, { label: 'Preview' }]
+                : [{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary' }]
             }
             rightSlot={(
               <div style={{ display: 'flex', alignItems: 'center' }}>

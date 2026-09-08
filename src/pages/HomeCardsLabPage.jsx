@@ -113,7 +113,7 @@ const REVIEW_STATES = [
   {
     key: 'no-cards',
     label: 'Signed in, no cards',
-    note: 'Nothing sent to the SRS yet',
+    note: 'Nothing sent to a review deck yet',
     props: { summary: null },
   },
   {

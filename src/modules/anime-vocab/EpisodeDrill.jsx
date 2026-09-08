@@ -187,10 +187,10 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onBack,
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 8 }}>
             <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, letterSpacing: '0.08em' }}>WORDS FROM THIS DRILL</span>
             {requiresSignIn ? (
-              <Button variant="neutral" size="sm" onClick={onSignIn}>Sign in to add to SRS</Button>
+              <Button variant="neutral" size="sm" onClick={onSignIn}>Sign in to add to review deck</Button>
             ) : (
               <Button variant="accent-outline" size="sm" onClick={handleAdd} disabled={selected.size === 0}>
-                Add {selected.size} to SRS
+                Add {selected.size} to review deck
               </Button>
             )}
           </div>
