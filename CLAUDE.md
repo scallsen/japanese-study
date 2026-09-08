@@ -251,7 +251,7 @@ Mirrors katsuyou-drill's UI exactly. Speed-mode only (no text input). Card front
 | `src/pages/VocabPage.jsx` | Main drill page — layout, settings drawer, state |
 | `src/components/VocabCard.jsx` | Flip card — front (kanji) / back (kanji + furigana + English + optional sentence); wraps `FlipCard` |
 | `src/FlipCard.jsx` + `src/FlipCard.css` | 3D flip animation (ported from katsuyou-drill) |
-| `src/components/DrillHUD.jsx` | Streak display + undo + score (VocabPage-only) |
+| `src/components/DrillHUD.jsx` | Streak display + undo + score — shared with Vocab SRS (`VocabSrsDrill.jsx`), see the Session progress tracker note under Vocab SRS |
 | `src/components/SpeedModeControls.jsx` | Incorrect [Z] / Correct [X] pair — a named composition of `DrillButtonRow`/`DrillButton`, shared with Anime Vocab's `EpisodeDrill` |
 | `src/components/PageHeader.jsx` | Breadcrumb header |
 | `src/components/SectionHeader.jsx`, `Checkbox.jsx`, `Select.jsx` | Settings-panel primitives |
@@ -693,30 +693,38 @@ Rating, State
 
 ```js
 initSession(due, newCards)
-// → { queue, completed, history, startTime, initialCount, againCount, goodCount }
+// → { queue, completed, history, startTime, initialCount, againCount, goodCount,
+//     streak, bestStreak, troubledIds }
 
 getCurrentCard(session)
-// Returns first queue card whose waitUntil is in the past (or absent). null if all waiting.
-
-getWaitMs(session)
-// ms until the earliest waiting card becomes available (for countdown display). 0 if none.
+// Returns the first queue card whose waitUntil is in the past (or absent).
+// Once every remaining card is waiting, returns the soonest-due one anyway
+// instead of null — see Relearn steps / learn ahead below. null only when
+// the queue itself is empty (session complete).
 
 answerCard(session, card, rating, opts?)
 // opts: { leechThreshold = 0 }
-// Again on review card → pushed to end of queue with waitUntil = now + 10 min (relearn step)
-// Again on new card    → requeued at position 3 immediately
-// Hard/Good/Easy       → moved to completed
+// Again on review card → pushed to end of queue with waitUntil = now + 10 min (relearn step);
+//                         card id added to troubledIds; streak reset to 0
+// Again on new card    → requeued at position 3 immediately; card id added to troubledIds; streak reset to 0
+// Hard/Good/Easy       → moved to completed; streak incremented, bestStreak updated
 // If lapses >= leechThreshold on a non-New card: suspended = true added to card
 // Returns { session, updatedCard, isLeech }
 
 undoLastAnswer(session)
-// Restores the last snapshot from history (ring buffer of 20). Returns { session, revertedCard }.
+// Restores the last snapshot from history (ring buffer of 20), including
+// streak/bestStreak/troubledIds. Returns { session, revertedCard }.
 // revertedCard is the original pre-answer card state — use it directly, no need to re-call reviewCard.
 
 isComplete(session)   // queue.length === 0
 
 getSessionStats(session)
-// → { total, remaining, waitingCount, againCount, goodCount, elapsedSeconds, canUndo }
+// → { total, remaining, waitingCount, againCount, goodCount, correctCount, troubledCount,
+//     streak, bestStreak, elapsedSeconds, canUndo }
+// correctCount/troubledCount partition `completed` into cards that were never
+// missed vs. cards that needed at least one Again this session before being
+// answered correctly — the same split Vocab Drill's simpleQueue engine
+// draws between `retired` and `troubled`, feeding the same DrillHUD component.
 ```
 
 ### Deck architecture
@@ -786,7 +794,13 @@ Built in `VocabSrsDrill.jsx` via the `AUDIO_BASE` constant. Autoplay sequence on
 
 ### Relearn steps
 
-When a **review card** (non-New) is answered Again, `answerCard` pushes it to the end of the queue with `waitUntil = Date.now() + 10min`. `getCurrentCard` skips it until the timer expires; the drill shows a live countdown. When a **new card** is answered Again, it requeues at position 3 immediately (no wait).
+When a **review card** (non-New) is answered Again, `answerCard` pushes it to the end of the queue with `waitUntil = Date.now() + 10min`. When a **new card** is answered Again, it requeues at position 3 immediately (no wait).
+
+**Learn ahead.** `getCurrentCard` skips a waiting card in favor of any other ready card — but once every remaining card in the queue is waiting, it returns the soonest-due one immediately rather than blocking the session on the real clock. This mirrors Anki's own "learn ahead limit" (default 20 minutes): a card in its relearn step is shown early when there's nothing else left to study, so a session with several lapsed cards can still be finished in one sitting instead of forcing the learner to wait out a real 10-minute timer per card. It only ever kicks in once nothing else is available — while other due/new cards remain, they're interleaved first, same as Anki. The countdown still applies for real if the learner exits mid-relearn: the persisted card's FSRS-computed `due` date is what `getTodaysQueue` checks on the next session, not anything session-local, so a card that hasn't hit its real due time yet simply won't appear until it does. There is no full-screen "waiting" state in the drill UI anymore — with a single fixed 10-minute step (well under Anki's 20-minute default), a waiting card is always eligible the moment it's the only thing left, so the block screen was unreachable and was removed. A card being re-shown this way (whether via learn-ahead or the ordinary interleaved wait) still carries the small orange corner dot on `FlipCard` that any repeat-appearance card gets (`isRequeue` in `VocabSrsDrill.jsx`).
+
+### Session progress tracker
+
+`VocabSrsDrill.jsx` renders its active-drill screen inside the shared `DrillHUD` component (`src/components/DrillHUD.jsx`) — the same one Vocab Drill uses — rather than a bespoke layout. `correct`/`troubled`/`remaining` come from `getSessionStats`'s `correctCount`/`troubledCount`/`remaining`; `streak`/`bestStreak` are now tracked on the session object itself (see `session.js exports` above) and only rendered when `showStreak` (wired to the existing `srs-show-streak` setting, previously unused by this drill) is on. Undo is `DrillHUD`'s own built-in button rather than a separate one.
 
 ### Leech detection
 
