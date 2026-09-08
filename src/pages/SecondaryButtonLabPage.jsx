@@ -224,8 +224,8 @@ function InlineSecondary({ label }) {
 const OPTIONS = [
   {
     key: 'baseline',
-    title: '1 — Baseline (current)',
-    note: 'variant="ghost" + ActionsRow\'s fullWidth-on-mobile. Shown for comparison — this is what\'s live today. Narrow the real browser window and tap "View all" on a touchscreen to see problem 2; the dead space under the mobile column here is problem 1.',
+    title: '1 — Baseline (before this fix)',
+    note: 'variant="ghost" + ActionsRow\'s old fullWidth-and-shrink-to-md-on-mobile. Shown for comparison — this is what was live before Option 4 shipped. Narrow the real browser window and tap "View all" on a touchscreen to see problem 2; the dead space under the mobile column here is problem 1.',
     Secondary: BaselineSecondary,
   },
   {
