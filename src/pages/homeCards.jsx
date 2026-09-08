@@ -184,36 +184,26 @@ function TextbookCarousel() {
 
 const REVIEW_PLACEHOLDER_FRONT = '/placeholder-svg/review-flashcard-front.svg'
 const REVIEW_PLACEHOLDER_BACK = '/placeholder-svg/review-flashcard-back.svg'
-
-// Both faces share the same empty top/bottom margin baked into their 32px
-// source canvas (rows 0-5 and 26-32 are blank on both) — cropped out the
-// same way TextbookCover crops its covers' horizontal gutter: render each
-// face at full size, clip the excess via a shorter overflow:hidden
-// container, shift up with a negative margin so the visible art starts at
-// the container's own top edge.
-const CARD_ART_SOURCE = 32
-const CARD_ART_TOP = 5
-const CARD_ART_BOTTOM = 26
-const CARD_ART_SCALE = COVER_SIZE / CARD_ART_SOURCE
-const CARD_ART_HEIGHT = Math.round((CARD_ART_BOTTOM - CARD_ART_TOP) * CARD_ART_SCALE)
-const CARD_ART_OFFSET = Math.round(CARD_ART_TOP * CARD_ART_SCALE)
+const REVIEW_PLACEHOLDER_BACKDROP = '/placeholder-svg/review-flashcard-backdrop.svg'
 
 // Review's empty-state image — a flashcard, front/back as separate SVGs,
 // hover-flipping between them (CSS-only 3D flip, see .review-flip-card* in
-// global.css — no useState per the StrictMode hover rule). Placeholder per
-// the redesign brief; swapped for a final asset separately. Try-it, easy to
-// discard: delete this component (render <img src={REVIEW_PLACEHOLDER_FRONT}
-// .../> instead) plus the CSS block if the flip doesn't earn its place.
+// global.css — no useState per the StrictMode hover rule), over a full-height
+// backdrop layer (same COVER_SIZE height as TextbookCover's own artwork, for
+// visual balance against the Practice card). Placeholder per the redesign
+// brief; swapped for a final asset separately. Try-it, easy to discard:
+// delete this component (render <img src={REVIEW_PLACEHOLDER_BACKDROP} .../>
+// instead) plus the CSS block if the flip doesn't earn its place.
 function ReviewPlaceholder() {
-  const faceStyle = {
-    width: COVER_SIZE, height: COVER_SIZE, marginTop: -CARD_ART_OFFSET,
-    imageRendering: 'pixelated',
-  }
+  const faceStyle = { width: COVER_SIZE, height: COVER_SIZE, imageRendering: 'pixelated' }
   return (
-    <div className="review-flip-card" style={{ width: COVER_SIZE, height: CARD_ART_HEIGHT, overflow: 'hidden' }}>
-      <div className="review-flip-card__inner">
-        <img src={REVIEW_PLACEHOLDER_FRONT} alt="" className="review-flip-card__face" style={faceStyle} />
-        <img src={REVIEW_PLACEHOLDER_BACK} alt="" className="review-flip-card__face review-flip-card__face--back" style={faceStyle} />
+    <div style={{ position: 'relative', width: COVER_SIZE, height: COVER_SIZE }}>
+      <img src={REVIEW_PLACEHOLDER_BACKDROP} alt="" style={{ ...faceStyle, position: 'absolute', inset: 0 }} />
+      <div className="review-flip-card" style={{ position: 'absolute', inset: 0, width: COVER_SIZE, height: COVER_SIZE }}>
+        <div className="review-flip-card__inner">
+          <img src={REVIEW_PLACEHOLDER_FRONT} alt="" className="review-flip-card__face" style={faceStyle} />
+          <img src={REVIEW_PLACEHOLDER_BACK} alt="" className="review-flip-card__face review-flip-card__face--back" style={faceStyle} />
+        </div>
       </div>
     </div>
   )
