@@ -566,3 +566,49 @@ button, input, select, textarea {
 .lab-seg-btn:hover:not(:disabled) {
   background: rgba(255,255,255,0.09) !important;
 }
+
+/* Secondary-button lab (#/dev/secondary-button-lab) — dev-only comparison of
+   primary+secondary action pairings for PrimaryCard's ActionsRow. */
+
+/* Option 2 — text link. No background at rest or on hover, ever; the only
+   affordance is the underline, so there's nothing to fill and nothing that
+   can get stuck filled after a tap. */
+.sbl-link:hover:not(:disabled),
+.sbl-link:focus-visible {
+  text-decoration: underline;
+}
+.sbl-link:active:not(:disabled) {
+  filter: brightness(0.85);
+}
+
+/* Option 3 — shrink-wrapped pill. Background fill only where a real pointer
+   can hover (mouse/trackpad); touch gets a quick :active press instead, so
+   tapping never leaves a stuck highlight the way an unguarded :hover would. */
+@media (hover: hover) {
+  .sbl-pill:hover:not(:disabled) {
+    background: rgba(255,255,255,0.06) !important;
+  }
+}
+.sbl-pill:active:not(:disabled) {
+  background: rgba(255,255,255,0.10) !important;
+}
+
+/* Option 4 — bordered "quiet" button. Border is already visible at rest
+   (set inline), so only the interaction states need class rules. */
+.sbl-outline {
+  transition: background 120ms, border-color 120ms;
+}
+@media (hover: hover) {
+  .sbl-outline:hover:not(:disabled) {
+    border-color: rgba(255,255,255,0.28) !important;
+  }
+}
+.sbl-outline:active:not(:disabled) {
+  background: rgba(255,255,255,0.06) !important;
+}
+
+/* Option 5 — link demoted into the subtitle line itself. */
+.sbl-inline-link:hover:not(:disabled),
+.sbl-inline-link:focus-visible {
+  text-decoration: underline;
+}
