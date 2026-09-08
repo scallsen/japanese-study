@@ -16,7 +16,11 @@
  * Idempotent by title: re-running skips any of the five whose title already
  * exists among shared stories, so it's safe to re-run after adding a new one.
  *
- * Run: node --env-file=.env scripts/seed-example-stories.mjs <user-id>
+ * Run: node --env-file=.env scripts/seed-example-stories.mjs <email-or-user-id>
+ *
+ * The service-role key also unlocks the Admin API, so the argument can be an
+ * email instead of a raw UUID — resolved to a user id via auth.admin.listUsers()
+ * rather than requiring a trip to the dashboard's Users table first.
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -31,14 +35,32 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
   process.exit(1)
 }
 
-const userId = process.argv[2]
-if (!userId || !/^[0-9a-f-]{36}$/i.test(userId)) {
-  console.error('Usage: node --env-file=.env scripts/seed-example-stories.mjs <user-id>')
-  console.error('<user-id> is the auth.users id these rows will be attributed to (any valid user — shared:true makes them visible to everyone regardless of owner).')
+const arg = process.argv[2]
+if (!arg) {
+  console.error('Usage: node --env-file=.env scripts/seed-example-stories.mjs <email-or-user-id>')
+  console.error('Any valid account works — shared:true makes these rows visible to everyone regardless of owner.')
   process.exit(1)
 }
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+async function resolveUserId(emailOrId) {
+  if (/^[0-9a-f-]{36}$/i.test(emailOrId)) return emailOrId
+
+  // Admin API is paginated; one page of 1000 comfortably covers a personal
+  // project without needing to loop through pages.
+  const { data, error } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 })
+  if (error) {
+    console.error('Failed to look up users:', error.message)
+    process.exit(1)
+  }
+  const match = data.users.find((u) => u.email?.toLowerCase() === emailOrId.toLowerCase())
+  if (!match) {
+    console.error(`No user found with email ${emailOrId}`)
+    process.exit(1)
+  }
+  return match.id
+}
 
 // Same PARTICLE_POS / tokenizeStory logic as supabase/functions/story-generate/index.ts.
 const PARTICLE_POS = new Set(['助詞', '助動詞', '記号', 'BOS/EOS'])
@@ -135,6 +157,8 @@ const EXAMPLE_STORIES = [
 ]
 
 async function main() {
+  const userId = await resolveUserId(arg)
+
   const { data: existing, error: fetchErr } = await supabase
     .from('stories')
     .select('title')
