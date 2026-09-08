@@ -173,20 +173,13 @@ export default function DashboardPage() {
       letterSpacing: TRACKING,
       color: TEXT,
     }}>
-      <PageHeader crumbs={[{ label: 'Japanese Study' }]} rightSlot={<AuthSlot />}>
-        {/* Home page only — PageHeader's crumb row alone is what every other
-            page uses for navigation, so the tagline lives here rather than
-            inside PageHeader itself. */}
-        <div style={{
-          padding: `0 calc(24px + env(safe-area-inset-right)) ${SPACE_16}px calc(24px + env(safe-area-inset-left))`,
-          fontFamily: FONT,
-          letterSpacing: TRACKING,
-          fontSize: FS_BASE,
-          color: TEXT_MUTED,
-        }}>
-          Drill and memorize Japanese vocabulary.
-        </div>
-      </PageHeader>
+      <PageHeader
+        crumbs={[{ label: 'Japanese Study' }]}
+        rightSlot={<AuthSlot />}
+        // Home page only — every other page uses the crumb row purely for
+        // navigation, and there's no room for this next to it on mobile.
+        subtitle={isMobile ? null : 'Drill and memorize Japanese vocabulary.'}
+      />
 
       <main style={{
         flex: 1,
@@ -281,7 +274,7 @@ export default function DashboardPage() {
 // the right-hand rail or sit side by side in the strip under the cards.
 //
 // Signed-out is the only state that dims the whole block (a real signed-in
-// learner with zero cards still has real Modules/Activity data worth
+// learner with zero cards still has real Stats/Activity data worth
 // showing at full strength — only "–" placeholders there, not the dormant
 // treatment). Reuses ModuleCard's existing disabled opacity rather than
 // inventing a second "dormant" visual language (grayscale/desaturation has
@@ -322,7 +315,7 @@ function StatsPanel({ columns, signedOut, srs, articlesRead, seriesTracked, stor
       </div>
 
       <div>
-        <SectionHeader title="Modules" />
+        <SectionHeader title="Stats" />
         {signedOut ? (
           <>
             <ModuleLine label="Articles read" capability="Reads real news articles" />
@@ -374,7 +367,7 @@ function ModuleLine({ label, value, capability }) {
 }
 
 const ACTIVITY_WEEKS = 12
-const ACTIVITY_CELL = 12
+const ACTIVITY_CELL_MAX = 22
 const ACTIVITY_GAP = 3
 
 // Reuses SEGMENT_COLORS' learning→young→mature ramp — the app's one
@@ -411,14 +404,17 @@ function ActivityGrid({ reviewLog }) {
 
   return (
     <div>
-      <div style={{ display: 'flex', gap: ACTIVITY_GAP, overflowX: 'auto' }}>
+      {/* Columns stretch to fill the sidebar's own width (equal flex-basis,
+          capped so cells don't balloon in the wider 3-column strip layout)
+          rather than a fixed cell size that leaves dead space on the right. */}
+      <div style={{ display: 'flex', gap: ACTIVITY_GAP, width: '100%' }}>
         {weeks.map((week, wi) => (
-          <div key={wi} style={{ display: 'flex', flexDirection: 'column', gap: ACTIVITY_GAP }}>
+          <div key={wi} style={{ display: 'flex', flexDirection: 'column', gap: ACTIVITY_GAP, flex: '1 1 0', minWidth: 0, maxWidth: ACTIVITY_CELL_MAX }}>
             {week.map(day => (
               <div
                 key={day.key}
                 title={`${day.key}: ${day.count} review${day.count === 1 ? '' : 's'}`}
-                style={{ width: ACTIVITY_CELL, height: ACTIVITY_CELL, borderRadius: 2, background: activityColor(day.count), flexShrink: 0 }}
+                style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: 2, background: activityColor(day.count) }}
               />
             ))}
           </div>

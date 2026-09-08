@@ -10,7 +10,7 @@ import {
 
 // Exploration only — three candidate shapes for the shared "tracked" stat
 // component a module's own page would use to show its own single-count
-// stat (the same numbers the dashboard's Modules sidebar group now shows:
+// stat (the same numbers the dashboard's Stats sidebar group now shows:
 // "Series tracked", "Stories generated", "Articles read"). Not wired to
 // real data, not linked from the dashboard, not built into any module page
 // yet — see the Home page redesign scope in CLAUDE.md. Same pattern as
@@ -63,7 +63,7 @@ function TileStat({ label, value }) {
 }
 
 // ── Option C — sidebar-style line ────────────────────────────────────────
-// Reuses the exact "Unit tracked — count" phrasing the dashboard's Modules
+// Reuses the exact "Unit tracked — count" phrasing the dashboard's Stats
 // group now renders, so a module's own page visually rhymes with the
 // dashboard rather than introducing a third way to show the same fact.
 function LineStat({ label, value }) {
@@ -92,7 +92,7 @@ const OPTIONS = [
   {
     key: 'line',
     title: 'C — Sidebar-style line',
-    note: 'Exact "Unit — count" phrasing from the dashboard\'s Modules group, dropped into a module page\'s own sidebar/details panel. Cheapest to keep in sync visually with the dashboard.',
+    note: 'Exact "Unit — count" phrasing from the dashboard\'s Stats group, dropped into a module page\'s own sidebar/details panel. Cheapest to keep in sync visually with the dashboard.',
     render: f => <LineStat label={f.label} value={f.value} />,
   },
 ]
@@ -111,7 +111,7 @@ export default function TrackedStatLabPage() {
           <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, maxWidth: 680, lineHeight: 1.5, marginBottom: SPACE_32 }}>
             Sketches only — not a built component, not wired to real data, not linked from any
             module page. Each option renders the same three fixture numbers (the numbers the
-            dashboard&apos;s Modules sidebar group already shows) so they can be judged side by side
+            dashboard&apos;s Stats sidebar group already shows) so they can be judged side by side
             before one gets built for real.
           </div>
 
