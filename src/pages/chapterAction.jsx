@@ -13,7 +13,7 @@ import { FS_BASE, TEXT_MUTED } from '../data/theme.js'
 export function chapterPrimaryAction(state, { onStart, onAdvance, onChangeTextbook }) {
   const { chapters, current, next, doneCount } = state
   if (doneCount === chapters.length) {
-    return { label: 'Pick new textbook', onClick: onChangeTextbook, menuItems: [], body: null }
+    return { label: 'Pick new word list', onClick: onChangeTextbook, menuItems: [], body: null }
   }
   if (current.drilled && next) {
     return {

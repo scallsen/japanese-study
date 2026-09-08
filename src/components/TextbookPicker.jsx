@@ -39,7 +39,7 @@ function availableBooks(wordCountFor) {
   return TEXTBOOKS.filter(b => hasWords(b, wordCountFor))
 }
 
-// The "Change textbook" surface. Picking a book replaces the current one —
+// The "Set word list" surface. Picking a book replaces the current one —
 // the app is built around studying one textbook at a time, so this is a
 // deliberate swap action, not a multi-select.
 //
@@ -77,7 +77,7 @@ export default function TextbookPicker({ open, onClose, currentId, onSelect, wor
     <Modal
       open={open}
       onClose={onClose}
-      title="Change textbook"
+      title="Set word list"
       size="lg"
       isMobile={isMobile}
       bodyPadding={0}
@@ -102,7 +102,7 @@ export function ConfirmButton({ selected, currentId, onChoose, withTitle = false
     ? 'In use'
     : !available
       ? 'Unavailable'
-      : withTitle ? `Use ${selected.title}` : 'Use this textbook'
+      : withTitle ? `Use ${selected.title}` : 'Use this word list'
   return (
     <Button fullWidth disabled={isCurrent || !available} onClick={onChoose}>
       {label}

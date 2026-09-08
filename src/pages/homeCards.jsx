@@ -137,7 +137,7 @@ export function TextbookCover({ icon, accent, onChangeTextbook }) {
           textDecoration: 'underline',
         }}
       >
-        Change textbook
+        Change word list
       </span>
     </button>
   )
@@ -178,6 +178,33 @@ function TextbookCarousel() {
           />
         ))}
       </div>
+    </div>
+  )
+}
+
+const REVIEW_PLACEHOLDER_BACKDROP = '/placeholder-svg/review-flashcard-backdrop.svg'
+
+// Content sits at x:6-26 of the 32px source canvas (6px empty margin each
+// side) — cropped out and left-aligned the same way TextbookCover crops its
+// own covers' horizontal gutter: render at full size, clip the excess via a
+// narrower overflow:hidden container, shift left with a negative margin.
+const REVIEW_ART_SOURCE = 32
+const REVIEW_ART_LEFT = 6
+const REVIEW_ART_RIGHT = 26
+const REVIEW_ART_SCALE = COVER_SIZE / REVIEW_ART_SOURCE
+const REVIEW_ART_WIDTH = Math.round((REVIEW_ART_RIGHT - REVIEW_ART_LEFT) * REVIEW_ART_SCALE)
+const REVIEW_ART_OFFSET = Math.round(REVIEW_ART_LEFT * REVIEW_ART_SCALE)
+
+// Review's empty-state image — placeholder per the redesign brief, swapped
+// for a final asset separately.
+function ReviewPlaceholder() {
+  return (
+    <div style={{ width: REVIEW_ART_WIDTH, height: COVER_SIZE, overflow: 'hidden' }}>
+      <img
+        src={REVIEW_PLACEHOLDER_BACKDROP}
+        alt=""
+        style={{ width: COVER_SIZE, height: COVER_SIZE, marginLeft: -REVIEW_ART_OFFSET, imageRendering: 'pixelated', display: 'block' }}
+      />
     </div>
   )
 }
@@ -307,7 +334,8 @@ export function NewCard({ loading, state, signedOut, onStart, onAdvance, onChang
       <PrimaryCard
         accent={accent}
         title="Practice"
-        actions={<ActionsRow><Button size="lg" onClick={onChangeTextbook}>Choose textbook</Button></ActionsRow>}
+        subtitle="Drill words from your study materials"
+        actions={<ActionsRow><Button size="lg" onClick={onChangeTextbook}>Choose word list</Button></ActionsRow>}
       >
         <TextbookCarousel />
       </PrimaryCard>
@@ -371,9 +399,13 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
       <PrimaryCard
         accent={accent}
         title="Review"
-        subtitle="Spaced repetition for the words you've studied. Sign in to sync your decks across devices."
-        actions={<ActionsRow><Button size="lg" onClick={onSignIn}>Create account</Button></ActionsRow>}
-      />
+        subtitle="Long-term memorization for vocabulary"
+        // Weaker than Practice's "Choose word list" on purpose — this is the
+        // optional card, not the primary action on the page.
+        actions={<ActionsRow><Button size="lg" variant="neutral" onClick={onSignIn}>Create account</Button></ActionsRow>}
+      >
+        <ReviewPlaceholder />
+      </PrimaryCard>
     )
   }
 

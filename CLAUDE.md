@@ -845,6 +845,9 @@ Configured via `leechThreshold` (default 8, localStorage key `srs-leech-threshol
     date: string,   // YYYY-MM-DD UTC — the date new cards were last introduced
     count: number,  // how many new cards were introduced on that date
   },
+  reviewLog: {
+    [date: string]: number,  // YYYY-MM-DD UTC → review count that day (Hard/Good/Easy answers, mirrors totalReviews' own goodCount accounting — Again answers aren't counted as completed reviews there either)
+  },
 }
 ```
 
@@ -852,7 +855,7 @@ Configured via `leechThreshold` (default 8, localStorage key `srs-leech-threshol
 
 `initializeDeckCards(progress, deckId)` populates card entries for a bundled deck when it is first activated (skips cards that already exist).
 
-`newCardDay` is missing from old data — always access as `progress.newCardDay ?? { date: '', count: 0 }`.
+`newCardDay` is missing from old data — always access as `progress.newCardDay ?? { date: '', count: 0 }`. `reviewLog` is missing the same way — always access as `progress.reviewLog ?? {}` — and is bumped once per completed session (`VocabSrsModule.jsx`'s `handleDrillDone`), not per card, same as `totalReviews`. Powers the dashboard's Activity heatmap (`DashboardPage.jsx`).
 
 ### Daily new card limit
 
