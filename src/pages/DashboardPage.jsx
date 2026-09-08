@@ -240,8 +240,13 @@ export default function DashboardPage() {
               </div>
 
               {/* Stacked (collapsed sidebar) layout only — on the side, the
-                  sidebar stays where it is, in its own grid column below. */}
-              {sidebarBelow && stats}
+                  sidebar stays where it is, in its own grid column below.
+                  Signed out, it's dropped here entirely rather than shown
+                  dimmed: a dormant stats block at the bottom of a narrow
+                  page reads as dead weight, not a sign-in nudge, once
+                  there's no room for it beside the cards. Signed in, or on
+                  the wide side-rail layout, nothing changes. */}
+              {sidebarBelow && !signedOut && stats}
             </div>
 
             {!sidebarBelow && stats}
