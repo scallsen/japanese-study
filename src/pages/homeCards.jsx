@@ -184,13 +184,13 @@ function TextbookCarousel() {
 
 const REVIEW_PLACEHOLDER_BACKDROP = '/placeholder-svg/review-flashcard-backdrop.svg'
 
-// Content sits at x:5-27 of the 32px source canvas (5px empty margin each
+// Content sits at x:6-26 of the 32px source canvas (6px empty margin each
 // side) — cropped out and left-aligned the same way TextbookCover crops its
 // own covers' horizontal gutter: render at full size, clip the excess via a
 // narrower overflow:hidden container, shift left with a negative margin.
 const REVIEW_ART_SOURCE = 32
-const REVIEW_ART_LEFT = 5
-const REVIEW_ART_RIGHT = 27
+const REVIEW_ART_LEFT = 6
+const REVIEW_ART_RIGHT = 26
 const REVIEW_ART_SCALE = COVER_SIZE / REVIEW_ART_SOURCE
 const REVIEW_ART_WIDTH = Math.round((REVIEW_ART_RIGHT - REVIEW_ART_LEFT) * REVIEW_ART_SCALE)
 const REVIEW_ART_OFFSET = Math.round(REVIEW_ART_LEFT * REVIEW_ART_SCALE)
