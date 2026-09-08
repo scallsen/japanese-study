@@ -199,7 +199,7 @@ const REVIEW_ART_OFFSET = Math.round(REVIEW_ART_LEFT * REVIEW_ART_SCALE)
 // for a final asset separately.
 function ReviewPlaceholder() {
   return (
-    <div style={{ width: REVIEW_ART_WIDTH, height: COVER_SIZE, overflow: 'hidden' }}>
+    <div style={{ width: REVIEW_ART_WIDTH, height: COVER_SIZE, flexShrink: 0, overflow: 'hidden' }}>
       <img
         src={REVIEW_PLACEHOLDER_BACKDROP}
         alt=""
