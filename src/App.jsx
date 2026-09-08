@@ -19,6 +19,7 @@ import TextbookPickerLabPage from './pages/TextbookPickerLabPage.jsx'
 import HomeFlowLabPage from './pages/HomeFlowLabPage.jsx'
 import TextbookFlowLabPage from './pages/TextbookFlowLabPage.jsx'
 import TrackedStatLabPage from './pages/TrackedStatLabPage.jsx'
+import CoverRotationLabPage from './pages/CoverRotationLabPage.jsx'
 
 function getRoute() {
   // Strip any query string (e.g. '/vocab-srs/browse?deck=x&manage=1') before
@@ -74,5 +75,7 @@ export default function App() {
   if (route === '/dev/textbook-flow') return <TextbookFlowLabPage />
   // Layout options for the future shared per-module "tracked" stat component, not linked from the dashboard
   if (route === '/dev/tracked-stat') return <TrackedStatLabPage />
+  // Rotating cover-art options for the empty Practice card's top-right square, not linked from the dashboard
+  if (route === '/dev/cover-rotation') return <CoverRotationLabPage />
   return <DashboardPage />
 }

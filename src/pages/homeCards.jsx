@@ -8,8 +8,9 @@ import { useIsMobile } from '../hooks/useIsMobile.js'
 import { MODULES } from '../data/modules.js'
 import { TEXTBOOKS, COVER_GUTTER_FRACTION } from '../data/textbooks.js'
 import { chapterPrimaryAction } from './chapterAction.jsx'
+import { useCoverRotation } from './coverRotation.js'
 import {
-  FONT, TRACKING, TEXT, TEXT_MUTED, FS_BADGE, FS_BASE, FS_CAPTION, FS_CONTENT_HEADING,
+  FONT, TRACKING, TEXT, TEXT_MUTED, FS_BADGE, FS_BASE, FS_CONTENT_HEADING,
   SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32,
 } from '../data/theme.js'
 
@@ -25,7 +26,7 @@ const SRS_MODULE = MODULES.find(m => m.id === 'vocab-srs')
 
 const HAIRLINE = 'rgba(255,255,255,0.08)'
 
-const COVER_SIZE = 104
+export const COVER_SIZE = 104
 
 function navigate(hash) {
   window.location.hash = hash
@@ -38,34 +39,34 @@ function navigate(hash) {
 // they're told to, rather than relying on the parent grid's default stretch
 // staying that way.
 export function PrimaryCard({ accent, title, subtitle, cover, progress, actions, children }) {
-  // Stacked one-per-row, a card has no neighbour to line up with, so the
-  // floor that keeps the pair squarish side by side would only add dead air.
-  const isMobile = useIsMobile()
   return (
     <ModuleThemeProvider accent={accent}>
       <Card
         padding={SPACE_24}
-        style={{
-          display: 'flex', flexDirection: 'column', gap: SPACE_16,
-          height: '100%', minHeight: isMobile ? 0 : 250,
-        }}
+        style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
       >
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: SPACE_16 }}>
-          <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: FS_CONTENT_HEADING, color: TEXT }}>{title}</div>
-            {subtitle && <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginTop: SPACE_4 }}>{subtitle}</div>}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE_16 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: SPACE_16 }}>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: FS_CONTENT_HEADING, color: TEXT }}>{title}</div>
+              {subtitle && <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginTop: SPACE_4 }}>{subtitle}</div>}
+            </div>
+            {cover}
           </div>
-          {cover}
+
+          {progress != null && (
+            <div style={{ height: 4, borderRadius: 2, background: HAIRLINE, overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: `${Math.round(progress * 100)}%`, background: accent, transition: 'width 300ms ease' }} />
+            </div>
+          )}
+
+          {children}
         </div>
-
-        {progress != null && (
-          <div style={{ height: 4, borderRadius: 2, background: HAIRLINE, overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: `${Math.round(progress * 100)}%`, background: accent, transition: 'width 300ms ease' }} />
-          </div>
-        )}
-
-        {children}
-        <div style={{ flex: 1, minHeight: SPACE_8 }} />
+        {/* The one gap between content and actions — sized to the card's own
+            padding so a card with nothing above the button still reads at
+            the same rhythm as the card's outer edge, instead of stacking a
+            flex `gap` on top of this floor (which is what "doubled" it). */}
+        <div style={{ flex: 1, minHeight: SPACE_24 }} />
         {actions}
       </Card>
     </ModuleThemeProvider>
@@ -143,42 +144,84 @@ export function TextbookCover({ icon, accent, onChangeTextbook }) {
   )
 }
 
-// Slow drift of the covers on offer, for the card that has nothing of its
-// own to show yet. The list is rendered twice and the track animates to
-// -50%, so the loop is seamless; the animation itself is
-// `.textbook-marquee__track` in global.css (keyframes can't be inline).
-function TextbookCarousel() {
-  // A personal book is one learner's own course material, so there is nobody
-  // to advertise it to here — and the five of them share two covers between
-  // them, which is what made this drift past as repeated N3 and N2 spines.
-  const covers = TEXTBOOKS.filter(book => book.icon && !book.personal)
-  const fade = 'linear-gradient(to right, transparent, #000 10%, #000 90%, transparent)'
+// Covers on offer, for the card that has nothing of its own to show yet —
+// rotates through them one at a time inside the same top-right square every
+// other cover art occupies (TextbookCover, ReviewPlaceholder), instead of a
+// full-width marquee, so the card's shape never changes across states.
+// Explored side by side with fade/slide/flip alternatives at
+// #/dev/cover-rotation before picking this one ("pop in and replace").
+const ROTATING_COVERS = TEXTBOOKS.filter(book => book.icon && !book.personal)
+const COVER_ROTATE_MS = 2600
+
+// Same crop TextbookCover already uses (the 5/32-per-side transparent
+// gutter trimmed off). The image itself must always render at its full
+// natural square size — shrinking *its own* width to the cropped width
+// (rather than the crop window's width) stretches it non-uniformly. The
+// crop window does the clipping; the image never changes shape.
+export function CroppedArt({ book, className, artWidth, artLeft, gutter }) {
   return (
-    <div
-      className="textbook-marquee"
-      style={{ overflow: 'hidden', maskImage: fade, WebkitMaskImage: fade }}
-    >
-      {/* Covers ride at their true size, and each one absorbs a gutter's worth
-          of the next one's transparent margin so the artwork sits close
-          together. Every item is treated identically, so the -50% loop still
-          lands seamlessly. */}
-      <div className="textbook-marquee__track" style={{ display: 'flex', gap: 0, width: 'max-content' }}>
-        {[...covers, ...covers].map((book, i) => (
-          <img
-            key={`${book.id}-${i}`}
-            src={book.icon}
-            alt=""
-            style={{
-              width: COVER_SIZE,
-              height: COVER_SIZE,
-              marginRight: -(COVER_GUTTER_FRACTION * COVER_SIZE),
-              flexShrink: 0,
-              imageRendering: 'pixelated',
-            }}
+    <div style={{ position: 'absolute', top: 0, left: artLeft, width: artWidth, height: COVER_SIZE, overflow: 'hidden' }}>
+      <img
+        src={book.icon}
+        alt=""
+        className={className}
+        style={{ width: COVER_SIZE, height: COVER_SIZE, marginLeft: -gutter, imageRendering: 'pixelated', display: 'block' }}
+      />
+    </div>
+  )
+}
+
+// A fixed square that shows one cover at a time, cross-animating between
+// them via enter/exit CSS classes (keyframes in global.css). `size` lets a
+// caller magnify it for closer inspection without changing the crop math —
+// scaling the whole subtree keeps the art proportioned identically at any
+// size, real or magnified.
+export function CoverSquare({ covers, current, outgoing, enterClass, exitClass, size = COVER_SIZE }) {
+  const scale = size / COVER_SIZE
+  const gutter = COVER_GUTTER_FRACTION * COVER_SIZE
+  const artWidth = COVER_SIZE - gutter * 2
+  // Right-aligned, not centered — the square is a fixed COVER_SIZE box (so
+  // the rotation animation has a stable frame to play in), but the crop
+  // itself should still sit flush with the card's right edge, matching
+  // TextbookCover (whose box shrinks to the cropped width instead).
+  const artLeft = COVER_SIZE - artWidth
+
+  return (
+    <div style={{ width: size, height: size, position: 'relative', flexShrink: 0, overflow: 'hidden', perspective: 500 }}>
+      <div style={{ position: 'absolute', inset: 0, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
+        {outgoing && (
+          <CroppedArt
+            key={`out-${outgoing.cycleId}`}
+            book={covers[outgoing.index]}
+            className={exitClass}
+            artWidth={artWidth}
+            artLeft={artLeft}
+            gutter={gutter}
           />
-        ))}
+        )}
+        <CroppedArt
+          key={`in-${current}`}
+          book={covers[current]}
+          className={enterClass}
+          artWidth={artWidth}
+          artLeft={artLeft}
+          gutter={gutter}
+        />
       </div>
     </div>
+  )
+}
+
+function RotatingCover() {
+  const { current, outgoing } = useCoverRotation(ROTATING_COVERS.length, COVER_ROTATE_MS)
+  return (
+    <CoverSquare
+      covers={ROTATING_COVERS}
+      current={current}
+      outgoing={outgoing}
+      enterClass="cover-pop-enter"
+      exitClass="cover-pop-exit"
+    />
   )
 }
 
@@ -199,7 +242,7 @@ const REVIEW_ART_OFFSET = Math.round(REVIEW_ART_LEFT * REVIEW_ART_SCALE)
 // for a final asset separately.
 function ReviewPlaceholder() {
   return (
-    <div style={{ width: REVIEW_ART_WIDTH, height: COVER_SIZE, overflow: 'hidden' }}>
+    <div style={{ width: REVIEW_ART_WIDTH, height: COVER_SIZE, flexShrink: 0, overflow: 'hidden' }}>
       <img
         src={REVIEW_PLACEHOLDER_BACKDROP}
         alt=""
@@ -306,19 +349,7 @@ export function SegmentedPrimary({ size = 'lg', label, onClick, menuItems = [], 
   )
 }
 
-// Signed-out progress on this card lives in this browser only (see the
-// storage audit in CLAUDE.md) — it's never at risk of leaking anyone else's
-// data, but it also vanishes if the learner clears their browser or switches
-// devices, so the card says so rather than letting that be a surprise.
-function SignedOutNotice() {
-  return (
-    <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>
-      Sign in to save this progress across devices.
-    </div>
-  )
-}
-
-export function NewCard({ loading, state, signedOut, onStart, onAdvance, onChangeTextbook }) {
+export function NewCard({ loading, state, onStart, onAdvance, onChangeTextbook }) {
   const accent = VOCAB_MODULE.accent
 
   if (loading) {
@@ -335,10 +366,9 @@ export function NewCard({ loading, state, signedOut, onStart, onAdvance, onChang
         accent={accent}
         title="Practice"
         subtitle="Drill words from your study materials"
+        cover={<RotatingCover />}
         actions={<ActionsRow><Button size="lg" onClick={onChangeTextbook}>Choose word list</Button></ActionsRow>}
-      >
-        <TextbookCarousel />
-      </PrimaryCard>
+      />
     )
   }
 
@@ -361,7 +391,7 @@ export function NewCard({ loading, state, signedOut, onStart, onAdvance, onChang
     )
   }
 
-  const { label, onClick, menuItems, body } = chapterPrimaryAction(state, { onStart, onAdvance, onChangeTextbook })
+  const { label, onClick, menuItems } = chapterPrimaryAction(state, { onStart, onAdvance, onChangeTextbook })
 
   return (
     <PrimaryCard
@@ -369,17 +399,13 @@ export function NewCard({ loading, state, signedOut, onStart, onAdvance, onChang
       title={textbook.title}
       subtitle={complete ? 'Book completed' : `${doneCount} of ${chapters.length} chapters`}
       cover={cover}
-      progress={complete ? 1 : (chapters.length ? doneCount / chapters.length : 0)}
       actions={
         <ActionsRow>
           <SegmentedPrimary size="lg" label={label} onClick={onClick} menuItems={menuItems} />
           {viewChapters}
         </ActionsRow>
       }
-    >
-      {body}
-      {signedOut && <SignedOutNotice />}
-    </PrimaryCard>
+    />
   )
 }
 
@@ -400,12 +426,11 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
         accent={accent}
         title="Review"
         subtitle="Long-term memorization for vocabulary"
+        cover={<ReviewPlaceholder />}
         // Weaker than Practice's "Choose word list" on purpose — this is the
         // optional card, not the primary action on the page.
         actions={<ActionsRow><Button size="lg" variant="neutral" onClick={onSignIn}>Create account</Button></ActionsRow>}
-      >
-        <ReviewPlaceholder />
-      </PrimaryCard>
+      />
     )
   }
 
@@ -415,20 +440,21 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
         accent={accent}
         title="Review"
         subtitle="No cards yet. Finish a chapter and send its words here."
+        cover={<ReviewPlaceholder />}
         actions={<ActionsRow><Button size="lg" variant="neutral" onClick={() => navigate('#/vocab-srs')}>Manage decks</Button></ActionsRow>}
       />
     )
   }
 
-  const { due, newToday, activeDecks, canStart, estimatedMinutes } = summary
+  const { due, newToday, canStart, estimatedMinutes } = summary
   const headline = canStart ? `${due} due · ${newToday} new · ~${estimatedMinutes} min` : 'Nothing due'
-  const caption = `${activeDecks} active ${activeDecks === 1 ? 'deck' : 'decks'}`
 
   return (
     <PrimaryCard
       accent={accent}
       title="Reviews"
       subtitle={headline}
+      cover={<ReviewPlaceholder />}
       actions={
         <ActionsRow>
           <Button size="lg" disabled={!canStart} onClick={() => navigate('#/vocab-srs?start=1')}>
@@ -437,8 +463,6 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
           <Button variant="ghost" size="lg" onClick={() => navigate('#/vocab-srs')}>Manage decks</Button>
         </ActionsRow>
       }
-    >
-      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>{caption}</div>
-    </PrimaryCard>
+    />
   )
 }

@@ -63,7 +63,7 @@ const NEW_STATES = [
     key: 'in-progress',
     label: 'Current chapter drilled',
     note: 'Start next + Continue current',
-    props: { state: textbookState('nsm-n3-kanji', { drilledCount: 4, pointer: 'nsm-n3-kanji-w1d5' }) },
+    props: { state: textbookState('nsm-n3-kanji', { drilledCount: 4, pointer: 'nsm-n3-kanji-w1d4' }) },
   },
   {
     key: 'next-untouched',
@@ -88,12 +88,6 @@ const NEW_STATES = [
     label: 'Long title + long labels',
     note: 'Wrapping stress test',
     props: { state: textbookState('marugoto-a1-katsudou', { drilledCount: 3, pointer: 'marugoto-a1-katsudou-t3' }) },
-  },
-  {
-    key: 'signed-out',
-    label: 'Signed out, textbook picked',
-    note: 'Local-only — the sign-in nudge',
-    props: { state: textbookState('nsm-n3-kanji', { drilledCount: 4, pointer: 'nsm-n3-kanji-w1d5' }), signedOut: true },
   },
 ]
 
