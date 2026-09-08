@@ -115,6 +115,21 @@ button, input, select, textarea {
   color: #f87171 !important;
 }
 
+/* Quiet — bordered-but-transparent secondary, e.g. NewCard's "View all" /
+   ReviewCard's "Manage decks". Its border is what gives a fullWidth mobile
+   instance a resting edge (see Button.jsx), so hover only deepens that
+   border and is gated to devices with a real pointer; a background fill only
+   ever appears on :active, so a touch tap gets a press-flash rather than a
+   :hover fill that touch can leave stuck. */
+@media (hover: hover) {
+  .btn-quiet:hover:not(:disabled) {
+    border-color: rgba(255,255,255,0.28) !important;
+  }
+}
+.btn-quiet:active:not(:disabled) {
+  background: rgba(255,255,255,0.06) !important;
+}
+
 /* Chip — active chips carry a per-module accent tint set inline, so hover
    brightens rather than hard-coding a colour here; inactive chips are
    near-transparent, where brightness() can't read, so they shift background. */
@@ -593,19 +608,8 @@ button, input, select, textarea {
   background: rgba(255,255,255,0.10) !important;
 }
 
-/* Option 4 — bordered "quiet" button. Border is already visible at rest
-   (set inline), so only the interaction states need class rules. */
-.sbl-outline {
-  transition: background 120ms, border-color 120ms;
-}
-@media (hover: hover) {
-  .sbl-outline:hover:not(:disabled) {
-    border-color: rgba(255,255,255,0.28) !important;
-  }
-}
-.sbl-outline:active:not(:disabled) {
-  background: rgba(255,255,255,0.06) !important;
-}
+/* Option 4 — now the real Button variant="quiet" (see .btn-quiet above);
+   shipped to NewCard/ReviewCard, kept here for side-by-side comparison. */
 
 /* Option 5 — link demoted into the subtitle line itself. */
 .sbl-inline-link:hover:not(:disabled),

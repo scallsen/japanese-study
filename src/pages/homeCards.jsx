@@ -375,7 +375,7 @@ export function NewCard({ loading, state, onStart, onAdvance, onChangeTextbook }
   const { textbook, chapters, doneCount, hasWords } = state
   const complete = doneCount === chapters.length
   const cover = <TextbookCover icon={textbook.icon} accent={accent} onChangeTextbook={onChangeTextbook} />
-  const viewChapters = <Button variant="ghost" size="lg" onClick={() => navigate('#/vocab')}>View all</Button>
+  const viewChapters = <Button variant="quiet" size="lg" onClick={() => navigate('#/vocab')}>View all</Button>
 
   if (!hasWords) {
     return (
@@ -460,7 +460,7 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
           <Button size="lg" disabled={!canStart} onClick={() => navigate('#/vocab-srs?start=1')}>
             {canStart ? `Review ${due + newToday} cards` : 'Nothing due'}
           </Button>
-          <Button variant="ghost" size="lg" onClick={() => navigate('#/vocab-srs')}>Manage decks</Button>
+          <Button variant="quiet" size="lg" onClick={() => navigate('#/vocab-srs')}>Manage decks</Button>
         </ActionsRow>
       }
     />

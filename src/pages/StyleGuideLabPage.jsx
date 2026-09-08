@@ -106,7 +106,7 @@ const DESCRIPTIONS = {
   type: '15px (FS_BASE) is the default for all body/UI text. One size — FS_CONTENT_HEADING — is proven reused across 3 unrelated screens already, so it gets its own tier as the general heading choice. Everything else belongs to one named screen each; three are marked Watch: single-use today, candidates for promotion once a component that would reuse them gets built.',
   spacing: '12px (SPACE_12) is the default gap/padding — reach for it first. Only drop tighter or step up when there’s a concrete reason, not by feel.',
   color: 'One core accent, five semantic tones, and a per-module accent each screen carries as its own identity. Two separate colour sets sit outside the semantic scale on purpose — see their notes.',
-  button: 'Trigger an action. Six variants covering every real button family in the app, reconciled from 15+ call sites that each hand-rolled their own. An `icon` prop supplements or replaces the label — an icon-only button is this with no children, not a separate component.',
+  button: 'Trigger an action. Eight variants covering every real button family in the app, reconciled from 15+ call sites that each hand-rolled their own. An `icon` prop supplements or replaces the label — an icon-only button is this with no children, not a separate component. `quiet` is the newest: a bordered-but-transparent secondary for when `neutral`’s filled background is too heavy and `ghost`’s fully transparent one disappears when a card’s ActionsRow stretches it to fullWidth on mobile (NewCard’s "View all", ReviewCard’s "Manage decks").',
   badge: 'A small classification — JLPT level, part of speech, difficulty, review status. One atom with tone presets, replacing 8+ inline pill implementations.',
   card: 'A raised surface for grouping content. The same shell was written inline 8+ times.',
   'text-input': 'Single-line text entry. Reconciled from four real inputs; `bare` exists because an input inside an already-bordered container must not draw a second border.',
@@ -365,7 +365,7 @@ function ColorPage() {
 
 /* ── Atoms ─────────────────────────────────────────────────────────────── */
 
-const BUTTON_VARIANTS = ['primary', 'accent-outline', 'neutral', 'danger-outline', 'warning-outline', 'ghost', 'ghost-muted']
+const BUTTON_VARIANTS = ['primary', 'accent-outline', 'neutral', 'quiet', 'danger-outline', 'warning-outline', 'ghost', 'ghost-muted']
 const BUTTON_VARIANT_OPTIONS = BUTTON_VARIANTS.map(v => ({ value: v, label: v }))
 const BUTTON_SIZE_OPTIONS = ['sm', 'md', 'lg', 'xl'].map(v => ({ value: v, label: v }))
 

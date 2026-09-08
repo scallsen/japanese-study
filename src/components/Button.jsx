@@ -27,6 +27,17 @@ function buildVariants(accent) {
     // icon-only button is a Button with an icon and no label, not a separate
     // component, so `icon` here also covers icon+text cases the old atom couldn't.
     'ghost-muted': { background: 'transparent', border: 'none', color: TEXT_MUTED },
+    // A secondary action that needs a real resting edge without `neutral`'s
+    // filled background — a card's bottom-pinned ActionsRow stretches its
+    // second button to fullWidth on mobile, and `ghost`'s transparent resting
+    // state made that stretch invisible: the padding under the label just
+    // read as dead space, not a button ("View all" under NewCard's primary
+    // CTA, "Manage decks" under ReviewCard's). The border gives the tap zone
+    // a boundary at rest; see global.css's `.btn-quiet` for why the background
+    // fill only ever appears on `:active`, never `:hover` — a hover-fill would
+    // read as a stuck/flashing highlight on a touch tap, which has no real
+    // `:hover` to leave.
+    quiet: { background: 'transparent', border: '1px solid rgba(255,255,255,0.14)', color: accent },
   }
 }
 
@@ -60,6 +71,7 @@ const VARIANT_CLASS = {
   neutral: 'btn btn-neutral',
   ghost: 'btn btn-ghost',
   'ghost-muted': 'btn btn-ghost-muted',
+  quiet: 'btn btn-quiet',
 }
 
 // forwardRef because callers need the real DOM node: DeckComboBox measures

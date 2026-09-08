@@ -179,31 +179,16 @@ function PillSecondary({ label, stacked }) {
 }
 
 // ── Option 4 — bordered "quiet" button, still full width ────────────────
-// Keeps ActionsRow's current fullWidth-on-mobile stretch (so it still lines
-// up edge-to-edge with the primary button above it, which the other options
+// Shipped: this is now the real Button variant="quiet" (src/components/
+// Button.jsx + .btn-quiet in global.css), not a lab mock — kept here so it
+// stays visible next to the alternatives it was chosen over. Keeps
+// ActionsRow's current fullWidth-on-mobile stretch (so it still lines up
+// edge-to-edge with the primary button above it, which the other options
 // give up), but gives the resting state a visible 1px edge — the tap zone
 // has a real boundary before any interaction, so the padding above/below
-// the label reads as "inside a button" rather than as blank space. Solves
-// problem 1 without changing the row's structure; still needs the
-// hover/active split from Option 3 to avoid problem 2.
-function OutlineSecondary({ label, stacked }) {
-  const accent = useAccent()
-  return (
-    <button
-      type="button"
-      className="sbl-outline"
-      onClick={() => {}}
-      style={{
-        background: 'transparent', border: '1px solid rgba(255,255,255,0.14)', color: accent,
-        fontFamily: FONT, letterSpacing: TRACKING, fontSize: FS_BASE, lineHeight: 1,
-        padding: stacked ? `${SPACE_8}px ${SPACE_16}px` : `10px ${SPACE_24}px`,
-        borderRadius: 6, cursor: 'pointer',
-        width: stacked ? '100%' : undefined,
-      }}
-    >
-      {label}
-    </button>
-  )
+// the label reads as "inside a button" rather than as blank space.
+function QuietSecondary({ label, stacked }) {
+  return <Button variant="quiet" size="lg" fullWidth={stacked} onClick={() => {}}>{label}</Button>
 }
 
 // ── Option 5 — demoted out of the action row entirely ───────────────────
@@ -256,10 +241,10 @@ const OPTIONS = [
     Secondary: PillSecondary,
   },
   {
-    key: 'outline',
-    title: '4 — Bordered "quiet" button, still full width',
-    note: 'Keeps the full-width stack (so it still lines up under the primary button) but gives it a real edge at rest, so the tap zone reads as a button instead of blank space. Needs the same :active-not-:hover fix as Option 3.',
-    Secondary: OutlineSecondary,
+    key: 'quiet',
+    title: '4 — Bordered "quiet" button, still full width — SHIPPED',
+    note: 'Now the real Button variant="quiet". Keeps the full-width stack (so it still lines up under the primary button) but gives it a real edge at rest, so the tap zone reads as a button instead of blank space, with the fill gated to :active so touch never gets a stuck :hover. Live on the real NewCard/ReviewCard now.',
+    Secondary: QuietSecondary,
   },
   {
     key: 'inline',
