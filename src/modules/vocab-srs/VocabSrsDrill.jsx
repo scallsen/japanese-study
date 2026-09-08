@@ -3,11 +3,12 @@ import FlipCard from '../../FlipCard.jsx'
 import PageHeader from '../../components/PageHeader.jsx'
 import { SidebarHeaderToggle } from '../../components/SettingsSidebar.jsx'
 import Button from '../../components/Button.jsx'
+import DrillHUD from '../../components/DrillHUD.jsx'
 import DrillButtonRow, { DrillButton } from '../../components/DrillButton.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_DISPLAY_HEADING, FS_STAT_VALUE, FS_CAPTION, WARNING, DRILL_COLORS } from '../../data/theme.js'
 import { useAccent } from '../../context/ModuleThemeContext.jsx'
 import { Rating, State, previewIntervals } from './srs.js'
-import { answerCard, undoLastAnswer, isComplete, getSessionStats, getCurrentCard, getWaitMs } from './session.js'
+import { answerCard, undoLastAnswer, isComplete, getSessionStats, getCurrentCard } from './session.js'
 import { useTTS } from '../../hooks/useTTS.js'
 import { useSFX } from '../../hooks/useSFX.js'
 import { useGamepad } from '../../hooks/useGamepad.js'
@@ -52,13 +53,6 @@ function formatInterval(dueDate, now = new Date()) {
   const weeks = Math.round(days / 7)
   if (weeks < 9) return `${weeks}w`
   return `${Math.round(days / 30)}mo`
-}
-
-function formatCountdown(ms) {
-  const totalSecs = Math.ceil(ms / 1000)
-  const mins = Math.floor(totalSecs / 60)
-  const secs = totalSecs % 60
-  return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`
 }
 
 function formatTime(secs) {
@@ -228,7 +222,7 @@ function DoneScreen({ stats, onDone }) {
 export default function VocabSrsDrill({
   initialCards, initialSession, onCardSave, onDone,
   showTranslation = true, showFurigana = true, showSentence = true, sentenceSource = 'custom', showKanjiMeaning = false,
-  pixelFont = true, showVisualEffects = true,
+  pixelFont = true, showVisualEffects = true, showStreak = false,
   audioEnabled = true, autoplayFront = true, autoplayBack = true,
   audioSource = 'voicevox-2', sfxEnabled = true, ttsVoice = '',
   showHardEasy = true, leechThreshold = 8,
@@ -496,8 +490,6 @@ export default function VocabSrsDrill({
   const currentAudioUrls = resolveAudioUrl(currentCard)
   const stats = getSessionStats(session)
   const progressPct = stats.total > 0 ? (stats.goodCount / stats.total) * 100 : 0
-  const isWaiting = !currentCard && stats.remaining > 0
-  const waitMs = isWaiting ? getWaitMs(session) : 0
 
   const againInterval = currentCard && currentCard.state !== State.New ? RELEARN_STEP_LABEL : null
 
@@ -571,23 +563,22 @@ export default function VocabSrsDrill({
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 16,
         padding: '16px',
         overflow: 'hidden',
       }}>
 
-        {isWaiting ? (
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: FS_BASE, color: TEXT, marginBottom: 8 }}>Relearning</div>
-            <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginBottom: 4 }}>
-              Next card in {formatCountdown(waitMs)}
-            </div>
-            <div style={{ fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.2)' }}>
-              {stats.waitingCount} card{stats.waitingCount !== 1 ? 's' : ''} waiting
-            </div>
-          </div>
-        ) : (
-          <>
+        <DrillHUD
+          streak={stats.streak}
+          bestStreak={stats.bestStreak}
+          correct={stats.correctCount}
+          troubled={stats.troubledCount}
+          remaining={stats.remaining}
+          canUndo={stats.canUndo}
+          onUndo={() => handleUndoRef.current()}
+          showStreak={showStreak}
+          showVisualEffects={showVisualEffects}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
             <div key={currentCard.id} className={cardClass} style={{ position: 'relative' }}>
               <div style={{
                 width: 'min(380px, calc(100vw - 32px), calc(var(--card-max-h, 9999px) * 380 / 280))',
@@ -677,15 +668,8 @@ export default function VocabSrsDrill({
                 )}
               </DrillButtonRow>
             )}
-            {stats.canUndo && (
-              <Button variant="ghost-muted" size="sm" onClick={() => handleUndoRef.current()} disabled={transitioning}>Undo [Z]</Button>
-            )}
-          </>
-        )}
-
-        <div style={{ fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.2)' }}>
-          {stats.remaining} remaining
-        </div>
+          </div>
+        </DrillHUD>
 
       </div>
       <AttributionFooter sources={footerSources} />

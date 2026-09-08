@@ -608,6 +608,7 @@ function VocabSrsHome() {
             showKanjiMeaning={settings.kanjiMeanings}
             pixelFont={settings.pixelFont}
             showVisualEffects={settings.visualEffects}
+            showStreak={settings.streak}
             audioEnabled={anyAudio}
             autoplayFront={settings.frontAudio}
             autoplayBack={settings.backAudio}
