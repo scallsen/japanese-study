@@ -40,8 +40,14 @@ export function useCustomWordCounts() {
 }
 
 /**
- * The learner's words for the given chapters. Returns `[]` while loading and
- * when signed out, so a caller can concatenate it unconditionally.
+ * The learner's words for the given chapters. Returns `{ words, loading }` —
+ * `words` is `[]` while loading and when signed out, so a caller can
+ * concatenate it unconditionally; `loading` is only true for a real
+ * in-flight fetch, which a deep link that jumps straight into the drill
+ * (see VocabPage's chapter/start query handling) needs to tell "nothing
+ * here yet" apart from "not fetched yet" — without it, a personal chapter's
+ * drill briefly renders as already complete (0 cards) before its words
+ * arrive.
  */
 export function useCustomWords(listKeys) {
   const { user } = useAuth()
@@ -49,9 +55,10 @@ export function useCustomWords(listKeys) {
   // effect keys on the contents instead.
   const key = [...(listKeys ?? [])].sort().join(',')
   const [words, setWords] = useState([])
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (!user || !supabase || !key) { setWords([]); return }
+    if (!user || !supabase || !key) { setWords([]); setLoading(false); return }
     const wanted = key.split(',')
     const missing = wanted.filter(k => !wordCache.has(`${user.id}|${k}`))
 
@@ -59,13 +66,15 @@ export function useCustomWords(listKeys) {
     const settle = () => {
       if (cancelled) return
       setWords(wanted.flatMap(k => wordCache.get(`${user.id}|${k}`) ?? []))
+      setLoading(false)
     }
 
     if (!missing.length) { settle(); return }
+    setLoading(true)
     supabase.from('custom_words').select('list_key, payload').in('list_key', missing)
       .then(({ data, error }) => {
         if (cancelled) return
-        if (error) { console.warn(`[useCustomWords] load failed: ${error.message}`); return }
+        if (error) { console.warn(`[useCustomWords] load failed: ${error.message}`); setLoading(false); return }
         // Cache every requested chapter, including ones that came back empty,
         // so an empty chapter is not re-fetched on every render.
         for (const k of missing) wordCache.set(`${user.id}|${k}`, [])
@@ -75,5 +84,5 @@ export function useCustomWords(listKeys) {
     return () => { cancelled = true }
   }, [user, key])
 
-  return words
+  return { words, loading }
 }
