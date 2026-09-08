@@ -3,7 +3,6 @@ import PageHeader from '../../components/PageHeader.jsx'
 import AuthSlot from '../../components/AuthSlot.jsx'
 import { WordPopup } from '../../components/JapaneseReader.jsx'
 import { buildVocabMap } from '../../utils/vocabMap.js'
-import { useAuth } from '../../context/AuthContext.jsx'
 import { useProgress } from '../../hooks/useProgress.js'
 import { useToast } from '../../context/ToastContext.jsx'
 // Cross-module write: creates cards in vocab-srs progress namespace
@@ -11,7 +10,6 @@ import { createCard } from '../vocab-srs/srs.js'
 import { ensureDeck, createDeck, deleteCards } from '../vocab-srs/deckUtils.js'
 import ChipSelector from '../../components/Chip.jsx'
 import ToggleButton from '../../components/ToggleButton.jsx'
-import Button from '../../components/Button.jsx'
 import Disclosure from '../../components/Disclosure.jsx'
 import NewspaperLayout from '../../components/NewspaperLayout.jsx'
 import { FONT, TRACKING, TEXT_MUTED, FS_BASE } from '../../data/theme.js'
@@ -32,7 +30,6 @@ function formatDate(iso) {
 }
 
 export default function ImmersionReader({ article, defaultLevel = 'simplified', onBack }) {
-  const { user, signIn } = useAuth()
   const [showSimplified, setShowSimplified] = useState(defaultLevel !== 'original' && !!article.body_simple)
   const [popup, setPopup] = useState(null) // { token, vocabEntry, anchorRect, idx }
   const [showFurigana, setShowFurigana] = useState(true)
@@ -141,8 +138,7 @@ export default function ImmersionReader({ article, defaultLevel = 'simplified', 
                 <div style={{ marginLeft: 'auto' }}>
                   <ToggleButton
                     active={showFurigana}
-                    labels={{ on: 'Hide furigana', off: 'Show furigana' }}
-                    activeTone="neutral"
+                    labels={{ on: 'Furigana on', off: 'Furigana off' }}
                     onClick={() => setShowFurigana(f => !f)}
                   />
                 </div>
@@ -172,18 +168,12 @@ export default function ImmersionReader({ article, defaultLevel = 'simplified', 
           </div>
 
           {hasSummary && (
-            <div style={{ marginBottom: 32, borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 24 }}>
+            <div style={{ paddingBottom: 48 }}>
               <Disclosure label="English summary">
                 <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, lineHeight: 1.7 }}>
                   {article.summary_en}
                 </div>
               </Disclosure>
-            </div>
-          )}
-
-          {!user && (
-            <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 24, paddingBottom: 48, display: 'flex', alignItems: 'center', gap: 12 }}>
-              <Button variant="neutral" size="sm" onClick={signIn}>Sign in to save reading history</Button>
             </div>
           )}
         </div>
