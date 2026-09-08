@@ -152,7 +152,7 @@ export default function ImmersionReader({ article, defaultLevel = 'simplified', 
 
           <div style={{ marginBottom: 40 }}>
             <NewspaperLayout
-              title={article.title}
+              title={showingSimplified ? (article.title_simple ?? article.title) : article.title}
               subtitle={article.title_en}
               masthead={SOURCE_LABEL[article.source] ?? article.source ?? 'News'}
               edition={EDITION_LABEL[showSimplified ? 'simplified' : 'original']}

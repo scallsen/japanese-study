@@ -55,6 +55,7 @@ const ARTICLE_SCHEMA = {
   type: 'object',
   properties: {
     title: { type: 'string' },
+    title_simple: { type: 'string' },
     title_en: { type: 'string' },
     body_ja: { type: 'string' },
     body_simple: { type: 'string' },
@@ -62,7 +63,7 @@ const ARTICLE_SCHEMA = {
     difficulty: { type: 'integer', enum: [1, 2, 3, 4, 5] },
     category: { type: 'string', enum: ARTICLE_CATEGORIES },
   },
-  required: ['title', 'title_en', 'body_ja', 'body_simple', 'summary_en', 'difficulty', 'category'],
+  required: ['title', 'title_simple', 'title_en', 'body_ja', 'body_simple', 'summary_en', 'difficulty', 'category'],
   additionalProperties: false,
 }
 
@@ -221,7 +222,8 @@ Headline: ${headline}
 Published: ${pubDate ?? 'recently'}
 
 Fields to produce:
-- title: the headline as-is (Japanese)
+- title: a Japanese headline for the intermediate article, rewritten at N4 level — keep the meaning of the real headline but use vocabulary and kanji an N4 learner can read. Headline style: under 30 characters, plain/dictionary form or noun ending, no です/ます
+- title_simple: a Japanese headline for the simplified article at N5 level — under 20 characters, plainer words, only very common kanji. Same headline style, no です/ます
 - title_en: natural English translation of the headline
 - body_ja: a 3-4 paragraph Japanese article about this topic. Use N4-level vocabulary and grammar. Short sentences. No unusual kanji without context. Write as if summarizing a real news story. Do not use furigana ruby tags — plain Japanese text only.
 - body_simple: a simplified 2-3 paragraph version of body_ja. Even simpler sentences and vocabulary, targeting N5/N4 boundary. Plain Japanese text only.
@@ -332,6 +334,7 @@ async function main() {
         slug,
         source: 'news',
         title: ai.title ?? topic.headline,
+        title_simple: ai.title_simple ?? null,
         title_en: ai.title_en ?? null,
         published_at: publishedAt,
         body_ja: ai.body_ja,

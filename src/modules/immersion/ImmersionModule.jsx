@@ -25,7 +25,7 @@ const IMMERSION_ACCENT = MODULES.find(m => m.id === 'immersion').accent
 
 const CATEGORY_OPTIONS = [{ value: 'all', label: 'All' }, ...CATEGORIES.map(c => ({ value: c.id, label: c.label }))]
 const LEVEL_OPTIONS = [{ value: 'simplified', label: 'Simple' }, { value: 'original', label: 'Intermediate' }]
-const ARTICLE_COLUMNS = 'id, slug, source, title, title_en, published_at, body_ja, body_simple, summary_en, questions, difficulty, category, tokens_ja, tokens_simple, vocabulary_ja'
+const ARTICLE_COLUMNS = 'id, slug, source, title, title_simple, title_en, published_at, body_ja, body_simple, summary_en, questions, difficulty, category, tokens_ja, tokens_simple, vocabulary_ja'
 const PAGE_SIZE = 12
 const DEFAULT_LEVEL_KEY = 'immersion-default-level'
 
@@ -40,12 +40,13 @@ function sanitizeSearchTerm(term) {
   return term.replace(/[,()]/g, '').trim()
 }
 
-function ArticleCard({ article, onClick, isRead }) {
+function ArticleCard({ article, level, onClick, isRead }) {
   const badges = article.category ? [{ label: CATEGORY_LABEL[article.category] ?? article.category, tone: 'accent' }] : []
+  const title = level === 'simplified' ? (article.title_simple ?? article.title) : article.title
   return (
     <FeedCard
       badges={badges}
-      title={article.title}
+      title={title}
       subtitle={article.title_en}
       meta={formatDate(article.published_at)}
       read={isRead}
@@ -151,7 +152,7 @@ function ImmersionScreens() {
 
     let q = supabase.from('articles').select(ARTICLE_COLUMNS).eq('active', true)
     if (category !== 'all') q = q.eq('category', category)
-    if (search) q = q.or(`title_en.ilike.%${search}%,summary_en.ilike.%${search}%,title.ilike.%${search}%`)
+    if (search) q = q.or(`title_en.ilike.%${search}%,summary_en.ilike.%${search}%,title.ilike.%${search}%,title_simple.ilike.%${search}%`)
     const offsetBase = category === 'all' && !search ? 3 : 0
     q = q.order('published_at', { ascending: false }).order('id', { ascending: false }).range(offsetBase, offsetBase + PAGE_SIZE - 1)
 
@@ -176,7 +177,7 @@ function ImmersionScreens() {
 
     let q = supabase.from('articles').select(ARTICLE_COLUMNS).eq('active', true)
     if (category !== 'all') q = q.eq('category', category)
-    if (search) q = q.or(`title_en.ilike.%${search}%,summary_en.ilike.%${search}%,title.ilike.%${search}%`)
+    if (search) q = q.or(`title_en.ilike.%${search}%,summary_en.ilike.%${search}%,title.ilike.%${search}%,title_simple.ilike.%${search}%`)
     q = q.order('published_at', { ascending: false }).order('id', { ascending: false }).range(from, to)
 
     setLoadingMore(true)
@@ -239,6 +240,7 @@ function ImmersionScreens() {
                   <ArticleCard
                     key={article.slug}
                     article={article}
+                    level={defaultLevel}
                     onClick={() => setSelectedArticle(article)}
                     isRead={readSet.has(article.slug)}
                   />
@@ -265,6 +267,7 @@ function ImmersionScreens() {
                   <ArticleCard
                     key={article.slug}
                     article={article}
+                    level={defaultLevel}
                     onClick={() => setSelectedArticle(article)}
                     isRead={readSet.has(article.slug)}
                   />
