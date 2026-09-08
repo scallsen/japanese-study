@@ -118,10 +118,10 @@ export default function PageHeader({ crumbs = [], rightSlot, subtitle, noBorder,
             decide when to hide it (e.g. on mobile) by passing null. */}
         {subtitle && (
           <span style={{
-            color: 'rgba(255,255,255,0.35)', fontSize: FS_NAV, marginLeft: 10,
+            color: 'rgba(255,255,255,0.35)', fontSize: FS_NAV, marginLeft: 14,
             whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0, flexShrink: 1,
           }}>
-            – {subtitle}
+            {subtitle}
           </span>
         )}
         {rightSlot && <div style={{ marginLeft: 'auto' }}>{rightSlot}</div>}

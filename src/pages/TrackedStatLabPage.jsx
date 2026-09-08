@@ -62,15 +62,16 @@ function TileStat({ label, value }) {
   )
 }
 
-// ── Option C — sidebar-style line ────────────────────────────────────────
-// Reuses the exact "Unit tracked — count" phrasing the dashboard's Stats
-// group now renders, so a module's own page visually rhymes with the
-// dashboard rather than introducing a third way to show the same fact.
+// ── Option C — sidebar-style row ─────────────────────────────────────────
+// The exact StatRow the dashboard's own Vocabulary/Stats groups use (label
+// left, value right, space-between) so a module's own page visually rhymes
+// with the dashboard rather than introducing a third way to show the same
+// fact. An inline "Unit — count" phrasing was tried here first but reads as
+// broken once the value is a bare "–" (double dash, "Articles read — –").
 function LineStat({ label, value }) {
   return (
-    <div style={{ fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING }}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE_12, fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING }}>
       <span style={{ color: TEXT_MUTED }}>{label}</span>
-      <span style={{ color: TEXT_MUTED }}> — </span>
       <span style={{ color: TEXT }}>{value}</span>
     </div>
   )
@@ -91,8 +92,8 @@ const OPTIONS = [
   },
   {
     key: 'line',
-    title: 'C — Sidebar-style line',
-    note: 'Exact "Unit — count" phrasing from the dashboard\'s Stats group, dropped into a module page\'s own sidebar/details panel. Cheapest to keep in sync visually with the dashboard.',
+    title: 'C — Sidebar-style row',
+    note: 'The exact label/value StatRow from the dashboard\'s Vocabulary and Stats groups, dropped into a module page\'s own sidebar/details panel. Cheapest to keep in sync visually with the dashboard.',
     render: f => <LineStat label={f.label} value={f.value} />,
   },
 ]

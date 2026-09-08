@@ -178,7 +178,7 @@ export default function DashboardPage() {
         rightSlot={<AuthSlot />}
         // Home page only — every other page uses the crumb row purely for
         // navigation, and there's no room for this next to it on mobile.
-        subtitle={isMobile ? null : 'Drill and memorize Japanese vocabulary.'}
+        subtitle={isMobile ? null : 'Drill and memorize Japanese vocabulary'}
       />
 
       <main style={{
@@ -219,8 +219,6 @@ export default function DashboardPage() {
                 />
               </div>
 
-              {sidebarBelow && stats}
-
               <div>
                 <SectionHeader title="Explore" />
                 <div style={{
@@ -233,6 +231,10 @@ export default function DashboardPage() {
                   ))}
                 </div>
               </div>
+
+              {/* Stacked (collapsed sidebar) layout only — on the side, the
+                  sidebar stays where it is, in its own grid column below. */}
+              {sidebarBelow && stats}
             </div>
 
             {!sidebarBelow && stats}
@@ -316,19 +318,9 @@ function StatsPanel({ columns, signedOut, srs, articlesRead, seriesTracked, stor
 
       <div>
         <SectionHeader title="Stats" />
-        {signedOut ? (
-          <>
-            <ModuleLine label="Articles read" capability="Reads real news articles" />
-            <ModuleLine label="Series tracked" capability="Tracks series you follow" />
-            <ModuleLine label="Stories generated" capability="Generates stories from words you know" />
-          </>
-        ) : (
-          <>
-            <ModuleLine label="Articles read" value={articlesRead} />
-            <ModuleLine label="Series tracked" value={seriesTracked} />
-            <ModuleLine label="Stories generated" value={storiesGenerated ?? '–'} />
-          </>
-        )}
+        <StatRow label="Articles read" value={signedOut ? '–' : articlesRead} />
+        <StatRow label="Series tracked" value={signedOut ? '–' : seriesTracked} />
+        <StatRow label="Stories generated" value={signedOut ? '–' : (storiesGenerated ?? '–')} />
       </div>
     </aside>
   )
@@ -339,29 +331,6 @@ function StatRow({ label, value }) {
     <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE_12, padding: `${SPACE_4}px 0`, fontSize: FS_BASE }}>
       <span style={{ color: TEXT_MUTED }}>{label}</span>
       <span style={{ color: TEXT }}>{value}</span>
-    </div>
-  )
-}
-
-// "Unit tracked — count", one flowing line rather than a two-column stat row
-// — deliberately different from StatRow above, since the unit-first phrasing
-// only reads naturally as a sentence fragment, not split to opposite edges.
-// Signed out, there's nothing to count for any of these (Articles
-// read/Series tracked normally have a local-only value even signed out, but
-// showing that here would undercut the sign-in nudge the rest of the
-// sidebar is making) — `capability` swaps the count for what the module does.
-function ModuleLine({ label, value, capability }) {
-  return (
-    <div style={{ padding: `${SPACE_4}px 0`, fontSize: FS_BASE }}>
-      {capability ? (
-        <span style={{ color: TEXT_MUTED }}>{capability}</span>
-      ) : (
-        <>
-          <span style={{ color: TEXT_MUTED }}>{label}</span>
-          <span style={{ color: TEXT_MUTED }}> — </span>
-          <span style={{ color: TEXT }}>{value}</span>
-        </>
-      )}
     </div>
   )
 }
