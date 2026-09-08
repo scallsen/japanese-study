@@ -936,7 +936,8 @@ create table if not exists articles (
   id           uuid primary key default gen_random_uuid(),
   slug         text not null unique,
   source       text,
-  title        text not null,
+  title        text not null,   -- N4-level headline, pairs with body_ja (pre-taxonomy rows carried the real headline verbatim; see scripts/regenerate-article-titles.mjs)
+  title_simple text,            -- N5-level headline, pairs with body_simple; reader/list fall back to `title` when null
   title_en     text,
   published_at timestamptz not null,
   body_ja      text not null,
@@ -944,6 +945,7 @@ create table if not exists articles (
   summary_en   text,
   questions    jsonb,   -- [{q, a}] x3
   difficulty   smallint,
+  category     text,    -- fixed taxonomy assigned at generation time (ARTICLE_CATEGORIES in fetch-nhk.mjs / CATEGORIES in src/modules/immersion/categories.js); null on pre-taxonomy rows — scripts/backfill-article-category.mjs fills them
   tokens_ja    jsonb,   -- [{t, r, w}] — Kuromoji tokens for body_ja
   tokens_simple jsonb,  -- [{t, r, w}] — Kuromoji tokens for body_simple
   vocabulary_ja jsonb,  -- [{word, reading, meaning, jmdictId, pos}] — JMdict entry per content token
