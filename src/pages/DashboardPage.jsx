@@ -36,7 +36,14 @@ const SIDEBAR_WIDTH = 280
 // Below this the right-hand sidebar would squeeze the two primary cards into
 // tall, narrow slivers, so it moves under them as a full-width stats strip
 // and the cards get their squarer proportions back.
-const SIDEBAR_BREAKPOINT = 1100
+//
+// Kept under ~1046 on purpose: that's the window width where the Explore
+// grid's own auto-fill (240px cards, 10px gap, inside the 1120px max-width
+// content column, 28px page padding each side) first fits a 4th column.
+// A breakpoint any higher leaves a band where the stacked layout is wide
+// enough for 4 Explore cards across with no sidebar yet visible — exactly
+// the "page gets wide but no sidebar" gap this number closes.
+const SIDEBAR_BREAKPOINT = 1020
 
 function readDailyNewCards() {
   const raw = safeLocalStorageGet('srs-daily-new-cards')

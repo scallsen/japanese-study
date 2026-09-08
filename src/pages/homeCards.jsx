@@ -182,6 +182,25 @@ function TextbookCarousel() {
   )
 }
 
+const REVIEW_PLACEHOLDER_SRC = '/placeholder-svg/review-flashcards.svg'
+
+// Review's empty-state image — a flashcard pile, same pixel-art treatment
+// and size as TextbookCover's own artwork so the two empty states read as
+// one visual language. Placeholder per the redesign brief; swapped for a
+// final asset separately.
+function ReviewPlaceholder() {
+  return (
+    <img
+      src={REVIEW_PLACEHOLDER_SRC}
+      alt=""
+      // marginLeft: auto pushes it to the card's right edge — same trick
+      // PageHeader's rightSlot uses — since Card's body is a column flex
+      // container this item doesn't otherwise get horizontal alignment.
+      style={{ width: COVER_SIZE, height: COVER_SIZE, imageRendering: 'pixelated', display: 'block', marginLeft: 'auto' }}
+    />
+  )
+}
+
 // Only ever two buttons on a card: the (possibly segmented) primary, then
 // one secondary action, side by side rather than a quiet link row above —
 // except on mobile, where the stacked card is already full device width and
@@ -376,7 +395,9 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
         // Weaker than Practice's "Choose textbook" on purpose — this is the
         // optional card, not the primary action on the page.
         actions={<ActionsRow><Button size="lg" variant="neutral" onClick={onSignIn}>Create account</Button></ActionsRow>}
-      />
+      >
+        <ReviewPlaceholder />
+      </PrimaryCard>
     )
   }
 
