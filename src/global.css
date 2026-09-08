@@ -475,6 +475,40 @@ button, input, select, textarea {
   .textbook-marquee__track { animation: none; }
 }
 
+/* #/dev/cover-rotation — candidate replacements for the marquee above:
+   rotating through the same cover art one at a time inside a fixed square,
+   instead of a horizontal drift across the card's full width. Each variant
+   pairs an -enter class (on the incoming cover) with an -exit class (on the
+   outgoing one); both play concurrently. */
+@keyframes cover-fade-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes cover-fade-out { from { opacity: 1; } to { opacity: 0; } }
+.cover-fade-enter { animation: cover-fade-in 450ms ease-out; }
+.cover-fade-exit  { animation: cover-fade-out 450ms ease-in forwards; }
+
+@keyframes cover-pop-in  { from { opacity: 0; transform: scale(0.82); } to { opacity: 1; transform: scale(1); } }
+@keyframes cover-pop-out { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.92); } }
+.cover-pop-enter { animation: cover-pop-in 420ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+.cover-pop-exit  { animation: cover-pop-out 300ms ease-in forwards; }
+
+@keyframes cover-slide-in  { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes cover-slide-out { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-16px); } }
+.cover-slide-enter { animation: cover-slide-in 420ms ease-out; }
+.cover-slide-exit  { animation: cover-slide-out 420ms ease-in forwards; }
+
+@keyframes cover-flip-in  { from { opacity: 0; transform: rotateY(90deg); } to { opacity: 1; transform: rotateY(0deg); } }
+@keyframes cover-flip-out { from { opacity: 1; transform: rotateY(0deg); } to { opacity: 0; transform: rotateY(-90deg); } }
+.cover-flip-enter { animation: cover-flip-in 480ms ease-out; backface-visibility: hidden; }
+.cover-flip-exit  { animation: cover-flip-out 480ms ease-in forwards; backface-visibility: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cover-fade-enter, .cover-fade-exit,
+  .cover-pop-enter, .cover-pop-exit,
+  .cover-slide-enter, .cover-slide-exit,
+  .cover-flip-enter, .cover-flip-exit {
+    animation: none;
+  }
+}
+
 /* Textbook picker rows (the real picker and the layout bench). Every one of
    these needs !important: the rows set background, colour and border-left
    inline, and an inline style outranks a class rule outright — the gotcha

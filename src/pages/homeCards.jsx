@@ -25,7 +25,7 @@ const SRS_MODULE = MODULES.find(m => m.id === 'vocab-srs')
 
 const HAIRLINE = 'rgba(255,255,255,0.08)'
 
-const COVER_SIZE = 104
+export const COVER_SIZE = 104
 
 function navigate(hash) {
   window.location.hash = hash
