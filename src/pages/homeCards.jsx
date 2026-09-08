@@ -384,12 +384,11 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
         accent={accent}
         title="Review"
         subtitle="Long-term memorization for vocabulary"
+        cover={<ReviewPlaceholder />}
         // Weaker than Practice's "Choose word list" on purpose — this is the
         // optional card, not the primary action on the page.
         actions={<ActionsRow><Button size="lg" variant="neutral" onClick={onSignIn}>Create account</Button></ActionsRow>}
-      >
-        <ReviewPlaceholder />
-      </PrimaryCard>
+      />
     )
   }
 
