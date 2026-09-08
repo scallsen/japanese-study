@@ -9,8 +9,9 @@ import ChipSelector from '../../components/Chip.jsx'
 import FeedCard from '../../components/FeedCard.jsx'
 import FilterCard, { FilterRow } from '../../components/FilterCard.jsx'
 import ActionBar, { ACTION_BAR_HEIGHT } from '../../components/ActionBar.jsx'
+import SectionHeader from '../../components/SectionHeader.jsx'
 import { BG } from './storyUI.jsx'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_CAPTION, FS_HEADING, DANGER } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_CAPTION, DANGER } from '../../data/theme.js'
 import { MODULES } from '../../data/modules.js'
 import { ModuleThemeProvider, useAccent } from '../../context/ModuleThemeContext.jsx'
 import { AI_DAILY_LIMITS } from '../../data/aiLimits.js'
@@ -98,10 +99,10 @@ function QuotaPips({ remaining }) {
   )
 }
 
-function StoryList({ title, stories, empty }) {
+function StoryList({ stories, empty }) {
   return (
     <div>
-      <div style={{ fontSize: FS_HEADING, color: TEXT_MUTED, marginBottom: 12 }}>{title}</div>
+      <SectionHeader title="Stories" />
       {stories.length > 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {stories.map(entry => (
@@ -134,14 +135,14 @@ function StoryGenerator() {
   const aiAvailable = useAiAvailability('story-generate')
   const storyRemaining = Math.max(0, STORY_LIMIT - (aiUsage.today['story-generate'] ?? 0))
 
-  const [myStories, setMyStories] = useState([])
-  const [exampleStories, setExampleStories] = useState([])
+  const [stories, setStories] = useState([])
   const [recentLoading, setRecentLoading] = useState(true)
   const [recentError, setRecentError] = useState(null)
 
-  // Two queries rather than one filtered client-side: a single limited query
-  // would let a long list of examples crowd out the user's own stories.
-  // RLS already restricts reads to own + shared, so this only shapes the split.
+  // Two queries rather than one filtered server-side `.or(...)`: RLS already
+  // restricts reads to own + shared, this just fetches each side's own top N
+  // before merging, so a long example list can't push a user's own recent
+  // story out of the top N before the merge even happens.
   useEffect(() => {
     if (!supabase) {
       setRecentError('Supabase not configured.')
@@ -166,8 +167,9 @@ function StoryGenerator() {
       } else {
         const own = (m.data ?? []).map(mapRow)
         const ownIds = new Set(own.map(s => s.id))
-        setMyStories(own)
-        setExampleStories((e.data ?? []).map(mapRow).filter(s => !ownIds.has(s.id)))
+        const shared = (e.data ?? []).map(mapRow).filter(s => !ownIds.has(s.id))
+        const merged = [...own, ...shared].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        setStories(merged.slice(0, MAX_RECENT_STORIES))
       }
       setRecentLoading(false)
     })
@@ -261,7 +263,7 @@ function StoryGenerator() {
         created_at: createdAt,
       })
       if (insertError) throw new Error(insertError.message)
-      setMyStories(prev => [{ id, title: data.title, format, createdAt }, ...prev].slice(0, MAX_RECENT_STORIES))
+      setStories(prev => [{ id, title: data.title, format, createdAt }, ...prev].slice(0, MAX_RECENT_STORIES))
       refreshUsage()
       window.location.hash = `#/story/${id}`
     } catch (err) {
@@ -344,18 +346,10 @@ function StoryGenerator() {
             ) : recentError ? (
               <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>{recentError}</div>
             ) : (
-              <>
-                <StoryList
-                  title="Your stories"
-                  stories={myStories}
-                  empty={user ? 'No stories generated yet.' : 'Sign in to generate and keep your own stories.'}
-                />
-                {exampleStories.length > 0 && (
-                  <div style={{ marginTop: 28 }}>
-                    <StoryList title="Examples" stories={exampleStories} empty={null} />
-                  </div>
-                )}
-              </>
+              <StoryList
+                stories={stories}
+                empty={user ? 'No stories generated yet.' : 'Sign in to generate and keep your own stories.'}
+              />
             )}
           </div>
         </div>
