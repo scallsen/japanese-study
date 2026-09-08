@@ -24,7 +24,7 @@ export default function DeckComboBox({
   isMobile,
   disabled = false,
   fullWidth = false,
-  buttonLabel = 'Add to SRS',
+  buttonLabel = 'Add to review deck',
   title = 'Add to which deck?',
   lastUsedDeckId,
 }) {

@@ -267,8 +267,8 @@ function VocabSrsHome() {
   if (!user) {
     return (
       <SignInGate
-        crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'SRS' }]}
-        title="Sign in to use Vocab SRS"
+        crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Reviews' }]}
+        title="Sign in to use Reviews"
         subtitle="Progress syncs to your account across devices"
         onSignIn={signIn}
       />
@@ -519,7 +519,7 @@ function VocabSrsHome() {
     const hairline = { height: 1, background: 'rgba(255,255,255,0.08)', margin: '20px 0' }
     return (
       <div>
-        <SectionHeader title="SRS Settings" />
+        <SectionHeader title="Review settings" />
         <FilterCard>
           <SettingsRow
             label="Daily new cards"
@@ -624,12 +624,12 @@ function VocabSrsHome() {
             leechThreshold={leechThreshold}
             isMobile={isMobile}
             onShowOptions={() => setShowOptions(v => !v)}
-            crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'SRS', onClick: handleExitSession }]}
+            crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Reviews', onClick: handleExitSession }]}
           />
         ) : (
           <div style={{ height: '100%', display: 'flex', flexDirection: 'column', color: TEXT }}>
             <PageHeader
-              crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'SRS' }]}
+              crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Reviews' }]}
               rightSlot={<AuthSlot />}
             />
 

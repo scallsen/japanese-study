@@ -107,7 +107,7 @@ const DESCRIPTIONS = {
   spacing: '12px (SPACE_12) is the default gap/padding — reach for it first. Only drop tighter or step up when there’s a concrete reason, not by feel.',
   color: 'One core accent, five semantic tones, and a per-module accent each screen carries as its own identity. Two separate colour sets sit outside the semantic scale on purpose — see their notes.',
   button: 'Trigger an action. Six variants covering every real button family in the app, reconciled from 15+ call sites that each hand-rolled their own. An `icon` prop supplements or replaces the label — an icon-only button is this with no children, not a separate component.',
-  badge: 'A small classification — JLPT level, part of speech, difficulty, SRS status. One atom with tone presets, replacing 8+ inline pill implementations.',
+  badge: 'A small classification — JLPT level, part of speech, difficulty, review status. One atom with tone presets, replacing 8+ inline pill implementations.',
   card: 'A raised surface for grouping content. The same shell was written inline 8+ times.',
   'text-input': 'Single-line text entry. Reconciled from four real inputs; `bare` exists because an input inside an already-bordered container must not draw a second border.',
   'number-field': 'A small bounded number — a count, a threshold, a day offset.',
@@ -135,7 +135,7 @@ const CORE_TYPE_TOKENS = [
   { names: ['FS_BADGE'], px: FS_BADGE, usage: 'inline pill labels — badges, tags', sample: 'N4' },
   { names: ['FS_SM'], px: FS_SM, usage: 'compact secondary text', sample: '2,007 cards · bundled' },
   { names: ['FS_BASE', 'FS_CAPTION', 'FS_HEADING', 'FS_ENTRY'], px: FS_BASE, isDefault: true, usage: 'use this — body text, captions, headings, dictionary entries all share it. Start here for any new text.', sample: 'You have 12 cards due today.' },
-  { names: ['FS_NAV'], px: FS_NAV, usage: 'breadcrumb navigation, the one step up from body text', sample: 'Japanese Study / Vocabulary Training' },
+  { names: ['FS_NAV'], px: FS_NAV, usage: 'breadcrumb navigation, the one step up from body text', sample: 'Japanese Study / Vocabulary' },
 ]
 
 const HEADING_TYPE_TOKENS = [
@@ -785,7 +785,7 @@ function ToggleButtonDemo() {
           />
         </div>
         <div>
-          <div style={{ fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.3)', marginBottom: SPACE_8 }}>Deck On / Off — SRS home (accent tone, non-destructive)</div>
+          <div style={{ fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.3)', marginBottom: SPACE_8 }}>Deck On / Off — Reviews home (accent tone, non-destructive)</div>
           <ToggleButton
             active={deckOn}
             labels={{ on: 'On', off: 'Off' }}
@@ -865,7 +865,7 @@ function DistributionBarDemo() {
 const SEED_DECKS = {
   'immersion-words': { id: 'immersion-words', name: 'Immersion Words', source: 'imported', addedAt: 1 },
   'story-words': { id: 'story-words', name: 'Story Words', source: 'imported', addedAt: 2 },
-  'vocab-drill-words': { id: 'vocab-drill-words', name: 'Vocab Drill Words', source: 'imported', addedAt: 3 },
+  'vocab-drill-words': { id: 'vocab-drill-words', name: 'Vocabulary Words', source: 'imported', addedAt: 3 },
 }
 
 function DeckPickerDemo() {
@@ -918,7 +918,7 @@ function DefinitionPopoverDemo() {
       </div>
       {log && <div style={{ fontSize: FS_CAPTION, color: ACCENT }}>{log}</div>}
       <div style={{ fontSize: FS_SM, color: TEXT_MUTED, lineHeight: 1.5, maxWidth: 420 }}>
-        Click the highlighted word, then &ldquo;Add to SRS&rdquo; — the panel swaps to the deck list in
+        Click the highlighted word, then &ldquo;Add to review deck&rdquo; — the panel swaps to the deck list in
         place instead of opening a second popover on top of itself.
       </div>
 
@@ -947,7 +947,7 @@ function DefinitionPopoverDemo() {
 
 const DRILL_LAYOUT_OPTIONS = [
   { value: 'verdict', label: 'Verdict pair (speed mode)' },
-  { value: 'rating', label: 'Four-way rating (SRS)' },
+  { value: 'rating', label: 'Four-way rating (Reviews)' },
   { value: 'placeholder', label: 'Pre-flip placeholder' },
 ]
 
@@ -1018,7 +1018,7 @@ const SELECT_SIZE_OPTIONS = ['sm', 'md'].map(v => ({ value: v, label: v }))
 const SELECT_VARIANT_OPTIONS = ['default', 'inline'].map(v => ({ value: v, label: v }))
 const SELECT_DEMO_OPTIONS = [
   { label: 'Nihongo So-Matome N3', options: [{ value: 'all', label: 'All lists' }, { value: 'w1d1', label: 'Week 1, Day 1' }] },
-  { label: 'SRS decks', options: [{ value: 'core', label: 'Keigo' }] },
+  { label: 'Review decks', options: [{ value: 'core', label: 'Keigo' }] },
 ]
 
 function SelectDemo() {
@@ -1059,7 +1059,7 @@ function SectionHeaderDemo() {
   const [withAction, setWithAction] = useState(true)
   const preview = (
     <div style={{ width: 360 }}>
-      <SectionHeader title="Review words" action={withAction ? <Button variant="accent-outline" size="sm">Add 2 to SRS</Button> : undefined} />
+      <SectionHeader title="Review words" action={withAction ? <Button variant="accent-outline" size="sm">Add 2 to review deck</Button> : undefined} />
       <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: SPACE_16 }}>…section content…</div>
       <SectionHeader title="Kanji" marginTop={28} />
       <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>…the next group…</div>
@@ -1072,7 +1072,7 @@ function SectionHeaderDemo() {
 function SignInGateDemo() {
   const preview = (
     <div style={{ width: 480, height: 300, overflow: 'hidden', borderRadius: 8, border: `1px solid ${BORDER}` }}>
-      <SignInGate fullScreen={false} crumbs={[{ label: 'Japanese Study' }, { label: 'SRS' }]} title="Sign in to use Vocab SRS" subtitle="Progress syncs to your account across devices" onSignIn={() => {}} />
+      <SignInGate fullScreen={false} crumbs={[{ label: 'Japanese Study' }, { label: 'Reviews' }]} title="Sign in to use Reviews" subtitle="Progress syncs to your account across devices" onSignIn={() => {}} />
     </div>
   )
   return <ComponentPage title="Sign-in Gate" description={DESCRIPTIONS['sign-in-gate']} built preview={preview} />

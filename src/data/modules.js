@@ -3,7 +3,7 @@
 export const MODULES = [
   {
     id: 'school-vocab',
-    label: 'Vocabulary Training',
+    label: 'Vocabulary',
     sublabel: 'Drill vocabulary words manually',
     tier: 'primary',
     stats: null,
@@ -14,7 +14,7 @@ export const MODULES = [
   },
   {
     id: 'vocab-srs',
-    label: 'SRS',
+    label: 'Reviews',
     sublabel: 'A simple spaced repetition tool for vocabulary',
     tier: 'primary',
     stats: null,

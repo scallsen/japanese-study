@@ -107,7 +107,7 @@ export function WordPopup({ token, vocabEntry, onAdd, onCreateAndAdd, decks, isM
             <div style={{ fontSize: FS_BASE, color: TEXT, marginBottom: 10 }}>{vocabEntry.meaning}</div>
           )}
           <Button variant="accent-outline" fullWidth onClick={() => setView('deck')}>
-            Add to SRS
+            Add to review deck
           </Button>
         </div>
       )}
