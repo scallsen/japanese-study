@@ -216,7 +216,7 @@ function ImmersionScreens() {
           <TextInput
             value={searchInput}
             onChange={setSearchInput}
-            placeholder="Search articles…"
+            placeholder="Search articles"
             size="lg"
           />
           <div style={{ fontSize: FS_BASE - 2, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.7, marginTop: -SPACE_8 }}>

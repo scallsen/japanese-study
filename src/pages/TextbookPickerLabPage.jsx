@@ -282,7 +282,7 @@ function useSearch(books) {
 function SearchRow({ query, setQuery }) {
   return (
     <div style={{ padding: SPACE_12, borderBottom: `1px solid ${HAIRLINE}` }}>
-      <TextInput value={query} onChange={setQuery} placeholder="Search textbooks…" fullWidth />
+      <TextInput value={query} onChange={setQuery} placeholder="Search word lists" fullWidth />
     </div>
   )
 }

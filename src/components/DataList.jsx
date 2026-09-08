@@ -324,7 +324,7 @@ export default function DataList({
             <TextInput
               value={search.value}
               onChange={search.onChange}
-              placeholder={search.placeholder ?? 'Search...'}
+              placeholder={search.placeholder ?? 'Search'}
               variant="bare"
             />
           </div>

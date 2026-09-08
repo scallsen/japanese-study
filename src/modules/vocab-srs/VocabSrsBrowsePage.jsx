@@ -335,7 +335,7 @@ function BrowseCards() {
             onChange={setStateFilter}
           />
 
-          <TextInput value={searchInput} onChange={setSearchInput} placeholder="Search..." style={{ marginBottom: 20 }} />
+          <TextInput value={searchInput} onChange={setSearchInput} placeholder="Search cards" style={{ marginBottom: 20 }} />
 
           <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: 10 }}>
             {filtered.length} card{filtered.length === 1 ? '' : 's'}

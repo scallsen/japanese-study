@@ -25,7 +25,7 @@ export default function OptionPicker({
   items,
   onSelect,
   onCreate,
-  placeholder = 'Search…',
+  placeholder = 'Search',
   emptyMessage = 'Nothing here yet',
   createLabel = query => `+ Create “${query}”`,
   autoFocus = true,
