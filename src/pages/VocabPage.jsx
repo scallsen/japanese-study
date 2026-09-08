@@ -112,9 +112,17 @@ function hashQuery() {
   return new URLSearchParams(window.location.hash.split('?')[1] ?? '')
 }
 
+// Validated against WORD_SOURCES' config rather than WORD_DATA's bundled
+// words: a personal source's chapters have no entry in WORD_DATA at all
+// (their words live in the learner's account, loaded async by
+// useCustomWords), so checking WORD_DATA here made every personal-textbook
+// deep link — "Start current chapter" / "Next chapter" from the dashboard,
+// for every book that actually has words today — silently fail to select a
+// chapter or start the drill, landing back on the chapter overview instead.
 function chapterFromHash() {
   const chapter = hashQuery().get('chapter')
-  return chapter && WORD_DATA.some(w => w.listKey === chapter) ? chapter : null
+  if (!chapter) return null
+  return WORD_SOURCES.some(s => s.id === chapter || s.lists?.some(l => l.id === chapter)) ? chapter : null
 }
 
 // A textbook chapter's listKey is also a WORD_SOURCES sublist id (or, for a
@@ -1124,7 +1132,7 @@ function VocabPageScreens() {
     () => (personalSource ? availableSubLists.map(l => l.id) : []),
     [personalSource, availableSubLists],
   )
-  const customWords = useCustomWords(customListKeys)
+  const { words: customWords, loading: customWordsLoading } = useCustomWords(customListKeys)
   const wordPool = useMemo(
     () => (customWords.length ? [...WORD_DATA, ...customWords] : WORD_DATA),
     [customWords],
@@ -1188,7 +1196,12 @@ function VocabPageScreens() {
   // falls back to localStorage when logged out, and the dashboard's chapter
   // pointer needs drilled state either way.
   useEffect(() => {
-    if (!isDrilling || !drill.done) return
+    // pool.length === 0 also covers the moment a deep-linked personal
+    // chapter's drill.done is briefly (and wrongly) true before its async
+    // word fetch resolves — see the customWordsLoading guard above. Without
+    // it this fired with total: 0 and marked the chapter drilled before a
+    // single card had been shown.
+    if (!isDrilling || !drill.done || pool.length === 0) return
     const now = new Date().toISOString()
     const total = pool.length
     const updatedSublists = { ...(vocabProgress?.sublists ?? {}) }
@@ -1341,7 +1354,14 @@ function VocabPageScreens() {
             minHeight: 'min-content',
           }}>
             {isDrilling ? (
-              drill.done ? (
+              // A personal chapter's words are fetched from the account, not the
+              // bundle — reachable here before that fetch settles when a deep
+              // link (dashboard "Start"/"Next chapter") jumps straight into the
+              // drill. Without this guard the empty pool reads as `drill.done`
+              // and flashes a 0-card done screen before the real cards arrive.
+              personalSource && customWordsLoading ? (
+                <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>Loading…</div>
+              ) : drill.done ? (
                 <DoneScreen
                   pool={pool}
                   mistakeCounts={drill.mistakeCounts}
