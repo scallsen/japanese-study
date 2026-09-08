@@ -9,7 +9,7 @@ import { MODULES } from '../data/modules.js'
 import { TEXTBOOKS, COVER_GUTTER_FRACTION } from '../data/textbooks.js'
 import { chapterPrimaryAction } from './chapterAction.jsx'
 import {
-  FONT, TRACKING, TEXT, TEXT_MUTED, FS_BADGE, FS_BASE, FS_CAPTION, FS_CONTENT_HEADING,
+  FONT, TRACKING, TEXT, TEXT_MUTED, FS_BADGE, FS_BASE, FS_CONTENT_HEADING,
   SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32,
 } from '../data/theme.js'
 
@@ -38,34 +38,34 @@ function navigate(hash) {
 // they're told to, rather than relying on the parent grid's default stretch
 // staying that way.
 export function PrimaryCard({ accent, title, subtitle, cover, progress, actions, children }) {
-  // Stacked one-per-row, a card has no neighbour to line up with, so the
-  // floor that keeps the pair squarish side by side would only add dead air.
-  const isMobile = useIsMobile()
   return (
     <ModuleThemeProvider accent={accent}>
       <Card
         padding={SPACE_24}
-        style={{
-          display: 'flex', flexDirection: 'column', gap: SPACE_16,
-          height: '100%', minHeight: isMobile ? 0 : 250,
-        }}
+        style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
       >
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: SPACE_16 }}>
-          <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: FS_CONTENT_HEADING, color: TEXT }}>{title}</div>
-            {subtitle && <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginTop: SPACE_4 }}>{subtitle}</div>}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE_16 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: SPACE_16 }}>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: FS_CONTENT_HEADING, color: TEXT }}>{title}</div>
+              {subtitle && <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginTop: SPACE_4 }}>{subtitle}</div>}
+            </div>
+            {cover}
           </div>
-          {cover}
+
+          {progress != null && (
+            <div style={{ height: 4, borderRadius: 2, background: HAIRLINE, overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: `${Math.round(progress * 100)}%`, background: accent, transition: 'width 300ms ease' }} />
+            </div>
+          )}
+
+          {children}
         </div>
-
-        {progress != null && (
-          <div style={{ height: 4, borderRadius: 2, background: HAIRLINE, overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: `${Math.round(progress * 100)}%`, background: accent, transition: 'width 300ms ease' }} />
-          </div>
-        )}
-
-        {children}
-        <div style={{ flex: 1, minHeight: SPACE_8 }} />
+        {/* The one gap between content and actions — sized to the card's own
+            padding so a card with nothing above the button still reads at
+            the same rhythm as the card's outer edge, instead of stacking a
+            flex `gap` on top of this floor (which is what "doubled" it). */}
+        <div style={{ flex: 1, minHeight: SPACE_24 }} />
         {actions}
       </Card>
     </ModuleThemeProvider>
@@ -306,19 +306,7 @@ export function SegmentedPrimary({ size = 'lg', label, onClick, menuItems = [], 
   )
 }
 
-// Signed-out progress on this card lives in this browser only (see the
-// storage audit in CLAUDE.md) — it's never at risk of leaking anyone else's
-// data, but it also vanishes if the learner clears their browser or switches
-// devices, so the card says so rather than letting that be a surprise.
-function SignedOutNotice() {
-  return (
-    <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>
-      Sign in to save this progress across devices.
-    </div>
-  )
-}
-
-export function NewCard({ loading, state, signedOut, onStart, onAdvance, onChangeTextbook }) {
+export function NewCard({ loading, state, onStart, onAdvance, onChangeTextbook }) {
   const accent = VOCAB_MODULE.accent
 
   if (loading) {
@@ -361,7 +349,7 @@ export function NewCard({ loading, state, signedOut, onStart, onAdvance, onChang
     )
   }
 
-  const { label, onClick, menuItems, body } = chapterPrimaryAction(state, { onStart, onAdvance, onChangeTextbook })
+  const { label, onClick, menuItems } = chapterPrimaryAction(state, { onStart, onAdvance, onChangeTextbook })
 
   return (
     <PrimaryCard
@@ -369,17 +357,13 @@ export function NewCard({ loading, state, signedOut, onStart, onAdvance, onChang
       title={textbook.title}
       subtitle={complete ? 'Book completed' : `${doneCount} of ${chapters.length} chapters`}
       cover={cover}
-      progress={complete ? 1 : (chapters.length ? doneCount / chapters.length : 0)}
       actions={
         <ActionsRow>
           <SegmentedPrimary size="lg" label={label} onClick={onClick} menuItems={menuItems} />
           {viewChapters}
         </ActionsRow>
       }
-    >
-      {body}
-      {signedOut && <SignedOutNotice />}
-    </PrimaryCard>
+    />
   )
 }
 
@@ -420,9 +404,8 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
     )
   }
 
-  const { due, newToday, activeDecks, canStart, estimatedMinutes } = summary
+  const { due, newToday, canStart, estimatedMinutes } = summary
   const headline = canStart ? `${due} due · ${newToday} new · ~${estimatedMinutes} min` : 'Nothing due'
-  const caption = `${activeDecks} active ${activeDecks === 1 ? 'deck' : 'decks'}`
 
   return (
     <PrimaryCard
@@ -437,8 +420,6 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
           <Button variant="ghost" size="lg" onClick={() => navigate('#/vocab-srs')}>Manage decks</Button>
         </ActionsRow>
       }
-    >
-      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>{caption}</div>
-    </PrimaryCard>
+    />
   )
 }

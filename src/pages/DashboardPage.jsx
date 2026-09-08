@@ -212,7 +212,6 @@ export default function DashboardPage() {
                 <NewCard
                   loading={vocabLoading}
                   state={textbookState}
-                  signedOut={signedOut}
                   onStart={startChapter}
                   onAdvance={advanceChapter}
                   onChangeTextbook={() => setPickerOpen(true)}
