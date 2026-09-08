@@ -26,6 +26,47 @@ const MAX_ARTICLES = 5
 const TOPIC_DISCOVERY_MODEL = 'claude-sonnet-5'
 const ARTICLE_MODEL = 'claude-haiku-4-5-20251001'
 
+// Fixed taxonomy assigned by Claude per-article (see ARTICLE_SCHEMA below).
+// Kept small and general so every story fits one bucket cleanly.
+const ARTICLE_CATEGORIES = ['politics', 'business', 'sports', 'culture', 'technology', 'science', 'society', 'world']
+
+const TOPICS_SCHEMA = {
+  type: 'object',
+  properties: {
+    topics: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          headline: { type: 'string' },
+          topicSlug: { type: 'string' },
+          publishedDate: { type: 'string' },
+        },
+        required: ['headline', 'topicSlug', 'publishedDate'],
+        additionalProperties: false,
+      },
+    },
+  },
+  required: ['topics'],
+  additionalProperties: false,
+}
+
+const ARTICLE_SCHEMA = {
+  type: 'object',
+  properties: {
+    title: { type: 'string' },
+    title_simple: { type: 'string' },
+    title_en: { type: 'string' },
+    body_ja: { type: 'string' },
+    body_simple: { type: 'string' },
+    summary_en: { type: 'string' },
+    difficulty: { type: 'integer', enum: [1, 2, 3, 4, 5] },
+    category: { type: 'string', enum: ARTICLE_CATEGORIES },
+  },
+  required: ['title', 'title_simple', 'title_en', 'body_ja', 'body_simple', 'summary_en', 'difficulty', 'category'],
+  additionalProperties: false,
+}
+
 if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   console.error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY')
   process.exit(1)
@@ -132,10 +173,7 @@ async function discoverTopics(count) {
         role: 'user',
         content: `Search the web for real, current Japanese-language news stories from the last day or two. Draw from a variety of reputable Japanese news outlets and topics — do not rely on a single source. Find ${count} distinct, general-interest stories that would work well for Japanese language learners (avoid graphic, sensitive, or overly niche stories).
 
-For each story, report the real Japanese headline as it was actually reported, a short English topic slug (kebab-case, ASCII, 2-5 words), and its approximate publish date.
-
-After searching, reply with ONLY a raw JSON array (no markdown, no commentary) in this exact shape:
-[{"headline": "Japanese headline text", "topicSlug": "kebab-case-slug", "publishedDate": "YYYY-MM-DD"}]`,
+For each story, report the real Japanese headline as it was actually reported, a short English topic slug (kebab-case, ASCII, 2-5 words), and its approximate publish date (YYYY-MM-DD).`,
       },
     ],
   }
@@ -147,11 +185,26 @@ After searching, reply with ONLY a raw JSON array (no markdown, no commentary) i
     response = await anthropic.messages.create({ ...params, messages })
   }
 
-  const text = response.content.filter(b => b.type === 'text').map(b => b.text).join('\n')
-  const jsonStart = text.indexOf('[')
-  const jsonEnd = text.lastIndexOf(']')
-  if (jsonStart === -1 || jsonEnd === -1) throw new Error('No JSON array in topic discovery response')
-  return JSON.parse(text.slice(jsonStart, jsonEnd + 1))
+  const findings = response.content.filter(b => b.type === 'text').map(b => b.text).join('\n')
+  if (!findings.trim()) throw new Error('Topic discovery returned no findings to structure')
+
+  // A second, tool-free call to structure the free-text findings above into
+  // schema-valid JSON. Kept separate from the web_search call: structured
+  // outputs (output_config.format) aren't documented as compatible with a
+  // multi-turn tool/pause_turn loop, so this mirrors the no-tools call shape
+  // story-generate/word-import already rely on for guaranteed-valid JSON.
+  const structured = await anthropic.messages.create({
+    model: TOPIC_DISCOVERY_MODEL,
+    max_tokens: 2000,
+    messages: [
+      { role: 'user', content: `Structure these news story findings into the required format:\n\n${findings}` },
+    ],
+    output_config: { format: { type: 'json_schema', schema: TOPICS_SCHEMA } },
+  })
+  if (structured.stop_reason === 'refusal') throw new Error('Topic structuring was refused')
+  const textBlock = structured.content.find(b => b.type === 'text')
+  if (!textBlock) throw new Error('No JSON in topic structuring response')
+  return JSON.parse(textBlock.text).topics
 }
 
 async function generateArticle(headline, pubDate) {
@@ -168,29 +221,24 @@ Based on this real Japanese news headline, write a short news article and study 
 Headline: ${headline}
 Published: ${pubDate ?? 'recently'}
 
-Return a JSON object (raw JSON only, no markdown):
-{
-  "title": "The headline as-is (Japanese)",
-  "title_en": "Natural English translation of the headline",
-  "body_ja": "A 3-4 paragraph Japanese article about this topic. Use N4-level vocabulary and grammar. Short sentences. No unusual kanji without context. Write as if summarizing a real news story. Do not use furigana ruby tags — plain Japanese text only.",
-  "body_simple": "A simplified 2-3 paragraph version of body_ja. Even simpler sentences and vocabulary, targeting N5/N4 boundary. Plain Japanese text only.",
-  "summary_en": "2-3 sentence English summary of the article",
-  "questions": [
-    {"q": "Japanese comprehension question about the article", "a": "Answer in Japanese (1 sentence)"},
-    {"q": "...", "a": "..."},
-    {"q": "...", "a": "..."}
-  ],
-  "difficulty": <integer 1-5 where 1=N5, 2=N4, 3=N3, 4=N2, 5=N1>
-}`,
+Fields to produce:
+- title: a Japanese headline for the intermediate article, rewritten at N4 level — keep the meaning of the real headline but use vocabulary and kanji an N4 learner can read. Headline style: under 30 characters, plain/dictionary form or noun ending, no です/ます
+- title_simple: a Japanese headline for the simplified article at N5 level — under 20 characters, plainer words, only very common kanji. Same headline style, no です/ます
+- title_en: natural English translation of the headline
+- body_ja: a 3-4 paragraph Japanese article about this topic. Use N4-level vocabulary and grammar. Short sentences. No unusual kanji without context. Write as if summarizing a real news story. Do not use furigana ruby tags — plain Japanese text only.
+- body_simple: a simplified 2-3 paragraph version of body_ja. Even simpler sentences and vocabulary, targeting N5/N4 boundary. Plain Japanese text only.
+- summary_en: 2-3 sentence English summary of the article
+- difficulty: integer 1-5 where 1=N5, 2=N4, 3=N3, 4=N2, 5=N1
+- category: the single best-fitting category for this story`,
       },
     ],
+    output_config: { format: { type: 'json_schema', schema: ARTICLE_SCHEMA } },
   })
 
-  const raw = message.content[0].text.trim()
-  const jsonStart = raw.indexOf('{')
-  const jsonEnd = raw.lastIndexOf('}')
-  if (jsonStart === -1 || jsonEnd === -1) throw new Error('No JSON in Claude response')
-  return JSON.parse(raw.slice(jsonStart, jsonEnd + 1))
+  if (message.stop_reason === 'refusal') throw new Error('Article generation was refused')
+  const textBlock = message.content.find(b => b.type === 'text')
+  if (!textBlock) throw new Error('No JSON in article generation response')
+  return JSON.parse(textBlock.text)
 }
 
 async function getExistingSlugs() {
@@ -286,13 +334,14 @@ async function main() {
         slug,
         source: 'news',
         title: ai.title ?? topic.headline,
+        title_simple: ai.title_simple ?? null,
         title_en: ai.title_en ?? null,
         published_at: publishedAt,
         body_ja: ai.body_ja,
         body_simple: ai.body_simple ?? null,
         summary_en: ai.summary_en ?? null,
-        questions: ai.questions ?? null,
         difficulty: ai.difficulty ?? 2,
+        category: ai.category ?? null,
         tokens_ja: tokensJa,
         tokens_simple: tokensSimple,
         vocabulary_ja: vocabularyJa,

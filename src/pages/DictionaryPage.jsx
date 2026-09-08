@@ -453,7 +453,7 @@ export default function DictionaryPage() {
         <div style={{ maxWidth: 600, margin: '0 auto', width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
         <div style={{ flex: 1 }}>
           <TextInput
-            placeholder="Search Japanese or English..."
+            placeholder="Search Japanese or English"
             value={query}
             onChange={setQuery}
             size="lg"

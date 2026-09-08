@@ -618,7 +618,7 @@ function DataListDemo() {
         } : undefined}
         editableFields={editable ? ['kanji', 'reading', 'gloss'] : undefined}
         onFieldChange={(row, key, value) => setRows(prev => prev.map(r => (r.id === row.id ? { ...r, [key]: value } : r)))}
-        search={showSearch ? { value: query, onChange: setQuery, placeholder: 'Filter rows...' } : undefined}
+        search={showSearch ? { value: query, onChange: setQuery, placeholder: 'Search rows' } : undefined}
         footer={showFooter ? <Button variant="primary" size="lg" disabled={selectable && selected.size === 0}>{selectable ? `Start Drill (${selected.size})` : 'Continue'}</Button> : undefined}
       />
       {navLog && <div style={{ marginTop: SPACE_8, fontSize: FS_CAPTION, color: ACCENT }}>{navLog}</div>}

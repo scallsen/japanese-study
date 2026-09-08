@@ -276,7 +276,7 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
         columns={WORD_COLUMNS}
         rows={displayedRows}
         selection={{ selected, onToggle: toggleRow, bulkHeader: { selectFirst: true } }}
-        search={{ value: lookupQuery, onChange: setLookupQuery, placeholder: 'Look up a word from this episode...' }}
+        search={{ value: lookupQuery, onChange: setLookupQuery, placeholder: 'Search episode words' }}
         emptyMessage={
           lookupQuery.trim()
             ? <>No match in this episode — try <a href="#/dictionary" style={{ color: ACCENT }}>the full dictionary search</a>.</>

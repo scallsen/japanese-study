@@ -6,6 +6,7 @@ import OptionPicker from './OptionPicker.jsx'
 import { deckPickerItems } from './deckPickerItems.js'
 import { TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_ENTRY_WORD, SPACE_8, SPACE_12 } from '../data/theme.js'
 import { useAccent } from '../context/ModuleThemeContext.jsx'
+import { useAuth } from '../context/AuthContext.jsx'
 
 // Hover is a CSS class (.reader-token) per the StrictMode rule, not a
 // hovered-index useState as it was originally. The two highlight colours are
@@ -71,6 +72,7 @@ export function WordPopup({ token, vocabEntry, onAdd, onCreateAndAdd, decks, isM
   // stacked layers with competing click-outside handlers and independent
   // positioning. Swapping content in place removes that entirely.
   const [view, setView] = useState('definition')
+  const { user } = useAuth()
 
   function close() {
     setView('definition')
@@ -106,9 +108,14 @@ export function WordPopup({ token, vocabEntry, onAdd, onCreateAndAdd, decks, isM
           {vocabEntry?.meaning && (
             <div style={{ fontSize: FS_BASE, color: TEXT, marginBottom: 10 }}>{vocabEntry.meaning}</div>
           )}
-          <Button variant="accent-outline" fullWidth onClick={() => setView('deck')}>
+          <Button variant="accent-outline" fullWidth disabled={!user} onClick={() => setView('deck')}>
             Add to review deck
           </Button>
+          {!user && (
+            <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: SPACE_8, textAlign: 'center' }}>
+              Create an account to access this feature
+            </div>
+          )}
         </div>
       )}
     </Popover>

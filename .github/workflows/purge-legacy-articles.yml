@@ -1,0 +1,29 @@
+name: Purge Legacy Articles
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Actually delete (unchecked = dry run, prints what would be deleted)'
+        type: boolean
+        default: false
+
+jobs:
+  purge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Purge legacy (pre-aggregation) articles
+        run: node scripts/purge-legacy-articles.mjs
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          CONFIRM: ${{ inputs.confirm }}
