@@ -180,7 +180,11 @@ export function CoverSquare({ covers, current, outgoing, enterClass, exitClass, 
   const scale = size / COVER_SIZE
   const gutter = COVER_GUTTER_FRACTION * COVER_SIZE
   const artWidth = COVER_SIZE - gutter * 2
-  const artLeft = (COVER_SIZE - artWidth) / 2
+  // Right-aligned, not centered — the square is a fixed COVER_SIZE box (so
+  // the rotation animation has a stable frame to play in), but the crop
+  // itself should still sit flush with the card's right edge, matching
+  // TextbookCover (whose box shrinks to the cropped width instead).
+  const artLeft = COVER_SIZE - artWidth
 
   return (
     <div style={{ width: size, height: size, position: 'relative', flexShrink: 0, overflow: 'hidden', perspective: 500 }}>
