@@ -8,6 +8,7 @@ import { useIsMobile } from '../hooks/useIsMobile.js'
 import { MODULES } from '../data/modules.js'
 import { TEXTBOOKS, COVER_GUTTER_FRACTION } from '../data/textbooks.js'
 import { chapterPrimaryAction } from './chapterAction.jsx'
+import { useCoverRotation } from './coverRotation.js'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_BADGE, FS_BASE, FS_CONTENT_HEADING,
   SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32,
@@ -143,42 +144,80 @@ export function TextbookCover({ icon, accent, onChangeTextbook }) {
   )
 }
 
-// Slow drift of the covers on offer, for the card that has nothing of its
-// own to show yet. The list is rendered twice and the track animates to
-// -50%, so the loop is seamless; the animation itself is
-// `.textbook-marquee__track` in global.css (keyframes can't be inline).
-function TextbookCarousel() {
-  // A personal book is one learner's own course material, so there is nobody
-  // to advertise it to here — and the five of them share two covers between
-  // them, which is what made this drift past as repeated N3 and N2 spines.
-  const covers = TEXTBOOKS.filter(book => book.icon && !book.personal)
-  const fade = 'linear-gradient(to right, transparent, #000 10%, #000 90%, transparent)'
+// Covers on offer, for the card that has nothing of its own to show yet —
+// rotates through them one at a time inside the same top-right square every
+// other cover art occupies (TextbookCover, ReviewPlaceholder), instead of a
+// full-width marquee, so the card's shape never changes across states.
+// Explored side by side with fade/slide/flip alternatives at
+// #/dev/cover-rotation before picking this one ("pop in and replace").
+const ROTATING_COVERS = TEXTBOOKS.filter(book => book.icon && !book.personal)
+const COVER_ROTATE_MS = 2600
+
+// Same crop TextbookCover already uses (the 5/32-per-side transparent
+// gutter trimmed off). The image itself must always render at its full
+// natural square size — shrinking *its own* width to the cropped width
+// (rather than the crop window's width) stretches it non-uniformly. The
+// crop window does the clipping; the image never changes shape.
+export function CroppedArt({ book, className, artWidth, artLeft, gutter }) {
   return (
-    <div
-      className="textbook-marquee"
-      style={{ overflow: 'hidden', maskImage: fade, WebkitMaskImage: fade }}
-    >
-      {/* Covers ride at their true size, and each one absorbs a gutter's worth
-          of the next one's transparent margin so the artwork sits close
-          together. Every item is treated identically, so the -50% loop still
-          lands seamlessly. */}
-      <div className="textbook-marquee__track" style={{ display: 'flex', gap: 0, width: 'max-content' }}>
-        {[...covers, ...covers].map((book, i) => (
-          <img
-            key={`${book.id}-${i}`}
-            src={book.icon}
-            alt=""
-            style={{
-              width: COVER_SIZE,
-              height: COVER_SIZE,
-              marginRight: -(COVER_GUTTER_FRACTION * COVER_SIZE),
-              flexShrink: 0,
-              imageRendering: 'pixelated',
-            }}
+    <div style={{ position: 'absolute', top: 0, left: artLeft, width: artWidth, height: COVER_SIZE, overflow: 'hidden' }}>
+      <img
+        src={book.icon}
+        alt=""
+        className={className}
+        style={{ width: COVER_SIZE, height: COVER_SIZE, marginLeft: -gutter, imageRendering: 'pixelated', display: 'block' }}
+      />
+    </div>
+  )
+}
+
+// A fixed square that shows one cover at a time, cross-animating between
+// them via enter/exit CSS classes (keyframes in global.css). `size` lets a
+// caller magnify it for closer inspection without changing the crop math —
+// scaling the whole subtree keeps the art proportioned identically at any
+// size, real or magnified.
+export function CoverSquare({ covers, current, outgoing, enterClass, exitClass, size = COVER_SIZE }) {
+  const scale = size / COVER_SIZE
+  const gutter = COVER_GUTTER_FRACTION * COVER_SIZE
+  const artWidth = COVER_SIZE - gutter * 2
+  const artLeft = (COVER_SIZE - artWidth) / 2
+
+  return (
+    <div style={{ width: size, height: size, position: 'relative', flexShrink: 0, overflow: 'hidden', perspective: 500 }}>
+      <div style={{ position: 'absolute', inset: 0, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
+        {outgoing && (
+          <CroppedArt
+            key={`out-${outgoing.cycleId}`}
+            book={covers[outgoing.index]}
+            className={exitClass}
+            artWidth={artWidth}
+            artLeft={artLeft}
+            gutter={gutter}
           />
-        ))}
+        )}
+        <CroppedArt
+          key={`in-${current}`}
+          book={covers[current]}
+          className={enterClass}
+          artWidth={artWidth}
+          artLeft={artLeft}
+          gutter={gutter}
+        />
       </div>
     </div>
+  )
+}
+
+function RotatingCover() {
+  const { current, outgoing } = useCoverRotation(ROTATING_COVERS.length, COVER_ROTATE_MS)
+  return (
+    <CoverSquare
+      covers={ROTATING_COVERS}
+      current={current}
+      outgoing={outgoing}
+      enterClass="cover-pop-enter"
+      exitClass="cover-pop-exit"
+    />
   )
 }
 
@@ -323,10 +362,9 @@ export function NewCard({ loading, state, onStart, onAdvance, onChangeTextbook }
         accent={accent}
         title="Practice"
         subtitle="Drill words from your study materials"
+        cover={<RotatingCover />}
         actions={<ActionsRow><Button size="lg" onClick={onChangeTextbook}>Choose word list</Button></ActionsRow>}
-      >
-        <TextbookCarousel />
-      </PrimaryCard>
+      />
     )
   }
 

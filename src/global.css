@@ -462,21 +462,8 @@ button, input, select, textarea {
   opacity: 1;
 }
 
-/* Cover carousel on the empty New card. The track renders the covers twice,
-   so animating it to -50% loops seamlessly. */
-@keyframes textbook-marquee-drift {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-.textbook-marquee__track {
-  animation: textbook-marquee-drift 42s linear infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .textbook-marquee__track { animation: none; }
-}
-
-/* #/dev/cover-rotation — candidate replacements for the marquee above:
-   rotating through the same cover art one at a time inside a fixed square,
+/* Cover rotation on the empty New card (RotatingCover in homeCards.jsx):
+   rotating through the cover art one at a time inside a fixed square,
    instead of a horizontal drift across the card's full width. Each variant
    pairs an -enter class (on the incoming cover) with an -exit class (on the
    outgoing one); both play concurrently. */

@@ -1,29 +1,26 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
 import PageHeader from '../components/PageHeader.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
 import Button from '../components/Button.jsx'
-import { PrimaryCard, ActionsRow, COVER_SIZE } from './homeCards.jsx'
+import { PrimaryCard, ActionsRow, CoverSquare, COVER_SIZE } from './homeCards.jsx'
+import { useCoverRotation } from './coverRotation.js'
 import { MODULES } from '../data/modules.js'
-import { TEXTBOOKS, COVER_GUTTER_FRACTION } from '../data/textbooks.js'
+import { TEXTBOOKS } from '../data/textbooks.js'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_CONTENT_HEADING,
   SPACE_8, SPACE_12, SPACE_16, SPACE_32,
 } from '../data/theme.js'
 
-// Dev-only exploration for the empty Practice card (signed out, no textbook
-// chosen). Today that state fills the card body with a horizontal marquee
-// of covers drifting past. This bench tries the opposite approach: keep the
-// cover art confined to the same top-right square the real TextbookCover
-// and ReviewPlaceholder already occupy — so the card's overall shape never
-// changes across states — and rotate through the available covers one at a
-// time inside it, each swap carrying a small entrance/exit animation. Same
-// pattern as ToastLabPage/HomeCardsLabPage: not linked from the dashboard,
-// reached at #/dev/cover-rotation. Nothing here is wired into the real
-// empty state yet — pick a variant and it gets ported into homeCards.jsx.
+// Dev-only bench for the empty Practice card's rotating cover art (signed
+// out, no textbook chosen). "Pop in" shipped to the real card — see
+// RotatingCover in homeCards.jsx, which this bench's "2. Pop in" section
+// below matches exactly (same hook, same CoverSquare, same classes). Kept
+// around as a live comparison against the three variants that weren't
+// picked, in case that decision gets revisited. Same pattern as
+// ToastLabPage/HomeCardsLabPage: not linked from the dashboard, reached at
+// #/dev/cover-rotation.
 
 const ACCENT = MODULES.find(m => m.id === 'school-vocab').accent
 const ROTATE_MS = 2600
-const EXIT_MS = 550
 
 const COVERS = TEXTBOOKS.filter(book => book.icon && !book.personal)
 
@@ -37,8 +34,8 @@ const VARIANTS = [
   },
   {
     key: 'pop',
-    label: '2. Pop in',
-    description: 'The new cover springs up from slightly small-and-faded to full size while the old one softens away underneath — the "pop in and replace" version.',
+    label: '2. Pop in — shipped',
+    description: 'The new cover springs up from slightly small-and-faded to full size while the old one softens away underneath — the "pop in and replace" version, live on the real card now.',
     enterClass: 'cover-pop-enter',
     exitClass: 'cover-pop-exit',
   },
@@ -58,98 +55,6 @@ const VARIANTS = [
   },
 ]
 
-// One rotation timer per variant section, shared by both the actual-size
-// preview (inside the real card) and the magnified swatch next to it, so
-// the two never drift out of sync with each other.
-function useCoverRotation(count, intervalMs) {
-  const [current, setCurrent] = useState(0)
-  const [outgoing, setOutgoing] = useState(null) // { index, cycleId } | null
-  const cycleRef = useRef(0)
-  const timerRef = useRef(null)
-
-  const advance = useCallback(() => {
-    setCurrent(prev => {
-      const next = (prev + 1) % count
-      cycleRef.current += 1
-      setOutgoing({ index: prev, cycleId: cycleRef.current })
-      return next
-    })
-  }, [count])
-
-  useEffect(() => {
-    timerRef.current = setInterval(advance, intervalMs)
-    return () => clearInterval(timerRef.current)
-  }, [advance, intervalMs])
-
-  useEffect(() => {
-    if (outgoing == null) return
-    const t = setTimeout(() => {
-      setOutgoing(o => (o && o.cycleId === outgoing.cycleId ? null : o))
-    }, EXIT_MS)
-    return () => clearTimeout(t)
-  }, [outgoing])
-
-  function advanceNow() {
-    advance()
-    clearInterval(timerRef.current)
-    timerRef.current = setInterval(advance, intervalMs)
-  }
-
-  return { current, outgoing, advanceNow }
-}
-
-// Same crop TextbookCover already uses (the 5/32-per-side transparent
-// gutter trimmed off), just centered inside a square wrapper instead of
-// abutting a rectangular one. The image itself must always render at its
-// full natural square size — shrinking *its own* width to the cropped
-// width (rather than the crop window's width) is what stretched it
-// non-uniformly the first time around. The crop window does the clipping;
-// the image never changes shape.
-function CroppedArt({ book, className, artWidth, artLeft, gutter }) {
-  return (
-    <div style={{ position: 'absolute', top: 0, left: artLeft, width: artWidth, height: COVER_SIZE, overflow: 'hidden' }}>
-      <img
-        src={book.icon}
-        alt=""
-        className={className}
-        style={{ width: COVER_SIZE, height: COVER_SIZE, marginLeft: -gutter, imageRendering: 'pixelated', display: 'block' }}
-      />
-    </div>
-  )
-}
-
-function CoverSquare({ current, outgoing, enterClass, exitClass, size = COVER_SIZE }) {
-  const scale = size / COVER_SIZE
-  const gutter = COVER_GUTTER_FRACTION * COVER_SIZE
-  const artWidth = COVER_SIZE - gutter * 2
-  const artLeft = (COVER_SIZE - artWidth) / 2
-
-  return (
-    <div style={{ width: size, height: size, position: 'relative', flexShrink: 0, overflow: 'hidden', perspective: 500 }}>
-      <div style={{ position: 'absolute', inset: 0, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
-        {outgoing && (
-          <CroppedArt
-            key={`out-${outgoing.cycleId}`}
-            book={COVERS[outgoing.index]}
-            className={exitClass}
-            artWidth={artWidth}
-            artLeft={artLeft}
-            gutter={gutter}
-          />
-        )}
-        <CroppedArt
-          key={`in-${current}`}
-          book={COVERS[current]}
-          className={enterClass}
-          artWidth={artWidth}
-          artLeft={artLeft}
-          gutter={gutter}
-        />
-      </div>
-    </div>
-  )
-}
-
 function VariantSection({ variant }) {
   const { current, outgoing, advanceNow } = useCoverRotation(COVERS.length, ROTATE_MS)
 
@@ -167,7 +72,7 @@ function VariantSection({ variant }) {
               accent={ACCENT}
               title="Practice"
               subtitle="Drill words from your study materials"
-              cover={<CoverSquare current={current} outgoing={outgoing} enterClass={variant.enterClass} exitClass={variant.exitClass} />}
+              cover={<CoverSquare covers={COVERS} current={current} outgoing={outgoing} enterClass={variant.enterClass} exitClass={variant.exitClass} />}
               actions={<ActionsRow><Button size="lg">Choose word list</Button></ActionsRow>}
             />
           </div>
@@ -175,7 +80,7 @@ function VariantSection({ variant }) {
         <div>
           <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: SPACE_8 }}>Magnified</div>
           <div style={{ background: '#2A2A2A', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: SPACE_16, display: 'inline-block' }}>
-            <CoverSquare current={current} outgoing={outgoing} enterClass={variant.enterClass} exitClass={variant.exitClass} size={220} />
+            <CoverSquare covers={COVERS} current={current} outgoing={outgoing} enterClass={variant.enterClass} exitClass={variant.exitClass} size={220} />
           </div>
           <div style={{ marginTop: SPACE_12 }}>
             <Button variant="ghost" size="sm" onClick={advanceNow}>Advance now</Button>
@@ -196,12 +101,12 @@ export default function CoverRotationLabPage() {
             Empty Practice card — rotating cover exploration
           </div>
           <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginBottom: 28, lineHeight: 1.5 }}>
-            Today, when signed out with no textbook chosen, the Practice card fills its body with a
-            horizontal marquee of covers drifting past. These four options try the opposite: keep the
-            art confined to the same {COVER_SIZE}×{COVER_SIZE} square the real cover occupies once a
-            textbook is chosen — so the card&rsquo;s shape never changes across states — and take turns
-            showing one cover at a time inside it. Each rotates on its own {(ROTATE_MS / 1000).toFixed(1)}s
-            timer; use &ldquo;Advance now&rdquo; to trigger a swap on demand.
+            The empty Practice card (signed out, no textbook chosen) rotates through the available
+            covers one at a time inside the same {COVER_SIZE}×{COVER_SIZE} square every other cover
+            occupies, instead of the horizontal marquee it used to show. &ldquo;Pop in&rdquo; is what
+            shipped; these four sections compare it against the alternatives considered. Each rotates
+            on its own {(ROTATE_MS / 1000).toFixed(1)}s timer; use &ldquo;Advance now&rdquo; to trigger
+            a swap on demand.
           </div>
           {VARIANTS.map(v => <VariantSection key={v.key} variant={v} />)}
         </div>
