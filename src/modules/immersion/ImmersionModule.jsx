@@ -18,13 +18,11 @@ import { useAuth } from '../../context/AuthContext.jsx'
 import { MODULES } from '../../data/modules.js'
 import { ModuleThemeProvider } from '../../context/ModuleThemeContext.jsx'
 import { FONT, TRACKING, TEXT_MUTED, FS_BASE, SPACE_8, SPACE_12, SPACE_16 } from '../../data/theme.js'
-import { SOURCE_LABEL } from './sourceLabels.js'
 import { CATEGORIES, CATEGORY_LABEL } from './categories.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
 
 const IMMERSION_ACCENT = MODULES.find(m => m.id === 'immersion').accent
 
-const DIFFICULTY_LABEL = { 1: 'N5', 2: 'N4', 3: 'N3', 4: 'N2', 5: 'N1' }
 const CATEGORY_OPTIONS = [{ value: 'all', label: 'All' }, ...CATEGORIES.map(c => ({ value: c.id, label: c.label }))]
 const LEVEL_OPTIONS = [{ value: 'simplified', label: 'Simple' }, { value: 'original', label: 'Intermediate' }]
 const ARTICLE_COLUMNS = 'id, slug, source, title, title_en, published_at, body_ja, body_simple, summary_en, questions, difficulty, category, tokens_ja, tokens_simple, vocabulary_ja'
@@ -43,9 +41,7 @@ function sanitizeSearchTerm(term) {
 }
 
 function ArticleCard({ article, onClick, isRead }) {
-  const badges = [{ label: SOURCE_LABEL[article.source] ?? article.source ?? 'News', tone: 'accent' }]
-  if (article.category) badges.push({ label: CATEGORY_LABEL[article.category] ?? article.category, tone: 'neutral' })
-  if (article.difficulty) badges.push({ label: DIFFICULTY_LABEL[article.difficulty] ?? '—', tone: 'neutral' })
+  const badges = article.category ? [{ label: CATEGORY_LABEL[article.category] ?? article.category, tone: 'accent' }] : []
   return (
     <FeedCard
       badges={badges}
