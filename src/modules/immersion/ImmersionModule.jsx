@@ -8,6 +8,7 @@ import SectionHeader from '../../components/SectionHeader.jsx'
 import ChipSelector from '../../components/Chip.jsx'
 import TextInput from '../../components/TextInput.jsx'
 import Button from '../../components/Button.jsx'
+import FilterCard, { FilterRow } from '../../components/FilterCard.jsx'
 import ImmersionReader from './ImmersionReader.jsx'
 import { supabase } from '../../lib/supabase.js'
 import { useProgress } from '../../hooks/useProgress.js'
@@ -215,25 +216,24 @@ function ImmersionScreens() {
       </PageHeader>
       <div style={{ flex: 1, overflowY: 'auto', padding: '32px 24px' }}>
         <div style={{ maxWidth: 780, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: SPACE_16 }}>
-          <div style={{ fontSize: FS_BASE - 2, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.7 }}>
+          <TextInput
+            value={searchInput}
+            onChange={setSearchInput}
+            placeholder="Search articles…"
+            size="lg"
+          />
+          <div style={{ fontSize: FS_BASE - 2, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, opacity: 0.7, marginTop: -SPACE_8 }}>
             Articles are written by AI based on real news topics and may contain inaccuracies.
           </div>
 
-          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: SPACE_12, alignItems: isMobile ? 'stretch' : 'center' }}>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <TextInput
-                value={searchInput}
-                onChange={setSearchInput}
-                placeholder="Search articles…"
-              />
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: SPACE_8 }}>
-              <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>Default level:</span>
+          <FilterCard>
+            <FilterRow key="topic" label="Topic">
+              <ChipSelector mode="single" options={CATEGORY_OPTIONS} value={category} onChange={setCategory} />
+            </FilterRow>
+            <FilterRow key="difficulty" label="Difficulty">
               <ChipSelector mode="single" options={LEVEL_OPTIONS} value={defaultLevel} onChange={handleLevelChange} />
-            </div>
-          </div>
-
-          <ChipSelector mode="single" options={CATEGORY_OPTIONS} value={category} onChange={setCategory} />
+            </FilterRow>
+          </FilterCard>
 
           {showFeatured && featured.length > 0 && (
             <div>
