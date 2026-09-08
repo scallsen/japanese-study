@@ -137,7 +137,7 @@ export function TextbookCover({ icon, accent, onChangeTextbook }) {
           textDecoration: 'underline',
         }}
       >
-        Change textbook
+        Change word list
       </span>
     </button>
   )
@@ -335,7 +335,7 @@ export function NewCard({ loading, state, signedOut, onStart, onAdvance, onChang
         accent={accent}
         title="Practice"
         subtitle="Drill words from your study materials"
-        actions={<ActionsRow><Button size="lg" onClick={onChangeTextbook}>Choose textbook</Button></ActionsRow>}
+        actions={<ActionsRow><Button size="lg" onClick={onChangeTextbook}>Choose word list</Button></ActionsRow>}
       >
         <TextbookCarousel />
       </PrimaryCard>
@@ -400,7 +400,7 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
         accent={accent}
         title="Review"
         subtitle="Long-term memorization for vocabulary"
-        // Weaker than Practice's "Choose textbook" on purpose — this is the
+        // Weaker than Practice's "Choose word list" on purpose — this is the
         // optional card, not the primary action on the page.
         actions={<ActionsRow><Button size="lg" variant="neutral" onClick={onSignIn}>Create account</Button></ActionsRow>}
       >
