@@ -21,6 +21,7 @@ Both issues have occurred in previous sessions and caused confusing bugs (search
 - **No TypeScript** — plain JS throughout.
 - **No i18n** — all strings hardcoded in English.
 - **No Japanese text in the UI** — labels, buttons, headings, and all other UI strings must be in English. Japanese text belongs only in word/card data (e.g. `kanji`, `kana`, `front` fields). `public/favicon.svg` (a rendered 文 glyph) is a deliberate exception — it's a logomark, not a string a learner has to read to use the app, the same distinction that already carves out Voicevox's Japanese voice-name credit.
+- **Every real Japanese text run renders through `<Japanese>` (`src/components/Japanese.jsx`)** — a `lang="ja" translate="no"` wrapper (`as` prop to reuse the host element instead of adding a nested one). `index.html` declares the page `lang="en"` (since the UI is English per the rule above) and opts out of browser translation site-wide (`translate="no"`, `notranslate` meta) — without per-run `lang="ja"` marking, that mismatch is exactly what once made Chrome's translate feature silently corrupt Japanese content (mistranslating some words but not others, previously misdiagnosed as a race condition). Any word/kana/kanji/sentence/token value ever gets rendered raw again, the bug comes back. Checklist for new code: a value that's Japanese-only content (not mixed with English in the same element) — wrap it; a `DataList` column that's entirely Japanese — pass `lang: 'ja'` on the column instead (DataList applies it to both the display cell and an editable input). Never mark an element containing a mix of Japanese and English (badges, glosses, meanings) — mark only the Japanese-only descendant. There is no automated check for this (no lint rule, no render test) — it's convention only, so a review pass on any new component touching `kanji`/`kana`/`reading`/`front`/`back`/`token.t`/dictionary `primary_form`/`kana_forms` fields should confirm the Japanese-only leaf goes through `<Japanese>`.
 - Hash-based routing — `window.location.hash` read in `App.jsx`. No third-party router.
 
 ## App architecture
@@ -187,6 +188,7 @@ Used by multiple modules/pages:
 | `Switch.jsx` | On/off control for a settings row — accent-aware, `role="switch"`, hover lit from the row |
 | `DrillSettingsPanel.jsx` | The drill settings drawer shared by Vocab Drill, Anime Vocab and SRS — see Drill settings section |
 | `AttributionFooter.jsx` | Third-party data credit line at the foot of a page — `<AttributionFooter sources={['dictionary', 'tanaka-corpus']} />`. See Attribution system section below |
+| `Japanese.jsx` | Wraps a Japanese-only text run in `lang="ja" translate="no"` (`as` prop to pick the host tag) — stops the browser's own translate feature from mistranslating it. See the "No Japanese text in the UI" convention above for when to use it |
 
 ### PageHeader
 
