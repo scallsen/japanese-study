@@ -466,19 +466,13 @@ export default function VocabSrsDrill({
   }
 
   const currentCard = getCurrentCard(session)
-  const currentAudioUrls = resolveAudioUrl(currentCard)
   const stats = getSessionStats(session)
   const progressPct = stats.total > 0 ? (stats.goodCount / stats.total) * 100 : 0
 
-  const rightSlot = (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-      <span style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>
-        {stats.goodCount} / {stats.total}
-        {stats.waitingCount > 0 && <span style={{ marginLeft: 6, color: WARNING }}>{stats.waitingCount} waiting</span>}
-      </span>
-      {isMobile && onShowOptions && <SidebarHeaderToggle onClick={onShowOptions} />}
-    </div>
-  )
+  // Correct/troubled/remaining are tracked by DrillHUD below the card
+  // (see the isComplete early return above for the same pattern) — the
+  // header carries only the mobile settings toggle, not a second counter.
+  const rightSlot = isMobile && onShowOptions && <SidebarHeaderToggle onClick={onShowOptions} />
 
   const isRequeue = currentCard && seenRef.current.has(currentCard.id)
 
@@ -593,15 +587,6 @@ export default function VocabSrsDrill({
                 }} />
               )}
             </div>
-
-            {audioEnabled && currentCard && currentAudioUrls.word && flipped && (
-              <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
-                <Button variant="ghost-muted" size="sm" onClick={() => speakCard(currentCard, currentAudioUrls)}>▶ Word</Button>
-                {currentAudioUrls.sentence && (
-                  <Button variant="ghost-muted" size="sm" onClick={() => voicevox.play(currentAudioUrls.sentence)}>▶ Sentence</Button>
-                )}
-              </div>
-            )}
 
             {!flipped ? (
               <DrillButtonRow placeholder="Space or tap to flip" />
