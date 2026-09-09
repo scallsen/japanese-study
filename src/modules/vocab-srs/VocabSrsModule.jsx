@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import Popover from '../../components/Popover.jsx'
 import Menu from '../../components/Menu.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
@@ -116,22 +116,23 @@ function DeckNameCell({ deck, stats, onRename }) {
 // A square icon button matching the row's own height, rather than the
 // shared Button component's icon-only sizing (padding-driven, not square,
 // and shorter than a Chip). Built locally instead of widening Button's API
-// for a one-off need: `alignSelf: 'stretch'` picks up the actions row's own
-// alignItems: 'stretch' below, giving it a definite height, and `aspectRatio`
-// then derives a matching width from that height — so it's exactly as tall
-// as the ToggleButton beside it (a Chip, taller than Button's own icon-only
-// sizing) without hardcoding either component's real pixel height.
-// `flexShrink: 0` (and `flexGrow: 0`) matter here specifically: a flex item's
-// aspect-ratio only fixes its *preferred* size — flexbox can still shrink an
-// item's main-axis size (width, in this row) independently of its stretched
-// cross-axis size (height) whenever the row runs short on space, which would
-// leave the height pinned by stretch but the width squeezed narrower,
-// silently breaking the square on a tight mobile row. Locking flex-grow/
-// shrink to 0 makes the aspect-ratio size the actual final size, not just a
-// starting point. Reuses the shared `.btn-ghost-muted` hover class so it
-// still reddens on hover like every other dismiss/remove affordance in the
-// app.
-function DeckDeleteButton({ onClick }) {
+// for a one-off need.
+//
+// `size` is the toggle's real measured height in px (see DeckRowActions) —
+// CSS alone (align-self: stretch + aspect-ratio) turned out not to be
+// reliable in practice: the button's height did stretch to match the
+// toggle, but the width never grew to match it via aspect-ratio, leaving a
+// tall narrow rectangle instead of a square (verified live, not just in
+// theory). Measuring the toggle's actual rendered height in JS and applying
+// it as an explicit width AND height sidesteps that entirely — it no longer
+// depends on how any particular engine resolves aspect-ratio inside a
+// stretched flex item. Before the first measurement lands (no ref yet on
+// the very first render) it falls back to `alignSelf: 'stretch'` +
+// `aspectRatio: '1 / 1'`, which is still square once *some* height exists,
+// just not guaranteed to track it — a one-frame fallback, not the steady
+// state. Reuses the shared `.btn-ghost-muted` hover class so it still
+// reddens on hover like every other dismiss/remove affordance in the app.
+function DeckDeleteButton({ onClick, size }) {
   return (
     <button
       type="button"
@@ -139,10 +140,8 @@ function DeckDeleteButton({ onClick }) {
       aria-label="Delete deck"
       className="btn btn-ghost-muted"
       style={{
-        alignSelf: 'stretch',
-        flexGrow: 0,
+        ...(size ? { width: size, height: size } : { alignSelf: 'stretch', aspectRatio: '1 / 1' }),
         flexShrink: 0,
-        aspectRatio: '1 / 1',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -179,17 +178,37 @@ function DeckDeleteButton({ onClick }) {
 // unconstrained toggle changes the whole row's layout width on every flip —
 // the name column has to shrink or grow to compensate, which reads as
 // everything else in the row shifting when only the toggle changed.
+//
+// The delete button's square size is the toggle's own measured height —
+// read synchronously in a layout effect (before paint, so there's no visible
+// flash) and kept current with a ResizeObserver, since the Chip's real
+// rendered height isn't a value this file can just hardcode (no line-height
+// is set anywhere on it, and DotGothic16 loads via font-display: swap, which
+// can itself change the box's height once the real font arrives).
 function DeckRowActions({ deck, onToggle, onDelete }) {
   const canDelete = !isBundledDeck(deck)
+  const toggleRef = useRef(null)
+  const [toggleHeight, setToggleHeight] = useState(null)
+
+  useLayoutEffect(() => {
+    const el = toggleRef.current
+    if (!el) return
+    const measure = () => setToggleHeight(el.offsetHeight)
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
   return (
     <div
       onClick={e => { e.preventDefault(); e.stopPropagation() }}
-      style={{ display: 'flex', alignItems: 'stretch', gap: 4, flexShrink: 0 }}
+      style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}
     >
-      <div style={{ width: 64, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div ref={toggleRef} style={{ width: 64, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <ToggleButton active={deck.active} labels={{ on: 'On', off: 'Off' }} onClick={onToggle} />
       </div>
-      {canDelete && <DeckDeleteButton onClick={onDelete} />}
+      {canDelete && <DeckDeleteButton onClick={onDelete} size={toggleHeight} />}
     </div>
   )
 }
