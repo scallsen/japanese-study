@@ -840,7 +840,7 @@ function VocabSrsHome() {
                 )}
 
                 <div style={{ marginBottom: 28 }}>
-                  <SectionHeader title={`Decks · ${activeDecks.length} of ${deckList.length} on`} />
+                  <SectionHeader title="Decks" />
                   <DataList
                     columns={deckColumns}
                     rows={deckList}
