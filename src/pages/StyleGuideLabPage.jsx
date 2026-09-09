@@ -965,10 +965,10 @@ function DrillButtonDemo() {
         </DrillButtonRow>
       ) : (
         <DrillButtonRow>
-          <DrillButton label="Again" hint="1" sublabel="&lt;10m" color={DRILL_COLORS.again} />
-          <DrillButton label="Hard" hint="2" sublabel="2d" color={DRILL_COLORS.hard} />
-          <DrillButton label="Good" hint="3" sublabel="5d" color={DRILL_COLORS.good} />
-          <DrillButton label="Easy" hint="4" sublabel="12d" color={DRILL_COLORS.easy} />
+          <DrillButton label="Again" hint="1" color={DRILL_COLORS.again} />
+          <DrillButton label="Hard" hint="2" color={DRILL_COLORS.hard} />
+          <DrillButton label="Good" hint="3" color={DRILL_COLORS.good} />
+          <DrillButton label="Easy" hint="4" color={DRILL_COLORS.easy} />
         </DrillButtonRow>
       )}
     </div>

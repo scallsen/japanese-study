@@ -104,3 +104,12 @@ export const DRILL_COLORS = {
 // Standard width for every drill control row — the flip card, the judgment
 // buttons, and the undo slot share it so they stack in one aligned column.
 export const DRILL_ROW_WIDTH = 'min(380px, calc(100vw - 32px))'
+
+// Fixed height for that same row. The pre-flip placeholder ("Space or tap to
+// flip") and the post-flip judgment buttons are two different renders of the
+// same slot — without a shared, explicit height, whichever one had more
+// content (the buttons, with a hint + sublabel) was taller than the other,
+// so flipping shifted the card and everything above it. A fixed height forces
+// both to match regardless of what either renders, rather than relying on
+// identical padding/line-count to happen to produce the same auto height.
+export const DRILL_ROW_HEIGHT = 44

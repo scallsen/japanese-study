@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import FlipCard from '../../FlipCard.jsx'
 import PageHeader from '../../components/PageHeader.jsx'
 import { SidebarHeaderToggle } from '../../components/SettingsSidebar.jsx'
@@ -7,7 +7,7 @@ import DrillHUD from '../../components/DrillHUD.jsx'
 import DrillButtonRow, { DrillButton } from '../../components/DrillButton.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_DISPLAY_HEADING, FS_STAT_VALUE, FS_CAPTION, WARNING, DRILL_COLORS } from '../../data/theme.js'
 import { useAccent } from '../../context/ModuleThemeContext.jsx'
-import { Rating, State, previewIntervals } from './srs.js'
+import { Rating } from './srs.js'
 import { answerCard, undoLastAnswer, isComplete, getSessionStats, getCurrentCard } from './session.js'
 import { useTTS } from '../../hooks/useTTS.js'
 import { useSFX } from '../../hooks/useSFX.js'
@@ -23,7 +23,6 @@ import AttributionFooter from '../../components/AttributionFooter.jsx'
 import { getMainTextScale, getSecondaryTextScale, cqw } from '../../utils/cardTextFit.js'
 
 const CARD_BG = '#E8E4DE'
-const RELEARN_STEP_LABEL = '10m'
 // Advance timings mirror VocabPage's verdict handler: the answered card slides/fades out
 // via FlipCard.css's cardExit* keyframes, then the next card's own content mounts fresh
 // (no 3D flip-back) via cardEnter — a single continuous motion instead of un-flipping the
@@ -39,20 +38,6 @@ const AUDIO_BASE = import.meta.env.VITE_SUPABASE_URL
 
 function getAudioUrl(filename) {
   return filename && AUDIO_BASE ? `${AUDIO_BASE}/${filename}` : null
-}
-
-function formatInterval(dueDate, now = new Date()) {
-  const ms = dueDate - now
-  if (ms < 60000) return '< 1m'
-  const mins = Math.round(ms / 60000)
-  if (mins < 60) return `${mins}m`
-  const hours = Math.round(ms / 3600000)
-  if (hours < 24) return `${hours}h`
-  const days = Math.round(ms / 86400000)
-  if (days < 30) return `${days}d`
-  const weeks = Math.round(days / 7)
-  if (weeks < 9) return `${weeks}w`
-  return `${Math.round(days / 30)}mo`
 }
 
 function formatTime(secs) {
@@ -419,13 +404,7 @@ export default function VocabSrsDrill({
   }, [showHardEasy])
 
   // Must be before the isComplete early return — hooks cannot be called conditionally.
-  // previewIntervals uses enable_fuzz so re-calling every tick re-rolls the fuzz; memoize per card ID.
   const currentCardForMemo = getCurrentCard(session)
-  const intervals = useMemo(
-    () => currentCardForMemo ? previewIntervals(currentCardForMemo) : null,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentCardForMemo?.id]
-  )
 
   // Preload the current card's word audio as soon as the card appears.
   useEffect(() => {
@@ -487,21 +466,13 @@ export default function VocabSrsDrill({
   }
 
   const currentCard = getCurrentCard(session)
-  const currentAudioUrls = resolveAudioUrl(currentCard)
   const stats = getSessionStats(session)
   const progressPct = stats.total > 0 ? (stats.goodCount / stats.total) * 100 : 0
 
-  const againInterval = currentCard && currentCard.state !== State.New ? RELEARN_STEP_LABEL : null
-
-  const rightSlot = (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-      <span style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>
-        {stats.goodCount} / {stats.total}
-        {stats.waitingCount > 0 && <span style={{ marginLeft: 6, color: WARNING }}>{stats.waitingCount} waiting</span>}
-      </span>
-      {isMobile && onShowOptions && <SidebarHeaderToggle onClick={onShowOptions} />}
-    </div>
-  )
+  // Correct/troubled/remaining are tracked by DrillHUD below the card
+  // (see the isComplete early return above for the same pattern) — the
+  // header carries only the mobile settings toggle, not a second counter.
+  const rightSlot = isMobile && onShowOptions && <SidebarHeaderToggle onClick={onShowOptions} />
 
   const isRequeue = currentCard && seenRef.current.has(currentCard.id)
 
@@ -617,23 +588,13 @@ export default function VocabSrsDrill({
               )}
             </div>
 
-            {audioEnabled && currentCard && currentAudioUrls.word && flipped && (
-              <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
-                <Button variant="ghost-muted" size="sm" onClick={() => speakCard(currentCard, currentAudioUrls)}>▶ Word</Button>
-                {currentAudioUrls.sentence && (
-                  <Button variant="ghost-muted" size="sm" onClick={() => voicevox.play(currentAudioUrls.sentence)}>▶ Sentence</Button>
-                )}
-              </div>
-            )}
-
             {!flipped ? (
               <DrillButtonRow placeholder="Space or tap to flip" />
             ) : (
               <DrillButtonRow>
                 <DrillButton
                   label="Again"
-                  hint="1"
-                  sublabel={againInterval ?? (intervals ? formatInterval(intervals[Rating.Again]) : null)}
+                  hint={isMobile ? null : '1'}
                   color={DRILL_COLORS.again}
                   onClick={() => handleAnswerRef.current(Rating.Again)}
                   disabled={transitioning}
@@ -641,8 +602,7 @@ export default function VocabSrsDrill({
                 {showHardEasy && (
                   <DrillButton
                     label="Hard"
-                    hint="2"
-                    sublabel={intervals ? formatInterval(intervals[Rating.Hard]) : null}
+                    hint={isMobile ? null : '2'}
                     color={DRILL_COLORS.hard}
                     onClick={() => handleAnswerRef.current(Rating.Hard)}
                     disabled={transitioning}
@@ -650,8 +610,7 @@ export default function VocabSrsDrill({
                 )}
                 <DrillButton
                   label="Good"
-                  hint={showHardEasy ? '3' : '2'}
-                  sublabel={intervals ? formatInterval(intervals[Rating.Good]) : null}
+                  hint={isMobile ? null : (showHardEasy ? '3' : '2')}
                   color={DRILL_COLORS.good}
                   onClick={() => handleAnswerRef.current(Rating.Good)}
                   disabled={transitioning}
@@ -659,8 +618,7 @@ export default function VocabSrsDrill({
                 {showHardEasy && (
                   <DrillButton
                     label="Easy"
-                    hint="4"
-                    sublabel={intervals ? formatInterval(intervals[Rating.Easy]) : null}
+                    hint={isMobile ? null : '4'}
                     color={DRILL_COLORS.easy}
                     onClick={() => handleAnswerRef.current(Rating.Easy)}
                     disabled={transitioning}

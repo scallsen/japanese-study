@@ -21,6 +21,7 @@ import TextbookFlowLabPage from './pages/TextbookFlowLabPage.jsx'
 import TrackedStatLabPage from './pages/TrackedStatLabPage.jsx'
 import CoverRotationLabPage from './pages/CoverRotationLabPage.jsx'
 import SecondaryButtonLabPage from './pages/SecondaryButtonLabPage.jsx'
+import DrillFlipLabPage from './pages/DrillFlipLabPage.jsx'
 
 function getRoute() {
   // Strip any query string (e.g. '/vocab-srs/browse?deck=x&manage=1') before
@@ -80,5 +81,7 @@ export default function App() {
   if (route === '/dev/cover-rotation') return <CoverRotationLabPage />
   // Comparison of primary+secondary action pairings (PrimaryCard's ActionsRow, mobile stacking), not linked from the dashboard
   if (route === '/dev/secondary-button-lab') return <SecondaryButtonLabPage />
+  // Dev-only comparison harness for the Review card's flip-position fix and the keyboard-hint options, not linked from the dashboard
+  if (route === '/dev/drill-flip-lab') return <DrillFlipLabPage />
   return <DashboardPage />
 }
