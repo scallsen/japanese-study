@@ -43,8 +43,8 @@ const STATUS_COLOR = { new: TEXT_MUTED, learning: '#fbbf24', young: '#60a5fa', m
 // (accent/success/warning/danger/neutral), and this 4-color status palette
 // isn't reused elsewhere, so it doesn't earn a place in Badge's fixed set.
 const WORD_COLUMNS = [
-  { key: 'displayForm', width: 90, fontFamily: KANJI_FONT, fontSize: FS_LIST_TITLE, render: row => row.displayForm },
-  { key: 'reading', width: 70, fontFamily: KANJI_FONT, tone: 'muted', render: row => (row.reading && row.reading !== row.displayForm ? row.reading : '') },
+  { key: 'displayForm', width: 90, fontFamily: KANJI_FONT, fontSize: FS_LIST_TITLE, lang: 'ja', render: row => row.displayForm },
+  { key: 'reading', width: 70, fontFamily: KANJI_FONT, tone: 'muted', lang: 'ja', render: row => (row.reading && row.reading !== row.displayForm ? row.reading : '') },
   { key: 'gloss', flex: 1, tone: 'muted', render: row => row.gloss ?? (row.jmdict_id ? '' : '(no dictionary match)') },
   {
     key: 'badges', width: 160,

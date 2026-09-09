@@ -8,6 +8,7 @@ import Select from '../components/Select.jsx'
 import Button from '../components/Button.jsx'
 import Badge from '../components/Badge.jsx'
 import DataList from '../components/DataList.jsx'
+import Japanese from '../components/Japanese.jsx'
 import Modal from '../components/Modal.jsx'
 import TextbookPicker from '../components/TextbookPicker.jsx'
 import SrsGateDialog from '../components/SrsGateDialog.jsx'
@@ -448,7 +449,7 @@ function DoneScreen({
   // mistake badge — three columns, the first two needing their own render.
   const columns = useMemo(() => [
     {
-      key: 'word', width: 100,
+      key: 'word', width: 100, lang: 'ja',
       render: row => {
         const dictEntry = row.word.jmdictId ? dictEntries[row.word.jmdictId] : null
         const { displayForm, reading } = resolveWordDisplay(row.word, dictEntry)
@@ -634,8 +635,8 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
     return (
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 5 }}>
-          <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{displayForm}</span>
-          {reading && <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{reading}</span>}
+          <Japanese as="span" style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{displayForm}</Japanese>
+          {reading && <Japanese as="span" style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{reading}</Japanese>}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           {posLabel && <Badge variant="fill" tone="neutral">{posLabel}</Badge>}
@@ -665,10 +666,10 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
                 display: 'flex', alignItems: 'flex-start', gap: 14, padding: '10px 12px',
                 background: 'rgba(255,255,255,0.03)', borderRadius: 6, border: '1px solid rgba(255,255,255,0.07)',
               }}>
-                <div style={{ fontSize: '2rem', color: TEXT, minWidth: 44, textAlign: 'center', lineHeight: 1.1 }}>{k.literal}</div>
+                <Japanese as="div" style={{ fontSize: '2rem', color: TEXT, minWidth: 44, textAlign: 'center', lineHeight: 1.1 }}>{k.literal}</Japanese>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  {k.on_readings?.length > 0 && <div style={{ fontSize: FS_BASE, color: TEXT, marginBottom: 2 }}>{k.on_readings.join('　')}</div>}
-                  {k.kun_readings?.length > 0 && <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginBottom: 4 }}>{k.kun_readings.join('　')}</div>}
+                  {k.on_readings?.length > 0 && <Japanese as="div" style={{ fontSize: FS_BASE, color: TEXT, marginBottom: 2 }}>{k.on_readings.join('　')}</Japanese>}
+                  {k.kun_readings?.length > 0 && <Japanese as="div" style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginBottom: 4 }}>{k.kun_readings.join('　')}</Japanese>}
                   <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>{(k.meanings ?? '').split('; ').slice(0, 4).join(', ')}</div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4, flexShrink: 0 }}>
@@ -682,7 +683,7 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
           )
         )}
         {sentenceText && (
-          <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontStyle: 'italic', padding: '2px 0' }}>{sentenceText}</div>
+          <Japanese as="div" style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontStyle: 'italic', padding: '2px 0' }}>{sentenceText}</Japanese>
         )}
         {dictEntry && (
           <a

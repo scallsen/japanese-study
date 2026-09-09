@@ -27,6 +27,7 @@ function Cell({ column, row, editable, onFieldChange }) {
         onChange={e => onFieldChange(row, column.key, e.target.value)}
         onClick={e => e.stopPropagation()}
         placeholder={typeof column.placeholder === 'function' ? column.placeholder(row) : column.placeholder}
+        lang={column.lang}
         style={{
           ...cellStyle(column),
           background: 'rgba(255,255,255,0.06)',
@@ -43,6 +44,8 @@ function Cell({ column, row, editable, onFieldChange }) {
 
   return (
     <div
+      lang={column.lang}
+      translate={column.lang === 'ja' ? 'no' : undefined}
       style={{
         ...cellStyle(column),
         display: 'flex',

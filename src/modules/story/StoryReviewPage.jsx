@@ -4,6 +4,7 @@ import AuthSlot from '../../components/AuthSlot.jsx'
 import { TokenizedBody, WordPopup } from '../../components/JapaneseReader.jsx'
 import { NewspaperLayout, ChatLayout, DiaryLayout, InterviewLayout, LetterLayout, PostcardLayout } from './StoryLayouts.jsx'
 import Button from '../../components/Button.jsx'
+import Japanese from '../../components/Japanese.jsx'
 import ToggleButton from '../../components/ToggleButton.jsx'
 import { BG } from './storyUI.jsx'
 import { buildVocabMap } from '../../utils/vocabMap.js'
@@ -165,7 +166,7 @@ function StoryReview({ storyId }) {
         <div style={{ maxWidth: 760, margin: '0 auto', padding: isMobile ? '18px 14px 70px' : '24px 20px 80px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20, flexWrap: 'wrap' }}>
             {!Layout && (
-              <h2 style={{ fontSize: FS_CONTENT_HEADING, fontWeight: 'normal', lineHeight: 1.5, margin: 0, flex: '1 1 200px' }}>{story.title}</h2>
+              <Japanese as="h2" style={{ fontSize: FS_CONTENT_HEADING, fontWeight: 'normal', lineHeight: 1.5, margin: 0, flex: '1 1 200px' }}>{story.title}</Japanese>
             )}
             <div style={{ display: 'flex', gap: 10, marginLeft: 'auto' }}>
               {hasTokens && (

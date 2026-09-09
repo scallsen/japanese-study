@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Handle, Position } from '@xyflow/react'
+import Japanese from '../../components/Japanese.jsx'
 import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION } from '../../data/theme.js'
 
 export default function GrammarNode({ data }) {
@@ -59,7 +60,7 @@ export default function GrammarNode({ data }) {
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 4, marginBottom: 2 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 5, minWidth: 0 }}>
           {!isUnlocked && <span style={{ fontSize: FS_CAPTION, color: '#3A3A3A', flexShrink: 0 }}>▪</span>}
-          <span style={{ fontSize: FS_BASE, color: labelColor, lineHeight: 1.3 }}>{label}</span>
+          <Japanese as="span" style={{ fontSize: FS_BASE, color: labelColor, lineHeight: 1.3 }}>{label}</Japanese>
         </div>
         <span
           onClick={(e) => { if (!showCheck) return; e.stopPropagation(); onToggle() }}

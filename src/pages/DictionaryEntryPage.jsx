@@ -17,6 +17,7 @@ import DataList from '../components/DataList.jsx'
 import { MODULES } from '../data/modules.js'
 import { ModuleThemeProvider } from '../context/ModuleThemeContext.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
+import Japanese from '../components/Japanese.jsx'
 import { KanjiBreakdownEntry } from './dictionaryShared.jsx'
 import { displayFormOf } from '../lib/displayForm.js'
 
@@ -186,9 +187,9 @@ const DECK_ROW_COLUMNS = [{ key: 'content', render: deckRowContent }]
 function SentenceCard({ sentence }) {
   return (
     <Card padding="12px 16px">
-      <div style={{ fontSize: FS_BASE, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, lineHeight: 1.6 }}>
+      <Japanese as="div" style={{ fontSize: FS_BASE, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, lineHeight: 1.6 }}>
         {sentence.japanese}
-      </div>
+      </Japanese>
       <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING, marginTop: 4 }}>
         {sentence.english}
       </div>
@@ -287,7 +288,7 @@ export default function DictionaryEntryPage({ entryId }) {
         crumbs={[
           { label: 'Japanese Study', href: '#/' },
           { label: 'Dictionary', href: '#/dictionary' },
-          { label: shownForm ?? '…' },
+          { label: shownForm ? <Japanese>{shownForm}</Japanese> : '…' },
         ]}
         rightSlot={<AuthSlot />}
       />
@@ -307,18 +308,18 @@ export default function DictionaryEntryPage({ entryId }) {
               {/* Header */}
               <div style={{ marginBottom: 28 }}>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, flexWrap: 'wrap', marginBottom: 10 }}>
-                  <span style={{ fontSize: FS_ENTRY_HEADING, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, lineHeight: 1.1 }}>
+                  <Japanese as="span" style={{ fontSize: FS_ENTRY_HEADING, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0, lineHeight: 1.1 }}>
                     {shownForm}
-                  </span>
+                  </Japanese>
                   {entry.common && <Badge variant="text" tone="accent">common</Badge>}
                 </div>
 
                 {altForms.length > 0 && (
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
                     {altForms.map((f, i) => (
-                      <span key={i} style={{ fontSize: FS_ENTRY_ALT, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
+                      <Japanese as="span" key={i} style={{ fontSize: FS_ENTRY_ALT, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
                         {f}
-                      </span>
+                      </Japanese>
                     ))}
                   </div>
                 )}

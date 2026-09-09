@@ -17,6 +17,7 @@ import DataList from '../components/DataList.jsx'
 import { MODULES } from '../data/modules.js'
 import { ModuleThemeProvider, useAccent } from '../context/ModuleThemeContext.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
+import Japanese from '../components/Japanese.jsx'
 import { KanjiBreakdownEntry } from './dictionaryShared.jsx'
 import { displayFormOf } from '../lib/displayForm.js'
 
@@ -259,9 +260,9 @@ function KanjiSection({ entries, hasWords }) {
                     borderRight: '1px solid rgba(255,255,255,0.05)',
                   }}
                 >
-                  <span style={{ fontSize: FS_CONTENT_HEADING, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
+                  <Japanese as="span" style={{ fontSize: FS_CONTENT_HEADING, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
                     {entry.literal}
-                  </span>
+                  </Japanese>
                 </div>
               ))}
             </div>
@@ -308,9 +309,9 @@ function entryRowContent(entry) {
   return (
     <div style={{ width: '100%' }}>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 5 }}>
-        <span style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{shown}</span>
+        <Japanese as="span" style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{shown}</Japanese>
         {showKana && (
-          <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{kana}</span>
+          <Japanese as="span" style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{kana}</Japanese>
         )}
         {entry.common && <Badge variant="text" tone="accent">common</Badge>}
       </div>

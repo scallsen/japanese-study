@@ -1,4 +1,5 @@
 import { TokenizedBody } from './JapaneseReader.jsx'
+import Japanese from './Japanese.jsx'
 import { FONT, MINCHO_FONT } from '../data/theme.js'
 
 // The paper-styled reading surface — built for Story's `news` format,
@@ -60,7 +61,7 @@ export default function NewspaperLayout({
         <span>{edition}</span>
         <span>{dateLine}</span>
       </div>
-      <h1 style={{
+      <Japanese as="h1" style={{
         fontFamily: MINCHO_FONT,
         fontWeight: 700,
         fontSize: isMobile ? 26 : 34,
@@ -69,7 +70,7 @@ export default function NewspaperLayout({
         textAlign: 'center',
       }}>
         {title}
-      </h1>
+      </Japanese>
       {subtitle && (
         <div style={{
           fontFamily: FONT,

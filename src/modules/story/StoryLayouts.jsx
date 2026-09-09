@@ -1,4 +1,5 @@
 import { TokenizedBody } from '../../components/JapaneseReader.jsx'
+import Japanese from '../../components/Japanese.jsx'
 import { parseDialogue } from './parseDialogue.js'
 import { FONT, KANJI_FONT, MINCHO_FONT, TRACKING, BORDER, TEXT, TEXT_MUTED, FS_BASE } from '../../data/theme.js'
 import { SURFACE } from './storyUI.jsx'
@@ -29,7 +30,7 @@ export function ChatLayout({ title, tokens, vocabMap, onWordClick, showFurigana,
       fontFamily: LINE_FONT,
       letterSpacing: 'normal',
     }}>
-      <div style={{
+      <Japanese as="div" style={{
         textAlign: 'center',
         fontSize: FS_BASE,
         color: TEXT,
@@ -38,7 +39,7 @@ export function ChatLayout({ title, tokens, vocabMap, onWordClick, showFurigana,
         background: 'rgba(0,0,0,0.25)',
       }}>
         {title}
-      </div>
+      </Japanese>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         {lines.map((line, li) => {
           const body = (offset, extra = {}) => (
@@ -96,17 +97,17 @@ export function ChatLayout({ title, tokens, vocabMap, onWordClick, showFurigana,
                 fontSize: 15,
                 marginBottom: 2,
               }}>
-                {line.speaker.slice(0, 1)}
+                <Japanese>{line.speaker.slice(0, 1)}</Japanese>
               </div>
               <div style={{ maxWidth: isMobile ? '78%' : '70%' }}>
-                <div style={{
+                <Japanese as="div" style={{
                   fontSize: 12,
                   color: TEXT_MUTED,
                   marginBottom: 3,
                   textAlign: isRight ? 'right' : 'left',
                 }}>
                   {line.speaker}
-                </div>
+                </Japanese>
                 <div style={{
                   background: isRight ? '#3E8E5A' : '#3B4652',
                   color: '#F2F2F2',
@@ -173,9 +174,9 @@ export function DiaryLayout({ title, tokens, vocabMap, onWordClick, showFurigana
         width: 1,
         background: 'rgba(178,88,32,0.35)',
       }} />
-      <div style={{ fontFamily: KANJI_FONT, fontSize: FS_BASE, color: '#8A5A2B', marginBottom: 12 }}>
+      <Japanese as="div" style={{ fontFamily: KANJI_FONT, fontSize: FS_BASE, color: '#8A5A2B', marginBottom: 12 }}>
         {title}
-      </div>
+      </Japanese>
       {hasHeader && (
         <div style={{ fontFamily: KANJI_FONT, fontSize: 14, letterSpacing: '0.04em', color: '#6B5A3E', marginBottom: 14, textAlign: 'right' }}>
           {section(headerTokens, 0)}
@@ -212,7 +213,7 @@ export function InterviewLayout({ title, tokens, vocabMap, onWordClick, showFuri
       padding: isMobile ? '18px 16px 22px' : '24px 30px 30px',
       boxShadow: '0 4px 18px rgba(0,0,0,0.35)',
     }}>
-      <div style={{
+      <Japanese as="div" style={{
         textAlign: 'center',
         fontFamily: FONT,
         letterSpacing: TRACKING,
@@ -223,7 +224,7 @@ export function InterviewLayout({ title, tokens, vocabMap, onWordClick, showFuri
         borderBottom: `1px solid ${BORDER}`,
       }}>
         {title}
-      </div>
+      </Japanese>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
         {lines.map((line, li) => {
           const offset = line.entries.length ? line.entries[0].gi : 0
@@ -257,7 +258,7 @@ export function InterviewLayout({ title, tokens, vocabMap, onWordClick, showFuri
 
           return (
             <div key={li} style={{ borderLeft: `3px solid ${accent}`, paddingLeft: 14 }}>
-              <div style={{
+              <Japanese as="div" style={{
                 fontSize: 12,
                 fontFamily: FONT,
                 letterSpacing: TRACKING,
@@ -266,7 +267,7 @@ export function InterviewLayout({ title, tokens, vocabMap, onWordClick, showFuri
                 marginBottom: 4,
               }}>
                 {line.speaker}
-              </div>
+              </Japanese>
               <div style={{ fontSize: 16, lineHeight: showFurigana ? 2.2 : 1.8 }}>
                 {body}
               </div>
@@ -290,7 +291,7 @@ export function LetterLayout({ title, tokens, vocabMap, onWordClick, showFurigan
       boxShadow: '0 6px 24px rgba(0,0,0,0.45)',
       position: 'relative',
     }}>
-      <div style={{
+      <Japanese as="div" style={{
         fontFamily: MINCHO_FONT,
         fontSize: isMobile ? 15 : 16,
         color: '#8A5A2B',
@@ -298,7 +299,7 @@ export function LetterLayout({ title, tokens, vocabMap, onWordClick, showFurigan
         maxWidth: isMobile ? '65%' : '75%',
       }}>
         {title}
-      </div>
+      </Japanese>
       <div style={{
         fontFamily: MINCHO_FONT,
         fontSize: isMobile ? 16 : 17,
@@ -367,7 +368,7 @@ function PostalCodeBoxes() {
   )
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-      <span style={{ fontFamily: KANJI_FONT, fontSize: 13, color: POSTCARD_INK }}>〒</span>
+      <Japanese as="span" style={{ fontFamily: KANJI_FONT, fontSize: 13, color: POSTCARD_INK }}>〒</Japanese>
       <div style={{ display: 'flex', gap: 2 }}>{[0, 1, 2].map(box)}</div>
       <span style={{ color: POSTCARD_INK, fontSize: 12 }}>—</span>
       <div style={{ display: 'flex', gap: 2 }}>{[0, 1, 2, 3].map(box)}</div>
@@ -397,9 +398,9 @@ export function PostcardLayout({ title, tokens, vocabMap, onWordClick, showFurig
         <PostalCodeBoxes />
         <Stamp />
       </div>
-      <div style={{ fontFamily: KANJI_FONT, fontSize: 13, color: '#8A5A2B', marginBottom: 10 }}>
+      <Japanese as="div" style={{ fontFamily: KANJI_FONT, fontSize: 13, color: '#8A5A2B', marginBottom: 10 }}>
         {title}
-      </div>
+      </Japanese>
       <div style={{
         writingMode: 'vertical-rl',
         textOrientation: 'mixed',

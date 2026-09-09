@@ -1,4 +1,5 @@
 import Badge from '../components/Badge.jsx'
+import Japanese from '../components/Japanese.jsx'
 import { FONT, KANJI_FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_ENTRY_KANJI } from '../data/theme.js'
 
 function kanjiGradeLabel(grade) {
@@ -29,20 +30,20 @@ export function KanjiBreakdownEntry({ entry, truncateMeanings = false }) {
 
   return (
     <>
-      <span style={{ fontSize: FS_ENTRY_KANJI, color: TEXT, fontFamily: KANJI_FONT, lineHeight: 1, flexShrink: 0, letterSpacing: 0, minWidth: 44, textAlign: 'center' }}>
+      <Japanese as="span" style={{ fontSize: FS_ENTRY_KANJI, color: TEXT, fontFamily: KANJI_FONT, lineHeight: 1, flexShrink: 0, letterSpacing: 0, minWidth: 44, textAlign: 'center' }}>
         {entry.literal}
-      </span>
+      </Japanese>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 5 }}>
           {entry.on_readings?.length > 0 && (
-            <span style={{ fontSize: FS_BASE, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
+            <Japanese as="span" style={{ fontSize: FS_BASE, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
               {entry.on_readings.join('、')}
-            </span>
+            </Japanese>
           )}
           {entry.kun_readings?.length > 0 && (
-            <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
+            <Japanese as="span" style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>
               {entry.kun_readings.join('、')}
-            </span>
+            </Japanese>
           )}
           {jlptLabel && <Badge variant="text" tone="accent">{jlptLabel}</Badge>}
           {gradeLabel && <Badge variant="text" tone="neutral">{gradeLabel}</Badge>}
