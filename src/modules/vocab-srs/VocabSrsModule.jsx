@@ -849,11 +849,11 @@ function VocabSrsHome() {
                   />
                 </div>
 
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 20, marginBottom: 28 }}>
+                <div style={{ marginBottom: 28 }}>
                   {renderOverviewSettings()}
                 </div>
 
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 20 }}>
+                <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
                     <ImportMenuButton onFile={handleFileChange} onOpenWordImport={() => setShowWordImport(true)} isMobile={isMobile} />
                   </div>
