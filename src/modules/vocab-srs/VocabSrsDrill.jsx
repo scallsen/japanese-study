@@ -307,7 +307,7 @@ export default function VocabSrsDrill({
       setLocalCards(updatedCards)
       setSession(newSession)
       setFlipped(false)
-      onCardSave(updatedCards)
+      onCardSave(updatedCards, rating === Rating.Again ? 0 : 1)
       if (isLeech) {
         setLeechNotice(currentCard.front)
         setTimeout(() => setLeechNotice(null), 4000)
@@ -343,7 +343,12 @@ export default function VocabSrsDrill({
         seenRef.current.delete(revertedCard.id)
         const revertedCards = localCardsRef.current.map(c => c.id === revertedCard.id ? revertedCard : c)
         setLocalCards(revertedCards)
-        onCardSave(revertedCards)
+        // Undo can only revert the most recent answer, so a goodCount drop
+        // between the two sessions means that answer was Again (uncounted) —
+        // wasReviewed here means the opposite, that it was counted and must
+        // now be un-counted.
+        const wasReviewed = prevSession.goodCount < sessionRef.current.goodCount
+        onCardSave(revertedCards, wasReviewed ? -1 : 0)
       }
       setSession(prevSession)
       setFlipped(false)
@@ -459,7 +464,7 @@ export default function VocabSrsDrill({
           rightSlot={isMobile && onShowOptions && <SidebarHeaderToggle onClick={onShowOptions} />}
         />
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <DoneScreen stats={stats} onDone={() => onDone(localCards, stats.goodCount)} />
+          <DoneScreen stats={stats} onDone={() => onDone(localCards)} />
         </div>
         <AttributionFooter sources={footerSources} />
       </div>

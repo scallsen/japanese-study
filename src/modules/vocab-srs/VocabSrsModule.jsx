@@ -500,28 +500,36 @@ function VocabSrsHome() {
     setSession(initSession(resolvedDue, resolvedNew))
   }
 
-  function handleCardSave(updatedSessionCards) {
+  // reviewDelta is +1/-1/0 for a single answer/undo (see VocabSrsDrill) —
+  // committed per-answer, not just at session end, so a session the learner
+  // exits before finishing (very possible: a missed review card queues a
+  // 10-minute relearn wait) still counts on the dashboard's Activity grid
+  // and totalReviews instead of silently losing that session's progress.
+  function handleCardSave(updatedSessionCards, reviewDelta = 0) {
     const newCardsObj = { ...cardsObj, ...resolvedArrayToCardsObj(updatedSessionCards, decks) }
-    const newProgress = { ...progress, cards: newCardsObj }
     const newCardDayUpdate = computeNewCardDay(newCardsObj)
+    let newProgress = { ...progress, cards: newCardsObj }
     if (newCardDayUpdate) newProgress.newCardDay = newCardDayUpdate
+    if (reviewDelta !== 0) {
+      const reviewLog = { ...(progress.reviewLog ?? {}) }
+      reviewLog[todayStr] = Math.max(0, (reviewLog[todayStr] ?? 0) + reviewDelta)
+      newProgress = {
+        ...newProgress,
+        reviewLog,
+        totalReviews: Math.max(0, (progress.totalReviews ?? 0) + reviewDelta),
+      }
+    }
     setProgress(newProgress)
     save(newProgress)
   }
 
-  function handleDrillDone(updatedSessionCards, goodCount) {
+  function handleDrillDone(updatedSessionCards) {
     const newCardsObj = { ...cardsObj, ...resolvedArrayToCardsObj(updatedSessionCards, decks) }
     const newCardDayUpdate = computeNewCardDay(newCardsObj)
-    // Same goodCount the dashboard's Activity grid and totalReviews both read
-    // from, so the two numbers can never drift apart.
-    const reviewLog = { ...(progress.reviewLog ?? {}) }
-    if (goodCount > 0) reviewLog[todayStr] = (reviewLog[todayStr] ?? 0) + goodCount
     const newProgress = {
       ...progress,
       cards: newCardsObj,
       lastSession: new Date().toISOString(),
-      totalReviews: (progress.totalReviews ?? 0) + goodCount,
-      reviewLog,
       ...(newCardDayUpdate ? { newCardDay: newCardDayUpdate } : {}),
     }
     sessionNewCardsRef.current = null
