@@ -120,9 +120,17 @@ function DeckNameCell({ deck, stats, onRename }) {
 // alignItems: 'stretch' below, giving it a definite height, and `aspectRatio`
 // then derives a matching width from that height — so it's exactly as tall
 // as the ToggleButton beside it (a Chip, taller than Button's own icon-only
-// sizing) without hardcoding either component's real pixel height. Reuses
-// the shared `.btn-ghost-muted` hover class so it still reddens on hover
-// like every other dismiss/remove affordance in the app.
+// sizing) without hardcoding either component's real pixel height.
+// `flexShrink: 0` (and `flexGrow: 0`) matter here specifically: a flex item's
+// aspect-ratio only fixes its *preferred* size — flexbox can still shrink an
+// item's main-axis size (width, in this row) independently of its stretched
+// cross-axis size (height) whenever the row runs short on space, which would
+// leave the height pinned by stretch but the width squeezed narrower,
+// silently breaking the square on a tight mobile row. Locking flex-grow/
+// shrink to 0 makes the aspect-ratio size the actual final size, not just a
+// starting point. Reuses the shared `.btn-ghost-muted` hover class so it
+// still reddens on hover like every other dismiss/remove affordance in the
+// app.
 function DeckDeleteButton({ onClick }) {
   return (
     <button
@@ -132,6 +140,8 @@ function DeckDeleteButton({ onClick }) {
       className="btn btn-ghost-muted"
       style={{
         alignSelf: 'stretch',
+        flexGrow: 0,
+        flexShrink: 0,
         aspectRatio: '1 / 1',
         display: 'flex',
         alignItems: 'center',
@@ -176,7 +186,7 @@ function DeckRowActions({ deck, onToggle, onDelete }) {
       onClick={e => { e.preventDefault(); e.stopPropagation() }}
       style={{ display: 'flex', alignItems: 'stretch', gap: 4, flexShrink: 0 }}
     >
-      <div style={{ width: 64, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ width: 64, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <ToggleButton active={deck.active} labels={{ on: 'On', off: 'Off' }} onClick={onToggle} />
       </div>
       {canDelete && <DeckDeleteButton onClick={onDelete} />}
