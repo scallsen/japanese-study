@@ -113,6 +113,45 @@ function DeckNameCell({ deck, stats, onRename }) {
   )
 }
 
+// A square icon button matching the row's own height, rather than the
+// shared Button component's icon-only sizing (padding-driven, not square,
+// and shorter than a Chip). Built locally instead of widening Button's API
+// for a one-off need: `alignSelf: 'stretch'` picks up the actions row's own
+// alignItems: 'stretch' below, giving it a definite height, and `aspectRatio`
+// then derives a matching width from that height — so it's exactly as tall
+// as the ToggleButton beside it (a Chip, taller than Button's own icon-only
+// sizing) without hardcoding either component's real pixel height. Reuses
+// the shared `.btn-ghost-muted` hover class so it still reddens on hover
+// like every other dismiss/remove affordance in the app.
+function DeckDeleteButton({ onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="Delete deck"
+      className="btn btn-ghost-muted"
+      style={{
+        alignSelf: 'stretch',
+        aspectRatio: '1 / 1',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'transparent',
+        border: 'none',
+        borderRadius: 6,
+        padding: 0,
+        color: TEXT_MUTED,
+        fontFamily: FONT,
+        fontSize: FS_BASE,
+        lineHeight: 1,
+        cursor: 'pointer',
+      }}
+    >
+      ×
+    </button>
+  )
+}
+
 // On/off toggle + delete (imported decks only) for a deck row. Both need to
 // stop the row's own navigate — a single wrapper handles that for both
 // controls rather than repeating it per-button. preventDefault is required,
@@ -123,17 +162,24 @@ function DeckNameCell({ deck, stats, onRename }) {
 // click from reaching other row-level listeners but never stopped the
 // browser from still following the link underneath — every tap on the
 // toggle silently also opened the deck's browse view.
+//
+// The toggle sits in a fixed-width slot (64px — the same width the toggle's
+// own DataList column used before this row became one custom column) rather
+// than sizing to its own label: "On" and "Off" aren't the same width, so an
+// unconstrained toggle changes the whole row's layout width on every flip —
+// the name column has to shrink or grow to compensate, which reads as
+// everything else in the row shifting when only the toggle changed.
 function DeckRowActions({ deck, onToggle, onDelete }) {
   const canDelete = !isBundledDeck(deck)
   return (
     <div
       onClick={e => { e.preventDefault(); e.stopPropagation() }}
-      style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}
+      style={{ display: 'flex', alignItems: 'stretch', gap: 4, flexShrink: 0 }}
     >
-      <ToggleButton active={deck.active} labels={{ on: 'On', off: 'Off' }} onClick={onToggle} />
-      {canDelete && (
-        <Button variant="ghost-muted" size="sm" icon="×" label="Delete deck" onClick={onDelete} />
-      )}
+      <div style={{ width: 64, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <ToggleButton active={deck.active} labels={{ on: 'On', off: 'Off' }} onClick={onToggle} />
+      </div>
+      {canDelete && <DeckDeleteButton onClick={onDelete} />}
     </div>
   )
 }

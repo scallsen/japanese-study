@@ -4,7 +4,7 @@ import { buildAnkiTsv, buildBackupJson } from './exportData.js'
 const card = (over = {}) => ({
   front: '魚', back: 'fish', kana: 'さかな',
   sentence: '魚を食べる。', sentenceEnglish: 'I eat fish.',
-  deckId: 'keigo', ...over,
+  deckId: 'sample-deck', ...over,
 })
 
 describe('buildAnkiTsv', () => {
@@ -17,8 +17,8 @@ describe('buildAnkiTsv', () => {
   })
 
   it('writes content columns in order, with the deck as the trailing tag', () => {
-    const row = buildAnkiTsv([card()], { keigo: 'Keigo Deck' }).split('\n')[3]
-    expect(row.split('\t')).toEqual(['魚', 'fish', 'さかな', '魚を食べる。', 'I eat fish.', 'Keigo-Deck'])
+    const row = buildAnkiTsv([card()], { 'sample-deck': 'Sample Deck' }).split('\n')[3]
+    expect(row.split('\t')).toEqual(['魚', 'fish', 'さかな', '魚を食べる。', 'I eat fish.', 'Sample-Deck'])
   })
 
   it('flattens tabs and newlines so they cannot shift later columns', () => {
@@ -33,19 +33,19 @@ describe('buildAnkiTsv', () => {
   })
 
   it('falls back to the deck id when no display name is known', () => {
-    const row = buildAnkiTsv([card({ deckId: 'keigo' })]).split('\n')[3]
-    expect(row.split('\t')[5]).toBe('keigo')
+    const row = buildAnkiTsv([card({ deckId: 'sample-deck' })]).split('\n')[3]
+    expect(row.split('\t')[5]).toBe('sample-deck')
   })
 
   it('drops cards with no resolved content rather than exporting blank notes', () => {
-    const rows = buildAnkiTsv([card(), { front: '', back: '', deckId: 'keigo' }])
+    const rows = buildAnkiTsv([card(), { front: '', back: '', deckId: 'sample-deck' }])
       .trim().split('\n').slice(3)
     expect(rows).toHaveLength(1)
   })
 
   it('leaves missing optional fields empty without collapsing the row', () => {
-    const row = buildAnkiTsv([{ front: 'それ', back: 'that', deckId: 'keigo' }]).split('\n')[3]
-    expect(row.split('\t')).toEqual(['それ', 'that', '', '', '', 'keigo'])
+    const row = buildAnkiTsv([{ front: 'それ', back: 'that', deckId: 'sample-deck' }]).split('\n')[3]
+    expect(row.split('\t')).toEqual(['それ', 'that', '', '', '', 'sample-deck'])
   })
 })
 

@@ -13,7 +13,7 @@ const CARDS = [
   { id: 'c2', deckId: 'imported', front: '青い', back: 'blue', state: State.Learning, stability: 2 },
   { id: 'c3', deckId: 'imported', front: '新しい', back: 'new', state: State.New, stability: 0 },
   { id: 'c4', deckId: 'imported', front: '古い', back: 'old', state: State.Review, stability: 5, suspended: true },
-  { id: 'c5', deckId: 'keigo', front: 'いただく', back: 'to receive (humble)', state: State.Review, stability: 40 },
+  { id: 'c5', deckId: 'other-deck', front: 'いただく', back: 'to receive (humble)', state: State.Review, stability: 40 },
 ]
 
 describe('buildLearnerContext — vocab-list', () => {

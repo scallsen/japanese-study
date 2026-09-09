@@ -1,20 +1,18 @@
 import { createEmptyCard } from 'ts-fsrs'
-import KEIGO from './decks/keigo.json'
 
-const DECK_WORDS = {
-  'keigo': KEIGO,
-}
+// No bundled deck currently ships — see RETIRED_DECKS below. Kept as an
+// object (rather than deleted outright) since a future bundled deck only
+// needs an entry here and in freshBundledDecks.
+const DECK_WORDS = {}
 
 // Bundled decks that used to ship and no longer do. Their deck entry and all
 // their cards are dropped on load, so stored progress heals itself without a
 // migration script — a retired deck's cards would otherwise resolve to blank
 // front/back and show as empty cards in the drill.
-const RETIRED_DECKS = ['core3k', 'core2000']
+const RETIRED_DECKS = ['core3k', 'core2000', 'keigo']
 
-function freshBundledDecks(now) {
-  return {
-    'keigo': { id: 'keigo', name: 'Keigo', source: 'bundled', active: false, addedAt: now },
-  }
+function freshBundledDecks() {
+  return {}
 }
 
 // Converts stored progress to the current shape.
@@ -25,12 +23,12 @@ export function migrateProgress(raw) {
 
   // Fresh install
   if (!raw) {
-    return { decks: freshBundledDecks(now), cards: {}, lastSession: null, totalReviews: 0 }
+    return { decks: freshBundledDecks(), cards: {}, lastSession: null, totalReviews: 0 }
   }
 
   // Already new shape — ensure bundled decks are current; drop retired decks
   if (raw.decks && !Array.isArray(raw.cards)) {
-    const baseDecks = freshBundledDecks(now)
+    const baseDecks = freshBundledDecks()
     const existingDecks = Object.fromEntries(
       Object.entries(raw.decks).filter(([id]) => !RETIRED_DECKS.includes(id))
     )
@@ -53,7 +51,7 @@ export function migrateProgress(raw) {
 
   return {
     decks: {
-      ...freshBundledDecks(now),
+      ...freshBundledDecks(),
       ...(hasLegacy ? { imported: { id: 'imported', name: 'Imported', source: 'imported', active: true, addedAt: now } } : {}),
     },
     cards: cardsObj,

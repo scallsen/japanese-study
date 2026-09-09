@@ -275,8 +275,8 @@ Mirrors katsuyou-drill's UI exactly. Speed-mode only (no text input). Card front
 | `src/utils/storage.js` | Safe localStorage get/set wrappers |
 | `src/data/wordLists.js` | Word source/list metadata: `WORD_SOURCES` array |
 | `src/data/words/sample.json` | Placeholder word data |
-| `scripts/generate-audio.mjs` | Generates Voicevox audio for word lists + `keigo.json`, uploads to Storage, prunes orphaned files (see Vocab audio section below) |
-| `.github/workflows/generate-vocab-audio.yml` | Runs the above automatically on every push touching word-list/keigo JSON, or via manual dispatch |
+| `scripts/generate-audio.mjs` | Generates Voicevox audio for word lists, uploads to Storage, prunes orphaned files (see Vocab audio section below) |
+| `.github/workflows/generate-vocab-audio.yml` | Runs the above automatically on every push touching word-list JSON, or via manual dispatch |
 | `src/global.css` | sidebar-scroll scrollbar styles; letter-spacing reset for form elements |
 
 ### Word source / list structure (`src/data/wordLists.js`)
@@ -424,7 +424,7 @@ Third-party data/asset credits (JMdict/EDICT, KANJIDIC2, Tanaka Corpus, Voicevox
 **Scripts:**
 | Script | Purpose |
 |---|---|
-| `scripts/backfill-vocab-jmdict.mjs` | One-off — matches every Vocab Drill word (`src/data/words/*.json`) and bundled SRS deck entry (`keigo.json`) against `dictionary`, writing `jmdictId` back into the JSON. Reading-verified (rejects a match if the candidate's `kana_forms` don't include the word's own reading) to avoid linking the wrong homograph — e.g. it deliberately leaves `する`/`ある` unmatched rather than guessing among 為る/刷る/剃る/擦る/掏る. Writes unmatched entries to `backfill-vocab-jmdict-report.json` for manual review; not all entries will ever auto-match (compound/decorated forms like `〇〇向き`, `正確（な）`). |
+| `scripts/backfill-vocab-jmdict.mjs` | One-off — matches every Vocab Drill word (`src/data/words/*.json`) against `dictionary`, writing `jmdictId` back into the JSON. Reading-verified (rejects a match if the candidate's `kana_forms` don't include the word's own reading) to avoid linking the wrong homograph — e.g. it deliberately leaves `する`/`ある` unmatched rather than guessing among 為る/刷る/剃る/擦る/掏る. Writes unmatched entries to `backfill-vocab-jmdict-report.json` for manual review; not all entries will ever auto-match (compound/decorated forms like `〇〇向き`, `正確（な）`). |
 | `scripts/import-tanaka.mjs` | Downloads/parses the Tanaka Corpus (`examples.utf.gz` from `https://www.edrdg.org/pub/Nihongo/examples.utf.gz` — the `ftp://` URL EDRDG's own docs reference isn't reachable from every network), resolves each sentence's per-word index tags to `dictionary.id`, populates `sentences`. Destructive full-refresh like `import-jmdict.mjs`. |
 
 `jmdictId` write sites for SRS cards (all pass it through `createCard`'s `extras`): `VocabPage.jsx`'s `handleAddToSrs`, `WordImportPanel.jsx`, `ImmersionReader.jsx`, `StoryReviewPage.jsx`. `IMPORTED_CONTENT_FIELDS` in `srs.js` includes `jmdictId` so it survives `resetCardProgress`.
@@ -503,7 +503,7 @@ Storage keys keep their `vocab-` / `srs-` prefixes and are listed in the SRS set
 
 ### Vocab audio (Voicevox)
 
-Word audio is pre-generated via [Voicevox](https://voicevox.hiroshiba.jp/) (neural Japanese TTS) rather than relying solely on the browser's Speech Synthesis API, which varies wildly in quality by OS/browser. This applies to the Vocab drill word lists and the `keigo` bundled SRS deck (see Vocab SRS section) — not to Immersion, Story, or Dictionary (all dynamic/on-demand content a local Voicevox instance can't serve live).
+Word audio is pre-generated via [Voicevox](https://voicevox.hiroshiba.jp/) (neural Japanese TTS) rather than relying solely on the browser's Speech Synthesis API, which varies wildly in quality by OS/browser. This applies to the Vocab drill word lists (and, were one ever to ship again, a bundled SRS deck — see Vocab SRS section) — not to Immersion, Story, or Dictionary (all dynamic/on-demand content a local Voicevox instance can't serve live).
 
 **Voices** (`VOICEVOX_VOICES` in `src/utils/voicevoxAudio.js`, kept in sync with `VOICES` in `scripts/generate-audio.mjs`):
 - Speaker id `2` — 四国めたん (Shikoku Metan), Normal style
@@ -511,9 +511,9 @@ Word audio is pre-generated via [Voicevox](https://voicevox.hiroshiba.jp/) (neur
 
 **Storage layout**: `audio/voicevox/<speakerId>/<key>.mp3`, where the key is a hash of **the text spoken** (`audioKeyFor` in `src/lib/displayForm.js`), not of the word that wanted it. One reading is stored once however many lists teach it — 7,138 words reduce to 2,272 clips — while two cards of one dictionary entry that say different things (勉強, 勉強する) keep separate clips. A hash because Supabase Storage rejects a non-ASCII object key and decodes percent-escapes before validating; non-cryptographic because a card needs the URL synchronously while rendering. The generator asserts no two readings share a key rather than trusting the hash. Words carry **no** record of their own audio: a card derives the URL from its reading and falls back to browser TTS when the clip 404s, which is also why a word list leaving the repo can no longer orphan audio another list still speaks. `scripts/rekey-audio.mjs` performed the one-off move from the old per-word layout. Formerly `audio/voicevox/<speakerId>/<entryId>.mp3` in the same public Supabase Storage `audio` bucket used by Vocab SRS's `audio/imported/` (Anki-uploaded audio) — kept in a separate prefix so the two can never collide or interfere with each other's cleanup.
 
-**Generation** (`scripts/generate-audio.mjs`): reads `src/data/words/*.json` and `src/modules/vocab-srs/decks/keigo.json`, generates audio for any entry missing a voice in its `voicevoxVoices` array (using `kana` as the TTS text for word-list entries, `front` for `keigo.json` entries which have no separate kana field), uploads to Storage, and writes the updated `voicevoxVoices` array back into the source JSON. Every run also **reconciles** each voice folder against the current entries and deletes any orphaned file — this is what makes removing a word/card from the JSON automatically delete its audio too, no separate cleanup step needed. Requires a running Voicevox engine (desktop app, or the headless `voicevox/voicevox_engine` Docker image) reachable at `VOICEVOX_URL` (default `http://localhost:50021`).
+**Generation** (`scripts/generate-audio.mjs`): reads `src/data/words/*.json` (plus a learner's own `custom_words`), synthesizes audio for any spoken reading that doesn't already have a stored clip for a given voice, and uploads it to Storage keyed by that reading (see Storage layout above — nothing is written back into the source JSON). Every run also **reconciles** each voice folder against the current entries and deletes any orphaned file — this is what makes removing a word/card from the JSON automatically delete its audio too, no separate cleanup step needed. Requires a running Voicevox engine (desktop app, or the headless `voicevox/voicevox_engine` Docker image) reachable at `VOICEVOX_URL` (default `http://localhost:50021`).
 
-**Automation** (`.github/workflows/generate-vocab-audio.yml`): runs the script automatically on every push to `main` touching `src/data/words/**` or the keigo deck (plus manual `workflow_dispatch`), using the official headless Voicevox Docker image spun up just for the job. Commits the updated JSON straight back to `main` with a bot identity — no PR step. The repo is public, so GitHub Actions minutes are free regardless of run frequency.
+**Automation** (`.github/workflows/generate-vocab-audio.yml`): runs the script automatically on every push to `main` touching `src/data/words/**` (plus manual `workflow_dispatch`), using the official headless Voicevox Docker image spun up just for the job. Commits any changed word-list JSON straight back to `main` with a bot identity — no PR step. The repo is public, so GitHub Actions minutes are free regardless of run frequency.
 
 **Processing status**: the workflow flips a single-row Supabase table, `audio_generation_status` (`id='vocab-audio'`, `status: 'idle'|'processing'`), to `'processing'` while it runs and back to `'idle'` when done (both in the script's own `try/finally` and, as a backstop against runner-level failures, an `if: always()` workflow step). `useAudioGenerationStatus()` polls this row and drives the "Audio is being generated" note shown under the audio-source picker in both the Vocab and SRS settings drawers.
 
@@ -647,7 +647,6 @@ Anki-style spaced repetition using [ts-fsrs](https://github.com/open-spaced-repe
 | `src/modules/vocab-srs/WordImportPanel.jsx` | Modal UI for the "Import from text / image" flow — paste/image input, review checklist (editable surface/reading/meaning per row), confirm → `onConfirm(cards)` |
 | `src/modules/vocab-srs/VocabSrsModule.jsx` | Home screen + sidebar: deck management, stats, settings, Start Review |
 | `src/modules/vocab-srs/VocabSrsDrill.jsx` | Drill UI — FlipCard, rating buttons, audio, relearn countdown, session complete |
-| `src/modules/vocab-srs/decks/keigo.json` | Bundled deck — 30 keigo/formal-register words; audio generated via Voicevox (see Vocab audio section under Vocabulary Drill), no Anki recordings. **The only bundled deck.** |
 | `src/modules/vocab-srs/srs.test.js` | Vitest unit tests for srs.js |
 | `src/modules/vocab-srs/session.test.js` | Vitest unit tests for session.js |
 | `src/modules/vocab-srs/import.test.js` | Vitest unit tests for import.js |
@@ -733,7 +732,7 @@ getSessionStats(session)
 
 Cards come from two sources:
 
-**Bundled decks** — static JSON files in `decks/`. Content lives in the JSON; only FSRS scheduling state is persisted to storage. New bundled decks start with no card entries in storage; entries are created on first activation via `initializeDeckCards`.
+**Bundled decks** — static JSON files in `decks/`. Content lives in the JSON; only FSRS scheduling state is persisted to storage. New bundled decks start with no card entries in storage; entries are created on first activation via `initializeDeckCards`. **None currently ship** — `core3k`, `core2000`, and `keigo` were all retired (see below); `DECK_WORDS`/`DECK_FILES` are both empty objects until a new one is added.
 
 **Imported decks** — created from Anki TSV exports, or from the "Import from text / image" flow (see Word import below). Content (front/back/audio/sentence fields) is stored inline on each card object in storage.
 
@@ -741,11 +740,11 @@ Both sources write to the same `cards{}` object, distinguished by `deckId`.
 
 ### Bundled deck content format
 
-Each entry in a `decks/*.json` file (also the shape `resolveCard` returns for a bundled card). Only `id`, `front` and `back` are required; the rest are optional and `keigo.json` carries none of them:
+No bundled deck ships today, so this is the shape a future one would need — each entry in a `decks/*.json` file (also the shape `resolveCard` returns for a bundled card). Only `id`, `front` and `back` are required; the rest are optional:
 
 ```js
 {
-  "id": "keigo-001",
+  "id": "example-001",
   "front": "いただく",
   "back": "to receive (humble)",
   "kana": "いただく",                     // optional
@@ -758,7 +757,7 @@ Each entry in a `decks/*.json` file (also the shape `resolveCard` returns for a 
 
 `sentenceEnglish` is shown below the Japanese sentence on the card back (smaller font).
 
-**Retiring a bundled deck** — add its id to `RETIRED_DECKS` in `migrate.js` *and* delete its JSON, import, and `DECK_FILES`/`DECK_WORDS` entries. The `RETIRED_DECKS` filter is not optional tidying: a retired deck's cards keep their scheduling state in stored progress but can no longer resolve content, so without it they render as blank cards in the drill. `core3k` and `core2000` were both retired this way (the latter in favour of using Core 2000 in the real Anki app), and `migrate.test.js` covers the behaviour.
+**Retiring a bundled deck** — add its id to `RETIRED_DECKS` in `migrate.js` *and* delete its JSON, import, and `DECK_FILES`/`DECK_WORDS` entries. The `RETIRED_DECKS` filter is not optional tidying: a retired deck's cards keep their scheduling state in stored progress but can no longer resolve content, so without it they render as blank cards in the drill. `core3k`, `core2000`, and `keigo` were all retired this way (`core2000` in favour of using Core 2000 in the real Anki app; `keigo` had no such replacement, it was simply dropped), and `migrate.test.js` covers the behaviour.
 
 ### Audio playback
 
@@ -1230,7 +1229,7 @@ create index if not exists stories_created_at_idx on stories (created_at desc);
 - `sourceType: 'vocab-list'` — `sourceId` is a `WORD_SOURCES` source id (expands to all sublists) or a single listKey. Reads bundled word JSON.
 - `sourceType: 'srs-deck'` — `sourceId` is a deckId. Caller must pass `options.cards` as **resolved** cards (run bundled cards through `resolveCard` first — scheduling-only state has no front/back). Options: `maturity: 'all' | 'seen' | 'graduated'`, `minStabilityDays`.
 - `options.grammarLevel` ('N5'–'N1', default 'N3') appends a grammar directive line; `null` omits it.
-- Output is dense one-word-per-line text (`魚 (さかな) — fish`) to control prompt token cost. The Keigo bundled deck has no kana field, so SRS-sourced lines are `front — back`.
+- Output is dense one-word-per-line text (`魚 (さかな) — fish`) to control prompt token cost. A bundled or imported card with no separate `kana` field falls back to `front — back`.
 
 ### Edge functions
 
