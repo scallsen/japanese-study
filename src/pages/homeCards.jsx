@@ -146,7 +146,7 @@ export function TextbookCover({ icon, accent, onChangeTextbook }) {
 
 // Covers on offer, for the card that has nothing of its own to show yet —
 // rotates through them one at a time inside the same top-right square every
-// other cover art occupies (TextbookCover, ReviewPlaceholder), instead of a
+// other cover art occupies (TextbookCover), instead of a
 // full-width marquee, so the card's shape never changes across states.
 // Explored side by side with fade/slide/flip alternatives at
 // #/dev/cover-rotation before picking this one ("pop in and replace").
@@ -222,33 +222,6 @@ function RotatingCover() {
       enterClass="cover-pop-enter"
       exitClass="cover-pop-exit"
     />
-  )
-}
-
-const REVIEW_PLACEHOLDER_BACKDROP = '/placeholder-svg/review-flashcard-backdrop.svg'
-
-// Content sits at x:6-26 of the 32px source canvas (6px empty margin each
-// side) — cropped out and left-aligned the same way TextbookCover crops its
-// own covers' horizontal gutter: render at full size, clip the excess via a
-// narrower overflow:hidden container, shift left with a negative margin.
-const REVIEW_ART_SOURCE = 32
-const REVIEW_ART_LEFT = 6
-const REVIEW_ART_RIGHT = 26
-const REVIEW_ART_SCALE = COVER_SIZE / REVIEW_ART_SOURCE
-const REVIEW_ART_WIDTH = Math.round((REVIEW_ART_RIGHT - REVIEW_ART_LEFT) * REVIEW_ART_SCALE)
-const REVIEW_ART_OFFSET = Math.round(REVIEW_ART_LEFT * REVIEW_ART_SCALE)
-
-// Review's empty-state image — placeholder per the redesign brief, swapped
-// for a final asset separately.
-function ReviewPlaceholder() {
-  return (
-    <div style={{ width: REVIEW_ART_WIDTH, height: COVER_SIZE, flexShrink: 0, overflow: 'hidden' }}>
-      <img
-        src={REVIEW_PLACEHOLDER_BACKDROP}
-        alt=""
-        style={{ width: COVER_SIZE, height: COVER_SIZE, marginLeft: -REVIEW_ART_OFFSET, imageRendering: 'pixelated', display: 'block' }}
-      />
-    </div>
   )
 }
 
@@ -425,7 +398,6 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
         accent={accent}
         title="Review"
         subtitle="Long-term memorization for vocabulary"
-        cover={<ReviewPlaceholder />}
         // Weaker than Practice's "Choose word list" on purpose — this is the
         // optional card, not the primary action on the page.
         actions={<ActionsRow><Button size="lg" variant="neutral" onClick={onSignIn}>Create account</Button></ActionsRow>}
@@ -439,7 +411,6 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
         accent={accent}
         title="Review"
         subtitle="No cards yet. Finish a chapter and send its words here."
-        cover={<ReviewPlaceholder />}
         actions={<ActionsRow><Button size="lg" variant="neutral" onClick={() => navigate('#/vocab-srs')}>Manage decks</Button></ActionsRow>}
       />
     )
@@ -453,7 +424,6 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
       accent={accent}
       title="Reviews"
       subtitle={headline}
-      cover={<ReviewPlaceholder />}
       actions={
         <ActionsRow>
           <Button size="lg" disabled={!canStart} onClick={() => navigate('#/vocab-srs?start=1')}>

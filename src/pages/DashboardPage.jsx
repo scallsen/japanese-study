@@ -207,6 +207,12 @@ export default function DashboardPage() {
                 display: 'grid',
                 gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'repeat(2, minmax(0, 1fr))',
                 gap: SPACE_12,
+                // Same auto-rows-1fr trick as the Explore grid below: on desktop
+                // the two cards already share one row (default stretch handles
+                // it), but on mobile they're stacked into two separate rows —
+                // without this each row would size to its own card's content
+                // and the shorter card wouldn't match the taller one.
+                gridAutoRows: '1fr',
               }}>
                 <NewCard
                   loading={vocabLoading}
