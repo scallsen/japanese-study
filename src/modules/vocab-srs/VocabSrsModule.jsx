@@ -34,6 +34,7 @@ import { useDrillSettings, audioSourceForVoice } from '../../hooks/useDrillSetti
 import { useJaVoices } from '../../hooks/useTTS.js'
 import { useAudioGenerationStatus } from '../../hooks/useAudioGenerationStatus.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
+import { localDateStr } from '../../utils/date.js'
 import { getVoicevoxCredit, speakerIdFromAudioSource } from '../../utils/voicevoxAudio.js'
 import AttributionFooter from '../../components/AttributionFooter.jsx'
 import { renderAttributionSegments } from '../../utils/attributionSegments.jsx'
@@ -391,7 +392,7 @@ function VocabSrsHome() {
     if (query.get('start') !== '1') return
     autoStartedRef.current = true
     window.history.replaceState(null, '', '#/vocab-srs')
-    const today = new Date().toISOString().split('T')[0]
+    const today = localDateStr()
     const day = progress.newCardDay ?? { date: '', count: 0 }
     const newPerDay = Math.max(0, dailyNewCards - (day.date === today ? day.count : 0))
     const queue = getTodaysQueue(progress.cards ?? {}, progress.decks ?? {}, { newPerDay })
@@ -431,7 +432,7 @@ function VocabSrsHome() {
   const deckList = Object.values(decks).sort((a, b) => (a.addedAt ?? 0) - (b.addedAt ?? 0))
   const globalStats = getGlobalStats(cardsObj, decks)
   const stateDistribution = getStateDistribution(cardsObj, decks)
-  const todayStr = new Date().toISOString().split('T')[0]
+  const todayStr = localDateStr()
   const newCardDay = progress.newCardDay ?? { date: '', count: 0 }
   const newCardsIntroducedToday = newCardDay.date === todayStr ? newCardDay.count : 0
   const effectiveNewPerDay = Math.max(0, dailyNewCards - newCardsIntroducedToday)
@@ -500,28 +501,28 @@ function VocabSrsHome() {
     setSession(initSession(resolvedDue, resolvedNew))
   }
 
-  function handleCardSave(updatedSessionCards) {
+  // reviewDelta is +1/-1/0 for a single answer/undo (see VocabSrsDrill) —
+  // committed per-answer, not just at session end, so a session the learner
+  // exits before finishing (very possible: a missed review card queues a
+  // 10-minute relearn wait) still counts toward totalReviews instead of
+  // silently losing that session's progress.
+  function handleCardSave(updatedSessionCards, reviewDelta = 0) {
     const newCardsObj = { ...cardsObj, ...resolvedArrayToCardsObj(updatedSessionCards, decks) }
-    const newProgress = { ...progress, cards: newCardsObj }
     const newCardDayUpdate = computeNewCardDay(newCardsObj)
+    const newProgress = { ...progress, cards: newCardsObj }
     if (newCardDayUpdate) newProgress.newCardDay = newCardDayUpdate
+    if (reviewDelta !== 0) newProgress.totalReviews = Math.max(0, (progress.totalReviews ?? 0) + reviewDelta)
     setProgress(newProgress)
     save(newProgress)
   }
 
-  function handleDrillDone(updatedSessionCards, goodCount) {
+  function handleDrillDone(updatedSessionCards) {
     const newCardsObj = { ...cardsObj, ...resolvedArrayToCardsObj(updatedSessionCards, decks) }
     const newCardDayUpdate = computeNewCardDay(newCardsObj)
-    // Same goodCount the dashboard's Activity grid and totalReviews both read
-    // from, so the two numbers can never drift apart.
-    const reviewLog = { ...(progress.reviewLog ?? {}) }
-    if (goodCount > 0) reviewLog[todayStr] = (reviewLog[todayStr] ?? 0) + goodCount
     const newProgress = {
       ...progress,
       cards: newCardsObj,
       lastSession: new Date().toISOString(),
-      totalReviews: (progress.totalReviews ?? 0) + goodCount,
-      reviewLog,
       ...(newCardDayUpdate ? { newCardDay: newCardDayUpdate } : {}),
     }
     sessionNewCardsRef.current = null

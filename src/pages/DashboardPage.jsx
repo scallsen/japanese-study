@@ -22,11 +22,12 @@ import { migrateProgress } from '../modules/vocab-srs/migrate.js'
 import { getGlobalStats, getStateDistribution, getTodaysQueue } from '../modules/vocab-srs/srs.js'
 import { STATE_SEGMENTS } from '../modules/vocab-srs/cardStates.js'
 import { safeLocalStorageGet } from '../utils/storage.js'
+import { localDateStr } from '../utils/date.js'
 import { takePendingToast } from '../utils/pendingToast.js'
 import { supabase } from '../lib/supabase.js'
 import {
-  FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION,
-  SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SEGMENT_COLORS,
+  FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE,
+  SPACE_4, SPACE_12, SPACE_16, SPACE_24,
 } from '../data/theme.js'
 
 const SECONDARY_MODULES = MODULES.filter(m => m.tier !== 'primary')
@@ -57,7 +58,7 @@ function summariseSrs(raw) {
   const progress = migrateProgress(raw)
   const decks = progress.decks ?? {}
   const cards = progress.cards ?? {}
-  const todayStr = new Date().toISOString().split('T')[0]
+  const todayStr = localDateStr()
   const newCardDay = progress.newCardDay ?? { date: '', count: 0 }
   const introducedToday = newCardDay.date === todayStr ? newCardDay.count : 0
   const newPerDay = Math.max(0, readDailyNewCards() - introducedToday)
@@ -70,8 +71,6 @@ function summariseSrs(raw) {
     totalCards: global.totalCards,
     activeDecks: global.activeDecks,
     learned: global.learned,
-    totalReviews: progress.totalReviews ?? 0,
-    reviewLog: progress.reviewLog ?? {},
     distribution: getStateDistribution(cards, decks),
     canStart: due.length > 0 || newCards.length > 0 || rescheduled.length > 0,
     estimatedMinutes: global.estimatedMinutes,
@@ -291,15 +290,15 @@ export default function DashboardPage() {
 
 // ── Stats sidebar ─────────────────────────────────────────────────────────────
 
-// Same three groups either way — `columns` only decides whether they stack in
+// Same two groups either way — `columns` only decides whether they stack in
 // the right-hand rail or sit side by side in the strip under the cards.
 //
 // Signed-out is the only state that dims the whole block (a real signed-in
-// learner with zero cards still has real Stats/Activity data worth
-// showing at full strength — only "–" placeholders there, not the dormant
-// treatment). Reuses ModuleCard's existing disabled opacity rather than
-// inventing a second "dormant" visual language (grayscale/desaturation has
-// no precedent anywhere else in the app).
+// learner with zero cards still has real Stats data worth showing at full
+// strength — only "–" placeholders there, not the dormant treatment).
+// Reuses ModuleCard's existing disabled opacity rather than inventing a
+// second "dormant" visual language (grayscale/desaturation has no precedent
+// anywhere else in the app).
 function StatsPanel({ columns, signedOut, srs, articlesRead, seriesTracked, storiesGenerated }) {
   const hasVocabData = !signedOut && srs && srs.totalCards > 0
 
@@ -331,11 +330,6 @@ function StatsPanel({ columns, signedOut, srs, articlesRead, seriesTracked, stor
       </div>
 
       <div>
-        <SectionHeader title="Activity" />
-        <ActivityGrid reviewLog={signedOut ? {} : (srs?.reviewLog ?? {})} />
-      </div>
-
-      <div>
         <SectionHeader title="Stats" />
         <StatRow label="Articles read" value={signedOut ? '–' : articlesRead} />
         <StatRow label="Series tracked" value={signedOut ? '–' : seriesTracked} />
@@ -350,67 +344,6 @@ function StatRow({ label, value }) {
     <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE_12, padding: `${SPACE_4}px 0`, fontSize: FS_BASE }}>
       <span style={{ color: TEXT_MUTED }}>{label}</span>
       <span style={{ color: TEXT }}>{value}</span>
-    </div>
-  )
-}
-
-const ACTIVITY_WEEKS = 12
-const ACTIVITY_CELL_MAX = 22
-const ACTIVITY_GAP = 3
-
-// Reuses SEGMENT_COLORS' learning→young→mature ramp — the app's one
-// "progressively more" ordinal green scale — for a different ordinal
-// quantity (review volume instead of SRS card maturity) rather than
-// inventing a second green scale for the same visual idea.
-function activityColor(count) {
-  if (count <= 0) return 'rgba(255,255,255,0.06)'
-  if (count <= 3) return SEGMENT_COLORS.learning
-  if (count <= 7) return SEGMENT_COLORS.young
-  return SEGMENT_COLORS.mature
-}
-
-// GitHub-contributions-style grid: one column per week, one row per weekday,
-// most recent week trailing on the right. `reviewLog` is a sparse
-// { 'YYYY-MM-DD': count } map (see vocab-srs progress shape in CLAUDE.md) —
-// an empty map (signed out, or no reviews yet) renders every cell at the
-// zero tier rather than hiding the grid, so the layout stays identical.
-function ActivityGrid({ reviewLog }) {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const totalDays = ACTIVITY_WEEKS * 7
-  const days = []
-  for (let i = totalDays - 1; i >= 0; i--) {
-    const d = new Date(today)
-    d.setDate(d.getDate() - i)
-    const key = d.toISOString().split('T')[0]
-    days.push({ key, count: reviewLog[key] ?? 0 })
-  }
-
-  const weeks = []
-  for (let i = 0; i < days.length; i += 7) weeks.push(days.slice(i, i + 7))
-  const total = days.reduce((sum, d) => sum + d.count, 0)
-
-  return (
-    <div>
-      {/* Columns stretch to fill the sidebar's own width (equal flex-basis,
-          capped so cells don't balloon in the wider 3-column strip layout)
-          rather than a fixed cell size that leaves dead space on the right. */}
-      <div style={{ display: 'flex', gap: ACTIVITY_GAP, width: '100%' }}>
-        {weeks.map((week, wi) => (
-          <div key={wi} style={{ display: 'flex', flexDirection: 'column', gap: ACTIVITY_GAP, flex: '1 1 0', minWidth: 0, maxWidth: ACTIVITY_CELL_MAX }}>
-            {week.map(day => (
-              <div
-                key={day.key}
-                title={`${day.key}: ${day.count} review${day.count === 1 ? '' : 's'}`}
-                style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: 2, background: activityColor(day.count) }}
-              />
-            ))}
-          </div>
-        ))}
-      </div>
-      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginTop: SPACE_8 }}>
-        {total} review{total === 1 ? '' : 's'} in the last {ACTIVITY_WEEKS} weeks
-      </div>
     </div>
   )
 }
