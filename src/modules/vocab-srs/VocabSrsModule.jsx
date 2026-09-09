@@ -34,6 +34,7 @@ import { useDrillSettings, audioSourceForVoice } from '../../hooks/useDrillSetti
 import { useJaVoices } from '../../hooks/useTTS.js'
 import { useAudioGenerationStatus } from '../../hooks/useAudioGenerationStatus.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
+import { localDateStr } from '../../utils/date.js'
 import { getVoicevoxCredit, speakerIdFromAudioSource } from '../../utils/voicevoxAudio.js'
 import AttributionFooter from '../../components/AttributionFooter.jsx'
 import { renderAttributionSegments } from '../../utils/attributionSegments.jsx'
@@ -391,7 +392,7 @@ function VocabSrsHome() {
     if (query.get('start') !== '1') return
     autoStartedRef.current = true
     window.history.replaceState(null, '', '#/vocab-srs')
-    const today = new Date().toISOString().split('T')[0]
+    const today = localDateStr()
     const day = progress.newCardDay ?? { date: '', count: 0 }
     const newPerDay = Math.max(0, dailyNewCards - (day.date === today ? day.count : 0))
     const queue = getTodaysQueue(progress.cards ?? {}, progress.decks ?? {}, { newPerDay })
@@ -431,7 +432,7 @@ function VocabSrsHome() {
   const deckList = Object.values(decks).sort((a, b) => (a.addedAt ?? 0) - (b.addedAt ?? 0))
   const globalStats = getGlobalStats(cardsObj, decks)
   const stateDistribution = getStateDistribution(cardsObj, decks)
-  const todayStr = new Date().toISOString().split('T')[0]
+  const todayStr = localDateStr()
   const newCardDay = progress.newCardDay ?? { date: '', count: 0 }
   const newCardsIntroducedToday = newCardDay.date === todayStr ? newCardDay.count : 0
   const effectiveNewPerDay = Math.max(0, dailyNewCards - newCardsIntroducedToday)

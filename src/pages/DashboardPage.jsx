@@ -22,6 +22,7 @@ import { migrateProgress } from '../modules/vocab-srs/migrate.js'
 import { getGlobalStats, getStateDistribution, getTodaysQueue } from '../modules/vocab-srs/srs.js'
 import { STATE_SEGMENTS } from '../modules/vocab-srs/cardStates.js'
 import { safeLocalStorageGet } from '../utils/storage.js'
+import { localDateStr } from '../utils/date.js'
 import { takePendingToast } from '../utils/pendingToast.js'
 import { supabase } from '../lib/supabase.js'
 import {
@@ -57,7 +58,7 @@ function summariseSrs(raw) {
   const progress = migrateProgress(raw)
   const decks = progress.decks ?? {}
   const cards = progress.cards ?? {}
-  const todayStr = new Date().toISOString().split('T')[0]
+  const todayStr = localDateStr()
   const newCardDay = progress.newCardDay ?? { date: '', count: 0 }
   const introducedToday = newCardDay.date === todayStr ? newCardDay.count : 0
   const newPerDay = Math.max(0, readDailyNewCards() - introducedToday)
@@ -382,7 +383,7 @@ function ActivityGrid({ reviewLog }) {
   for (let i = totalDays - 1; i >= 0; i--) {
     const d = new Date(today)
     d.setDate(d.getDate() - i)
-    const key = d.toISOString().split('T')[0]
+    const key = localDateStr(d)
     days.push({ key, count: reviewLog[key] ?? 0 })
   }
 
