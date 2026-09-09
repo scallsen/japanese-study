@@ -132,6 +132,17 @@ function DeckNameCell({ deck, stats, onRename }) {
 // just not guaranteed to track it — a one-frame fallback, not the steady
 // state. Reuses the shared `.btn-ghost-muted` hover class so it still
 // reddens on hover like every other dismiss/remove affordance in the app.
+//
+// Draws its own × as an SVG rather than the "×" text glyph the rest of the
+// app uses for this affordance (Toast's dismiss, TrackedAnimeSection's
+// remove): flex-centering a text node centers its line box, not the glyph's
+// actual ink, and DotGothic16's own metrics left the character visibly
+// off-center inside a perfectly square button — small but obvious once the
+// button is finally square instead of a rectangle. Two crossed lines on a
+// square viewBox center exactly regardless of font metrics; `stroke:
+// currentColor` still follows the button's own color (and the hover class's
+// `color: #f87171 !important`), so it reddens on hover exactly like the
+// text version did.
 function DeckDeleteButton({ onClick, size }) {
   return (
     <button
@@ -150,13 +161,12 @@ function DeckDeleteButton({ onClick, size }) {
         borderRadius: 6,
         padding: 0,
         color: TEXT_MUTED,
-        fontFamily: FONT,
-        fontSize: FS_BASE,
-        lineHeight: 1,
         cursor: 'pointer',
       }}
     >
-      ×
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <path d="M2.5 2.5L11.5 11.5M11.5 2.5L2.5 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
     </button>
   )
 }
