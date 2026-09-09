@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import FlipCard from '../../FlipCard.jsx'
+import Japanese from '../../components/Japanese.jsx'
 import PageHeader from '../../components/PageHeader.jsx'
 import { SidebarHeaderToggle } from '../../components/SettingsSidebar.jsx'
 import Button from '../../components/Button.jsx'
@@ -55,7 +56,7 @@ function KanjiMeaningBar({ chars, meanings, jaFont, scale }) {
           padding: '1.8cqw 1cqw', gap: 2,
           borderLeft: i > 0 ? '1px solid rgba(0,0,0,0.1)' : 'none',
         }}>
-          <span style={{ fontFamily: jaFont, fontSize: cqw(5, scale), color: '#333' }}>{ch}</span>
+          <Japanese as="span" style={{ fontFamily: jaFont, fontSize: cqw(5, scale), color: '#333' }}>{ch}</Japanese>
           <div style={{
             fontFamily: FONT, fontSize: cqw(2.6, scale), color: '#777', textAlign: 'center',
             whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%',
@@ -112,7 +113,7 @@ function SrsCardFace({ text, kana, isBack, backText, jmdictId, sentence, sentenc
         padding: '0 20px',
       }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{
+          <Japanese as="div" style={{
             fontFamily: cardFont,
             fontSize: cqw(isBack ? 10 : 12.63, mainScale),
             color: '#222',
@@ -121,16 +122,16 @@ function SrsCardFace({ text, kana, isBack, backText, jmdictId, sentence, sentenc
             textShadow: '2px 2px 0 rgba(0,0,0,0.25)',
           }}>
             {text}
-          </div>
+          </Japanese>
           {showReading && (
-            <div style={{
+            <Japanese as="div" style={{
               fontFamily: cardFont,
               fontSize: cqw(5.26, mainScale),
               color: '#666',
               marginTop: 4,
             }}>
               {kana}
-            </div>
+            </Japanese>
           )}
         </div>
         {isBack && resolvedBackText && showTranslation && (
@@ -146,14 +147,14 @@ function SrsCardFace({ text, kana, isBack, backText, jmdictId, sentence, sentenc
         )}
         {isBack && resolvedSentence && showSentence && (
           <div style={{ textAlign: 'center' }}>
-            <div style={{
+            <Japanese as="div" style={{
               fontFamily: cardFont,
               fontSize: cqw(4.2, secondaryScale),
               color: '#666',
               lineHeight: 1.5,
             }}>
               {resolvedSentence}
-            </div>
+            </Japanese>
             {resolvedSentenceEnglish && (
               <div style={{
                 fontFamily: cardFont,

@@ -7,6 +7,7 @@ import Button from '../../components/Button.jsx'
 import Select from '../../components/Select.jsx'
 import ChipSelector from '../../components/Chip.jsx'
 import FeedCard from '../../components/FeedCard.jsx'
+import Japanese from '../../components/Japanese.jsx'
 import FilterCard, { FilterRow } from '../../components/FilterCard.jsx'
 import ActionBar, { ACTION_BAR_HEIGHT } from '../../components/ActionBar.jsx'
 import SectionHeader from '../../components/SectionHeader.jsx'
@@ -64,7 +65,7 @@ function RecentCard({ entry, onClick }) {
   return (
     <FeedCard
       badges={[{ label: FORMAT_LABEL[entry.format] ?? entry.format, tone: 'neutral' }]}
-      title={entry.title || 'Untitled'}
+      title={entry.title ? <Japanese>{entry.title}</Japanese> : 'Untitled'}
       meta={formatDate(entry.createdAt)}
       onClick={onClick}
     />

@@ -4,6 +4,7 @@ import AuthSlot from '../../components/AuthSlot.jsx'
 import TopProgressBar from '../../components/TopProgressBar.jsx'
 import CenteredLoadingMessage from '../../components/CenteredLoadingMessage.jsx'
 import FeedCard from '../../components/FeedCard.jsx'
+import Japanese from '../../components/Japanese.jsx'
 import SectionHeader from '../../components/SectionHeader.jsx'
 import ChipSelector from '../../components/Chip.jsx'
 import TextInput from '../../components/TextInput.jsx'
@@ -46,7 +47,7 @@ function ArticleCard({ article, level, onClick, isRead }) {
   return (
     <FeedCard
       badges={badges}
-      title={title}
+      title={<Japanese>{title}</Japanese>}
       subtitle={article.title_en}
       meta={formatDate(article.published_at)}
       read={isRead}

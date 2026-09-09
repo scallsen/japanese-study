@@ -19,8 +19,8 @@ const TAB_OPTIONS = [
 
 // Editable review table: surface / reading / meaning are inline inputs.
 const REVIEW_COLUMNS = [
-  { key: 'surface', width: 90 },
-  { key: 'reading', width: 90, placeholder: 'reading' },
+  { key: 'surface', width: 90, lang: 'ja' },
+  { key: 'reading', width: 90, placeholder: 'reading', lang: 'ja' },
   { key: 'meaning', placeholder: row => (row.jmdictId ? 'meaning' : 'no dictionary match — enter meaning') },
 ]
 const EDITABLE_FIELDS = ['surface', 'reading', 'meaning']

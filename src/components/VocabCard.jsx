@@ -1,4 +1,5 @@
 import FlipCard from '../FlipCard.jsx'
+import Japanese from './Japanese.jsx'
 import { buildFurigana } from '../utils/furigana.js'
 import { FONT } from '../data/theme.js'
 import { useKanjiMeanings } from '../hooks/useKanjiMeanings.js'
@@ -56,7 +57,7 @@ function frontTextStyle(scale) {
 function RubyText({ displayForm, reading, jaFont }) {
   const parts = buildFurigana(displayForm, reading)
   return (
-    <span>
+    <Japanese>
       {parts.map((part, i) => part.type === 'kanji' ? (
         <ruby key={i}>
           {part.text}
@@ -67,7 +68,7 @@ function RubyText({ displayForm, reading, jaFont }) {
       ) : (
         <span key={i}>{part.text}</span>
       ))}
-    </span>
+    </Japanese>
   )
 }
 
@@ -84,7 +85,9 @@ function FrontContent({ word, displayForm, reading, resolvedEnglish, reviewMode,
     <CardShell isReview={word.isReview} isSentenceVocab={word.isSentenceVocab} isModified={word.modified}>
       <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: isMeaningFront ? '0 16px' : 0 }}>
         <div style={{ ...frontTextStyle(scale), fontFamily: isMeaningFront ? FONT : jaFont }}>
-          {annotateFront ? <RubyText displayForm={displayForm} reading={reading} jaFont={jaFont} /> : frontText}
+          {annotateFront
+            ? <RubyText displayForm={displayForm} reading={reading} jaFont={jaFont} />
+            : isMeaningFront ? frontText : <Japanese>{frontText}</Japanese>}
         </div>
       </div>
     </CardShell>
@@ -100,7 +103,7 @@ function KanjiMeaningBar({ chars, meanings, jaFont, scale }) {
           padding: '1.8cqw 1cqw', gap: 2,
           borderLeft: i > 0 ? '1px solid rgba(0,0,0,0.1)' : 'none',
         }}>
-          <span style={{ fontFamily: jaFont, fontSize: cqw(5, scale), color: '#333' }}>{ch}</span>
+          <Japanese as="span" style={{ fontFamily: jaFont, fontSize: cqw(5, scale), color: '#333' }}>{ch}</Japanese>
           <div style={{
             fontFamily: FONT, fontSize: cqw(2.6, scale), color: '#777', textAlign: 'center',
             whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%',
@@ -121,7 +124,7 @@ function BackContent({ word, displayForm, reading, resolvedEnglish, sentenceText
   // SrsCardFace's `isBack || showFurigana`, which has always worked this way.
   const kanjiDisplay = reading && reading !== displayForm
     ? <RubyText displayForm={displayForm} reading={reading} jaFont={jaFont} />
-    : displayForm
+    : <Japanese>{displayForm}</Japanese>
 
   const kanjiMeanings = useKanjiMeanings(displayForm, showKanjiMeaning)
   const kanjiChars = showKanjiMeaning ? kanjiCharsOf(displayForm) : []
@@ -163,7 +166,7 @@ function BackContent({ word, displayForm, reading, resolvedEnglish, sentenceText
             </div>
           )}
           {showSentence && sentenceText && (
-            <div style={{
+            <Japanese as="div" style={{
               fontFamily: jaFont,
               fontSize: cqw(4.2, secondaryScale),
               fontWeight: 400,
@@ -173,7 +176,7 @@ function BackContent({ word, displayForm, reading, resolvedEnglish, sentenceText
               lineHeight: 1.5,
             }}>
               {sentenceText}
-            </div>
+            </Japanese>
           )}
         </div>
         {meaningBarReady && <KanjiMeaningBar chars={kanjiChars} meanings={kanjiMeanings} jaFont={jaFont} scale={secondaryScale} />}

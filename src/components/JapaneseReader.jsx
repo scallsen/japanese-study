@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { isBundledDeck } from '../modules/vocab-srs/deckUtils.js'
 import Button from './Button.jsx'
+import Japanese from './Japanese.jsx'
 import Popover from './Popover.jsx'
 import OptionPicker from './OptionPicker.jsx'
 import { deckPickerItems } from './deckPickerItems.js'
@@ -30,7 +31,7 @@ export function TokenizedBody({
 
   if (!Array.isArray(tokens) || tokens.length === 0) return null
   return (
-    <span style={{ '--reader-hover': hoverBg, '--reader-vocab': vocabBg }}>
+    <Japanese style={{ '--reader-hover': hoverBg, '--reader-vocab': vocabBg }}>
       {tokens.map((tok, i) => {
         if (!tok.w) return <span key={i}>{tok.t}</span>
         const isActive = activeIdx === i
@@ -61,7 +62,7 @@ export function TokenizedBody({
           </span>
         )
       })}
-    </span>
+    </Japanese>
   )
 }
 
@@ -85,7 +86,7 @@ export function WordPopup({ token, vocabEntry, onAdd, onCreateAndAdd, decks, isM
       onClose={close}
       anchorRect={anchorRect}
       isMobile={isMobile}
-      title={view === 'deck' ? 'Add to which deck?' : token.t}
+      title={view === 'deck' ? 'Add to which deck?' : <Japanese>{token.t}</Japanese>}
       bodyPadding={view === 'deck' ? 0 : undefined}
     >
       {view === 'deck' ? (
@@ -98,9 +99,9 @@ export function WordPopup({ token, vocabEntry, onAdd, onCreateAndAdd, decks, isM
         />
       ) : (
         <div style={{ padding: `${SPACE_8}px ${SPACE_12}px`, minWidth: 160 }}>
-          <div style={{ fontSize: FS_ENTRY_WORD, color: TEXT, marginBottom: 2 }}>{token.t}</div>
+          <Japanese as="div" style={{ fontSize: FS_ENTRY_WORD, color: TEXT, marginBottom: 2 }}>{token.t}</Japanese>
           {token.r && (
-            <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginBottom: (vocabEntry?.pos || vocabEntry?.meaning) ? 4 : 10 }}>{token.r}</div>
+            <Japanese as="div" style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginBottom: (vocabEntry?.pos || vocabEntry?.meaning) ? 4 : 10 }}>{token.r}</Japanese>
           )}
           {vocabEntry?.pos && (
             <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: vocabEntry.meaning ? 4 : 10, opacity: 0.7 }}>{vocabEntry.pos}</div>
