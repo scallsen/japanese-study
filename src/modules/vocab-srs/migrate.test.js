@@ -26,19 +26,19 @@ describe('migrateProgress — retired bundled decks', () => {
     const { decks } = migrateProgress(stored)
     expect(decks.core2000).toBeUndefined()
     expect(decks.core3k).toBeUndefined()
+    expect(decks.keigo).toBeUndefined()
   })
 
   it('drops their cards, which could no longer resolve content', () => {
     const { cards } = migrateProgress(stored)
     expect(cards.a).toBeUndefined()
     expect(cards.b).toBeUndefined()
+    expect(cards.c).toBeUndefined()
   })
 
   it('leaves surviving decks and their cards untouched', () => {
     const { decks, cards } = migrateProgress(stored)
-    expect(decks.keigo).toBeDefined()
     expect(decks['story-words']).toBeDefined()
-    expect(cards.c).toMatchObject({ id: 'c', reps: 1 })
     expect(cards.d).toMatchObject({ id: 'd', front: 'x', reps: 7 })
   })
 
@@ -53,9 +53,9 @@ describe('migrateProgress — retired bundled decks', () => {
     expect(Object.keys(twice.decks).sort()).toEqual(Object.keys(once.decks).sort())
   })
 
-  it('offers only the still-shipping bundled decks on a fresh install', () => {
+  it('offers no bundled decks on a fresh install — none currently ship', () => {
     const { decks, cards } = migrateProgress(null)
-    expect(Object.keys(decks)).toEqual(['keigo'])
+    expect(decks).toEqual({})
     expect(cards).toEqual({})
   })
 })

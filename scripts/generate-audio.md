@@ -1,6 +1,6 @@
 # Vocab audio generation
 
-Pre-generates neural TTS audio for the vocab word lists and the `keigo` SRS deck via [Voicevox](https://voicevox.hiroshiba.jp/), replacing browser Speech Synthesis (variable quality, OS-dependent) as the primary audio source. Full documentation lives in `CLAUDE.md` under "Vocabulary Drill → Vocab audio (Voicevox)" — this file just covers running the script itself.
+Pre-generates neural TTS audio for the vocab word lists via [Voicevox](https://voicevox.hiroshiba.jp/), replacing browser Speech Synthesis (variable quality, OS-dependent) as the primary audio source. Full documentation lives in `CLAUDE.md` under "Vocabulary Drill → Vocab audio (Voicevox)" — this file just covers running the script itself.
 
 ## Voices
 
@@ -20,11 +20,11 @@ Env vars required: `SUPABASE_URL` (or `VITE_SUPABASE_URL`), `SUPABASE_SERVICE_RO
 
 ## Running automatically
 
-`.github/workflows/generate-vocab-audio.yml` runs this script on every push to `main` touching `src/data/words/**` or `src/modules/vocab-srs/decks/keigo.json`, or via manual `workflow_dispatch`. It spins up the official headless `voicevox/voicevox_engine` Docker image for the duration of the job — no persistent server needed. Generated audio filenames get committed straight back to `main`.
+`.github/workflows/generate-vocab-audio.yml` runs this script on every push to `main` touching `src/data/words/**`, or via manual `workflow_dispatch`. It spins up the official headless `voicevox/voicevox_engine` Docker image for the duration of the job — no persistent server needed. Generated audio filenames get committed straight back to `main`.
 
 ## What it does
 
-1. Reads `src/data/words/*.json` and `keigo.json`.
+1. Reads `src/data/words/*.json`.
 2. For each entry missing a voice in its `voicevoxVoices` array, synthesizes audio (via `/audio_query` + `/synthesis`), converts WAV→MP3 with `ffmpeg`, and uploads to Supabase Storage at `audio/voicevox/<speakerId>/<entryId>.mp3`.
 3. Writes the updated `voicevoxVoices` array back into the source JSON.
 4. Reconciles each voice folder against current entries and deletes anything orphaned — removing a word/card from the JSON automatically prunes its stored audio on the next run.

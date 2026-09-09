@@ -54,11 +54,10 @@ async function main() {
   // A kanji word is matched on primary_form alone — there's no separate
   // reading to verify against yet, so the human reviews the resolved
   // reading printed below before trusting it. A pure-kana word is matched
-  // with kana === form, the same "already kana, no separate reading field"
-  // convention used for keigo entries elsewhere (see
-  // backfill-vocab-jmdict.mjs) — this is what lets the matcher fall through
-  // to the kana_forms search and its homograph-disambiguation safety net
-  // (e.g. する → 為る/刷る/掏る/剃る/擦る) instead of guessing.
+  // with kana === form (see CLAUDE.md's "use kana if no kanji form"
+  // convention) — this is what lets the matcher fall through to the
+  // kana_forms search and its homograph-disambiguation safety net (e.g.
+  // する → 為る/刷る/掏る/剃る/擦る) instead of guessing.
   const row = HAS_KANJI.test(word)
     ? await resolveJmdictMatch(supabase, { form: word, kana: null })
     : await resolveJmdictMatch(supabase, { form: word, kana: word })

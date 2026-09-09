@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import Popover from '../../components/Popover.jsx'
 import Menu from '../../components/Menu.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
@@ -9,11 +9,12 @@ import { initSession } from './session.js'
 import { migrateProgress, initializeDeckCards } from './migrate.js'
 import VocabSrsDrill from './VocabSrsDrill.jsx'
 import WordImportPanel from './WordImportPanel.jsx'
-import { ensureDeck, createDeck, renameDeck, deleteCards } from './deckUtils.js'
+import { ensureDeck, createDeck, renameDeck, deleteCards, deleteDeck, isBundledDeck } from './deckUtils.js'
 import PageHeader from '../../components/PageHeader.jsx'
 import AuthSlot from '../../components/AuthSlot.jsx'
 import SettingsSidebar from '../../components/SettingsSidebar.jsx'
 import SignInGate from '../../components/SignInGate.jsx'
+import ConfirmDialog from '../../components/ConfirmDialog.jsx'
 import Button from '../../components/Button.jsx'
 import NumberField from '../../components/NumberField.jsx'
 import ToggleButton from '../../components/ToggleButton.jsx'
@@ -112,6 +113,153 @@ function DeckNameCell({ deck, stats, onRename }) {
   )
 }
 
+// A square icon button matching the row's own height, rather than the
+// shared Button component's icon-only sizing (padding-driven, not square,
+// and shorter than a Chip). Built locally instead of widening Button's API
+// for a one-off need.
+//
+// `size` is the toggle's real measured height in px (see DeckRowActions) —
+// CSS alone (align-self: stretch + aspect-ratio) turned out not to be
+// reliable in practice: the button's height did stretch to match the
+// toggle, but the width never grew to match it via aspect-ratio, leaving a
+// tall narrow rectangle instead of a square (verified live, not just in
+// theory). Measuring the toggle's actual rendered height in JS and applying
+// it as an explicit width AND height sidesteps that entirely — it no longer
+// depends on how any particular engine resolves aspect-ratio inside a
+// stretched flex item. Before the first measurement lands (no ref yet on
+// the very first render) it falls back to `alignSelf: 'stretch'` +
+// `aspectRatio: '1 / 1'`, which is still square once *some* height exists,
+// just not guaranteed to track it — a one-frame fallback, not the steady
+// state. Reuses the shared `.btn-ghost-muted` hover class so it still
+// reddens on hover like every other dismiss/remove affordance in the app.
+//
+// Draws its own × as an SVG rather than the "×" text glyph the rest of the
+// app uses for this affordance (Toast's dismiss, TrackedAnimeSection's
+// remove): flex-centering a text node centers its line box, not the glyph's
+// actual ink, and DotGothic16's own metrics left the character visibly
+// off-center inside a perfectly square button — small but obvious once the
+// button is finally square instead of a rectangle. Two crossed lines on a
+// square viewBox center exactly regardless of font metrics; `stroke:
+// currentColor` still follows the button's own color (and the hover class's
+// `color: #f87171 !important`), so it reddens on hover exactly like the
+// text version did.
+function DeckDeleteButton({ onClick, size }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="Delete deck"
+      className="btn btn-ghost-muted"
+      style={{
+        ...(size ? { width: size, height: size } : { alignSelf: 'stretch', aspectRatio: '1 / 1' }),
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'transparent',
+        border: 'none',
+        borderRadius: 6,
+        padding: 0,
+        color: TEXT_MUTED,
+        cursor: 'pointer',
+      }}
+    >
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <path d="M2.5 2.5L11.5 11.5M11.5 2.5L2.5 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    </button>
+  )
+}
+
+// On/off toggle + delete (imported decks only) for a deck row. Both need to
+// stop the row's own navigate — a single wrapper handles that for both
+// controls rather than repeating it per-button. preventDefault is required,
+// not just stopPropagation: the row renders as a real <a> (navigate.href
+// below), and an ancestor <a>'s native navigation is gated on the click
+// event's canceled flag, which only preventDefault sets. The previous
+// version of this wrapper called stopPropagation alone, which stopped the
+// click from reaching other row-level listeners but never stopped the
+// browser from still following the link underneath — every tap on the
+// toggle silently also opened the deck's browse view.
+//
+// The toggle sits in a fixed-width slot (64px — the same width the toggle's
+// own DataList column used before this row became one custom column) rather
+// than sizing to its own label: "On" and "Off" aren't the same width, so an
+// unconstrained toggle changes the whole row's layout width on every flip —
+// the name column has to shrink or grow to compensate, which reads as
+// everything else in the row shifting when only the toggle changed.
+//
+// The delete button's square size is the toggle's own measured height —
+// read synchronously in a layout effect (before paint, so there's no visible
+// flash) and kept current with a ResizeObserver, since the Chip's real
+// rendered height isn't a value this file can just hardcode (no line-height
+// is set anywhere on it, and DotGothic16 loads via font-display: swap, which
+// can itself change the box's height once the real font arrives).
+function DeckRowActions({ deck, onToggle, onDelete }) {
+  const canDelete = !isBundledDeck(deck)
+  const toggleRef = useRef(null)
+  const [toggleHeight, setToggleHeight] = useState(null)
+
+  useLayoutEffect(() => {
+    const el = toggleRef.current
+    if (!el) return
+    const measure = () => setToggleHeight(el.offsetHeight)
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div
+      onClick={e => { e.preventDefault(); e.stopPropagation() }}
+      style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}
+    >
+      <div ref={toggleRef} style={{ width: 64, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <ToggleButton active={deck.active} labels={{ on: 'On', off: 'Off' }} onClick={onToggle} />
+      </div>
+      {canDelete && <DeckDeleteButton onClick={onDelete} size={toggleHeight} />}
+    </div>
+  )
+}
+
+// The Decks list is a single custom-rendered DataList column rather than
+// separate name/dist/toggle columns — on mobile the learning-stage bar needs
+// to drop to its own line below the name instead of squeezing into a third
+// of the row width alongside it, which a per-column flex layout can't express.
+function DeckRowContent({ deck, cardsObj, isMobile, onRename, onToggle, onDelete }) {
+  const stats = getDeckStats(cardsObj, deck.id)
+  // getStateDistribution filters to active decks — force it here so a
+  // toggled-off deck's bar still reflects its real cards, matching the count
+  // text beside it (getDeckStats doesn't gate on active).
+  const segments = STATE_SEGMENTS.map(s => ({
+    ...s, count: getStateDistribution(cardsObj, { [deck.id]: { ...deck, active: true } })[s.key] ?? 0,
+  }))
+  const bar = <DistributionBar segments={segments} showLegend={false} />
+  const nameCell = <DeckNameCell deck={deck} stats={stats} onRename={onRename} />
+  const actions = <DeckRowActions deck={deck} onToggle={onToggle} onDelete={onDelete} />
+
+  if (isMobile) {
+    return (
+      <div style={{ width: '100%' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>{nameCell}</div>
+          {actions}
+        </div>
+        <div style={{ marginTop: 10 }}>{bar}</div>
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', width: '100%', gap: 14 }}>
+      <div style={{ flex: 2, minWidth: 0 }}>{nameCell}</div>
+      <div style={{ flex: 1.4, minWidth: 0 }}>{bar}</div>
+      {actions}
+    </div>
+  )
+}
+
 // A single "Import" trigger opening the two existing import flows in a
 // popover menu, rather than two separate buttons sitting side by side.
 // "Choose .txt file" still needs a real file picker, which a Menu item's
@@ -190,6 +338,7 @@ function VocabSrsHome() {
   const [showWordImport, setShowWordImport] = useState(false)
   const [advanceDays, setAdvanceDays] = useState(3)
   const [showOptions, setShowOptions] = useState(() => window.innerWidth > 768)
+  const [deletingDeckId, setDeletingDeckId] = useState(null)
 
   const { settings, set: setSetting } = useDrillSettings('srs')
   const anyAudio = settings.frontAudio || settings.backAudio
@@ -290,34 +439,22 @@ function VocabSrsHome() {
   const canStart = due.length > 0 || newCards.length > 0 || rescheduled.length > 0
   const activeDecks = deckList.filter(d => d.active)
 
-  // The Decks list's columns — name (+ inline rename), a per-deck learning-
-  // stage bar, and the on/off toggle. Both the toggle and the name's rename
-  // affordance stop the click from also firing the row's own navigate.
+  // A single custom-rendered column (see DeckRowContent) rather than
+  // separate name/dist/toggle columns, so the mobile layout can drop the
+  // learning-stage bar to its own line instead of squeezing it in beside the
+  // name at a third of the row width.
   const deckColumns = [
     {
-      key: 'name', flex: 2,
-      render: deck => <DeckNameCell deck={deck} stats={getDeckStats(cardsObj, deck.id)} onRename={name => handleRenameDeck(deck.id, name)} />,
-    },
-    {
-      key: 'dist', flex: 1.4,
+      key: 'row', wrap: true,
       render: deck => (
-        <div style={{ width: '100%' }}>
-          {/* getStateDistribution filters to active decks — force it here so
-              a toggled-off deck's bar still reflects its real cards, matching
-              the count text beside it (getDeckStats doesn't gate on active). */}
-          <DistributionBar
-            segments={STATE_SEGMENTS.map(s => ({ ...s, count: getStateDistribution(cardsObj, { [deck.id]: { ...deck, active: true } })[s.key] ?? 0 }))}
-            showLegend={false}
-          />
-        </div>
-      ),
-    },
-    {
-      key: 'toggle', width: 64, align: 'right',
-      render: deck => (
-        <span onClick={e => e.stopPropagation()}>
-          <ToggleButton active={deck.active} labels={{ on: 'On', off: 'Off' }} onClick={() => handleToggleDeck(deck.id)} />
-        </span>
+        <DeckRowContent
+          deck={deck}
+          cardsObj={cardsObj}
+          isMobile={isMobile}
+          onRename={name => handleRenameDeck(deck.id, name)}
+          onToggle={() => handleToggleDeck(deck.id)}
+          onDelete={() => setDeletingDeckId(deck.id)}
+        />
       ),
     },
   ]
@@ -497,6 +634,34 @@ function VocabSrsHome() {
     save(newProgress)
   }
 
+  // Cascade-deletes the deck and its cards (deleteDeck no-ops on a bundled
+  // deck — defense-in-depth, DeckRowActions already excludes them from the
+  // delete affordance). Same undo-toast pattern as the browse page's own
+  // deck delete, so a card set removed by mistake here isn't gone for good.
+  function handleDeleteDeck(deckId) {
+    const deletedDeck = decks[deckId]
+    const deletedCards = Object.values(cardsObj).filter(c => c.deckId === deckId)
+    const newProgress = deleteDeck(progress, deckId)
+    setProgress(newProgress)
+    save(newProgress)
+    setDeletingDeckId(null)
+    showToast({
+      message: `Deleted "${deletedDeck?.name}" and its ${deletedCards.length} card${deletedCards.length === 1 ? '' : 's'}.`,
+      actionLabel: 'Undo',
+      onAction: () => handleUndoDeleteDeck(deletedDeck, deletedCards),
+    })
+  }
+
+  function handleUndoDeleteDeck(deletedDeck, deletedCards) {
+    if (!deletedDeck) return
+    const restoredDecks = { ...decks, [deletedDeck.id]: deletedDeck }
+    const restoredCardsObj = { ...cardsObj }
+    for (const card of deletedCards) restoredCardsObj[card.id] = card
+    const newProgress = { ...progress, decks: restoredDecks, cards: restoredCardsObj }
+    setProgress(newProgress)
+    save(newProgress)
+  }
+
   // Card front/back/audio/interface settings only mean something with a card
   // actually on screen, so this is only ever mounted during an active
   // session — see the sidebar's conditional render below. SRS Settings and
@@ -587,6 +752,10 @@ function VocabSrsHome() {
     )
   }
 
+  const deletingDeckCardCount = deletingDeckId
+    ? Object.values(cardsObj).filter(c => c.deckId === deletingDeckId).length
+    : 0
+
   return (
     <div style={{
       display: 'flex',
@@ -671,7 +840,7 @@ function VocabSrsHome() {
                 )}
 
                 <div style={{ marginBottom: 28 }}>
-                  <SectionHeader title={`Decks · ${activeDecks.length} of ${deckList.length} on`} />
+                  <SectionHeader title="Decks" />
                   <DataList
                     columns={deckColumns}
                     rows={deckList}
@@ -680,11 +849,11 @@ function VocabSrsHome() {
                   />
                 </div>
 
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 20, marginBottom: 28 }}>
+                <div style={{ marginBottom: 28 }}>
                   {renderOverviewSettings()}
                 </div>
 
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 20 }}>
+                <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
                     <ImportMenuButton onFile={handleFileChange} onOpenWordImport={() => setShowWordImport(true)} isMobile={isMobile} />
                   </div>
@@ -726,6 +895,17 @@ function VocabSrsHome() {
         isMobile={isMobile}
         onAdd={handleWordImportAdd}
         onCreateAndAdd={handleWordImportCreateAndAdd}
+      />
+
+      <ConfirmDialog
+        open={!!deletingDeckId}
+        title="Delete deck"
+        message={deletingDeckId
+          ? `Delete "${decks[deletingDeckId]?.name}" and its ${deletingDeckCardCount} card${deletingDeckCardCount === 1 ? '' : 's'}? This can't be undone.`
+          : ''}
+        confirmLabel="Delete"
+        onConfirm={() => handleDeleteDeck(deletingDeckId)}
+        onCancel={() => setDeletingDeckId(null)}
       />
 
     </div>

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Generates Voicevox neural TTS audio for the vocab word lists and the keigo SRS
- * deck, and uploads MP3s to Supabase Storage.
+ * Generates Voicevox neural TTS audio for the vocab word lists, and uploads
+ * MP3s to Supabase Storage.
  *
  * A clip is stored under audio/voicevox/<speakerId>/<key>.mp3, where the key is
  * a hash of THE TEXT SPOKEN rather than of the word that wanted it. One reading
@@ -26,7 +26,7 @@
  *
  * Run manually: node --env-file=.env scripts/generate-audio.mjs
  * Runs automatically via .github/workflows/generate-vocab-audio.yml on every push
- * touching src/data/words/** or the keigo deck.
+ * touching src/data/words/**.
  *
  * Env vars required:
  *   SUPABASE_URL (or VITE_SUPABASE_URL)
@@ -82,13 +82,10 @@ const VOICES = [
 // src/data/words/ is picked up automatically — a hardcoded list here previously
 // let new files (e.g. a newly added word list) silently get no audio at all.
 const WORD_LIST_DIR = 'src/data/words'
-const TARGETS = [
-  ...readdirSync(WORD_LIST_DIR)
-    .filter(f => f.endsWith('.json'))
-    .sort()
-    .map(f => ({ path: `${WORD_LIST_DIR}/${f}`, textField: 'kana' })),
-  { path: 'src/modules/vocab-srs/decks/keigo.json', textField: 'front' },
-]
+const TARGETS = readdirSync(WORD_LIST_DIR)
+  .filter(f => f.endsWith('.json'))
+  .sort()
+  .map(f => `${WORD_LIST_DIR}/${f}`)
 
 async function confirmSpeakers() {
   const res = await fetch(`${VOICEVOX_URL}/speakers`)
@@ -250,9 +247,9 @@ async function generate() {
   // those apart while collapsing everything that genuinely sounds the same.
   const entriesByPath = new Map()
   const allIds = []
-  for (const target of TARGETS) {
-    const rows = JSON.parse(readFileSync(target.path, 'utf8'))
-    entriesByPath.set(target.path, rows)
+  for (const path of TARGETS) {
+    const rows = JSON.parse(readFileSync(path, 'utf8'))
+    entriesByPath.set(path, rows)
     allIds.push(...rows.map(e => e.jmdictId))
   }
 
@@ -273,12 +270,9 @@ async function generate() {
   const dict = await fetchEntries(allIds)
 
   const textByKey = new Map()
-  for (const target of [...TARGETS, { path: CUSTOM_WORDS_KEY, textField: 'kana' }]) {
-    for (const entry of entriesByPath.get(target.path)) {
-      // keigo.json speaks its `front`; a word list speaks the card's reading.
-      const text = target.textField === 'front'
-        ? entry.front
-        : speechTextOf(entry, entry.jmdictId ? dict.get(entry.jmdictId) : null) ?? entry.kana
+  for (const path of [...TARGETS, CUSTOM_WORDS_KEY]) {
+    for (const entry of entriesByPath.get(path)) {
+      const text = speechTextOf(entry, entry.jmdictId ? dict.get(entry.jmdictId) : null) ?? entry.kana
       if (!text) continue
       const key = audioKeyFor(text)
       const seen = textByKey.get(key)

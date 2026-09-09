@@ -23,7 +23,10 @@ const {
   deleteCards,
 } = await import('./deckUtils.js')
 
-const bundledDeck = { id: 'keigo', name: 'Keigo', source: 'bundled', active: true, addedAt: 1 }
+// A generic stand-in for a bundled deck — not tied to any real shipped
+// deck, which is deliberate: the app currently ships none (see
+// migrate.js's RETIRED_DECKS).
+const bundledDeck = { id: 'sample-bundled', name: 'Sample Bundled', source: 'bundled', active: true, addedAt: 1 }
 const importedDeck = { id: 'story-words', name: 'Story Words', source: 'imported', active: true, addedAt: 2 }
 
 beforeEach(() => {
@@ -49,7 +52,7 @@ describe('isBundledDeck', () => {
 })
 
 describe('resolveTargetDeckId', () => {
-  const decks = { keigo: bundledDeck, 'story-words': importedDeck }
+  const decks = { 'sample-bundled': bundledDeck, 'story-words': importedDeck }
 
   it('falls back to bootstrap default when nothing stored', () => {
     expect(resolveTargetDeckId(decks, null, 'immersion-words')).toBe('immersion-words')
@@ -64,7 +67,7 @@ describe('resolveTargetDeckId', () => {
   })
 
   it('falls back when the stored deck is bundled', () => {
-    expect(resolveTargetDeckId(decks, 'keigo', 'immersion-words')).toBe('immersion-words')
+    expect(resolveTargetDeckId(decks, 'sample-bundled', 'immersion-words')).toBe('immersion-words')
   })
 })
 
@@ -95,8 +98,8 @@ describe('renameDeck', () => {
   })
 
   it('no-ops on a bundled deck', () => {
-    const decks = { keigo: bundledDeck }
-    expect(renameDeck(decks, 'keigo', 'Hacked')).toBe(decks)
+    const decks = { 'sample-bundled': bundledDeck }
+    expect(renameDeck(decks, 'sample-bundled', 'Hacked')).toBe(decks)
   })
 
   it('no-ops on a missing deck', () => {
@@ -108,22 +111,22 @@ describe('renameDeck', () => {
 describe('deleteDeck', () => {
   it('cascades to remove the deck and its cards', () => {
     const progress = {
-      decks: { 'story-words': importedDeck, keigo: bundledDeck },
+      decks: { 'story-words': importedDeck, 'sample-bundled': bundledDeck },
       cards: {
         c1: { id: 'c1', deckId: 'story-words' },
-        c2: { id: 'c2', deckId: 'keigo' },
+        c2: { id: 'c2', deckId: 'sample-bundled' },
       },
     }
     const result = deleteDeck(progress, 'story-words')
     expect(result.decks['story-words']).toBeUndefined()
-    expect(result.decks.keigo).toBeDefined()
+    expect(result.decks['sample-bundled']).toBeDefined()
     expect(result.cards.c1).toBeUndefined()
     expect(result.cards.c2).toBeDefined()
   })
 
   it('no-ops on a bundled deck', () => {
-    const progress = { decks: { keigo: bundledDeck }, cards: {} }
-    expect(deleteDeck(progress, 'keigo')).toBe(progress)
+    const progress = { decks: { 'sample-bundled': bundledDeck }, cards: {} }
+    expect(deleteDeck(progress, 'sample-bundled')).toBe(progress)
   })
 
   it('no-ops on a missing deck', () => {

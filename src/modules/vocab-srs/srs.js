@@ -1,14 +1,13 @@
 import { createEmptyCard, fsrs, generatorParameters, Rating, State } from 'ts-fsrs'
-import KEIGO from './decks/keigo.json'
 
 const f = fsrs(generatorParameters({ enable_fuzz: true }))
 
 export { Rating, State }
 
-// Maps deckId → (cardId → word object) for bundled decks
-const DECK_FILES = {
-  'keigo': new Map(KEIGO.map(w => [w.id, w])),
-}
+// Maps deckId → (cardId → word object) for bundled decks. Empty — no bundled
+// deck currently ships (see migrate.js's RETIRED_DECKS); a future one adds
+// an entry here.
+const DECK_FILES = {}
 
 // Creates FSRS scheduling state for a bundled card (no content stored).
 export function createBundledCardState(id, deckId) {
