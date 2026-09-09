@@ -504,22 +504,14 @@ function VocabSrsHome() {
   // reviewDelta is +1/-1/0 for a single answer/undo (see VocabSrsDrill) —
   // committed per-answer, not just at session end, so a session the learner
   // exits before finishing (very possible: a missed review card queues a
-  // 10-minute relearn wait) still counts on the dashboard's Activity grid
-  // and totalReviews instead of silently losing that session's progress.
+  // 10-minute relearn wait) still counts toward totalReviews instead of
+  // silently losing that session's progress.
   function handleCardSave(updatedSessionCards, reviewDelta = 0) {
     const newCardsObj = { ...cardsObj, ...resolvedArrayToCardsObj(updatedSessionCards, decks) }
     const newCardDayUpdate = computeNewCardDay(newCardsObj)
-    let newProgress = { ...progress, cards: newCardsObj }
+    const newProgress = { ...progress, cards: newCardsObj }
     if (newCardDayUpdate) newProgress.newCardDay = newCardDayUpdate
-    if (reviewDelta !== 0) {
-      const reviewLog = { ...(progress.reviewLog ?? {}) }
-      reviewLog[todayStr] = Math.max(0, (reviewLog[todayStr] ?? 0) + reviewDelta)
-      newProgress = {
-        ...newProgress,
-        reviewLog,
-        totalReviews: Math.max(0, (progress.totalReviews ?? 0) + reviewDelta),
-      }
-    }
+    if (reviewDelta !== 0) newProgress.totalReviews = Math.max(0, (progress.totalReviews ?? 0) + reviewDelta)
     setProgress(newProgress)
     save(newProgress)
   }
