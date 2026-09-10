@@ -22,8 +22,7 @@ import Badge from '../../components/Badge.jsx'
 import DistributionBar from '../../components/DistributionBar.jsx'
 import DataList from '../../components/DataList.jsx'
 import { useToast } from '../../context/ToastContext.jsx'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_NAV, FS_CAPTION, FS_CONTENT_HEADING } from '../../data/theme.js'
-import { MODULES } from '../../data/modules.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_NAV, FS_CAPTION, FS_CONTENT_HEADING, BRAND, LANTERN_OFF, LANTERN_SIZES } from '../../data/theme.js'
 import { ModuleThemeProvider, useAccent } from '../../context/ModuleThemeContext.jsx'
 import { STATE_SEGMENTS, SUSPENDED_DESCRIPTION } from './cardStates.js'
 import SectionHeader from '../../components/SectionHeader.jsx'
@@ -40,7 +39,7 @@ import AttributionFooter from '../../components/AttributionFooter.jsx'
 import { renderAttributionSegments } from '../../utils/attributionSegments.jsx'
 import { useIsMobile } from '../../hooks/useIsMobile.js'
 
-const SRS_ACCENT = MODULES.find(m => m.id === 'vocab-srs').accent
+const SRS_ACCENT = BRAND
 
 // DistributionBar owns the bar + legend; the suspended count sits outside the
 // ramp (it's a status, not a learning stage) so it's a danger Badge below.
@@ -417,7 +416,7 @@ function VocabSrsHome() {
   if (!user) {
     return (
       <SignInGate
-        crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Reviews' }]}
+        crumbs={[{ label: 'Lantern', href: '#/' }, { label: 'Reviews' }]}
         title="Sign in to use Reviews"
         subtitle="Progress syncs to your account across devices"
         onSignIn={signIn}
@@ -794,12 +793,12 @@ function VocabSrsHome() {
             leechThreshold={leechThreshold}
             isMobile={isMobile}
             onShowOptions={() => setShowOptions(v => !v)}
-            crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Reviews', onClick: handleExitSession }]}
+            crumbs={[{ label: 'Lantern', href: '#/' }, { label: 'Reviews', onClick: handleExitSession }]}
           />
         ) : (
           <div style={{ height: '100%', display: 'flex', flexDirection: 'column', color: TEXT }}>
             <PageHeader
-              crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Reviews' }]}
+              crumbs={[{ label: 'Lantern', href: '#/' }, { label: 'Reviews' }]}
               rightSlot={<AuthSlot />}
             />
 
@@ -815,14 +814,24 @@ function VocabSrsHome() {
                 ) : (
                   <div style={{ marginBottom: 28 }}>
                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
-                      <div>
-                        <div style={{ fontSize: FS_CONTENT_HEADING, color: TEXT, letterSpacing: TRACKING }}>
-                          {canStart
-                            ? `${due.length + rescheduled.length} due · ${newCards.length} new · ~${Math.ceil((due.length + rescheduled.length + newCards.length) * 0.25) || '<1'} min`
-                            : 'Nothing due'}
-                        </div>
-                        <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginTop: 4 }}>
-                          {activeDecks.length} active {activeDecks.length === 1 ? 'deck' : 'decks'} · {globalStats.totalCards} cards
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        {/* brand/BRAND.md §4 "Reviews — empty queue": lamp-off
+                            beside the headline. Sized for this compact summary
+                            row rather than the spec's full-page 96px hero —
+                            there's no dedicated empty-state screen here, just
+                            this strip at the top of the deck list. */}
+                        {!canStart && (
+                          <img src={LANTERN_OFF} alt="" width={LANTERN_SIZES.nav} height={LANTERN_SIZES.nav} style={{ display: 'block', imageRendering: 'pixelated', flexShrink: 0 }} />
+                        )}
+                        <div>
+                          <div style={{ fontSize: FS_CONTENT_HEADING, color: TEXT, letterSpacing: TRACKING }}>
+                            {canStart
+                              ? `${due.length + rescheduled.length} due · ${newCards.length} new · ~${Math.ceil((due.length + rescheduled.length + newCards.length) * 0.25) || '<1'} min`
+                              : 'Nothing to review'}
+                          </div>
+                          <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginTop: 4 }}>
+                            {activeDecks.length} active {activeDecks.length === 1 ? 'deck' : 'decks'} · {globalStats.totalCards} cards
+                          </div>
                         </div>
                       </div>
                       <Button variant="accent-outline" size="lg" onClick={() => handleStartReview(effectiveNewPerDay)} disabled={!canStart}>

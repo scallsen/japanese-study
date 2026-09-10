@@ -611,6 +611,21 @@ button, input, select, textarea {
 /* Option 4 — now the real Button variant="quiet" (see .btn-quiet above);
    shipped to NewCard/ReviewCard, kept here for side-by-side comparison. */
 
+/* Lantern loading flicker (brand/BRAND.md §2, §4) — the on/off sprites
+   stacked and cross-toggled via opacity on a hard steps(1) cut, not a
+   crossfade, so it reads as a lamp flicker rather than a dissolve. Each
+   phase holds ~600ms (1200ms full cycle). Reduced-motion falls back to a
+   static lit lamp per spec, same pattern as the cover-rotation keyframes
+   above. */
+@keyframes lantern-flicker-on  { 0%, 49.9% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@keyframes lantern-flicker-off { 0%, 49.9% { opacity: 0; } 50%, 100% { opacity: 1; } }
+.lantern-flicker-on  { animation: lantern-flicker-on 1200ms steps(1) infinite; }
+.lantern-flicker-off { animation: lantern-flicker-off 1200ms steps(1) infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .lantern-flicker-on  { animation: none; opacity: 1; }
+  .lantern-flicker-off { animation: none; opacity: 0; }
+}
+
 /* Option 5 — link demoted into the subtitle line itself. */
 .sbl-inline-link:hover:not(:disabled),
 .sbl-inline-link:focus-visible {

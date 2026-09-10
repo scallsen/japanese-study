@@ -5,13 +5,13 @@ import Popover from '../components/Popover.jsx'
 import Menu from '../components/Menu.jsx'
 import { ModuleThemeProvider, useAccent } from '../context/ModuleThemeContext.jsx'
 import { useIsMobile } from '../hooks/useIsMobile.js'
-import { MODULES } from '../data/modules.js'
 import { TEXTBOOKS, COVER_GUTTER_FRACTION } from '../data/textbooks.js'
 import { chapterPrimaryAction } from './chapterAction.jsx'
 import { useCoverRotation } from './coverRotation.js'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_BADGE, FS_BASE, FS_CONTENT_HEADING,
-  SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32,
+  SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32, BRAND,
+  LANTERN_ON, LANTERN_OFF, LANTERN_SIZES,
 } from '../data/theme.js'
 
 // The home page's two big cards, plus SegmentedPrimary/ActionsRow/
@@ -21,8 +21,6 @@ import {
 // same components the real page uses, and so both pages show the same
 // primary action for the chapter under the tracker.
 
-const VOCAB_MODULE = MODULES.find(m => m.id === 'school-vocab')
-const SRS_MODULE = MODULES.find(m => m.id === 'vocab-srs')
 
 const HAIRLINE = 'rgba(255,255,255,0.08)'
 
@@ -43,7 +41,9 @@ export function PrimaryCard({ accent, title, subtitle, cover, progress, actions,
     <ModuleThemeProvider accent={accent}>
       <Card
         padding={SPACE_24}
-        style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+        // BRAND left edge (brand/BRAND.md §3.3) — the two primary home cards
+        // are the only place a colour appears as an edge rather than a fill.
+        style={{ display: 'flex', flexDirection: 'column', height: '100%', borderLeft: `4px solid ${accent}` }}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE_16 }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: SPACE_16 }}>
@@ -322,7 +322,7 @@ export function SegmentedPrimary({ size = 'lg', label, onClick, menuItems = [], 
 }
 
 export function NewCard({ loading, state, onStart, onAdvance, onChangeTextbook }) {
-  const accent = VOCAB_MODULE.accent
+  const accent = BRAND
 
   if (loading) {
     return (
@@ -381,8 +381,24 @@ export function NewCard({ loading, state, onStart, onAdvance, onChangeTextbook }
   )
 }
 
+// Lit when there's something to review, unlit when the queue is empty —
+// brand/BRAND.md §2, §4. No dim/third state; static, it only animates via
+// ReviewCard's own on↔off swap when its state changes (handled by React
+// simply re-rendering a different <img src>, no crossfade).
+function ReviewLamp({ on }) {
+  return (
+    <img
+      src={on ? LANTERN_ON : LANTERN_OFF}
+      alt=""
+      width={LANTERN_SIZES.card}
+      height={LANTERN_SIZES.card}
+      style={{ display: 'block', imageRendering: 'pixelated', flexShrink: 0 }}
+    />
+  )
+}
+
 export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary }) {
-  const accent = SRS_MODULE.accent
+  const accent = BRAND
 
   if (authLoading || loading) {
     return (
@@ -398,6 +414,7 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
         accent={accent}
         title="Review"
         subtitle="Long-term memorization for vocabulary"
+        cover={<ReviewLamp on={false} />}
         // Weaker than Practice's "Choose word list" on purpose — this is the
         // optional card, not the primary action on the page.
         actions={<ActionsRow><Button size="lg" variant="neutral" onClick={onSignIn}>Create account</Button></ActionsRow>}
@@ -411,6 +428,7 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
         accent={accent}
         title="Review"
         subtitle="No cards yet. Finish a chapter and send its words here."
+        cover={<ReviewLamp on={false} />}
         actions={<ActionsRow><Button size="lg" variant="neutral" onClick={() => navigate('#/vocab-srs')}>Manage decks</Button></ActionsRow>}
       />
     )
@@ -424,6 +442,7 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
       accent={accent}
       title="Reviews"
       subtitle={headline}
+      cover={<ReviewLamp on={canStart} />}
       actions={
         <ActionsRow>
           <Button size="lg" disabled={!canStart} onClick={() => navigate('#/vocab-srs?start=1')}>

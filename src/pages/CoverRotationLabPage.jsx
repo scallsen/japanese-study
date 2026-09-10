@@ -3,11 +3,10 @@ import SectionHeader from '../components/SectionHeader.jsx'
 import Button from '../components/Button.jsx'
 import { PrimaryCard, ActionsRow, CoverSquare, COVER_SIZE } from './homeCards.jsx'
 import { useCoverRotation } from './coverRotation.js'
-import { MODULES } from '../data/modules.js'
 import { TEXTBOOKS } from '../data/textbooks.js'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_CONTENT_HEADING,
-  SPACE_8, SPACE_12, SPACE_16, SPACE_32,
+  SPACE_8, SPACE_12, SPACE_16, SPACE_32, BRAND,
 } from '../data/theme.js'
 
 // Dev-only bench for the empty Practice card's rotating cover art (signed
@@ -19,7 +18,7 @@ import {
 // ToastLabPage/HomeCardsLabPage: not linked from the dashboard, reached at
 // #/dev/cover-rotation.
 
-const ACCENT = MODULES.find(m => m.id === 'school-vocab').accent
+const ACCENT = BRAND
 const ROTATE_MS = 2600
 
 const COVERS = TEXTBOOKS.filter(book => book.icon && !book.personal)
@@ -94,7 +93,7 @@ function VariantSection({ variant }) {
 export default function CoverRotationLabPage() {
   return (
     <div style={{ width: '100vw', height: '100dvh', background: '#1E1E1E', fontFamily: FONT, letterSpacing: TRACKING, display: 'flex', flexDirection: 'column', color: TEXT, overflow: 'hidden' }}>
-      <PageHeader crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Cover rotation lab' }]} />
+      <PageHeader crumbs={[{ label: 'Lantern', href: '#/' }, { label: 'Cover rotation lab' }]} />
       <main style={{ flex: 1, overflowY: 'auto', padding: '28px 24px 60px' }}>
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
           <div style={{ fontSize: FS_CONTENT_HEADING, color: TEXT, marginBottom: 8 }}>

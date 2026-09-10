@@ -16,12 +16,11 @@ import TrackedAnimeSection from './TrackedAnimeSection.jsx'
 import { useTrackedAnime } from './useTrackedAnime.js'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import { useJaVoices } from '../../hooks/useTTS.js'
-import { FONT, TRACKING } from '../../data/theme.js'
-import { MODULES } from '../../data/modules.js'
+import { FONT, TRACKING, BRAND } from '../../data/theme.js'
 import { ModuleThemeProvider, useAccent } from '../../context/ModuleThemeContext.jsx'
 import { useIsMobile } from '../../hooks/useIsMobile.js'
 
-const ANIME_ACCENT = MODULES.find(m => m.id === 'anime-vocab').accent
+const ANIME_ACCENT = BRAND
 
 // Duplicated per-file (matches this module's own established convention —
 // see e.g. GrammarMapModule.jsx, VocabSrsModule.jsx, StoryModule.jsx — each
@@ -133,7 +132,7 @@ export default function AnimeVocabModule({ initialMediaId }) {
     setDrillWords(null)
   }
 
-  const crumbs = [{ label: 'Japanese Study', href: '#/' }]
+  const crumbs = [{ label: 'Lantern', href: '#/' }]
   if (!media) {
     crumbs.push({ label: 'Anime vocabulary' })
   } else if (!episode) {

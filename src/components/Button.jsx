@@ -1,5 +1,5 @@
 import { forwardRef } from 'react'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32, DANGER, WARNING } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32, DANGER, WARNING, ON_BRAND } from '../data/theme.js'
 import { useAccent } from '../context/ModuleThemeContext.jsx'
 
 // Reconciled from the real variants already in use across the app —
@@ -14,7 +14,9 @@ import { useAccent } from '../context/ModuleThemeContext.jsx'
 // pink, not core teal) — same gap Badge and SelectAllCheckbox had.
 function buildVariants(accent) {
   return {
-    primary: { background: accent, border: 'none', color: '#fff' },
+    // ON_BRAND (#1E1E1E), not white — white on BRAND is 3.9:1 and fails AA;
+    // ON_BRAND is 4.25:1. See brand/BRAND.md §3.
+    primary: { background: accent, border: 'none', color: ON_BRAND },
     'accent-outline': { background: `${accent}29`, border: `1px solid ${accent}6b`, color: accent },
     neutral: { background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', color: TEXT },
     'danger-outline': { background: 'rgba(248,113,113,0.15)', border: '1px solid rgba(248,113,113,0.4)', color: DANGER },

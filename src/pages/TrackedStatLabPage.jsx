@@ -5,7 +5,7 @@ import { ModuleThemeProvider, useAccent } from '../context/ModuleThemeContext.js
 import { MODULES } from '../data/modules.js'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_CONTENT_HEADING, FS_STAT_VALUE,
-  SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32,
+  SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32, BRAND,
 } from '../data/theme.js'
 
 // Exploration only — three candidate shapes for the shared "tracked" stat
@@ -104,7 +104,7 @@ export default function TrackedStatLabPage() {
       height: '100%', display: 'flex', flexDirection: 'column',
       background: BG, fontFamily: FONT, letterSpacing: TRACKING, color: TEXT,
     }}>
-      <PageHeader crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Tracked stat' }]} />
+      <PageHeader crumbs={[{ label: 'Lantern', href: '#/' }, { label: 'Tracked stat' }]} />
 
       <main style={{ flex: 1, overflowY: 'auto', padding: SPACE_24 }}>
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
@@ -124,7 +124,7 @@ export default function TrackedStatLabPage() {
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: SPACE_24 }}>
                 {FIXTURES.map(f => (
-                  <ModuleThemeProvider key={f.module.id} accent={f.module.accent}>
+                  <ModuleThemeProvider key={f.module.id} accent={BRAND}>
                     {opt.render(f)}
                   </ModuleThemeProvider>
                 ))}

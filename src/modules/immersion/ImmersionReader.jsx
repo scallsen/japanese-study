@@ -116,7 +116,7 @@ export default function ImmersionReader({ article, defaultLevel = 'simplified', 
 
       <PageHeader
         crumbs={[
-          { label: 'Japanese Study', href: '#/' },
+          { label: 'Lantern', href: '#/' },
           { label: 'News reader', onClick: onBack },
           { label: 'Read' },
         ]}

@@ -1,5 +1,9 @@
 // `tier: 'primary'` marks the two modules the dashboard renders as its large
 // New / Review cards; everything else is a secondary ModuleCard.
+//
+// Modules no longer carry their own accent colour (brand/BRAND.md §3, §7) —
+// Lantern has one brand colour, BRAND, used everywhere a module used to have
+// its own hue. Module identity comes from its icon and name.
 export const MODULES = [
   {
     id: 'school-vocab',
@@ -9,7 +13,6 @@ export const MODULES = [
     stats: null,
     href: '#/vocab',
     external: false,
-    accent: '#3A7FEF',
     requiresAuth: false,
   },
   {
@@ -20,10 +23,6 @@ export const MODULES = [
     stats: null,
     href: '#/vocab-srs',
     external: false,
-    // Green, not the old core teal — reviews read as "green light to study".
-    // #27AE60 is an existing app green (DRILL_COLORS' correct, minus its
-    // alpha) rather than a new hue, so nothing new enters the palette.
-    accent: '#27AE60',
     requiresAuth: true,
   },
   {
@@ -34,7 +33,6 @@ export const MODULES = [
     stats: null,
     href: '#/anime-vocab',
     external: false,
-    accent: '#D46EA3',
     requiresAuth: false,
   },
   {
@@ -45,7 +43,6 @@ export const MODULES = [
     stats: null,
     href: '#/story',
     external: false,
-    accent: '#CC8A3D',
     requiresAuth: false,
   },
   {
@@ -56,7 +53,6 @@ export const MODULES = [
     stats: null,
     href: '#/immersion',
     external: false,
-    accent: '#E05A4E',
     requiresAuth: false,
   },
   {
@@ -67,7 +63,6 @@ export const MODULES = [
     stats: null,
     href: '#/dictionary',
     external: false,
-    accent: '#D4A84B',
     requiresAuth: false,
   },
   {
@@ -77,7 +72,6 @@ export const MODULES = [
     stats: null,
     href: 'https://scallsen.ca/katsuyou-drill/',
     external: true,
-    accent: '#E8962E',
     requiresAuth: false,
   },
 ]

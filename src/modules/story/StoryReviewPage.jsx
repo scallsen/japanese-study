@@ -8,8 +8,7 @@ import Japanese from '../../components/Japanese.jsx'
 import ToggleButton from '../../components/ToggleButton.jsx'
 import { BG } from './storyUI.jsx'
 import { buildVocabMap } from '../../utils/vocabMap.js'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_ARTICLE_BODY, FS_HEADING, FS_CONTENT_HEADING } from '../../data/theme.js'
-import { MODULES } from '../../data/modules.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_ARTICLE_BODY, FS_HEADING, FS_CONTENT_HEADING, BRAND } from '../../data/theme.js'
 import { ModuleThemeProvider } from '../../context/ModuleThemeContext.jsx'
 // Cross-module write: creates cards in vocab-srs progress namespace (same pattern as ImmersionReader)
 import { createCard } from '../vocab-srs/srs.js'
@@ -20,7 +19,7 @@ import { supabase } from '../../lib/supabase.js'
 import { lookupVocabulary } from './lookupVocabulary.js'
 import { useIsMobile } from '../../hooks/useIsMobile.js'
 
-const STORY_ACCENT = MODULES.find(m => m.id === 'story').accent
+const STORY_ACCENT = BRAND
 
 const FORMAT_LAYOUTS = {
   news: NewspaperLayout,
@@ -127,7 +126,7 @@ function StoryReview({ storyId }) {
   }
 
   const crumbs = [
-    { label: 'Japanese Study', href: '#/' },
+    { label: 'Lantern', href: '#/' },
     { label: 'Story generator', href: '#/story' },
     { label: 'Review story' },
   ]

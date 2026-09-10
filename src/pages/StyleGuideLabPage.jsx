@@ -29,11 +29,17 @@ import {
   FS_SM, FS_NAV, FS_BADGE, FS_DISPLAY_HEADING, FS_STAT_VALUE,
   FS_LIST_TITLE, FS_ENTRY_WORD, FS_ENTRY_KANJI, FS_ENTRY_HEADING, FS_ENTRY_ALT, FS_ARTICLE_BODY,
   SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32,
-  SEGMENT_COLORS, DRILL_COLORS, KANJI_FONT } from '../data/theme.js'
+  SEGMENT_COLORS, DRILL_COLORS, KANJI_FONT,
+  BRAND, BRAND_DEEP, BRAND_TEXT, ON_BRAND } from '../data/theme.js'
 
 const BG = '#1E1E1E'
 const SURFACE = '#2A2A2A'
-const ACCENT = '#3ABDA4'
+// The design system's one accent is now BRAND everywhere (brand/BRAND.md) —
+// every demo below that reads ACCENT previews the real brand colour.
+const ACCENT = BRAND
+// Kept only as a second value for the Chip accent-override demo below (a
+// per-instance override still exists on Chip/Button; this just shows it's
+// still wired up). Not a second app accent — see brand/BRAND.md's Don'ts.
 const ANIME_ACCENT = '#D46EA3'
 const BORDER = 'rgba(255,255,255,0.08)'
 const WARNING = '#fbbf24'
@@ -178,15 +184,14 @@ const SEMANTIC_COLORS = [
   { name: 'danger', hex: '#f87171', usage: 'wrong answers, destructive actions' },
 ]
 
-const MODULE_ACCENTS = [
-  { name: 'vocab-srs', hex: '#3ABDA4', usage: 'also the app-wide core accent' },
-  { name: 'anime-vocab', hex: '#D46EA3', usage: 'module-local' },
-  { name: 'immersion', hex: '#E05A4E', usage: 'module-local' },
-  { name: 'grammar-map', hex: '#8B7CF8', usage: 'module-local' },
-  { name: 'story', hex: '#CC8A3D', usage: 'module-local' },
-  { name: 'dictionary', hex: '#D4A84B', usage: 'module-local' },
-  { name: 'katsuyou', hex: '#E8962E', usage: 'module-local' },
-  { name: 'school-vocab', hex: '#3A7FEF', usage: 'module-local' },
+// Module accents are retired (brand/BRAND.md §3, §7) — every module now
+// renders in the base greys with BRAND for its one primary action, instead
+// of a colour per module. This list replaces the old MODULE_ACCENTS table.
+const BRAND_PALETTE = [
+  { name: 'BRAND', hex: BRAND, usage: 'the lit lantern, one primary button/screen, home-card edge, focus rings, active chips' },
+  { name: 'BRAND_DEEP', hex: BRAND_DEEP, usage: "BRAND's hover/pressed shade only" },
+  { name: 'BRAND_TEXT', hex: BRAND_TEXT, usage: 'links and small red text under 24px — BRAND itself fails AA there' },
+  { name: 'ON_BRAND', hex: ON_BRAND, usage: 'text on a BRAND-filled surface' },
 ]
 
 /* ── Shared page chrome ────────────────────────────────────────────────── */
@@ -351,8 +356,8 @@ function ColorPage() {
       <GroupLabel>Semantic</GroupLabel>
       {SEMANTIC_COLORS.map((c, i) => <ColorRow key={c.name} c={c} isLast={i === SEMANTIC_COLORS.length - 1} />)}
 
-      <GroupLabel>Module accents — each screen&apos;s own identity</GroupLabel>
-      {MODULE_ACCENTS.map((c, i) => <ColorRow key={c.name} c={c} isLast={i === MODULE_ACCENTS.length - 1} />)}
+      <GroupLabel>Brand — the one accent, five places it&apos;s allowed (brand/BRAND.md §3)</GroupLabel>
+      {BRAND_PALETTE.map((c, i) => <ColorRow key={c.name} c={c} isLast={i === BRAND_PALETTE.length - 1} />)}
 
       <GroupLabel>Card-state ramp — validated for colour-vision deficiency, do not normalise</GroupLabel>
       {segmentList.map((c, i) => <ColorRow key={c.name} c={c} isLast={i === segmentList.length - 1} />)}
@@ -910,7 +915,11 @@ function DefinitionPopoverDemo() {
         <span
           ref={wordRef}
           onClick={() => { setOpen(true); setLog(null) }}
-          style={{ background: 'rgba(224,90,78,0.22)', cursor: 'pointer', padding: '0 2px', borderRadius: 3 }}
+          // Matches TokenizedBody's own default (`${accent}38`) — this demo
+          // used to hardcode Immersion's old red; the real component moved
+          // to the ambient accent (now BRAND) a while ago, this was just
+          // never brought back in sync. See JapaneseReader.jsx.
+          style={{ background: `${BRAND}38`, cursor: 'pointer', padding: '0 2px', borderRadius: 3 }}
         >
           世界
         </span>
@@ -1072,7 +1081,7 @@ function SectionHeaderDemo() {
 function SignInGateDemo() {
   const preview = (
     <div style={{ width: 480, height: 300, overflow: 'hidden', borderRadius: 8, border: `1px solid ${BORDER}` }}>
-      <SignInGate fullScreen={false} crumbs={[{ label: 'Japanese Study' }, { label: 'Reviews' }]} title="Sign in to use Reviews" subtitle="Progress syncs to your account across devices" onSignIn={() => {}} />
+      <SignInGate fullScreen={false} crumbs={[{ label: 'Lantern' }, { label: 'Reviews' }]} title="Sign in to use Reviews" subtitle="Progress syncs to your account across devices" onSignIn={() => {}} />
     </div>
   )
   return <ComponentPage title="Sign-in Gate" description={DESCRIPTIONS['sign-in-gate']} built preview={preview} />
@@ -1130,7 +1139,7 @@ export default function StyleGuideLabPage() {
 
   return (
     <div style={{ width: '100vw', height: '100dvh', background: BG, fontFamily: FONT, letterSpacing: TRACKING, display: 'flex', flexDirection: 'column', color: TEXT, overflow: 'hidden' }}>
-      <PageHeader crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Style guide' }]} />
+      <PageHeader crumbs={[{ label: 'Lantern', href: '#/' }, { label: 'Style guide' }]} />
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
         <nav style={{ width: 220, flexShrink: 0, borderRight: `1px solid ${BORDER}`, overflowY: 'auto', padding: '20px 12px' }}>
           {NAV.map(section => (

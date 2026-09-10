@@ -22,7 +22,6 @@ import { cardFormOf } from '../lib/displayForm.js'
 import { useDictionaryEntries } from '../hooks/useDictionaryEntries.js'
 import { cardGloss } from '../utils/dictionaryEntryLookup.js'
 import { getTextbook, COVER_GUTTER_FRACTION } from '../data/textbooks.js'
-import { MODULES } from '../data/modules.js'
 import { WORD_DATA } from '../data/wordData.js'
 import { STATE_SEGMENTS } from '../modules/vocab-srs/cardStates.js'
 import {
@@ -30,7 +29,7 @@ import {
 } from './homeFlowFixtures.js'
 import {
   FONT, KANJI_FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_CONTENT_HEADING, FS_DISPLAY_HEADING, FS_STAT_VALUE,
-  SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32,
+  SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32, BRAND,
 } from '../data/theme.js'
 
 // Dev-only bench, round two of #/dev/home-flow, after concept B ("two
@@ -45,8 +44,8 @@ import {
 const BG = '#1E1E1E'
 const HAIRLINE = 'rgba(255,255,255,0.08)'
 const DONE_GREY = '#8A8A8A'
-const VOCAB_ACCENT = MODULES.find(m => m.id === 'school-vocab').accent
-const SRS_ACCENT = MODULES.find(m => m.id === 'vocab-srs').accent
+const VOCAB_ACCENT = BRAND
+const SRS_ACCENT = BRAND
 
 const OPTION_GROUPS = [
   {
@@ -229,7 +228,7 @@ export default function TextbookFlowLabPage() {
       height: '100%', display: 'flex', flexDirection: 'column',
       background: BG, fontFamily: FONT, letterSpacing: TRACKING, color: TEXT,
     }}>
-      <PageHeader crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Home flow', href: '#/dev/home-flow' }, { label: 'Textbook page' }]} />
+      <PageHeader crumbs={[{ label: 'Lantern', href: '#/' }, { label: 'Home flow', href: '#/dev/home-flow' }, { label: 'Textbook page' }]} />
 
       <main style={{ flex: 1, overflowY: 'auto', padding: isMobile ? SPACE_16 : SPACE_24 }}>
         <div style={{ maxWidth: 1160, margin: '0 auto' }}>
@@ -285,7 +284,7 @@ const CRUMB = { drill: 'Reviewing', done: 'Session complete', decks: 'Decks', br
 
 function Frame({ mock }) {
   const { screen, go, opts, srs, note } = mock
-  const crumbs = [{ label: 'Japanese Study', onClick: () => go('home') }]
+  const crumbs = [{ label: 'Lantern', onClick: () => go('home') }]
   if (screen.name === 'browse') crumbs.push({ label: 'Decks', onClick: () => go('decks') })
   if (['drill', 'done', 'preview'].includes(screen.name)) crumbs.push({ label: 'Vocabulary Training', onClick: () => go('textbook') })
   if (screen.name !== 'home') crumbs.push({ label: screen.name === 'preview' ? screen.chapter.label : CRUMB[screen.name] })

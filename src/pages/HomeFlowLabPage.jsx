@@ -23,14 +23,13 @@ import { ModuleThemeProvider } from '../context/ModuleThemeContext.jsx'
 import { useIsMobile } from '../hooks/useIsMobile.js'
 import { resolveTextbookState } from '../lib/textbookProgress.js'
 import { TEXTBOOKS, getTextbook } from '../data/textbooks.js'
-import { MODULES } from '../data/modules.js'
 import { STATE_SEGMENTS } from '../modules/vocab-srs/cardStates.js'
 import {
   BOOK_ID, DAILY_NEW, wordCountFor, INITIAL_DECKS, initialProgress, initialSent, deckTotal, summariseDecks, addChapterToDecks,
 } from './homeFlowFixtures.js'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_CONTENT_HEADING, FS_DISPLAY_HEADING, FS_STAT_VALUE,
-  SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32,
+  SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32, BRAND,
 } from '../data/theme.js'
 
 // Dev-only bench for the shape of the whole learn → remember loop: where
@@ -45,8 +44,8 @@ import {
 
 const BG = '#1E1E1E'
 const HAIRLINE = 'rgba(255,255,255,0.08)'
-const VOCAB_ACCENT = MODULES.find(m => m.id === 'school-vocab').accent
-const SRS_ACCENT = MODULES.find(m => m.id === 'vocab-srs').accent
+const VOCAB_ACCENT = BRAND
+const SRS_ACCENT = BRAND
 
 const BOOKS_WITH_WORDS = TEXTBOOKS.filter(b => !b.personal && b.chapters.some(ch => wordCountFor(ch.id) > 0))
 
@@ -150,7 +149,7 @@ export default function HomeFlowLabPage() {
       height: '100%', display: 'flex', flexDirection: 'column',
       background: BG, fontFamily: FONT, letterSpacing: TRACKING, color: TEXT,
     }}>
-      <PageHeader crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Home flow' }]} />
+      <PageHeader crumbs={[{ label: 'Lantern', href: '#/' }, { label: 'Home flow' }]} />
 
       <main style={{ flex: 1, overflowY: 'auto', padding: isMobile ? SPACE_16 : SPACE_24 }}>
         <div style={{ maxWidth: 1160, margin: '0 auto' }}>
@@ -235,7 +234,7 @@ const SCREEN_CRUMB = {
 
 function Frame({ mock }) {
   const { screen, concept, go } = mock
-  const crumbs = [{ label: 'Japanese Study', onClick: () => go('home') }]
+  const crumbs = [{ label: 'Lantern', onClick: () => go('home') }]
   if (screen.name !== 'home') {
     if (screen.name === 'browse') crumbs.push({ label: 'Decks', onClick: () => go('decks') })
     if (screen.name === 'drill' || screen.name === 'done') {
