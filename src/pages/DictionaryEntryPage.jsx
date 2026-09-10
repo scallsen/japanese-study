@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import PageHeader from '../components/PageHeader.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
 import { supabase } from '../lib/supabase.js'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_ENTRY_HEADING, FS_ENTRY_ALT, KANJI_FONT } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_ENTRY_HEADING, FS_ENTRY_ALT, KANJI_FONT, BRAND, DANGER } from '../data/theme.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useProgress } from '../hooks/useProgress.js'
 import { migrateProgress } from '../modules/vocab-srs/migrate.js'
@@ -14,7 +14,6 @@ import Badge from '../components/Badge.jsx'
 import Card from '../components/Card.jsx'
 import CenteredLoadingMessage from '../components/CenteredLoadingMessage.jsx'
 import DataList from '../components/DataList.jsx'
-import { MODULES } from '../data/modules.js'
 import { ModuleThemeProvider } from '../context/ModuleThemeContext.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
 import Japanese from '../components/Japanese.jsx'
@@ -22,7 +21,7 @@ import { KanjiBreakdownEntry } from './dictionaryShared.jsx'
 import { displayFormOf } from '../lib/displayForm.js'
 
 const BG = '#1E1E1E'
-const DICTIONARY_ACCENT = MODULES.find(m => m.id === 'dictionary').accent
+const DICTIONARY_ACCENT = BRAND
 
 function isSingleKanji(ch) {
   return /^[一-鿿]$/.test(ch)
@@ -286,7 +285,7 @@ export default function DictionaryEntryPage({ entryId }) {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', background: BG }}>
       <PageHeader
         crumbs={[
-          { label: 'Japanese Study', href: '#/' },
+          { label: 'Lantern', href: '#/' },
           { label: 'Dictionary', href: '#/dictionary' },
           { label: shownForm ? <Japanese>{shownForm}</Japanese> : '…' },
         ]}
@@ -298,7 +297,7 @@ export default function DictionaryEntryPage({ entryId }) {
           {loading && <CenteredLoadingMessage text="Loading..." />}
 
           {!loading && error && (
-            <div style={{ textAlign: 'center', padding: '64px 0', color: '#E05A4E', fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING }}>
+            <div style={{ textAlign: 'center', padding: '64px 0', color: DANGER, fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING }}>
               {error}
             </div>
           )}

@@ -6,7 +6,7 @@ import { ModuleThemeProvider, useAccent } from '../context/ModuleThemeContext.js
 import { MODULES } from '../data/modules.js'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_CONTENT_HEADING,
-  SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32,
+  SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32, BRAND,
 } from '../data/theme.js'
 
 // Dev-only comparison of primary+secondary action pairings for the home
@@ -260,7 +260,7 @@ export default function SecondaryButtonLabPage() {
       height: '100%', display: 'flex', flexDirection: 'column',
       background: BG, fontFamily: FONT, letterSpacing: TRACKING, color: TEXT,
     }}>
-      <PageHeader crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Secondary button' }]} />
+      <PageHeader crumbs={[{ label: 'Lantern', href: '#/' }, { label: 'Secondary button' }]} />
 
       <main style={{ flex: 1, overflowY: 'auto', padding: SPACE_24 }}>
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
@@ -287,7 +287,7 @@ export default function SecondaryButtonLabPage() {
                       {FIXTURES.map(f => (
                         <MockCard
                           key={f.key}
-                          accent={f.module.accent}
+                          accent={BRAND}
                           title={f.title}
                           subtitle={f.subtitle}
                           primaryLabel={f.primaryLabel}

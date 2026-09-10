@@ -5,13 +5,13 @@ import Popover from '../components/Popover.jsx'
 import Menu from '../components/Menu.jsx'
 import { ModuleThemeProvider, useAccent } from '../context/ModuleThemeContext.jsx'
 import { useIsMobile } from '../hooks/useIsMobile.js'
-import { MODULES } from '../data/modules.js'
 import { TEXTBOOKS, COVER_GUTTER_FRACTION } from '../data/textbooks.js'
 import { chapterPrimaryAction } from './chapterAction.jsx'
 import { useCoverRotation } from './coverRotation.js'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_BADGE, FS_BASE, FS_CONTENT_HEADING,
-  SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32,
+  SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32, BRAND,
+  LANTERN_ON_HERO, LANTERN_OFF_HERO,
 } from '../data/theme.js'
 
 // The home page's two big cards, plus SegmentedPrimary/ActionsRow/
@@ -21,8 +21,6 @@ import {
 // same components the real page uses, and so both pages show the same
 // primary action for the chapter under the tracker.
 
-const VOCAB_MODULE = MODULES.find(m => m.id === 'school-vocab')
-const SRS_MODULE = MODULES.find(m => m.id === 'vocab-srs')
 
 const HAIRLINE = 'rgba(255,255,255,0.08)'
 
@@ -43,6 +41,8 @@ export function PrimaryCard({ accent, title, subtitle, cover, progress, actions,
     <ModuleThemeProvider accent={accent}>
       <Card
         padding={SPACE_24}
+        // Dropped the BRAND left edge from brand/BRAND.md §3.3 — visual
+        // review call, kept out of that section now (see the note there).
         style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE_16 }}>
@@ -262,6 +262,12 @@ export function ActionsRow({ children }) {
 // chapter instead of advancing), a chevron that opens it in a popover menu
 // rather than surfacing it as a second visible button. Degrades to a plain
 // Button when there's nothing to put in the menu.
+//
+// Hand-rolled rather than two <Button variant="primary">s glued together —
+// the shared square-height chevron segment and the seam between them don't
+// map onto Button's API — so it needs Button.jsx's btn-primary class added
+// explicitly (see global.css) to get the same BRAND_DEEP hover Button's own
+// primary variant gets; it won't pick that up automatically from Button.jsx.
 export function SegmentedPrimary({ size = 'lg', label, onClick, menuItems = [], fullWidth = false }) {
   const accent = useAccent()
   const [open, setOpen] = useState(false)
@@ -289,7 +295,7 @@ export function SegmentedPrimary({ size = 'lg', label, onClick, menuItems = [], 
     }}>
       <button
         type="button"
-        className="btn btn-tint"
+        className="btn btn-tint btn-primary"
         onClick={onClick}
         style={{
           background: accent, border: 'none', boxSizing: 'border-box',
@@ -303,7 +309,7 @@ export function SegmentedPrimary({ size = 'lg', label, onClick, menuItems = [], 
       <button
         ref={chevronRef}
         type="button"
-        className="btn btn-tint"
+        className="btn btn-tint btn-primary"
         onClick={() => setOpen(o => !o)}
         aria-label="More actions"
         style={{
@@ -322,7 +328,7 @@ export function SegmentedPrimary({ size = 'lg', label, onClick, menuItems = [], 
 }
 
 export function NewCard({ loading, state, onStart, onAdvance, onChangeTextbook }) {
-  const accent = VOCAB_MODULE.accent
+  const accent = BRAND
 
   if (loading) {
     return (
@@ -381,8 +387,31 @@ export function NewCard({ loading, state, onStart, onAdvance, onChangeTextbook }
   )
 }
 
+// Lit when there's something to review, unlit when the queue is empty —
+// brand/BRAND.md §2, §4. No dim/third state; static, it only animates via
+// ReviewCard's own on↔off swap when its state changes (handled by React
+// simply re-rendering a different <img src>, no crossfade). Full COVER_SIZE
+// height now, matching NewCard's TextbookCover — the Reviews card gets a
+// real illustration instead of a small badge, so it uses the higher-detail
+// HERO pair rather than the small pair every other instance keeps using.
+// Height-only, no fixed width: the sprite's viewBox is cropped to its true
+// (non-square) bounds, so forcing a COVER_SIZE-square width would stretch
+// it — auto width keeps it undistorted, and the card's own
+// justify-content: space-between row (see PrimaryCard) is what pushes it
+// flush against the card's right edge regardless of its narrower width.
+function ReviewLamp({ on }) {
+  return (
+    <img
+      src={on ? LANTERN_ON_HERO : LANTERN_OFF_HERO}
+      alt=""
+      height={COVER_SIZE}
+      style={{ display: 'block', imageRendering: 'pixelated', flexShrink: 0 }}
+    />
+  )
+}
+
 export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary }) {
-  const accent = SRS_MODULE.accent
+  const accent = BRAND
 
   if (authLoading || loading) {
     return (
@@ -398,6 +427,7 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
         accent={accent}
         title="Review"
         subtitle="Long-term memorization for vocabulary"
+        cover={<ReviewLamp on={false} />}
         // Weaker than Practice's "Choose word list" on purpose — this is the
         // optional card, not the primary action on the page.
         actions={<ActionsRow><Button size="lg" variant="neutral" onClick={onSignIn}>Create account</Button></ActionsRow>}
@@ -411,6 +441,7 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
         accent={accent}
         title="Review"
         subtitle="No cards yet. Finish a chapter and send its words here."
+        cover={<ReviewLamp on={false} />}
         actions={<ActionsRow><Button size="lg" variant="neutral" onClick={() => navigate('#/vocab-srs')}>Manage decks</Button></ActionsRow>}
       />
     )
@@ -424,6 +455,7 @@ export function ReviewCard({ authLoading, signedOut, onSignIn, loading, summary 
       accent={accent}
       title="Reviews"
       subtitle={headline}
+      cover={<ReviewLamp on={canStart} />}
       actions={
         <ActionsRow>
           <Button size="lg" disabled={!canStart} onClick={() => navigate('#/vocab-srs?start=1')}>

@@ -6,7 +6,7 @@ import TopProgressBar from '../components/TopProgressBar.jsx'
 import CenteredLoadingMessage from '../components/CenteredLoadingMessage.jsx'
 import { useDelayedLoading } from '../hooks/useDelayedLoading.js'
 import { supabase } from '../lib/supabase.js'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_ENTRY_WORD, FS_CONTENT_HEADING, KANJI_FONT } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_ENTRY_WORD, FS_CONTENT_HEADING, KANJI_FONT, BRAND, DANGER } from '../data/theme.js'
 import AttributionFooter from '../components/AttributionFooter.jsx'
 import Badge from '../components/Badge.jsx'
 import Card from '../components/Card.jsx'
@@ -14,7 +14,6 @@ import TextInput from '../components/TextInput.jsx'
 import Checkbox from '../components/Checkbox.jsx'
 import Button from '../components/Button.jsx'
 import DataList from '../components/DataList.jsx'
-import { MODULES } from '../data/modules.js'
 import { ModuleThemeProvider, useAccent } from '../context/ModuleThemeContext.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
 import Japanese from '../components/Japanese.jsx'
@@ -22,7 +21,7 @@ import { KanjiBreakdownEntry } from './dictionaryShared.jsx'
 import { displayFormOf } from '../lib/displayForm.js'
 
 const BG = '#1E1E1E'
-const DICTIONARY_ACCENT = MODULES.find(m => m.id === 'dictionary').accent
+const DICTIONARY_ACCENT = BRAND
 
 const PAGE_SIZE = 20
 
@@ -443,7 +442,7 @@ export default function DictionaryPage() {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', background: BG }}>
       <PageHeader
         crumbs={[
-          { label: 'Japanese Study', href: '#/' },
+          { label: 'Lantern', href: '#/' },
           { label: 'Dictionary' },
         ]}
         rightSlot={<AuthSlot />}
@@ -493,7 +492,7 @@ export default function DictionaryPage() {
           )}
 
           {!loading && error && (
-            <div style={{ textAlign: 'center', padding: '48px 0', color: '#E05A4E', fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING }}>
+            <div style={{ textAlign: 'center', padding: '48px 0', color: DANGER, fontFamily: FONT, fontSize: FS_BASE, letterSpacing: TRACKING }}>
               {error}
             </div>
           )}

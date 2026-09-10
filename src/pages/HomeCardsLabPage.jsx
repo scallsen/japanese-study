@@ -172,7 +172,7 @@ export default function HomeCardsLabPage() {
       height: '100%', display: 'flex', flexDirection: 'column',
       background: BG, fontFamily: FONT, letterSpacing: TRACKING, color: TEXT,
     }}>
-      <PageHeader crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Home cards' }]} />
+      <PageHeader crumbs={[{ label: 'Lantern', href: '#/' }, { label: 'Home cards' }]} />
 
       <main style={{ flex: 1, overflowY: 'auto', padding: SPACE_24 }}>
         <div style={{ maxWidth: 1240, margin: '0 auto' }}>

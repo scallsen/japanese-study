@@ -12,6 +12,82 @@ export const BORDER = '#2E2E2E'
 export const TEXT = '#E8E8E8'
 export const TEXT_MUTED = '#888888'
 
+// ── Lantern brand ────────────────────────────────────────────────────────
+// See brand/BRAND.md for the full spec. The one brand colour. PICO-8 red.
+// Used for: the lit lantern body, the single primary action per screen, the
+// left edge of the two home cards, focus rings, active chips. Nothing else.
+export const BRAND = '#FF004D'
+
+// Shade of BRAND — the lantern's shadow stripes. Use for BRAND's hover/pressed
+// state and nothing else. Do not use as a second accent.
+export const BRAND_DEEP = '#D80041'
+
+// Text-safe tint of BRAND. BRAND on the #1E1E1E background is 4.25:1 — passes
+// for UI components and large text, FAILS AA for body text. Use BRAND_TEXT
+// (5.7:1) for links, inline emphasis, and any red text under 24px.
+export const BRAND_TEXT = '#FF5C8A'
+
+// #1E1E1E on #FF004D is 4.25:1; white on #FF004D is only 3.9:1 — on paper
+// dark text wins, but on the real filled button (DotGothic16, real size)
+// white read clean and this read muddy, so Button's primary variant ships
+// white text instead. Kept defined for any other surface that puts text
+// directly on a BRAND fill and wants the higher-contrast option.
+export const ON_BRAND = '#1E1E1E'
+
+// 15% BRAND, for tinted backgrounds (active chip, selected row, focus halo).
+export const BRAND_TINT = 'rgba(255, 0, 77, 0.15)'
+
+// Lantern-internal colours. These exist so the sprite and the UI can share a
+// palette when a component echoes the lantern (loading state, review card).
+// GLOW and EMBER now do double duty as ACCENT_SECONDARY's two brightest
+// steps (below) — not a coincidence, the ramp is built to read as "getting
+// brighter, like the lantern."
+export const GLOW = '#FFEC27'   // lit window — PICO-8 10
+export const EMBER = '#FFA300'  // lit window core — PICO-8 9
+export const UNLIT = '#5F574F'  // unlit body — PICO-8 5
+export const UNLIT_DEEP = '#3F3933'
+export const CAP = '#C2C3C7'    // metal caps + hanging loop — PICO-8 6
+
+// ── Accent-secondary ────────────────────────────────────────────────────
+// One secondary accent family, not several. GLOW, EMBER, and this are all
+// real PICO-8 palette colours (10 yellow, 9 orange, 4 brown) — same
+// discipline BRAND itself follows (PICO-8 8). Used where an ordinal "how far
+// along" ramp needs more range than grey alone — today, just
+// SEGMENT_COLORS below. Explored at #/dev/segment-colors against a
+// brand-forward (all-red) ramp, a cool blue ramp, and single-hue-only EMBER
+// and GLOW ramps before landing on this three-step blend.
+//
+// A second, cool secondary (blue) was considered for contrast variety and
+// set aside — nothing needs it yet, and BRAND.md's "don't add a second
+// accent" discipline argues against introducing one speculatively. Revisit
+// only if a real need shows up (e.g. a chart wanting more than three
+// distinguishable ordinal steps).
+export const ACCENT_SECONDARY_DIM = '#AB5236'  // PICO-8 4 — the ramp's dimmest/earliest step
+
+// Sprite paths (public/). on = reviews due / caught-up moments / default mark;
+// off = nothing to review / 404 / offline. No dim state — two sprites only.
+export const LANTERN_ON = '/brand/lamp-on.svg'
+export const LANTERN_OFF = '/brand/lamp-off.svg'
+
+// Higher-detail pair, still 32×32 but drawn pixel-by-pixel instead of on the
+// small pair's 2-px/16×16-logical grid — the small pair blurs/blocks up
+// scaled past ~48px, this one holds up at illustration sizes. Reviews
+// home-card cover (COVER_SIZE, matching the Practice card's textbook cover)
+// is the first user; everywhere else keeps the small pair per BRAND.md §2.
+export const LANTERN_ON_HERO = '/brand/lamp-on-hero.svg'
+export const LANTERN_OFF_HERO = '/brand/lamp-off-hero.svg'
+
+// The HERO pair's viewBox only (not the small pair, which stays square) is
+// cropped to its true bounds (23×32 — no dead space baked in around the
+// lamp shape) — anywhere a HERO sprite needs an explicit numeric width
+// (rather than sizing off `height` and the image's own intrinsic ratio)
+// should multiply by this instead of assuming square.
+export const LANTERN_ASPECT = 23 / 32
+
+// Sizes the sprite is allowed to render at. Multiples of 32 (its native grid)
+// or exactly 16/24 for chrome. Anything else blurs the pixels.
+export const LANTERN_SIZES = { nav: 24, card: 48, hero: 96, favicon: 16 }
+
 export const FS_SM = 13
 export const FS_BASE = 15  // THE DEFAULT — use this for body/UI text unless a specific token below actually fits better (a badge, a caption, nav). Don't reach for a different size just because it "looks nicer" here.
 export const FS_NAV = 16
@@ -76,17 +152,25 @@ export const DANGER = '#f87171'
 // uses is declared in one file, and so the components themselves stay
 // export-only-components (react-refresh).
 
-// Card-state distribution ramp (DistributionBar). An ordinal ramp —
-// learning → young → mature get progressively lighter — deliberately
-// validated for colour-vision deficiency and contrast. NOT drift toward the
-// semantic tokens; don't "reconcile" it onto success/warning without redoing
-// that check. `new` sits outside the ramp as inert grey on purpose.
+// Card-state distribution ramp (DistributionBar). Now built from
+// ACCENT_SECONDARY — learning → young → mature literally brighten
+// (ACCENT_SECONDARY_DIM → EMBER → GLOW), reading as "this card is getting
+// brighter/more lit the more it's learned." `new` is CAP (inert, unlit-cap
+// grey). `relearning` is BRAND_TEXT — deliberately a different hue family
+// from the amber run, since it's a regression flag ("just got this wrong"),
+// not a further step in the getting-brighter progression; folding it into
+// the amber ramp would make it read as more-mastered, not less.
+//
+// Was a teal-green ramp before the rebrand (learning #4c8a7d / young #5eb6a2
+// / mature #7fe0c8), documented then as CVD-validated. This replacement
+// hasn't been re-run through a CVD simulator — do that before trusting it
+// the way the old ramp was trusted.
 export const SEGMENT_COLORS = {
-  new: '#aaaaaa',
-  learning: '#4c8a7d',
-  young: '#5eb6a2',
-  mature: '#7fe0c8',
-  relearning: '#e0a72e',
+  new: CAP,
+  learning: ACCENT_SECONDARY_DIM,
+  young: EMBER,
+  mature: GLOW,
+  relearning: BRAND_TEXT,
 }
 
 // Drill judgment buttons (DrillButton). A Flat-UI lineage that predates and

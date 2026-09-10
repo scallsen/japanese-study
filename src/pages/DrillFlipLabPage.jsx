@@ -62,7 +62,7 @@ export default function DrillFlipLabPage() {
 
   return (
     <div style={{ minHeight: '100%', background: '#1E1E1E', color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>
-      <PageHeader crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Drill flip layout lab' }]} />
+      <PageHeader crumbs={[{ label: 'Lantern', href: '#/' }, { label: 'Drill flip layout lab' }]} />
       <div style={{ padding: 24, maxWidth: 900, margin: '0 auto' }}>
         <p style={{ color: TEXT_MUTED, fontSize: FS_BASE, lineHeight: 1.6 }}>
           Click a card to flip it. The button row now reserves the same height as the

@@ -830,7 +830,7 @@ export default function SettingsLabPage({
 
   return (
     <div style={{ width: '100vw', height: '100dvh', background: BG, fontFamily: FONT, letterSpacing: TRACKING, color: TEXT, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-      <PageHeader crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Settings lab' }]} />
+      <PageHeader crumbs={[{ label: 'Lantern', href: '#/' }, { label: 'Settings lab' }]} />
       <main className="sidebar-scroll" style={{ flex: 1, overflowY: 'auto', padding: `${SPACE_24}px ${SPACE_24}px 80px` }}>
         <div style={{ maxWidth: 1080, margin: '0 auto' }}>
 

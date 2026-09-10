@@ -1,4 +1,4 @@
-import { FONT, TRACKING, TEXT_MUTED, FS_BASE, SPACE_4, SPACE_8, SPACE_12 } from '../data/theme.js'
+import { FONT, TRACKING, TEXT_MUTED, FS_BASE, SPACE_4, SPACE_8, SPACE_12, BRAND, BRAND_TEXT } from '../data/theme.js'
 import { useAccent } from '../context/ModuleThemeContext.jsx'
 
 // Reconciled from four independent implementations of the same visual
@@ -17,6 +17,18 @@ const SIZES = {
 // which no amount of resting-state styling can express.
 export function Chip({ label, active, onClick, size = 'sm', accent: accentOverride, grow = false, disabled = false, destructiveHover = false }) {
   const accent = useAccent(accentOverride)
+  // BRAND on bg is 4.25:1 — fine for the border/tint, fails AA as text this
+  // small (brand/BRAND.md §3's contrast note: "BRAND_TEXT for … any red text
+  // under 24px"). Border and background tint stay on raw `accent`; only the
+  // label swaps to BRAND_TEXT when the ambient accent is BRAND specifically
+  // — other accent values (ToggleButton's success/neutral tones) don't have
+  // this problem and shouldn't be touched.
+  const textColor = accent === BRAND ? BRAND_TEXT : accent
+  // Tint/border darkened from 0x22/0x55 to 0x30/0x60 (13% → 19% background)
+  // after a live-review pass at #/dev/accent-polish — label colour untouched,
+  // this was purely "darker chip bg, same text" against several structural
+  // alternatives (filled solid, no-border, bold outline, indicator dot,
+  // underline) that were all rejected outright.
   const className = [
     'chip',
     active ? 'chip--on' : 'chip--off',
@@ -36,9 +48,9 @@ export function Chip({ label, active, onClick, size = 'sm', accent: accentOverri
         fontSize: FS_BASE,
         fontFamily: FONT,
         letterSpacing: TRACKING,
-        background: active ? `${accent}22` : 'transparent',
-        color: active ? accent : TEXT_MUTED,
-        border: `1px solid ${active ? `${accent}55` : 'rgba(255,255,255,0.12)'}`,
+        background: active ? `${accent}30` : 'transparent',
+        color: active ? textColor : TEXT_MUTED,
+        border: `1px solid ${active ? `${accent}60` : 'rgba(255,255,255,0.12)'}`,
         flex: grow ? 1 : undefined,
         opacity: disabled ? 0.4 : 1,
       }}

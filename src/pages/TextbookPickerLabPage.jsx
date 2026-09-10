@@ -10,11 +10,10 @@ import { TextbookBrowser, ConfirmButton } from '../components/TextbookPicker.jsx
 import { ModuleThemeProvider } from '../context/ModuleThemeContext.jsx'
 import { useIsMobile } from '../hooks/useIsMobile.js'
 import { TEXTBOOKS } from '../data/textbooks.js'
-import { MODULES } from '../data/modules.js'
 import { WORD_DATA } from '../data/wordData.js'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_CONTENT_HEADING, FS_LIST_TITLE,
-  SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32,
+  SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32, BRAND,
 } from '../data/theme.js'
 
 // Dev-only bench for the change-textbook surface. The shipped picker
@@ -27,7 +26,7 @@ import {
 const BG = '#1E1E1E'
 const SURFACE = '#2A2A2A'
 const HAIRLINE = 'rgba(255,255,255,0.08)'
-const ACCENT = MODULES.find(m => m.id === 'school-vocab').accent
+const ACCENT = BRAND
 
 const WORD_COUNTS = WORD_DATA.reduce((map, w) => {
   if (!w.isSentenceVocab) map[w.listKey] = (map[w.listKey] ?? 0) + 1
@@ -94,7 +93,7 @@ export default function TextbookPickerLabPage() {
         height: '100%', display: 'flex', flexDirection: 'column',
         background: BG, fontFamily: FONT, letterSpacing: TRACKING, color: TEXT,
       }}>
-        <PageHeader crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Textbook picker' }]} />
+        <PageHeader crumbs={[{ label: 'Lantern', href: '#/' }, { label: 'Textbook picker' }]} />
 
         <main style={{ flex: 1, overflowY: 'auto', padding: SPACE_24 }}>
           <div style={{ maxWidth: 1100, margin: '0 auto' }}>

@@ -47,7 +47,7 @@ export default function ToastLabPage() {
 
   return (
     <div style={{ width: '100vw', height: '100dvh', background: BG, fontFamily: FONT, letterSpacing: TRACKING, display: 'flex', flexDirection: 'column', color: TEXT, overflow: 'hidden' }}>
-      <PageHeader crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Toast lab' }]} />
+      <PageHeader crumbs={[{ label: 'Lantern', href: '#/' }, { label: 'Toast lab' }]} />
       <main style={{ flex: 1, overflowY: 'auto', padding: '28px 24px 60px' }}>
         <div style={{ maxWidth: 700, margin: '0 auto' }}>
           <div style={{ fontSize: FS_CONTENT_HEADING, color: TEXT, marginBottom: 8 }}>

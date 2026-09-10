@@ -1,7 +1,23 @@
 import { useState, useEffect } from 'react'
-import { FONT, TRACKING, BORDER, FS_NAV } from '../data/theme.js'
+import { FONT, TRACKING, BORDER, FS_NAV, LANTERN_ON, LANTERN_SIZES } from '../data/theme.js'
 
 const NARROW_BP = 540
+
+// The nav lockup (brand/BRAND.md §1, §4): lamp-on at 24px + the wordmark,
+// left-aligned, on the home crumb only. Static — never animates here.
+// The small sprite's own canvas is square (its viewBox crop only applies to
+// the HERO pair, see LANTERN_ASPECT's comment), so a plain square size fits.
+function LanternMark() {
+  return (
+    <img
+      src={LANTERN_ON}
+      alt=""
+      width={LANTERN_SIZES.nav}
+      height={LANTERN_SIZES.nav}
+      style={{ display: 'block', imageRendering: 'pixelated', flexShrink: 0 }}
+    />
+  )
+}
 
 export default function PageHeader({ crumbs = [], rightSlot, subtitle, noBorder, children }) {
   const [hoveredIdx, setHoveredIdx] = useState(null)
@@ -62,6 +78,9 @@ export default function PageHeader({ crumbs = [], rightSlot, subtitle, noBorder,
   } else {
     crumbNodes = crumbs.flatMap((crumb, i) => {
       const isClickable = !!crumb.href || !!crumb.onClick
+      const isHome = i === 0
+      const label = isHome ? <><LanternMark />{crumb.label}</> : crumb.label
+      const lockupStyle = isHome ? { display: 'inline-flex', alignItems: 'center', gap: 6 } : null
       const items = []
       if (i > 0) items.push(sep(`sep-${i}`))
       items.push(
@@ -72,9 +91,9 @@ export default function PageHeader({ crumbs = [], rightSlot, subtitle, noBorder,
               href={crumb.href}
               onMouseEnter={() => setHoveredIdx(i)}
               onMouseLeave={() => setHoveredIdx(null)}
-              style={crumbStyle(hoveredIdx === i)}
+              style={{ ...crumbStyle(hoveredIdx === i), ...lockupStyle }}
             >
-              {crumb.label}
+              {label}
             </a>
           ) : (
             <span
@@ -82,14 +101,14 @@ export default function PageHeader({ crumbs = [], rightSlot, subtitle, noBorder,
               onClick={crumb.onClick}
               onMouseEnter={() => setHoveredIdx(i)}
               onMouseLeave={() => setHoveredIdx(null)}
-              style={crumbStyle(hoveredIdx === i)}
+              style={{ ...crumbStyle(hoveredIdx === i), ...lockupStyle }}
             >
-              {crumb.label}
+              {label}
             </span>
           )
         ) : (
-          <span key={`crumb-${i}`} style={{ color: 'rgba(255,255,255,0.85)', fontSize: FS_NAV }}>
-            {crumb.label}
+          <span key={`crumb-${i}`} style={{ color: 'rgba(255,255,255,0.85)', fontSize: FS_NAV, ...lockupStyle }}>
+            {label}
           </span>
         )
       )

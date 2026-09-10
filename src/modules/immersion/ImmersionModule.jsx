@@ -16,13 +16,12 @@ import { useProgress } from '../../hooks/useProgress.js'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import { useIsMobile } from '../../hooks/useIsMobile.js'
 import { useAuth } from '../../context/AuthContext.jsx'
-import { MODULES } from '../../data/modules.js'
 import { ModuleThemeProvider } from '../../context/ModuleThemeContext.jsx'
-import { FONT, TRACKING, TEXT_MUTED, FS_BASE, SPACE_8, SPACE_12, SPACE_16 } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT_MUTED, FS_BASE, SPACE_8, SPACE_12, SPACE_16, BRAND } from '../../data/theme.js'
 import { CATEGORIES, CATEGORY_LABEL } from './categories.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
 
-const IMMERSION_ACCENT = MODULES.find(m => m.id === 'immersion').accent
+const IMMERSION_ACCENT = BRAND
 
 const CATEGORY_OPTIONS = [{ value: 'all', label: 'All' }, ...CATEGORIES.map(c => ({ value: c.id, label: c.label }))]
 const LEVEL_OPTIONS = [{ value: 'simplified', label: 'Simple' }, { value: 'original', label: 'Intermediate' }]
@@ -205,7 +204,7 @@ function ImmersionScreens() {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', background: '#1E1E1E' }}>
       <PageHeader
         crumbs={[
-          { label: 'Japanese Study', href: '#/' },
+          { label: 'Lantern', href: '#/' },
           { label: 'News reader' },
         ]}
         rightSlot={<AuthSlot />}

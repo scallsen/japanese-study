@@ -96,6 +96,25 @@ button, input, select, textarea {
   filter: brightness(0.92);
 }
 
+/* Primary overrides btn-tint's brightness filter with a real colour swap —
+   BRAND (#FF004D) is already near its max visual "hotness", so brightening
+   it further barely registers; BRAND_DEEP (#D80041) is an unmistakably
+   different, darker red. !important because Button sets `background: accent`
+   inline, which otherwise outranks this class outright (same gotcha as
+   .btn-neutral/.chip--off/.track-toggle). */
+.btn-primary:hover:not(:disabled) {
+  filter: none;
+  background: #D80041 !important;
+}
+
+/* brand/BRAND.md names BRAND_DEEP for both hover and pressed — active
+   darkens that same colour further via filter rather than inventing a
+   third, undefined shade. */
+.btn-primary:active:not(:disabled) {
+  filter: brightness(0.85);
+  background: #D80041 !important;
+}
+
 .btn-neutral:hover:not(:disabled) {
   background: rgba(255,255,255,0.10) !important;
 }
@@ -610,6 +629,129 @@ button, input, select, textarea {
 
 /* Option 4 — now the real Button variant="quiet" (see .btn-quiet above);
    shipped to NewCard/ReviewCard, kept here for side-by-side comparison. */
+
+/* Lantern loading flicker, v1 (brand/BRAND.md §2, §4) — the on/off sprites
+   stacked and cross-toggled via opacity on a hard steps(1) cut, not a
+   crossfade, so it reads as a lamp flicker rather than a dissolve. Each
+   phase holds ~600ms (1200ms full cycle). Superseded by lantern-pulse below
+   — kept only for the before/after comparison at #/dev/accent-polish, not
+   used in the live component any more. */
+@keyframes lantern-flicker-on  { 0%, 49.9% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@keyframes lantern-flicker-off { 0%, 49.9% { opacity: 0; } 50%, 100% { opacity: 1; } }
+.lantern-flicker-on  { animation: lantern-flicker-on 1200ms steps(1) infinite; }
+.lantern-flicker-off { animation: lantern-flicker-off 1200ms steps(1) infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .lantern-flicker-on  { animation: none; opacity: 1; }
+  .lantern-flicker-off { animation: none; opacity: 0; }
+}
+
+/* Lantern loading pulse, v3 — the shipped version. The sprite itself never
+   dims — stays fully opaque and lit — only a soft glow halo around it
+   breathes. Reads as "steadily working, with a living aura" rather than
+   "pulsing on and off," which suits a loading state better: the thing
+   being waited for is in progress, not intermittent. Beat v2 (breathe;
+   kept below for comparison) at #/dev/accent-polish. ~1800ms — a faster
+   ease at this smoothness reads as jittery, not gentle. Glow colour is
+   BRAND (rgb(255,0,77)) — ties the loading state to the app's own accent
+   directly, swapped in from EMBER after a live-review pass (EMBER, the
+   lantern's own window-core colour, is kept as `lantern-glow-strong`'s
+   colour below, for comparison). Reduced-motion: static lit, no glow. */
+@keyframes lantern-pulse-glow {
+  0%, 100% { filter: drop-shadow(0 0 1px rgba(255,0,77,0)); }
+  50%      { filter: drop-shadow(0 0 6px rgba(255,0,77,0.75)); }
+}
+.lantern-pulse {
+  animation: lantern-pulse-glow 1800ms ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lantern-pulse { animation: none; filter: none; }
+}
+
+/* v2 — breathe + glow, the previous shipped version. A single lit sprite
+   breathing in opacity 1 → 0.45 plus the same synced glow. Kept for the
+   #/dev/accent-polish comparison, not used live any more. */
+@keyframes lantern-pulse-breathe { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+@keyframes lantern-pulse-breathe-glow {
+  0%, 100% { filter: drop-shadow(0 0 1px rgba(255,163,0,0)); }
+  50%      { filter: drop-shadow(0 0 5px rgba(255,163,0,0.65)); }
+}
+.lantern-demo-pulse-breathe {
+  animation: lantern-pulse-breathe 1800ms ease-in-out infinite, lantern-pulse-breathe-glow 1800ms ease-in-out infinite;
+}
+
+/* Lab-only middle ground, for the #/dev/accent-polish comparison — smooth
+   ease crossfade between the two full sprites, same as v1's mechanism but
+   without the steps(1) hard cut, and no glow. Shows what the eased timing
+   alone buys before the v2 breathe+glow rewrite on top of it. Not used
+   anywhere live. */
+@keyframes lantern-crossfade-on  { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes lantern-crossfade-off { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+.lantern-crossfade-on  { animation: lantern-crossfade-on 1800ms ease-in-out infinite; }
+.lantern-crossfade-off { animation: lantern-crossfade-off 1800ms ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .lantern-crossfade-on  { animation: none; opacity: 1; }
+  .lantern-crossfade-off { animation: none; opacity: 0; }
+}
+
+/* Further pulse/glow variants, all lab-only — #/dev/accent-polish compares
+   them against the shipped .lantern-pulse across timing (smooth vs pixel),
+   glow colour, glow intensity, and mechanism (breathe vs glow-only vs
+   hard-edged). None of these are used outside that page. */
+
+/* Glow-only mechanism (the shipped one), same BRAND colour pushed further —
+   bigger radius, higher peak opacity than the shipped 6px/0.75. */
+@keyframes lantern-glow-strong {
+  0%, 100% { filter: drop-shadow(0 0 1px rgba(255,0,77,0)); }
+  50%      { filter: drop-shadow(0 0 9px rgba(255,0,77,0.9)); }
+}
+.lantern-demo-pulse-strong {
+  animation: lantern-glow-strong 1800ms ease-in-out infinite;
+}
+
+/* Glow-only, EMBER — the original shipped colour (the lantern's own
+   window-core), before swapping to BRAND. Kept for comparison. */
+@keyframes lantern-glow-ember {
+  0%, 100% { filter: drop-shadow(0 0 1px rgba(255,163,0,0)); }
+  50%      { filter: drop-shadow(0 0 6px rgba(255,163,0,0.75)); }
+}
+.lantern-demo-pulse-glow-ember {
+  animation: lantern-glow-ember 1800ms ease-in-out infinite;
+}
+
+/* Glow-only, GLOW (yellow, the window colour) instead of EMBER (the
+   window's core) or BRAND — same intensity as shipped. */
+@keyframes lantern-glow-yellow {
+  0%, 100% { filter: drop-shadow(0 0 1px rgba(255,236,39,0)); }
+  50%      { filter: drop-shadow(0 0 6px rgba(255,236,39,0.75)); }
+}
+.lantern-demo-pulse-glow-yellow {
+  animation: lantern-glow-yellow 1800ms ease-in-out infinite;
+}
+
+/* "Pixel" timing — the same breathe + EMBER glow as v2, but stepped (4
+   discrete frames) instead of eased, so the pulse itself reads as
+   chunky/retro rather than a smooth analog fade — closer in spirit to the
+   app's crisp, no-antialiasing pixel art than a fully smooth animation is. */
+.lantern-demo-pulse-stepped {
+  animation: lantern-pulse-breathe 1600ms steps(4) infinite, lantern-pulse-breathe-glow 1600ms steps(4) infinite;
+}
+
+/* Hard-edged "pixel glow" — box-shadow with zero blur radius instead of
+   filter: drop-shadow's gaussian blur, stepped rather than eased, so the
+   halo itself is a crisp rectangular ring (matching the sprite's own
+   shape-rendering: crispEdges) rather than a smooth photographic bloom.
+   Needs a wrapper div (box-shadow follows the element's box, not an <img>'s
+   irregular silhouette) — see the lab page's DemoGlowPixel for the markup.
+   Glow-only mechanism like the shipped version — the sprite itself is
+   static, only the box-shadow ring pulses. */
+@keyframes lantern-box-glow-pixel {
+  0%, 100%   { box-shadow: 0 0 0 0 rgba(255,0,77,0); }
+  25%, 75%   { box-shadow: 0 0 0 2px rgba(255,0,77,0.35); }
+  50%        { box-shadow: 0 0 0 4px rgba(255,0,77,0.6); }
+}
+.lantern-demo-pixel-glow-box {
+  animation: lantern-box-glow-pixel 1600ms steps(1) infinite;
+}
 
 /* Option 5 — link demoted into the subtitle line itself. */
 .sbl-inline-link:hover:not(:disabled),

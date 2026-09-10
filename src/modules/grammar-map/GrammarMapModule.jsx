@@ -150,7 +150,7 @@ export default function GrammarMapModule() {
   if (!authLoading && !user) {
     return (
       <div style={{ width: '100vw', height: '100dvh', background: '#1E1E1E', fontFamily: FONT, letterSpacing: TRACKING, display: 'flex', flexDirection: 'column', color: TEXT }}>
-        <PageHeader crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Grammar Map' }]} />
+        <PageHeader crumbs={[{ label: 'Lantern', href: '#/' }, { label: 'Grammar Map' }]} />
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
           <div style={{ fontSize: FS_BASE, color: TEXT }}>Sign in to use Grammar Map</div>
           <button
@@ -362,7 +362,7 @@ export default function GrammarMapModule() {
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         <PageHeader
           crumbs={[
-            { label: 'Japanese Study', href: '#/' },
+            { label: 'Lantern', href: '#/' },
             { label: 'Grammar Map' },
           ]}
           rightSlot={

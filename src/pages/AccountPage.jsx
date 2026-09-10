@@ -94,7 +94,7 @@ export default function AccountPage() {
     gap: SPACE_32,
   }
 
-  const crumbs = [{ label: 'Japanese Study', href: '#/' }, { label: 'Account' }]
+  const crumbs = [{ label: 'Lantern', href: '#/' }, { label: 'Account' }]
 
   if (loading) {
     return <div style={shell}><PageHeader crumbs={crumbs} rightSlot={<AuthSlot />} /></div>

@@ -12,8 +12,7 @@ import FilterCard, { FilterRow } from '../../components/FilterCard.jsx'
 import ActionBar, { ACTION_BAR_HEIGHT } from '../../components/ActionBar.jsx'
 import SectionHeader from '../../components/SectionHeader.jsx'
 import { BG } from './storyUI.jsx'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_CAPTION, DANGER } from '../../data/theme.js'
-import { MODULES } from '../../data/modules.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_CAPTION, DANGER, BRAND } from '../../data/theme.js'
 import { ModuleThemeProvider, useAccent } from '../../context/ModuleThemeContext.jsx'
 import { AI_DAILY_LIMITS } from '../../data/aiLimits.js'
 import { useAiUsage } from '../../hooks/useAiUsage.js'
@@ -32,7 +31,7 @@ import { generateStory } from './api.js'
 import { useIsMobile } from '../../hooks/useIsMobile.js'
 
 const MAX_RECENT_STORIES = 20
-const STORY_ACCENT = MODULES.find(m => m.id === 'story').accent
+const STORY_ACCENT = BRAND
 
 const FORMATS = [
   { id: 'story', label: 'Story' },
@@ -276,7 +275,7 @@ function StoryGenerator() {
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: BG, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>
       <PageHeader
-        crumbs={[{ label: 'Japanese Study', href: '#/' }, { label: 'Story generator' }]}
+        crumbs={[{ label: 'Lantern', href: '#/' }, { label: 'Story generator' }]}
         rightSlot={<AuthSlot />}
       >
         <TopProgressBar loading={showGenerating} color={STORY_ACCENT} />

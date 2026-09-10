@@ -1,5 +1,5 @@
 import { forwardRef } from 'react'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32, DANGER, WARNING } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32, DANGER, WARNING, BRAND, BRAND_TEXT } from '../data/theme.js'
 import { useAccent } from '../context/ModuleThemeContext.jsx'
 
 // Reconciled from the real variants already in use across the app —
@@ -13,15 +13,25 @@ import { useAccent } from '../context/ModuleThemeContext.jsx'
 // the ambient module accent (Anime Vocab's Start Drill CTA must render
 // pink, not core teal) — same gap Badge and SelectAllCheckbox had.
 function buildVariants(accent) {
+  // BRAND on bg is 4.25:1 — fine for a fill/border, fails AA as text this
+  // small (brand/BRAND.md §3: "BRAND_TEXT for … any red text under 24px").
+  // Only the label swaps; accent-outline's border/tint and primary's fill
+  // stay on raw `accent` — those aren't small text, they don't have the
+  // contrast problem.
+  const textColor = accent === BRAND ? BRAND_TEXT : accent
   return {
+    // White, not ON_BRAND — brand/BRAND.md §3 called for dark text on the
+    // contrast-ratio math (4.25:1 vs white's 3.9:1), but on the real button
+    // (filled, DotGothic16, real size) white reads cleanly and dark reads
+    // muddy. Visual review overrides the spec's math here.
     primary: { background: accent, border: 'none', color: '#fff' },
-    'accent-outline': { background: `${accent}29`, border: `1px solid ${accent}6b`, color: accent },
+    'accent-outline': { background: `${accent}29`, border: `1px solid ${accent}6b`, color: textColor },
     neutral: { background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', color: TEXT },
     'danger-outline': { background: 'rgba(248,113,113,0.15)', border: '1px solid rgba(248,113,113,0.4)', color: DANGER },
     // Same tint recipe as danger-outline in the warning tone — VocabPage's
     // DoneScreen "Redo Troubled", the one amber action in the app.
     'warning-outline': { background: 'rgba(251,191,36,0.15)', border: '1px solid rgba(251,191,36,0.4)', color: WARNING },
-    ghost: { background: 'transparent', border: 'none', color: accent },
+    ghost: { background: 'transparent', border: 'none', color: textColor },
     // Borderless neutral that reddens on hover — the dismiss/remove affordance
     // (a toast's ×, a row's remove). Replaces the former IconButton atom: an
     // icon-only button is a Button with an icon and no label, not a separate
@@ -37,7 +47,10 @@ function buildVariants(accent) {
     // fill only ever appears on `:active`, never `:hover` — a hover-fill would
     // read as a stuck/flashing highlight on a touch tap, which has no real
     // `:hover` to leave.
-    quiet: { background: 'transparent', border: '1px solid rgba(255,255,255,0.14)', color: accent },
+    // TEXT, not accent — a plain secondary action ("View all", "Manage
+    // decks") shouldn't compete with BRAND's single-primary-button rule by
+    // reading as a second red CTA next to SegmentedPrimary.
+    quiet: { background: 'transparent', border: '1px solid rgba(255,255,255,0.14)', color: TEXT },
   }
 }
 
@@ -63,8 +76,12 @@ const ICON_ONLY_SIZES = { sm: 4, md: 6, lg: 8, xl: 10 }
 // className drives hover/active — colored variants brighten via `filter`
 // (works for solid/translucent tints alike), neutral/ghost shift background
 // directly since brightness() can't visibly lighten them. See global.css.
+// `primary` gets its own class instead of relying on btn-tint's brightness
+// filter: on a solid, already-vivid BRAND fill, +15% brightness barely reads
+// as a state change. btn-primary swaps to the real BRAND_DEEP colour
+// instead, which is an unmistakable shift regardless of the base hue.
 const VARIANT_CLASS = {
-  primary: 'btn btn-tint',
+  primary: 'btn btn-tint btn-primary',
   'accent-outline': 'btn btn-tint',
   'danger-outline': 'btn btn-tint',
   'warning-outline': 'btn btn-tint',

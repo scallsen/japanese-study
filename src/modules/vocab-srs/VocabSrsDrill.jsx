@@ -6,7 +6,7 @@ import { SidebarHeaderToggle } from '../../components/SettingsSidebar.jsx'
 import Button from '../../components/Button.jsx'
 import DrillHUD from '../../components/DrillHUD.jsx'
 import DrillButtonRow, { DrillButton } from '../../components/DrillButton.jsx'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_DISPLAY_HEADING, FS_STAT_VALUE, FS_CAPTION, WARNING, DRILL_COLORS } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_DISPLAY_HEADING, FS_STAT_VALUE, FS_CAPTION, WARNING, DRILL_COLORS, LANTERN_ON, LANTERN_SIZES } from '../../data/theme.js'
 import { useAccent } from '../../context/ModuleThemeContext.jsx'
 import { Rating } from './srs.js'
 import { answerCard, undoLastAnswer, isComplete, getSessionStats, getCurrentCard } from './session.js'
@@ -175,9 +175,22 @@ function SrsCardFace({ text, kana, isBack, backText, jmdictId, sentence, sentenc
   )
 }
 
+// brand/BRAND.md §4: "Session complete | three lamp-on at 48px in a row,
+// then the existing stats." Static — the lantern doesn't animate here.
+function DoneLanterns() {
+  return (
+    <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginBottom: 12 }}>
+      {[0, 1, 2].map(i => (
+        <img key={i} src={LANTERN_ON} alt="" width={LANTERN_SIZES.card} height={LANTERN_SIZES.card} style={{ display: 'block', imageRendering: 'pixelated' }} />
+      ))}
+    </div>
+  )
+}
+
 function DoneScreen({ stats, onDone }) {
   return (
     <div style={{ textAlign: 'center', fontFamily: FONT, letterSpacing: TRACKING }}>
+      <DoneLanterns />
       <div style={{ color: TEXT, fontSize: FS_DISPLAY_HEADING, marginBottom: 16 }}>Session complete</div>
       <div style={{ display: 'flex', gap: 20, justifyContent: 'center', marginBottom: 16 }}>
         <div>
@@ -213,7 +226,7 @@ export default function VocabSrsDrill({
   audioSource = 'voicevox-2', sfxEnabled = true, ttsVoice = '',
   showHardEasy = true, leechThreshold = 8,
   isMobile = false, onShowOptions,
-  crumbs = [{ label: 'Japanese Study', href: '#/' }],
+  crumbs = [{ label: 'Lantern', href: '#/' }],
 }) {
   const [session, setSession] = useState(initialSession)
   const [localCards, setLocalCards] = useState(initialCards)

@@ -27,11 +27,11 @@ import { takePendingToast } from '../utils/pendingToast.js'
 import { supabase } from '../lib/supabase.js'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE,
-  SPACE_4, SPACE_12, SPACE_16, SPACE_24,
+  SPACE_4, SPACE_12, SPACE_16, SPACE_24, BRAND,
 } from '../data/theme.js'
 
 const SECONDARY_MODULES = MODULES.filter(m => m.tier !== 'primary')
-const VOCAB_ACCENT = MODULES.find(m => m.id === 'school-vocab').accent
+const VOCAB_ACCENT = BRAND
 
 const SIDEBAR_WIDTH = 280
 // Below this the right-hand sidebar would squeeze the two primary cards into
@@ -180,7 +180,7 @@ export default function DashboardPage() {
       color: TEXT,
     }}>
       <PageHeader
-        crumbs={[{ label: 'Japanese Study' }]}
+        crumbs={[{ label: 'Lantern' }]}
         rightSlot={<AuthSlot />}
         // Home page only — every other page uses the crumb row purely for
         // navigation, and there's no room for this next to it on mobile.

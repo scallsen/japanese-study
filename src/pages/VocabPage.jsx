@@ -21,9 +21,8 @@ import { useDrillSettings, audioSourceForVoice } from '../hooks/useDrillSettings
 import ActionBar, { ACTION_BAR_HEIGHT } from '../components/ActionBar.jsx'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_BADGE, FS_ENTRY_WORD, FS_STAT_VALUE,
-  FS_DISPLAY_HEADING, FS_CONTENT_HEADING, KANJI_FONT, WARNING,
+  FS_DISPLAY_HEADING, FS_CONTENT_HEADING, KANJI_FONT, WARNING, BRAND, DANGER,
 } from '../data/theme.js'
-import { MODULES } from '../data/modules.js'
 import { ModuleThemeProvider, useAccent } from '../context/ModuleThemeContext.jsx'
 import { WORD_SOURCES, visibleSources } from '../data/wordLists.js'
 import { useDrill } from '../hooks/useDrill.js'
@@ -57,7 +56,7 @@ import { getTextbook } from '../data/textbooks.js'
 import { chapterPrimaryAction } from './chapterAction.jsx'
 import { SegmentedPrimary, TextbookCover } from './homeCards.jsx'
 
-const VOCAB_ACCENT = MODULES.find(m => m.id === 'school-vocab').accent
+const VOCAB_ACCENT = BRAND
 
 const MISTAKE_TIER_TONE = { none: 'success', one: 'warning', many: 'danger' }
 
@@ -576,7 +575,7 @@ class GlanceErrorBoundary extends Component {
   render() {
     if (this.state.error) {
       return (
-        <div style={{ padding: 32, color: '#ff6b6b', fontFamily: FONT, fontSize: FS_BASE }}>
+        <div style={{ padding: 32, color: DANGER, fontFamily: FONT, fontSize: FS_BASE }}>
           Preview error: {this.state.error.message}
           <pre style={{ marginTop: 8, fontSize: 12, color: TEXT_MUTED, whiteSpace: 'pre-wrap' }}>{this.state.error.stack}</pre>
         </div>
@@ -1317,10 +1316,10 @@ function VocabPageScreens() {
           <PageHeader
             crumbs={
               isDrilling
-                ? [{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary', onClick: () => setIsDrilling(false) }, { label: 'Reviewing' }]
+                ? [{ label: 'Lantern', href: '#/' }, { label: 'Vocabulary', onClick: () => setIsDrilling(false) }, { label: 'Reviewing' }]
                 : isGlancing
-                ? [{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary', onClick: () => setIsGlancing(false) }, { label: 'Preview' }]
-                : [{ label: 'Japanese Study', href: '#/' }, { label: 'Vocabulary' }]
+                ? [{ label: 'Lantern', href: '#/' }, { label: 'Vocabulary', onClick: () => setIsGlancing(false) }, { label: 'Preview' }]
+                : [{ label: 'Lantern', href: '#/' }, { label: 'Vocabulary' }]
             }
             rightSlot={(
               <div style={{ display: 'flex', alignItems: 'center' }}>
