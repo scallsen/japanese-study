@@ -24,6 +24,11 @@ export function Chip({ label, active, onClick, size = 'sm', accent: accentOverri
   // — other accent values (ToggleButton's success/neutral tones) don't have
   // this problem and shouldn't be touched.
   const textColor = accent === BRAND ? BRAND_TEXT : accent
+  // Tint/border darkened from 0x22/0x55 to 0x30/0x60 (13% → 19% background)
+  // after a live-review pass at #/dev/accent-polish — label colour untouched,
+  // this was purely "darker chip bg, same text" against several structural
+  // alternatives (filled solid, no-border, bold outline, indicator dot,
+  // underline) that were all rejected outright.
   const className = [
     'chip',
     active ? 'chip--on' : 'chip--off',
@@ -43,9 +48,9 @@ export function Chip({ label, active, onClick, size = 'sm', accent: accentOverri
         fontSize: FS_BASE,
         fontFamily: FONT,
         letterSpacing: TRACKING,
-        background: active ? `${accent}22` : 'transparent',
+        background: active ? `${accent}30` : 'transparent',
         color: active ? textColor : TEXT_MUTED,
-        border: `1px solid ${active ? `${accent}55` : 'rgba(255,255,255,0.12)'}`,
+        border: `1px solid ${active ? `${accent}60` : 'rgba(255,255,255,0.12)'}`,
         flex: grow ? 1 : undefined,
         opacity: disabled ? 0.4 : 1,
       }}

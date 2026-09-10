@@ -148,24 +148,24 @@ const WHITER = '#FFA8C4' // lighter than BRAND_TEXT, still pink — not full whi
 const TUNING_VARIANTS = [
   {
     id: 'current',
-    label: 'Current — bg 13%, BRAND_TEXT label',
-    shipped: true,
+    label: 'Retired — bg 13%, BRAND_TEXT label',
     style: active => ({
       background: active ? `${BRAND}22` : 'transparent',
       color: active ? BRAND_TEXT : TEXT_MUTED,
       border: `1px solid ${active ? `${BRAND}55` : 'rgba(255,255,255,0.12)'}`,
     }),
-    note: 'Shipped (Chip.jsx, post readability-fix).',
+    note: 'What shipped right after the readability fix. Replaced by the darker background below.',
   },
   {
     id: 'darker-bg',
-    label: 'Darker bg (19%), same label colour',
+    label: 'Shipped — darker bg (19%), same label colour',
+    shipped: true,
     style: active => ({
       background: active ? `${BRAND}30` : 'transparent',
       color: active ? BRAND_TEXT : TEXT_MUTED,
       border: `1px solid ${active ? `${BRAND}60` : 'rgba(255,255,255,0.12)'}`,
     }),
-    note: 'Just the background pushed darker (0x22 → 0x30), label and border otherwise unchanged. A richer chip at rest, no change to the text itself.',
+    note: 'Just the background pushed darker (0x22 → 0x30, border 0x55 → 0x60), label unchanged. A richer chip at rest, no change to the text itself.',
   },
   {
     id: 'darker-bg-2',
@@ -242,9 +242,9 @@ function ChipStyleSection() {
       <SectionHeader title="2 — Chip colour tuning" />
       <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, maxWidth: 760, lineHeight: 1.5, marginBottom: SPACE_12 }}>
         Structural alternatives to the outline+tint recipe were rejected outright — kept here as a one-line
-        record, not full cards: {REJECTED_DIRECTIONS.join('; ')}. These stay on the shipped recipe and only tune
-        its two numbers — background tint darkness, label lightness — mixed on/off chips per row so telling
-        selected apart from unselected at a glance stays part of the comparison.
+        record, not full cards: {REJECTED_DIRECTIONS.join('; ')}. Landed on darkening the background tint alone
+        (13% → 19%) and leaving the label colour untouched — mixed on/off chips per row so telling selected
+        apart from unselected at a glance stayed part of the comparison, not just reading one label in isolation.
       </div>
       {TUNING_VARIANTS.map(v => <TuningRow key={v.id} variant={v} />)}
     </div>
