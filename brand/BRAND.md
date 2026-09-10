@@ -53,12 +53,21 @@ Rules:
 - Render only at 16, 24, 48, 96 px (or any multiple of 32). Other sizes blur.
   Always `image-rendering: pixelated` on `<img>`; the SVGs already carry
   `shape-rendering: crispEdges`.
-- No recolouring, no rotation, no mirroring, no drop shadow, no CSS glow.
-  The glow is drawn in — the yellow window and orange core are the glow.
+- No recolouring, no rotation, no mirroring. The glow is drawn in — the yellow
+  window and orange core are the glow — **except** the one loading-state CSS
+  glow below, added after a live-review pass; every other instance stays flat.
 - Never give it a face.
-- It never animates in the nav bar. It may animate in two places: the reviews
-  card when its state changes (stepped on↔off swap, no crossfade), and a loading
-  state (on/off alternating at ~600 ms, `steps(1)`). Reduced-motion: static lit.
+- It never animates in the nav bar. It animates in two places:
+  - **Reviews card**, on its own state change: stepped on↔off swap, no crossfade.
+  - **Loading** (`CenteredLoadingMessage`, `.lantern-pulse` in global.css): the
+    sprite itself stays fully lit and opaque — it does **not** dim or swap to
+    `lamp-off` — only a soft `filter: drop-shadow()` glow around it breathes,
+    EMBER-coloured, ~1800ms ease-in-out. Reads as "steadily working," not
+    "flickering." Two earlier versions were tried and retired: a hard on/off
+    `steps(1)` crossfade between the two sprites, then an eased version that
+    also dimmed the lit sprite's own opacity — both are kept live for
+    comparison at `#/dev/accent-polish`, not used anywhere real any more.
+    Reduced-motion: static lit, no glow.
 
 ## 3. Colour
 
@@ -160,7 +169,7 @@ for accessibility.
 | Reviews — empty queue | `lamp-off` at 96 px, "Nothing to review", secondary button |
 | Session complete | three `lamp-on` at 48 px in a row, then the existing stats |
 | 404 / offline | `lamp-off` at 96 px, flat copy |
-| Loading | `lamp-on`/`lamp-off` alternating, no spinner |
+| Loading | `lamp-on`, static + a soft breathing EMBER glow (`.lantern-pulse`), no spinner |
 | Favicon / tab | `favicon.svg` (= lamp-on), `favicon.ico` fallback |
 | iOS / PWA icon | `apple-touch-icon.png`, `icon-192/512.png` (bg versions) |
 

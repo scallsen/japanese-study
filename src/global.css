@@ -645,23 +645,36 @@ button, input, select, textarea {
   .lantern-flicker-off { animation: none; opacity: 0; }
 }
 
-/* Lantern loading pulse, v2 — the shipped version. A single lit sprite
-   breathing in opacity plus a synced soft glow, instead of crossfading two
-   full sprites: reads as the lamp glowing, not switching on and off, and
-   never needs an off-state fallback. ~1800ms — a faster ease at this
-   smoothness reads as jittery, not gentle. Glow colour is EMBER
-   (rgb(255,163,0)) — the sprite's own window-core colour, not an invented
-   one. Reduced-motion: static lit, no glow. */
-@keyframes lantern-pulse-breathe { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+/* Lantern loading pulse, v3 — the shipped version. The sprite itself never
+   dims — stays fully opaque and lit — only a soft glow halo around it
+   breathes. Reads as "steadily working, with a living aura" rather than
+   "pulsing on and off," which suits a loading state better: the thing
+   being waited for is in progress, not intermittent. Beat v2 (breathe;
+   kept below for comparison) at #/dev/accent-polish. ~1800ms — a faster
+   ease at this smoothness reads as jittery, not gentle. Glow colour is
+   EMBER (rgb(255,163,0)) — the sprite's own window-core colour, not an
+   invented one. Reduced-motion: static lit, no glow. */
 @keyframes lantern-pulse-glow {
+  0%, 100% { filter: drop-shadow(0 0 1px rgba(255,163,0,0)); }
+  50%      { filter: drop-shadow(0 0 6px rgba(255,163,0,0.75)); }
+}
+.lantern-pulse {
+  animation: lantern-pulse-glow 1800ms ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lantern-pulse { animation: none; filter: none; }
+}
+
+/* v2 — breathe + glow, the previous shipped version. A single lit sprite
+   breathing in opacity 1 → 0.45 plus the same synced glow. Kept for the
+   #/dev/accent-polish comparison, not used live any more. */
+@keyframes lantern-pulse-breathe { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+@keyframes lantern-pulse-breathe-glow {
   0%, 100% { filter: drop-shadow(0 0 1px rgba(255,163,0,0)); }
   50%      { filter: drop-shadow(0 0 5px rgba(255,163,0,0.65)); }
 }
-.lantern-pulse {
-  animation: lantern-pulse-breathe 1800ms ease-in-out infinite, lantern-pulse-glow 1800ms ease-in-out infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .lantern-pulse { animation: none; opacity: 1; filter: none; }
+.lantern-demo-pulse-breathe {
+  animation: lantern-pulse-breathe 1800ms ease-in-out infinite, lantern-pulse-breathe-glow 1800ms ease-in-out infinite;
 }
 
 /* Lab-only middle ground, for the #/dev/accent-polish comparison — smooth
@@ -683,56 +696,43 @@ button, input, select, textarea {
    glow colour, glow intensity, and mechanism (breathe vs glow-only vs
    hard-edged). None of these are used outside that page. */
 
-/* Same breathe as the shipped version, EMBER glow pushed further — bigger
-   radius, higher peak opacity. */
+/* Glow-only mechanism (the shipped one), EMBER pushed further — bigger
+   radius, higher peak opacity than the shipped 6px/0.75. */
 @keyframes lantern-glow-strong {
   0%, 100% { filter: drop-shadow(0 0 1px rgba(255,163,0,0)); }
   50%      { filter: drop-shadow(0 0 9px rgba(255,163,0,0.9)); }
 }
 .lantern-demo-pulse-strong {
-  animation: lantern-pulse-breathe 1800ms ease-in-out infinite, lantern-glow-strong 1800ms ease-in-out infinite;
+  animation: lantern-glow-strong 1800ms ease-in-out infinite;
 }
 
-/* Same breathe + soft intensity, GLOW (yellow, the window colour) instead
-   of EMBER (the window's core). */
+/* Glow-only, GLOW (yellow, the window colour) instead of EMBER (the
+   window's core), same intensity as shipped. */
 @keyframes lantern-glow-yellow {
   0%, 100% { filter: drop-shadow(0 0 1px rgba(255,236,39,0)); }
-  50%      { filter: drop-shadow(0 0 5px rgba(255,236,39,0.65)); }
+  50%      { filter: drop-shadow(0 0 6px rgba(255,236,39,0.75)); }
 }
 .lantern-demo-pulse-glow-yellow {
-  animation: lantern-pulse-breathe 1800ms ease-in-out infinite, lantern-glow-yellow 1800ms ease-in-out infinite;
+  animation: lantern-glow-yellow 1800ms ease-in-out infinite;
 }
 
-/* Same breathe + soft intensity, BRAND (the app's own accent) instead of a
-   lantern-internal colour — ties the loading state to the brand red
-   directly rather than the warm glow palette. */
+/* Glow-only, BRAND (the app's own accent) instead of a lantern-internal
+   colour — ties the loading state to the brand red directly rather than
+   the warm glow palette. Same intensity as shipped. */
 @keyframes lantern-glow-red {
   0%, 100% { filter: drop-shadow(0 0 1px rgba(255,0,77,0)); }
-  50%      { filter: drop-shadow(0 0 5px rgba(255,0,77,0.65)); }
+  50%      { filter: drop-shadow(0 0 6px rgba(255,0,77,0.75)); }
 }
 .lantern-demo-pulse-glow-red {
-  animation: lantern-pulse-breathe 1800ms ease-in-out infinite, lantern-glow-red 1800ms ease-in-out infinite;
+  animation: lantern-glow-red 1800ms ease-in-out infinite;
 }
 
-/* "Pixel" timing — the same breathe + EMBER glow, but stepped (4 discrete
-   frames) instead of eased, so the pulse itself reads as chunky/retro
-   rather than a smooth analog fade — closer in spirit to the app's crisp,
-   no-antialiasing pixel art than a fully smooth animation is. */
+/* "Pixel" timing — the same breathe + EMBER glow as v2, but stepped (4
+   discrete frames) instead of eased, so the pulse itself reads as
+   chunky/retro rather than a smooth analog fade — closer in spirit to the
+   app's crisp, no-antialiasing pixel art than a fully smooth animation is. */
 .lantern-demo-pulse-stepped {
-  animation: lantern-pulse-breathe 1600ms steps(4) infinite, lantern-pulse-glow 1600ms steps(4) infinite;
-}
-
-/* Different mechanism: the lamp itself never dims — stays fully opaque and
-   lit — only the glow halo around it breathes. Reads as "steadily on, with
-   a living aura" rather than "pulsing between lit and unlit," which may
-   suit a loading state better (the thing being waited for is in progress,
-   not intermittent). */
-@keyframes lantern-glow-only {
-  0%, 100% { filter: drop-shadow(0 0 1px rgba(255,163,0,0)); }
-  50%      { filter: drop-shadow(0 0 6px rgba(255,163,0,0.75)); }
-}
-.lantern-demo-glow-only {
-  animation: lantern-glow-only 1800ms ease-in-out infinite;
+  animation: lantern-pulse-breathe 1600ms steps(4) infinite, lantern-pulse-breathe-glow 1600ms steps(4) infinite;
 }
 
 /* Hard-edged "pixel glow" — box-shadow with zero blur radius instead of
@@ -741,7 +741,8 @@ button, input, select, textarea {
    shape-rendering: crispEdges) rather than a smooth photographic bloom.
    Needs a wrapper div (box-shadow follows the element's box, not an <img>'s
    irregular silhouette) — see the lab page's DemoGlowPixel for the markup.
-   Combined with the smooth breathe so only the glow itself is "pixel." */
+   Glow-only mechanism like the shipped version — the sprite itself is
+   static, only the box-shadow ring pulses. */
 @keyframes lantern-box-glow-pixel {
   0%, 100%   { box-shadow: 0 0 0 0 rgba(255,163,0,0); }
   25%, 75%   { box-shadow: 0 0 0 2px rgba(255,163,0,0.35); }
@@ -749,9 +750,6 @@ button, input, select, textarea {
 }
 .lantern-demo-pixel-glow-box {
   animation: lantern-box-glow-pixel 1600ms steps(1) infinite;
-}
-.lantern-demo-pixel-glow-img {
-  animation: lantern-pulse-breathe 1800ms ease-in-out infinite;
 }
 
 /* Option 5 — link demoted into the subtitle line itself. */
