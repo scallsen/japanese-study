@@ -67,8 +67,10 @@ Base is unchanged (`#1E1E1E` bg, `#313131` surface, `#2E2E2E` border,
 The two primary home cards (New, Reviews) originally carried a 4-px `BRAND`
 left edge — dropped after visual review. They carry no left-edge colour now.
 
-It does NOT appear as: module colours, card backgrounds, headings, icons,
-progress bars, badges, or error/wrong states.
+`BRAND` itself does NOT appear as: module colours, card backgrounds,
+headings, icons, badges, or error/wrong states. It does now appear in one
+progress bar — see Accent-secondary below, which is a different colour
+(`BRAND_TEXT`) used narrowly, not raw `BRAND` spread across the bar.
 
 **Module accents are gone.** Every module renders in the base greys with `BRAND`
 for its one primary action. Module identity comes from its pixel icon and its
@@ -76,16 +78,60 @@ name, not a hue. Module icons stay as they are — multicolour PICO-8
 illustrations, like book covers. Illustration may use the whole PICO-8 palette;
 chrome may not.
 
-**Semantic colours are unchanged.** `SUCCESS/WARNING/DANGER`, `SEGMENT_COLORS`
-and `DRILL_COLORS` keep their current values. `DRILL_COLORS.again` is a true
-red (`rgb(192,57,43)`); `BRAND` is a pink-red. They are visibly different and
-live in different places (judgment row vs. primary actions), so no collision.
+**Semantic colours are unchanged.** `SUCCESS/WARNING/DANGER` and `DRILL_COLORS`
+keep their current values. `DRILL_COLORS.again` is a true red (`rgb(192,57,43)`);
+`BRAND` is a pink-red. They are visibly different and live in different places
+(judgment row vs. primary actions), so no collision. `SEGMENT_COLORS` is
+**not** semantic-unchanged any more — see Accent-secondary below.
 
 **Contrast, for reference**
 - `BRAND` on bg 4.25:1 → OK for buttons/borders/large text, not body text.
-- `ON_BRAND` on `BRAND` 4.25:1 → button labels ≥ FS_BASE, DotGothic.
+- `ON_BRAND` on `BRAND` 4.25:1 → defined for any surface that wants it, but
+  `Button`'s primary variant ships white text instead — see above.
 - `BRAND_TEXT` on bg 5.7:1 → AA body text.
 - `CAP #C2C3C7` on bg 9.6:1.
+
+## 3a. Accent-secondary
+
+One secondary accent family, not several: `GLOW #FFEC27` (PICO-8 10, the
+lantern's lit window) and `EMBER #FFA300` (PICO-8 9, the window's core),
+plus one more real PICO-8 colour, `ACCENT_SECONDARY_DIM #AB5236` (PICO-8 4,
+brown), for a third ordinal step darker than either. All three are genuine
+PICO-8 palette entries — same discipline `BRAND` itself follows (PICO-8 8).
+
+**Used for:** `SEGMENT_COLORS`, the card-mastery ramp on `DistributionBar`
+(Dashboard sidebar, and each deck row on the Reviews home screen):
+
+```js
+SEGMENT_COLORS = {
+  new: CAP,                    // inert, unlit-cap grey
+  learning: ACCENT_SECONDARY_DIM,
+  young: EMBER,
+  mature: GLOW,
+  relearning: BRAND_TEXT,      // regression flag, not part of the amber run
+}
+```
+
+The ramp reads as "this card gets brighter as it's learned" — the same way
+the lantern's own window lights up. `relearning` is deliberately a different
+hue (`BRAND_TEXT`, not an amber shade): it means "just got this wrong,
+cooling down," a regression, not a further step of mastery — folding it into
+the amber run would make it read as more-learned, not less.
+
+Explored at `#/dev/segment-colors` against a brand-forward (all-`BRAND`)
+ramp, a cool-blue ramp, and single-hue-only `EMBER` and `GLOW` variants
+before landing on the blend — that page stays live as the record.
+
+**Not adding a second (cool/blue) secondary.** Considered for contrast
+variety, set aside: nothing needs it yet, and it has no grounding in the
+brand the way the amber pair does (they're literally the lantern's own
+colours). Revisit only on a real need — e.g. a chart wanting more than three
+distinguishable ordinal steps — not speculatively.
+
+**Not re-validated for CVD.** The pre-rebrand teal ramp this replaces was
+documented as CVD-checked; this one hasn't been run through an actual
+simulator (none available while building it). Do that before leaning on it
+for accessibility.
 
 ## 4. Where the brand shows up
 

@@ -5,25 +5,31 @@ import DistributionBar from '../components/DistributionBar.jsx'
 import { STATE_SEGMENTS } from '../modules/vocab-srs/cardStates.js'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_CONTENT_HEADING,
-  SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32, BRAND, SEGMENT_COLORS,
+  SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32, BRAND, BRAND_TEXT,
+  SEGMENT_COLORS, ACCENT_SECONDARY_DIM, EMBER, GLOW, CAP,
 } from '../data/theme.js'
 
 // Dev-only exploration, not linked from the dashboard — reached at
-// #/dev/segment-colors. Answers two open questions from the rebrand: should
-// SEGMENT_COLORS (the card-mastery ramp on DistributionBar) lean into BRAND,
-// and if not, what else pairs well with it? DistributionBar takes an
-// optional `colors` prop (defaulting to SEGMENT_COLORS) purely so this page
-// can drive the real component with candidate palettes — production call
-// sites never pass it. Same "real components, fake data" convention as
+// #/dev/segment-colors. DistributionBar takes an optional `colors` prop
+// (defaulting to SEGMENT_COLORS) purely so this page can drive the real
+// component with candidate palettes — production call sites never pass it.
+// Same "real components, fake data" convention as
 // CoverRotationLabPage/TextbookPickerLabPage.
 //
-// The current ramp (`learning`/`young`/`mature`: #4c8a7d/#5eb6a2/#7fe0c8) is
-// flagged in CLAUDE.md as "validated for colour-vision deficiency and
-// contrast... don't 'reconcile' it onto the semantic tokens without redoing
-// that check" — that check isn't re-run here (no CVD simulator in this
-// environment), so every option below is a judgment call grounded in colour
-// theory and the DRILL_COLORS.again collision risk, not a re-validated one.
-// Whichever option gets picked should get an honest CVD pass before it ships.
+// History: this page originally compared five directions (current teal,
+// brand-forward red, refined teal, warm amber, cool blue) for whether
+// SEGMENT_COLORS should touch BRAND at all. The amber direction won —
+// specifically, built from the lantern's own glow colours (EMBER/GLOW,
+// both real PICO-8 palette entries, same discipline BRAND follows) rather
+// than an arbitrary amber. See theme.js's ACCENT_SECONDARY comment block.
+// The three sections below are that follow-up: EMBER alone, GLOW alone, or
+// blended — the blend shipped, kept live here via the real SEGMENT_COLORS
+// import rather than a duplicated literal, so this page can't drift from
+// what's actually running. CVD note: none of this has been through an
+// actual simulator (none available in this environment) — get an honest
+// pass on whichever combination stays before leaning on it for
+// accessibility, the same caveat the pre-rebrand ramp's own validation
+// note implies.
 
 const SAMPLE_COUNTS = { new: 8, learning: 5, young: 12, mature: 34, relearning: 3 }
 const SAMPLE_SUSPENDED = 2
@@ -33,45 +39,48 @@ function segmentsFor(counts) {
   return STATE_SEGMENTS.map(s => ({ ...s, count: counts[s.key] ?? 0 }))
 }
 
-// BRAND is #FF004D — hsl(342°, 100%, 50%), a saturated magenta-red. Its true
-// complement sits at hsl(162°, …) — a teal/spring-green. The retired core
-// teal (#3ABDA4, ~hsl(166°, 54%, 48%)) lands within a few degrees of that by
-// coincidence, not design; option C leans on that.
-const PALETTES = [
+// The three amber directions actually asked for. All three keep `new` (CAP)
+// and `relearning` (BRAND_TEXT) fixed — those aren't part of what's being
+// compared — so the only real variable is the learning → young → mature run.
+const AMBER_VARIANTS = [
   {
-    id: 'current',
-    label: 'A — Current (unchanged)',
+    id: 'blend',
+    label: '1 — Blended: EMBER → GLOW (shipped)',
+    shipped: true,
     colors: SEGMENT_COLORS,
-    note: 'The control. Teal-green ordinal ramp (learning → young → mature getting lighter), inert grey for "new", amber for "relearning". No BRAND anywhere in it — this ramp predates the rebrand and was never module-accent-driven.',
-    cvd: 'Already documented as CVD-validated in CLAUDE.md. Baseline for comparison, not re-checked here.',
+    note: 'The lantern\'s own two window colours used as-is at the two most-legible ordinal steps — EMBER at "young", GLOW at "mature" — plus one more real PICO-8 colour (4, brown) for "learning". Every colour here is a genuine PICO-8 palette entry except BRAND_TEXT on relearning (already an established, contrast-checked token). Reads as "this card gets brighter as it\'s learned," the same way the lantern lights up.',
   },
   {
-    id: 'brand-forward',
-    label: 'B — Brand-forward (monochrome red ramp)',
+    id: 'ember-only',
+    label: '2 — EMBER only (single hue)',
+    colors: { new: CAP, learning: ACCENT_SECONDARY_DIM, young: EMBER, mature: '#FFCCAA', relearning: BRAND_TEXT },
+    note: 'A pure lightness ramp inside EMBER\'s own hue (~38°): PICO-8 4 (brown) → EMBER → PICO-8 15 (peach, the lightest warm entry in the palette). Still fully PICO-8-sourced, but GLOW never appears — the ramp never actually reaches the lantern\'s brightest state, which undercuts the "gets brighter" narrative at its most important step (mature).',
+  },
+  {
+    id: 'glow-only',
+    label: '3 — GLOW only (single hue)',
+    colors: { new: CAP, learning: '#6B5A0E', young: '#C9A83A', mature: GLOW, relearning: BRAND_TEXT },
+    note: 'A pure lightness ramp inside GLOW\'s own hue (~55°, yellow-gold): dark olive → mid gold → GLOW. The one option here that breaks PICO-8 discipline — the palette has no second real yellow, so "learning" and "young" are interpolated, not sourced. Reaches full GLOW at "mature", but never touches EMBER, so the ramp skips the ember stage the lantern narrative implies.',
+  },
+]
+
+// Condensed record of the directions considered before the amber call —
+// swatches only, not full dual mockups, since they're not live candidates.
+const RETIRED = [
+  {
+    label: 'Retired — teal-green (pre-rebrand)',
+    colors: { new: '#aaaaaa', learning: '#4c8a7d', young: '#5eb6a2', mature: '#7fe0c8', relearning: '#e0a72e' },
+    note: 'What SEGMENT_COLORS was before this page existed. Documented as CVD-validated at the time. No BRAND anywhere in it.',
+  },
+  {
+    label: 'Considered — brand-forward (monochrome red)',
     colors: { new: '#6b6b6b', learning: '#FFD9E4', young: '#FF8FAE', mature: '#FF004D', relearning: '#B8003A' },
-    note: 'Answers "should we use accent red a lot?" directly: a single-hue lightness ramp on BRAND\'s own hue, light pink → full BRAND at "mature" (reading as "this card has fully arrived at the brand colour"), dark red for "relearning". The real risk: DRILL_COLORS.again (rgb(192,57,43), a true red) already means "you got this wrong" elsewhere in the same module. A mostly-red distribution bar risks reading as "lots of problems" when it actually means "lots of well-learned cards" — the opposite of the intended signal. Mature and relearning are also both saturated reds here, easy to confuse at a glance.',
-    cvd: 'A single-hue, lightness-only ramp doesn\'t rely on hue discrimination, so it\'s more robust to red-green CVD than it looks — but protanopia dampens perceived red brightness specifically, which could compress "mature" and "relearning" toward each other for exactly the users this is supposed to be safe for.',
+    note: 'Full BRAND at "mature". Set aside: DRILL_COLORS.again is already a true red meaning "you got this wrong" elsewhere in the same module — a mostly-red bar risks reading as "lots of problems" when it means the opposite.',
   },
   {
-    id: 'teal-refined',
-    label: 'C — Teal complement (refined)',
-    colors: { new: '#9AA0A6', learning: '#3F6B60', young: '#5EB6A2', mature: '#8FEBD4', relearning: '#E0A72E' },
-    note: 'Confirms rather than replaces: the current ramp already sits close to BRAND\'s true complement, so this is a light refinement (cooler "new" grey, one more step of range on "mature") rather than a new direction. No BRAND anywhere in the ramp itself, same as A.',
-    cvd: 'Same family as the validated current ramp — lowest-risk option of the four alternatives, though "refined" still means unverified until it gets the same CVD pass.',
-  },
-  {
-    id: 'warm-amber',
-    label: 'D — Warm amber, with a BRAND accent on Relearning',
-    colors: { new: '#9AA0A6', learning: '#8A6A3D', young: '#C9944F', mature: '#F0C878', relearning: '#FF5C8A' },
-    note: 'A warm ramp analogous to BRAND\'s hue neighbourhood (amber/gold, not literally red) for the ordinal mastery steps, with BRAND_TEXT — an existing brand token, not a new colour — reserved for the one state that\'s actually urgent ("relearning": just got it wrong, cooling down). This is the one option that uses a brand colour deliberately and narrowly rather than either avoiding it entirely (C) or spreading it across the whole ramp (B).',
-    cvd: 'Amber/gold hues are generally safer for the common red-green CVD types than red-green pairings. BRAND_TEXT on "relearning" alone (not adjacent in the ramp to a similarly-saturated red) avoids B\'s mature/relearning collision.',
-  },
-  {
-    id: 'cool-blue',
-    label: 'E — Cool blue',
-    colors: { new: '#9AA0A6', learning: '#35506B', young: '#5B85B0', mature: '#9FC6E8', relearning: '#E0A72E' },
-    note: 'A second cool option, blue rather than teal — worth having if teal reads as too tied to the retired core-teal identity. Keeps amber on "relearning", unchanged from A/C.',
-    cvd: 'Blue/yellow discrimination (tritanopia) is far rarer than red/green CVD, so a blue ramp is close to the safest hue family available for this specific accessibility concern.',
+    label: 'Considered — cool blue',
+    colors: { new: '#9AA0A6', learning: '#35506B', young: '#5B85B0', mature: '#9FC6E8', relearning: '#e0a72e' },
+    note: 'The safest option for red-green CVD specifically (blue/yellow discrimination is far rarer to lack), but no grounding in the brand — set aside in favour of the amber family, which is literally the lantern\'s own colours.',
   },
 ]
 
@@ -121,27 +130,37 @@ function DeckReviewMock({ colors }) {
   )
 }
 
-function PaletteSection({ palette }) {
+function VariantSection({ variant }) {
   return (
     <div style={{ marginBottom: SPACE_32, paddingBottom: SPACE_32, borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-      <SectionHeader title={palette.label} />
-      <Swatches colors={palette.colors} />
-      <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, maxWidth: 760, lineHeight: 1.5, marginBottom: SPACE_12 }}>
-        {palette.note}
-      </div>
-      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, maxWidth: 760, lineHeight: 1.5, marginBottom: SPACE_16, opacity: 0.8 }}>
-        CVD note: {palette.cvd}
+      <SectionHeader
+        title={variant.label}
+        action={variant.shipped && <Badge tone="success">Live now</Badge>}
+      />
+      <Swatches colors={variant.colors} />
+      <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, maxWidth: 760, lineHeight: 1.5, marginBottom: SPACE_16 }}>
+        {variant.note}
       </div>
       <div style={{ display: 'flex', gap: SPACE_24, flexWrap: 'wrap', alignItems: 'flex-start' }}>
         <div>
           <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: SPACE_8 }}>Home sidebar (Dashboard Stats panel)</div>
-          <SidebarMock colors={palette.colors} />
+          <SidebarMock colors={variant.colors} />
         </div>
         <div>
           <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: SPACE_8 }}>Deck review page (Reviews home, per-deck row)</div>
-          <DeckReviewMock colors={palette.colors} />
+          <DeckReviewMock colors={variant.colors} />
         </div>
       </div>
+    </div>
+  )
+}
+
+function RetiredRow({ item }) {
+  return (
+    <div style={{ marginBottom: SPACE_16 }}>
+      <div style={{ fontSize: FS_BASE, color: TEXT, marginBottom: 6 }}>{item.label}</div>
+      <Swatches colors={item.colors} />
+      <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, maxWidth: 720, lineHeight: 1.5, opacity: 0.85 }}>{item.note}</div>
     </div>
   )
 }
@@ -152,27 +171,32 @@ export default function SegmentColorLabPage() {
       <PageHeader crumbs={[{ label: 'Lantern', href: '#/' }, { label: 'Deck-state colour exploration' }]} />
       <main style={{ flex: 1, overflowY: 'auto', padding: '28px 24px 60px' }}>
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
-          <div style={{ fontSize: FS_CONTENT_HEADING, marginBottom: 8 }}>Deck-state distribution colour — five options</div>
+          <div style={{ fontSize: FS_CONTENT_HEADING, marginBottom: 8 }}>Deck-state distribution colour — the amber directions</div>
           <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, maxWidth: 760, lineHeight: 1.5, marginBottom: 28 }}>
-            SEGMENT_COLORS (New / Learning / Young / Mature / Relearning) predates the rebrand and has
-            no BRAND in it today. Same sample deck rendered through the real <code>DistributionBar</code> component
-            in both places it actually appears — the Dashboard sidebar and a deck row on the Reviews home
-            screen — for each candidate palette below.
+            Same sample deck through the real <code>DistributionBar</code> component in both places it actually
+            appears — the Dashboard sidebar and a deck row on the Reviews home screen. Section 1 is what
+            shipped; 2 and 3 are the single-hue alternatives it was tried against.
           </div>
 
-          {PALETTES.map(p => <PaletteSection key={p.id} palette={p} />)}
+          {AMBER_VARIANTS.map(v => <VariantSection key={v.id} variant={v} />)}
 
           <div style={{
             background: `${BRAND}14`, border: `1px solid ${BRAND}40`, borderRadius: 8,
-            padding: SPACE_16, fontSize: FS_BASE, color: TEXT_MUTED, lineHeight: 1.6, maxWidth: 760,
+            padding: SPACE_16, fontSize: FS_BASE, color: TEXT_MUTED, lineHeight: 1.6, maxWidth: 760, marginBottom: SPACE_32,
           }}>
-            <strong style={{ color: TEXT }}>Leaning towards D.</strong> B answers &ldquo;use red a lot&rdquo; honestly, but the
-            DRILL_COLORS.again collision (mature and &ldquo;you got this wrong&rdquo; both reading as saturated red) is a real
-            usability cost, not just a taste call. C is the safe, validated-family option but doesn&apos;t touch BRAND at
-            all. D puts BRAND_TEXT somewhere it earns its place — the one state that&apos;s genuinely time-sensitive —
-            without turning the whole ramp red. Not a final call — pick whichever reads best to you; this page&apos;s
-            candidates make that a real side-by-side, not a guess.
+            <strong style={{ color: TEXT }}>Shipped: the blend.</strong> It&apos;s the only one of the three that reaches
+            both EMBER and GLOW, so it&apos;s the only one that actually tells the full &ldquo;getting brighter&rdquo; story —
+            EMBER-only never gets to GLOW&apos;s brightness, GLOW-only never touches EMBER&apos;s warmth. It&apos;s also the only
+            fully PICO-8-sourced option of the three (GLOW-only needed two interpolated, non-palette shades).
+            Now formalized in theme.js as ACCENT_SECONDARY — GLOW, EMBER, and PICO-8 4 (brown) together, one
+            secondary accent family, not a scattered set of ad hoc colours.
           </div>
+
+          <SectionHeader title="Earlier directions, for the record" />
+          <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, maxWidth: 760, lineHeight: 1.5, marginBottom: SPACE_16, opacity: 0.8 }}>
+            Swatches only, not full mockups — these aren&apos;t live candidates, just the trail that led to the amber call.
+          </div>
+          {RETIRED.map(item => <RetiredRow key={item.label} item={item} />)}
         </div>
       </main>
     </div>
