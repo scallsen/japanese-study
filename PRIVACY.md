@@ -1,9 +1,9 @@
 # Privacy policy
 
-Last updated 5 September 2026.
+Last updated 10 September 2026.
 
-This is a plain-language description of what Japanese Study
-(https://japanese-study.scallsen.ca) actually stores and who it talks to. It is
+This is a plain-language description of what Lantern
+(https://lantern.study) actually stores and who it talks to. It is
 a personal, non-commercial project. This is not legal advice and has not been
 reviewed by a lawyer.
 

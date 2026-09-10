@@ -364,8 +364,12 @@ function Footer() {
         Developed by Simon Callsen
       </a>
       <span style={{ color: 'rgba(232,232,232,0.55)', fontSize: 13 }}>·</span>
-      <a href="https://github.com/scallsen/japanese-study" target="_blank" rel="noopener noreferrer" className="footer-link" style={linkStyle}>
+      <a href="https://github.com/scallsen/lantern" target="_blank" rel="noopener noreferrer" className="footer-link" style={linkStyle}>
         GitHub
+      </a>
+      <span style={{ color: 'rgba(232,232,232,0.55)', fontSize: 13 }}>·</span>
+      <a href="#/privacy" className="footer-link" style={linkStyle}>
+        Privacy Policy
       </a>
     </div>
   )
