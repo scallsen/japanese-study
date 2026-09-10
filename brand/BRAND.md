@@ -182,6 +182,30 @@ public/apple-touch-icon.png ← replace
 public/icon-192.png, public/icon-512.png  ← add; reference from manifest
 ```
 
+**Regenerating the raster icons** (favicon.ico, apple-touch-icon.png, icon-192/512.png)
+when a sprite changes — no design tool involved, just ImageMagick against the SVGs
+already in this repo:
+
+```
+# favicon.ico — from the small pair (transparent, tiny-instance sprite)
+magick -background none brand/sprites/lamp-on.svg -filter point -resize 16x16 /tmp/favicon-16.png
+magick -background none brand/sprites/lamp-on.svg -filter point -resize 32x32 /tmp/favicon-32.png
+magick /tmp/favicon-16.png /tmp/favicon-32.png public/favicon.ico
+
+# apple-touch-icon.png / icon-192.png / icon-512.png — from the HERO pair,
+# flattened onto opaque BG (#1E1E1E) first: iOS/PWA icons need an opaque
+# source, a transparent one renders unpredictably. -filter point keeps the
+# pixel edges crisp — the default filter blurs/anti-aliases them.
+magick -background '#1E1E1E' brand/sprites/lamp-on-hero.svg -flatten -filter point -resize 180x180 public/apple-touch-icon.png
+magick -background '#1E1E1E' brand/sprites/lamp-on-hero.svg -flatten -filter point -resize 192x192 public/icon-192.png
+magick -background '#1E1E1E' brand/sprites/lamp-on-hero.svg -flatten -filter point -resize 512x512 public/icon-512.png
+```
+
+`-background none` *before* the SVG matters — set after, it's too late to affect
+how the SVG itself rasterizes and the transparent regions come out white instead.
+Copy the results into `brand/favicon/` too, so that folder stays a true snapshot
+of what's live in `public/`.
+
 `index.html`:
 ```html
 <title>Lantern</title>
