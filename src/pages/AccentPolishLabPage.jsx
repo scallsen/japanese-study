@@ -126,87 +126,102 @@ function ReadabilitySection() {
   )
 }
 
-/* ─────────────────────── Section 2: chip style directions ─────────────────────── */
+/* ─────────────────────── Section 2: chip colour tuning ─────────────────────── */
+
+// Structural alternatives (filled solid, no-border soft fill, bold outline,
+// indicator dot, underline) were tried first and rejected outright — none of
+// them, kept here as a one-line record, not full cards. These stay on the
+// shipped recipe (outline + tint + coloured label) and only tune the two
+// numbers in it: background tint darkness and label lightness.
+const REJECTED_DIRECTIONS = [
+  'Filled solid (white label on solid BRAND)',
+  'Soft fill with no border',
+  'Bold 2px outline with no fill',
+  'Neutral text/background + a small indicator dot',
+  'Tab-style underline with no box',
+]
+
+const WHITER = '#FFA8C4' // lighter than BRAND_TEXT, still pink — not full white
 
 // Each variant is a function of `active` → style object, so one row can show
-// a realistic mix of on/off chips rather than isolated all-on swatches — the
-// legibility question is as much "can you tell these apart" as "can you read
-// the label."
-const STYLE_VARIANTS = [
+// a realistic mix of on/off chips rather than isolated all-on swatches.
+const TUNING_VARIANTS = [
   {
     id: 'current',
-    label: 'Current — outlined, tinted background',
+    label: 'Current — bg 13%, BRAND_TEXT label',
     shipped: true,
     style: active => ({
       background: active ? `${BRAND}22` : 'transparent',
       color: active ? BRAND_TEXT : TEXT_MUTED,
       border: `1px solid ${active ? `${BRAND}55` : 'rgba(255,255,255,0.12)'}`,
     }),
-    note: 'Shipped (Chip.jsx, post readability-fix). Border + soft tint + BRAND_TEXT label.',
+    note: 'Shipped (Chip.jsx, post readability-fix).',
   },
   {
-    id: 'filled',
-    label: 'Filled solid',
+    id: 'darker-bg',
+    label: 'Darker bg (19%), same label colour',
     style: active => ({
-      background: active ? BRAND : 'transparent',
+      background: active ? `${BRAND}30` : 'transparent',
+      color: active ? BRAND_TEXT : TEXT_MUTED,
+      border: `1px solid ${active ? `${BRAND}60` : 'rgba(255,255,255,0.12)'}`,
+    }),
+    note: 'Just the background pushed darker (0x22 → 0x30), label and border otherwise unchanged. A richer chip at rest, no change to the text itself.',
+  },
+  {
+    id: 'darker-bg-2',
+    label: 'Darker still (24%), same label colour',
+    style: active => ({
+      background: active ? `${BRAND}3d` : 'transparent',
+      color: active ? BRAND_TEXT : TEXT_MUTED,
+      border: `1px solid ${active ? `${BRAND}70` : 'rgba(255,255,255,0.12)'}`,
+    }),
+    note: 'One step further (0x3d). Starting to read as a soft fill rather than a tint; label is BRAND_TEXT throughout, unchanged — worth checking whether it still separates cleanly from a background this saturated.',
+  },
+  {
+    id: 'darker-bg-white',
+    label: 'Darker bg (19%) + near-white label',
+    style: active => ({
+      background: active ? `${BRAND}30` : 'transparent',
+      color: active ? TEXT : TEXT_MUTED,
+      border: `1px solid ${active ? `${BRAND}60` : 'rgba(255,255,255,0.12)'}`,
+    }),
+    note: 'Same darker background as the row above, label swapped from BRAND_TEXT to TEXT (#E8E8E8, the app\'s standard near-white) — as the tint darkens, the effective backdrop behind the label gets richer, the same reasoning that justifies white on the solid primary button.',
+  },
+  {
+    id: 'darker-bg-2-white',
+    label: 'Darker still (24%) + pure white label',
+    style: active => ({
+      background: active ? `${BRAND}3d` : 'transparent',
       color: active ? '#fff' : TEXT_MUTED,
-      border: `1px solid ${active ? BRAND : 'rgba(255,255,255,0.12)'}`,
+      border: `1px solid ${active ? `${BRAND}80` : 'rgba(255,255,255,0.12)'}`,
     }),
-    note: 'Solid BRAND fill, white label — the most unambiguous contrast of any option here. But a filter row with several chips active at once (Difficulty routinely has 4-6) turns into several solid red blocks, working against BRAND.md\'s one-primary-action-per-screen restraint — it starts to compete with the actual primary button on the same screen.',
+    note: 'Darkest background here, paired with pure white — closest to a soft-filled chip without going fully solid. Probably the strongest contrast of the set.',
   },
   {
-    id: 'soft-no-border',
-    label: 'Soft fill, no border',
+    id: 'same-bg-whiter-text',
+    label: 'Same bg (13%) + lighter pink label',
     style: active => ({
-      background: active ? `${BRAND}35` : 'transparent',
-      color: active ? BRAND_TEXT : TEXT_MUTED,
-      border: '1px solid transparent',
+      background: active ? `${BRAND}22` : 'transparent',
+      color: active ? WHITER : TEXT_MUTED,
+      border: `1px solid ${active ? `${BRAND}55` : 'rgba(255,255,255,0.12)'}`,
     }),
-    note: 'Stronger tint than shipped (0x35 vs 0x22), no border at all — quieter edges, the fill alone carries "selected." Loses a little definition against busy backgrounds without the border\'s hard edge.',
-  },
-  {
-    id: 'bold-outline',
-    label: 'Bold outline, no fill',
-    style: active => ({
-      background: 'transparent',
-      color: active ? BRAND_TEXT : TEXT_MUTED,
-      border: `2px solid ${active ? BRAND : 'rgba(255,255,255,0.12)'}`,
-    }),
-    note: 'No background tint — a thicker (2px) border alone marks "selected." Reads more like a real outline button per chip than a filter pill; the row as a whole feels heavier even with no fill.',
-  },
-  {
-    id: 'dot',
-    label: 'Neutral + indicator dot',
-    style: () => ({ background: 'transparent', color: TEXT, border: '1px solid rgba(255,255,255,0.12)' }),
-    dot: true,
-    note: 'Text and background never touch BRAND at all — a small dot carries the "selected" signal instead, sidestepping the contrast question entirely. Costs scannability: which chips are on takes a beat longer to register than a colour change does.',
-  },
-  {
-    id: 'underline',
-    label: 'Underline, no box',
-    style: active => ({
-      background: 'transparent', color: active ? BRAND_TEXT : TEXT_MUTED, border: 'none',
-      borderBottom: `2px solid ${active ? BRAND : 'transparent'}`, borderRadius: 0, paddingBottom: 2,
-    }),
-    note: 'No box at all — a tab-like underline. Reads well for a small, mutually-exclusive set (a single-select view toggle), less at home as a dense multi-select grid like Difficulty\'s six options — nothing marks the tap target when inactive.',
+    note: 'Background untouched — only the label lightened, from BRAND_TEXT (#FF5C8A) to a paler pink (#FFA8C4), stopping short of full white so it still reads as "red," just lighter.',
   },
 ]
 
-function VariantChip({ label, active, variant }) {
+function TuningChip({ label, active, variant }) {
   return (
     <span style={{
-      display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 11px',
-      borderRadius: variant.id === 'underline' ? 0 : 4,
+      display: 'inline-flex', padding: '4px 11px', borderRadius: 4,
       fontSize: FS_BASE, fontFamily: FONT, letterSpacing: TRACKING,
       ...variant.style(active),
     }}>
       {label}
-      {variant.dot && active && <span style={{ width: 6, height: 6, borderRadius: '50%', background: BRAND, flexShrink: 0 }} />}
     </span>
   )
 }
 
-function VariantRow({ variant }) {
+function TuningRow({ variant }) {
   return (
     <div style={{ marginBottom: SPACE_24 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: SPACE_8, marginBottom: SPACE_8 }}>
@@ -214,7 +229,7 @@ function VariantRow({ variant }) {
         {variant.shipped && <Badge tone="success">Live now</Badge>}
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: SPACE_8, marginBottom: SPACE_8 }}>
-        {DIFFICULTY_OPTIONS.map((c, i) => <VariantChip key={c} label={c} active={i % 2 === 0} variant={variant} />)}
+        {DIFFICULTY_OPTIONS.map((c, i) => <TuningChip key={c} label={c} active={i % 2 === 0} variant={variant} />)}
       </div>
       <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, lineHeight: 1.5, maxWidth: 700 }}>{variant.note}</div>
     </div>
@@ -224,14 +239,14 @@ function VariantRow({ variant }) {
 function ChipStyleSection() {
   return (
     <div style={{ marginBottom: SPACE_32, paddingBottom: SPACE_32, borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-      <SectionHeader title="2 — Chip style directions" />
-      <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, maxWidth: 760, lineHeight: 1.5, marginBottom: SPACE_16 }}>
-        Section 1 fixed the text colour without changing the recipe (outline + tint). These vary the recipe
-        itself — fill weight, border weight, whether colour touches text at all — with a realistic mix of
-        on/off chips per row rather than isolated swatches, since half the legibility question is telling
-        selected and unselected apart at a glance, not just reading one label in isolation.
+      <SectionHeader title="2 — Chip colour tuning" />
+      <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, maxWidth: 760, lineHeight: 1.5, marginBottom: SPACE_12 }}>
+        Structural alternatives to the outline+tint recipe were rejected outright — kept here as a one-line
+        record, not full cards: {REJECTED_DIRECTIONS.join('; ')}. These stay on the shipped recipe and only tune
+        its two numbers — background tint darkness, label lightness — mixed on/off chips per row so telling
+        selected apart from unselected at a glance stays part of the comparison.
       </div>
-      {STYLE_VARIANTS.map(v => <VariantRow key={v.id} variant={v} />)}
+      {TUNING_VARIANTS.map(v => <TuningRow key={v.id} variant={v} />)}
     </div>
   )
 }
@@ -269,28 +284,28 @@ const PULSE_VARIANTS = [
   },
   {
     id: 'glow-only',
-    label: 'v3 — Shipped: glow-only, lamp stays lit',
+    label: 'v3 — Shipped: glow-only, BRAND (red)',
     shipped: true,
-    note: 'The sprite itself never dims — stays fully opaque — only the halo around it breathes. Reads as "steadily working, with a living aura" rather than "pulsing between lit and unlit." Picked over v2 for exactly that reason.',
+    note: 'The sprite itself never dims — stays fully opaque — only the halo around it breathes, in the app\'s own accent colour. Reads as "steadily working, with a living aura." Glow colour swapped from EMBER (the lantern\'s own window-core) to BRAND after a live-review pass — see the EMBER card below for the original.',
     render: () => <img src={LANTERN_ON} alt="" width={24} height={24} className="lantern-pulse" style={{ imageRendering: 'pixelated' }} />,
   },
   {
     id: 'strong',
     label: 'Glow intensity — strong',
-    note: 'Same glow-only mechanism, radius/peak-opacity pushed up (6px/0.75 → 9px/0.9). More dramatic; risks feeling busy next to body text.',
+    note: 'Same glow-only mechanism/colour as shipped, radius/peak-opacity pushed up (6px/0.75 → 9px/0.9). More dramatic; risks feeling busy next to body text.',
     render: () => <img src={LANTERN_ON} alt="" width={24} height={24} className="lantern-demo-pulse-strong" style={{ imageRendering: 'pixelated' }} />,
+  },
+  {
+    id: 'ember',
+    label: 'Glow colour — EMBER (the original)',
+    note: 'What shipped first — the lantern\'s own window-core colour instead of BRAND. Warmer, ties to the sprite itself rather than the app accent; swapped out for BRAND to tie the loading state to the brand directly.',
+    render: () => <img src={LANTERN_ON} alt="" width={24} height={24} className="lantern-demo-pulse-glow-ember" style={{ imageRendering: 'pixelated' }} />,
   },
   {
     id: 'yellow',
     label: 'Glow colour — GLOW (yellow)',
-    note: 'Same glow-only mechanism/intensity as shipped, colour swapped from EMBER to GLOW — the window colour instead of its core.',
+    note: 'Same glow-only mechanism/intensity as shipped, colour swapped to GLOW — the window colour itself, rather than its core (EMBER) or the app accent (BRAND).',
     render: () => <img src={LANTERN_ON} alt="" width={24} height={24} className="lantern-demo-pulse-glow-yellow" style={{ imageRendering: 'pixelated' }} />,
-  },
-  {
-    id: 'red',
-    label: 'Glow colour — BRAND (red)',
-    note: 'Glow in the app\'s own accent instead of a lantern-internal colour. Ties the loading state to BRAND directly, at the cost of the warm "ember" feeling.',
-    render: () => <img src={LANTERN_ON} alt="" width={24} height={24} className="lantern-demo-pulse-glow-red" style={{ imageRendering: 'pixelated' }} />,
   },
   {
     id: 'stepped',

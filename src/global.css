@@ -652,11 +652,13 @@ button, input, select, textarea {
    being waited for is in progress, not intermittent. Beat v2 (breathe;
    kept below for comparison) at #/dev/accent-polish. ~1800ms — a faster
    ease at this smoothness reads as jittery, not gentle. Glow colour is
-   EMBER (rgb(255,163,0)) — the sprite's own window-core colour, not an
-   invented one. Reduced-motion: static lit, no glow. */
+   BRAND (rgb(255,0,77)) — ties the loading state to the app's own accent
+   directly, swapped in from EMBER after a live-review pass (EMBER, the
+   lantern's own window-core colour, is kept as `lantern-glow-strong`'s
+   colour below, for comparison). Reduced-motion: static lit, no glow. */
 @keyframes lantern-pulse-glow {
-  0%, 100% { filter: drop-shadow(0 0 1px rgba(255,163,0,0)); }
-  50%      { filter: drop-shadow(0 0 6px rgba(255,163,0,0.75)); }
+  0%, 100% { filter: drop-shadow(0 0 1px rgba(255,0,77,0)); }
+  50%      { filter: drop-shadow(0 0 6px rgba(255,0,77,0.75)); }
 }
 .lantern-pulse {
   animation: lantern-pulse-glow 1800ms ease-in-out infinite;
@@ -696,35 +698,34 @@ button, input, select, textarea {
    glow colour, glow intensity, and mechanism (breathe vs glow-only vs
    hard-edged). None of these are used outside that page. */
 
-/* Glow-only mechanism (the shipped one), EMBER pushed further — bigger
-   radius, higher peak opacity than the shipped 6px/0.75. */
+/* Glow-only mechanism (the shipped one), same BRAND colour pushed further —
+   bigger radius, higher peak opacity than the shipped 6px/0.75. */
 @keyframes lantern-glow-strong {
-  0%, 100% { filter: drop-shadow(0 0 1px rgba(255,163,0,0)); }
-  50%      { filter: drop-shadow(0 0 9px rgba(255,163,0,0.9)); }
+  0%, 100% { filter: drop-shadow(0 0 1px rgba(255,0,77,0)); }
+  50%      { filter: drop-shadow(0 0 9px rgba(255,0,77,0.9)); }
 }
 .lantern-demo-pulse-strong {
   animation: lantern-glow-strong 1800ms ease-in-out infinite;
 }
 
+/* Glow-only, EMBER — the original shipped colour (the lantern's own
+   window-core), before swapping to BRAND. Kept for comparison. */
+@keyframes lantern-glow-ember {
+  0%, 100% { filter: drop-shadow(0 0 1px rgba(255,163,0,0)); }
+  50%      { filter: drop-shadow(0 0 6px rgba(255,163,0,0.75)); }
+}
+.lantern-demo-pulse-glow-ember {
+  animation: lantern-glow-ember 1800ms ease-in-out infinite;
+}
+
 /* Glow-only, GLOW (yellow, the window colour) instead of EMBER (the
-   window's core), same intensity as shipped. */
+   window's core) or BRAND — same intensity as shipped. */
 @keyframes lantern-glow-yellow {
   0%, 100% { filter: drop-shadow(0 0 1px rgba(255,236,39,0)); }
   50%      { filter: drop-shadow(0 0 6px rgba(255,236,39,0.75)); }
 }
 .lantern-demo-pulse-glow-yellow {
   animation: lantern-glow-yellow 1800ms ease-in-out infinite;
-}
-
-/* Glow-only, BRAND (the app's own accent) instead of a lantern-internal
-   colour — ties the loading state to the brand red directly rather than
-   the warm glow palette. Same intensity as shipped. */
-@keyframes lantern-glow-red {
-  0%, 100% { filter: drop-shadow(0 0 1px rgba(255,0,77,0)); }
-  50%      { filter: drop-shadow(0 0 6px rgba(255,0,77,0.75)); }
-}
-.lantern-demo-pulse-glow-red {
-  animation: lantern-glow-red 1800ms ease-in-out infinite;
 }
 
 /* "Pixel" timing — the same breathe + EMBER glow as v2, but stepped (4
@@ -744,9 +745,9 @@ button, input, select, textarea {
    Glow-only mechanism like the shipped version — the sprite itself is
    static, only the box-shadow ring pulses. */
 @keyframes lantern-box-glow-pixel {
-  0%, 100%   { box-shadow: 0 0 0 0 rgba(255,163,0,0); }
-  25%, 75%   { box-shadow: 0 0 0 2px rgba(255,163,0,0.35); }
-  50%        { box-shadow: 0 0 0 4px rgba(255,163,0,0.6); }
+  0%, 100%   { box-shadow: 0 0 0 0 rgba(255,0,77,0); }
+  25%, 75%   { box-shadow: 0 0 0 2px rgba(255,0,77,0.35); }
+  50%        { box-shadow: 0 0 0 4px rgba(255,0,77,0.6); }
 }
 .lantern-demo-pixel-glow-box {
   animation: lantern-box-glow-pixel 1600ms steps(1) infinite;

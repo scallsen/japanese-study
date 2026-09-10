@@ -62,10 +62,13 @@ Rules:
   - **Loading** (`CenteredLoadingMessage`, `.lantern-pulse` in global.css): the
     sprite itself stays fully lit and opaque — it does **not** dim or swap to
     `lamp-off` — only a soft `filter: drop-shadow()` glow around it breathes,
-    EMBER-coloured, ~1800ms ease-in-out. Reads as "steadily working," not
-    "flickering." Two earlier versions were tried and retired: a hard on/off
-    `steps(1)` crossfade between the two sprites, then an eased version that
-    also dimmed the lit sprite's own opacity — both are kept live for
+    BRAND-coloured, ~1800ms ease-in-out. Reads as "steadily working," not
+    "flickering." First shipped in EMBER (the lantern's own window-core
+    colour), swapped to BRAND after a live-review pass — ties the loading
+    state to the app's own accent directly. Two earlier mechanism versions
+    were also tried and retired: a hard on/off `steps(1)` crossfade between
+    the two sprites, then an eased version that also dimmed the lit
+    sprite's own opacity — both are kept live for
     comparison at `#/dev/accent-polish`, not used anywhere real any more.
     Reduced-motion: static lit, no glow.
 
@@ -169,7 +172,7 @@ for accessibility.
 | Reviews — empty queue | `lamp-off` at 96 px, "Nothing to review", secondary button |
 | Session complete | three `lamp-on` at 48 px in a row, then the existing stats |
 | 404 / offline | `lamp-off` at 96 px, flat copy |
-| Loading | `lamp-on`, static + a soft breathing EMBER glow (`.lantern-pulse`), no spinner |
+| Loading | `lamp-on`, static + a soft breathing BRAND glow (`.lantern-pulse`), no spinner |
 | Favicon / tab | `favicon.svg` (= lamp-on), `favicon.ico` fallback |
 | iOS / PWA icon | `apple-touch-icon.png`, `icon-192/512.png` (bg versions) |
 
