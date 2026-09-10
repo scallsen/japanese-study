@@ -391,15 +391,19 @@ export function NewCard({ loading, state, onStart, onAdvance, onChangeTextbook }
 // brand/BRAND.md §2, §4. No dim/third state; static, it only animates via
 // ReviewCard's own on↔off swap when its state changes (handled by React
 // simply re-rendering a different <img src>, no crossfade). Full COVER_SIZE
-// now, matching NewCard's TextbookCover — the Reviews card gets a real
-// illustration instead of a small badge, so it uses the higher-detail HERO
-// pair rather than the small pair every other instance keeps using.
+// height now, matching NewCard's TextbookCover — the Reviews card gets a
+// real illustration instead of a small badge, so it uses the higher-detail
+// HERO pair rather than the small pair every other instance keeps using.
+// Height-only, no fixed width: the sprite's viewBox is cropped to its true
+// (non-square) bounds, so forcing a COVER_SIZE-square width would stretch
+// it — auto width keeps it undistorted, and the card's own
+// justify-content: space-between row (see PrimaryCard) is what pushes it
+// flush against the card's right edge regardless of its narrower width.
 function ReviewLamp({ on }) {
   return (
     <img
       src={on ? LANTERN_ON_HERO : LANTERN_OFF_HERO}
       alt=""
-      width={COVER_SIZE}
       height={COVER_SIZE}
       style={{ display: 'block', imageRendering: 'pixelated', flexShrink: 0 }}
     />

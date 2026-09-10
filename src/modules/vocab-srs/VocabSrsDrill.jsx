@@ -181,7 +181,7 @@ function DoneLanterns() {
   return (
     <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginBottom: 12 }}>
       {[0, 1, 2].map(i => (
-        <img key={i} src={LANTERN_ON} alt="" width={LANTERN_SIZES.card} height={LANTERN_SIZES.card} style={{ display: 'block', imageRendering: 'pixelated' }} />
+        <img key={i} src={LANTERN_ON} alt="" height={LANTERN_SIZES.card} style={{ display: 'block', imageRendering: 'pixelated' }} />
       ))}
     </div>
   )

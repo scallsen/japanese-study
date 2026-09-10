@@ -77,6 +77,12 @@ export const LANTERN_OFF = '/brand/lamp-off.svg'
 export const LANTERN_ON_HERO = '/brand/lamp-on-hero.svg'
 export const LANTERN_OFF_HERO = '/brand/lamp-off-hero.svg'
 
+// All four sprites' viewBox is cropped to their true bounds (23×32 — no dead
+// space baked in around the lamp shape), so anywhere the sprite needs an
+// explicit numeric width (rather than sizing off `height` and the image's
+// own intrinsic ratio) should multiply by this instead of assuming square.
+export const LANTERN_ASPECT = 23 / 32
+
 // Sizes the sprite is allowed to render at. Multiples of 32 (its native grid)
 // or exactly 16/24 for chrome. Anything else blurs the pixels.
 export const LANTERN_SIZES = { nav: 24, card: 48, hero: 96, favicon: 16 }

@@ -5,12 +5,15 @@ const NARROW_BP = 540
 
 // The nav lockup (brand/BRAND.md §1, §4): lamp-on at 24px + the wordmark,
 // left-aligned, on the home crumb only. Static — never animates here.
+// Height-only: the sprite's own viewBox is cropped to its true bounds (no
+// dead space baked in), so an explicit square width would stretch it —
+// letting width size itself off the image's real aspect ratio keeps it
+// undistorted and sitting flush against the wordmark, no invisible margin.
 function LanternMark() {
   return (
     <img
       src={LANTERN_ON}
       alt=""
-      width={LANTERN_SIZES.nav}
       height={LANTERN_SIZES.nav}
       style={{ display: 'block', imageRendering: 'pixelated', flexShrink: 0 }}
     />
