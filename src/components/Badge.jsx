@@ -1,4 +1,4 @@
-import { FONT, TRACKING, FS_BADGE, TEXT_MUTED, SUCCESS, WARNING, DANGER } from '../data/theme.js'
+import { FONT, TRACKING, FS_BADGE, TEXT_MUTED, SUCCESS, WARNING, DANGER, BRAND, BRAND_TEXT } from '../data/theme.js'
 import { useAccent } from '../context/ModuleThemeContext.jsx'
 
 // Small classification pill — JLPT level, part-of-speech, difficulty, SRS
@@ -28,6 +28,10 @@ export default function Badge({ tone = 'neutral', variant = 'fill', accent, dimm
     neutral: TEXT_MUTED,
   }
   const color = TONE_COLORS[tone] ?? TONE_COLORS.neutral
+  // BRAND on bg is 4.25:1 — fine for the border/tint, fails AA at FS_BADGE
+  // (brand/BRAND.md §3: "BRAND_TEXT for … any red text under 24px"). Only
+  // the label swaps; background/border stay on raw `color`.
+  const textColor = color === BRAND ? BRAND_TEXT : color
   const opacity = dimmed ? 0.55 : 1
 
   // width: fit-content matters — as a child of a flex *column* the default
@@ -35,7 +39,7 @@ export default function Badge({ tone = 'neutral', variant = 'fill', accent, dimm
   // full width. A badge must always be exactly as wide as its label.
   if (variant === 'text') {
     return (
-      <span style={{ fontFamily: FONT, letterSpacing: TRACKING, fontSize: FS_BADGE, color, opacity, flexShrink: 0, width: 'fit-content' }}>
+      <span style={{ fontFamily: FONT, letterSpacing: TRACKING, fontSize: FS_BADGE, color: textColor, opacity, flexShrink: 0, width: 'fit-content' }}>
         {children}
       </span>
     )
@@ -49,7 +53,7 @@ export default function Badge({ tone = 'neutral', variant = 'fill', accent, dimm
         fontFamily: FONT,
         letterSpacing: TRACKING,
         fontSize: FS_BADGE,
-        color,
+        color: textColor,
         background: `${color}22`,
         border: `1px solid ${color}55`,
         borderRadius: 4,

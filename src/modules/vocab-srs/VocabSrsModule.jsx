@@ -821,7 +821,7 @@ function VocabSrsHome() {
                             there's no dedicated empty-state screen here, just
                             this strip at the top of the deck list. */}
                         {!canStart && (
-                          <img src={LANTERN_OFF} alt="" height={LANTERN_SIZES.nav} style={{ display: 'block', imageRendering: 'pixelated', flexShrink: 0 }} />
+                          <img src={LANTERN_OFF} alt="" width={LANTERN_SIZES.nav} height={LANTERN_SIZES.nav} style={{ display: 'block', imageRendering: 'pixelated', flexShrink: 0 }} />
                         )}
                         <div>
                           <div style={{ fontSize: FS_CONTENT_HEADING, color: TEXT, letterSpacing: TRACKING }}>

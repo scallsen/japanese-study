@@ -39,10 +39,14 @@ so they hold up at illustration size instead of blurring/blocking up.
 Transparent, like the small pair (not baked-in like `-bg` — the first version
 of this pair was, and it showed up as a mismatched darker square, since it
 baked in the page background `#1E1E1E` rather than the card's own lighter
-`SURFACE`; transparent fixes that). First and currently only use: the Reviews
-home card's `cover` slot, at `COVER_SIZE` (104px, matching the Practice
-card's textbook cover) — the Reviews card gets a real illustration now
-instead of a small badge.
+`SURFACE`; transparent fixes that). Its viewBox is also cropped to its true
+23×32 bounds (5px of dead canvas on the left, 4px on the right, trimmed) —
+the small pair stays on its original square 32×32 canvas untouched, this
+crop is illustration-only. `LANTERN_ASPECT` (theme.js) is 23/32 for the one
+spot that needs an explicit numeric width against it. First and currently
+only use: the Reviews home card's `cover` slot, at `COVER_SIZE` (104px,
+matching the Practice card's textbook cover) — the Reviews card gets a real
+illustration now instead of a small badge.
 Every other instance in §4's table keeps the small pair.
 
 Rules:
