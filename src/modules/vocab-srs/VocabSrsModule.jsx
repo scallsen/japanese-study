@@ -834,7 +834,7 @@ function VocabSrsHome() {
                           </div>
                         </div>
                       </div>
-                      <Button variant="accent-outline" size="lg" onClick={() => handleStartReview(effectiveNewPerDay)} disabled={!canStart}>
+                      <Button size="lg" onClick={() => handleStartReview(effectiveNewPerDay)} disabled={!canStart}>
                         {canStart ? `Start review (${due.length + rescheduled.length + newCards.length})` : 'Nothing due'}
                       </Button>
                     </div>
