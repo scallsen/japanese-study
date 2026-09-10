@@ -1,11 +1,11 @@
-import { FONT, TRACKING } from '../data/theme.js'
+import { FONT, TRACKING, BRAND } from '../data/theme.js'
 
-// Fixed, not the ambient module accent. The avatar sits in the header on every
-// route, so reading the accent recoloured it on each navigation — teal on the
-// dashboard, pink in anime vocab, red in the news reader — which reads as a
-// different control rather than as one identity. What it stands for is the
-// user, and that doesn't change with the page.
-const AVATAR_COLOR = '#3A7FEF'
+// Fixed, not the ambient module accent — same reasoning as before the
+// rebrand (the avatar sits in the header on every route and shouldn't
+// recolour per page), but now that reasoning is moot: the ambient accent is
+// BRAND everywhere anyway. Kept as its own constant, set to BRAND, so the
+// header's one recognisable brand mark is the avatar.
+const AVATAR_COLOR = BRAND
 
 // Up to two initials from a display name, falling back to the first letter of
 // an email's local part. A single "?" rather than an empty circle when there's

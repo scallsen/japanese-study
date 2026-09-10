@@ -52,11 +52,20 @@ Base is unchanged (`#1E1E1E` bg, `#313131` surface, `#2E2E2E` border,
 **One brand colour: `BRAND #FF004D`** (PICO-8 red). It appears in exactly these places:
 
 1. The lit lantern.
-2. The single primary button per screen — fill `BRAND`, text `ON_BRAND #1E1E1E`,
-   hover/pressed `BRAND_DEEP`.
-3. A 4-px left edge on the two primary home cards (New, Reviews). Edge, not fill.
+2. The single primary button per screen — fill `BRAND`, text **white** (`#fff`),
+   hover/pressed `BRAND_DEEP`. The contrast math below called for `ON_BRAND`
+   here; on the actual filled button (DotGothic16, real size) white read
+   clean and `ON_BRAND` read muddy — visual review overrode the math, and
+   white is what shipped. `ON_BRAND` stays defined for any other surface
+   that puts text directly on a `BRAND` fill.
+3. The header avatar (top-right, every page) — tinted `BRAND`, same recipe
+   as `Button`'s `accent-outline`. It's the one place BRAND shows up as a
+   fixed, page-independent mark rather than a per-screen action.
 4. Focus rings, active/selected chips (`BRAND_TINT` background, `BRAND` border).
 5. Links and small red text — as `BRAND_TEXT #FF5C8A`, never raw `BRAND`.
+
+The two primary home cards (New, Reviews) originally carried a 4-px `BRAND`
+left edge — dropped after visual review. They carry no left-edge colour now.
 
 It does NOT appear as: module colours, card backgrounds, headings, icons,
 progress bars, badges, or error/wrong states.
@@ -83,8 +92,9 @@ live in different places (judgment row vs. primary actions), so no collision.
 | surface | treatment |
 |---|---|
 | Nav | `lamp-on` at 24 px + `Lantern` at FS_NAV, top-left, home link, static |
-| Home — New card | `BRAND` left edge, `BRAND` primary button |
-| Home — Reviews card | `BRAND` left edge; `lamp-on` at 48 px when due, `lamp-off` when queue is empty |
+| Header avatar | `BRAND` tint, top-right, every page, static |
+| Home — New card | `BRAND` primary button. No left edge (dropped after review). |
+| Home — Reviews card | `lamp-on` at 48 px when due, `lamp-off` when queue is empty. No left edge. |
 | Reviews — empty queue | `lamp-off` at 96 px, "Nothing to review", secondary button |
 | Session complete | three `lamp-on` at 48 px in a row, then the existing stats |
 | 404 / offline | `lamp-off` at 96 px, flat copy |

@@ -22,6 +22,7 @@ import TrackedStatLabPage from './pages/TrackedStatLabPage.jsx'
 import CoverRotationLabPage from './pages/CoverRotationLabPage.jsx'
 import SecondaryButtonLabPage from './pages/SecondaryButtonLabPage.jsx'
 import DrillFlipLabPage from './pages/DrillFlipLabPage.jsx'
+import SegmentColorLabPage from './pages/SegmentColorLabPage.jsx'
 
 function getRoute() {
   // Strip any query string (e.g. '/vocab-srs/browse?deck=x&manage=1') before
@@ -83,5 +84,7 @@ export default function App() {
   if (route === '/dev/secondary-button-lab') return <SecondaryButtonLabPage />
   // Dev-only comparison harness for the Review card's flip-position fix and the keyboard-hint options, not linked from the dashboard
   if (route === '/dev/drill-flip-lab') return <DrillFlipLabPage />
+  // Colour exploration for SEGMENT_COLORS (DistributionBar), not linked from the dashboard
+  if (route === '/dev/segment-colors') return <SegmentColorLabPage />
   return <DashboardPage />
 }

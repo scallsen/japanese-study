@@ -41,9 +41,9 @@ export function PrimaryCard({ accent, title, subtitle, cover, progress, actions,
     <ModuleThemeProvider accent={accent}>
       <Card
         padding={SPACE_24}
-        // BRAND left edge (brand/BRAND.md §3.3) — the two primary home cards
-        // are the only place a colour appears as an edge rather than a fill.
-        style={{ display: 'flex', flexDirection: 'column', height: '100%', borderLeft: `4px solid ${accent}` }}
+        // Dropped the BRAND left edge from brand/BRAND.md §3.3 — visual
+        // review call, kept out of that section now (see the note there).
+        style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE_16 }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: SPACE_16 }}>
@@ -262,6 +262,12 @@ export function ActionsRow({ children }) {
 // chapter instead of advancing), a chevron that opens it in a popover menu
 // rather than surfacing it as a second visible button. Degrades to a plain
 // Button when there's nothing to put in the menu.
+//
+// Hand-rolled rather than two <Button variant="primary">s glued together —
+// the shared square-height chevron segment and the seam between them don't
+// map onto Button's API — so it needs Button.jsx's btn-primary class added
+// explicitly (see global.css) to get the same BRAND_DEEP hover Button's own
+// primary variant gets; it won't pick that up automatically from Button.jsx.
 export function SegmentedPrimary({ size = 'lg', label, onClick, menuItems = [], fullWidth = false }) {
   const accent = useAccent()
   const [open, setOpen] = useState(false)
@@ -289,7 +295,7 @@ export function SegmentedPrimary({ size = 'lg', label, onClick, menuItems = [], 
     }}>
       <button
         type="button"
-        className="btn btn-tint"
+        className="btn btn-tint btn-primary"
         onClick={onClick}
         style={{
           background: accent, border: 'none', boxSizing: 'border-box',
@@ -303,7 +309,7 @@ export function SegmentedPrimary({ size = 'lg', label, onClick, menuItems = [], 
       <button
         ref={chevronRef}
         type="button"
-        className="btn btn-tint"
+        className="btn btn-tint btn-primary"
         onClick={() => setOpen(o => !o)}
         aria-label="More actions"
         style={{

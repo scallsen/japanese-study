@@ -96,6 +96,25 @@ button, input, select, textarea {
   filter: brightness(0.92);
 }
 
+/* Primary overrides btn-tint's brightness filter with a real colour swap —
+   BRAND (#FF004D) is already near its max visual "hotness", so brightening
+   it further barely registers; BRAND_DEEP (#D80041) is an unmistakably
+   different, darker red. !important because Button sets `background: accent`
+   inline, which otherwise outranks this class outright (same gotcha as
+   .btn-neutral/.chip--off/.track-toggle). */
+.btn-primary:hover:not(:disabled) {
+  filter: none;
+  background: #D80041 !important;
+}
+
+/* brand/BRAND.md names BRAND_DEEP for both hover and pressed — active
+   darkens that same colour further via filter rather than inventing a
+   third, undefined shade. */
+.btn-primary:active:not(:disabled) {
+  filter: brightness(0.85);
+  background: #D80041 !important;
+}
+
 .btn-neutral:hover:not(:disabled) {
   background: rgba(255,255,255,0.10) !important;
 }

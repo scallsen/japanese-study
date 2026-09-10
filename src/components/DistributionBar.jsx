@@ -7,9 +7,11 @@ import { FONT, TRACKING, TEXT_MUTED, FS_CAPTION, SPACE_4, SPACE_8, SEGMENT_COLOR
  *
  * `segments`: [{ key, label, count, description? }] — rendered in array
  * order, zero-count segments dropped. Colours come from SEGMENT_COLORS by
- * key, so callers pass data, not styling.
+ * key by default, so callers pass data, not styling; `colors` is an
+ * override for comparing candidate palettes against the real component
+ * (see #/dev/segment-colors) — production call sites never pass it.
  */
-export default function DistributionBar({ segments, showLegend = true }) {
+export default function DistributionBar({ segments, showLegend = true, colors = SEGMENT_COLORS }) {
   const visible = segments.filter(s => s.count > 0)
   const total = segments.reduce((sum, s) => sum + s.count, 0)
   if (total === 0) return null
@@ -21,7 +23,7 @@ export default function DistributionBar({ segments, showLegend = true }) {
           <div
             key={s.key}
             title={`${s.label}: ${s.count} (${((s.count / total) * 100).toFixed(1)}%)${s.description ? ` — ${s.description}` : ''}`}
-            style={{ flex: `${s.count} 0 0`, background: SEGMENT_COLORS[s.key] ?? SEGMENT_COLORS.new }}
+            style={{ flex: `${s.count} 0 0`, background: colors[s.key] ?? colors.new }}
           />
         ))}
       </div>
@@ -40,7 +42,7 @@ export default function DistributionBar({ segments, showLegend = true }) {
             >
               <span style={{
                 width: 8, height: 8, borderRadius: 2, flexShrink: 0,
-                background: SEGMENT_COLORS[s.key] ?? SEGMENT_COLORS.new,
+                background: colors[s.key] ?? colors.new,
               }} />
               {s.label} {s.count}
             </span>
