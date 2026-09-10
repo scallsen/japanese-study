@@ -69,6 +69,14 @@ export const ACCENT_SECONDARY_DIM = '#AB5236'  // PICO-8 4 — the ramp's dimmes
 export const LANTERN_ON = '/brand/lamp-on.svg'
 export const LANTERN_OFF = '/brand/lamp-off.svg'
 
+// Higher-detail pair, still 32×32 but drawn pixel-by-pixel instead of on the
+// small pair's 2-px/16×16-logical grid — the small pair blurs/blocks up
+// scaled past ~48px, this one holds up at illustration sizes. Reviews
+// home-card cover (COVER_SIZE, matching the Practice card's textbook cover)
+// is the first user; everywhere else keeps the small pair per BRAND.md §2.
+export const LANTERN_ON_HERO = '/brand/lamp-on-hero.svg'
+export const LANTERN_OFF_HERO = '/brand/lamp-off-hero.svg'
+
 // Sizes the sprite is allowed to render at. Multiples of 32 (its native grid)
 // or exactly 16/24 for chrome. Anything else blurs the pixels.
 export const LANTERN_SIZES = { nav: 24, card: 48, hero: 96, favicon: 16 }

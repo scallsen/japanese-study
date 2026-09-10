@@ -11,7 +11,7 @@ import { useCoverRotation } from './coverRotation.js'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_BADGE, FS_BASE, FS_CONTENT_HEADING,
   SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32, BRAND,
-  LANTERN_ON, LANTERN_OFF, LANTERN_SIZES,
+  LANTERN_ON_HERO, LANTERN_OFF_HERO,
 } from '../data/theme.js'
 
 // The home page's two big cards, plus SegmentedPrimary/ActionsRow/
@@ -390,14 +390,17 @@ export function NewCard({ loading, state, onStart, onAdvance, onChangeTextbook }
 // Lit when there's something to review, unlit when the queue is empty —
 // brand/BRAND.md §2, §4. No dim/third state; static, it only animates via
 // ReviewCard's own on↔off swap when its state changes (handled by React
-// simply re-rendering a different <img src>, no crossfade).
+// simply re-rendering a different <img src>, no crossfade). Full COVER_SIZE
+// now, matching NewCard's TextbookCover — the Reviews card gets a real
+// illustration instead of a small badge, so it uses the higher-detail HERO
+// pair rather than the small pair every other instance keeps using.
 function ReviewLamp({ on }) {
   return (
     <img
-      src={on ? LANTERN_ON : LANTERN_OFF}
+      src={on ? LANTERN_ON_HERO : LANTERN_OFF_HERO}
       alt=""
-      width={LANTERN_SIZES.card}
-      height={LANTERN_SIZES.card}
+      width={COVER_SIZE}
+      height={COVER_SIZE}
       style={{ display: 'block', imageRendering: 'pixelated', flexShrink: 0 }}
     />
   )

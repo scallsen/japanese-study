@@ -55,6 +55,12 @@ export const ACCENT_SECONDARY_DIM = '#AB5236'  // PICO-8 4 — the ramp's dimmes
 export const LANTERN_ON = '/brand/lamp-on.svg'
 export const LANTERN_OFF = '/brand/lamp-off.svg'
 
+// Higher-detail pair (BRAND.md §2) — same 32×32 canvas, pixel-by-pixel
+// instead of the small pair's 2-px grid, for illustration-size renders.
+// Reviews home-card cover is the only user so far.
+export const LANTERN_ON_HERO = '/brand/lamp-on-hero.svg'
+export const LANTERN_OFF_HERO = '/brand/lamp-off-hero.svg'
+
 // Sizes the sprite is allowed to render at. Multiples of 32 (its native grid)
 // or exactly 16/24 for chrome. Anything else blurs the pixels.
 export const LANTERN_SIZES = { nav: 24, card: 48, hero: 96, favicon: 16 }

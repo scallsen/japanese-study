@@ -27,11 +27,20 @@ Two sprites, both 32×32, drawn on a 2-px grid (16×16 logical pixels):
 
 | file | state | when |
 |---|---|---|
-| `lamp-on.svg` | lit | default mark; reviews card when reviews are due |
-| `lamp-off.svg` | unlit | reviews card when nothing is due; 404; offline |
+| `lamp-on.svg` | lit | default mark; small UI instances (nav, session-complete, loading, empty-queue badge) |
+| `lamp-off.svg` | unlit | same, unlit state; 404; offline |
 
 `-bg` variants carry the `#1E1E1E` background baked in, for app icons and share
 images only. In the UI always use the transparent versions.
+
+**`-hero` variants** (`lamp-on-hero.svg` / `lamp-off-hero.svg`) — a second pair,
+still 32×32 but drawn pixel-by-pixel rather than on the small pair's 2-px grid,
+so they hold up at illustration size instead of blurring/blocking up. Background
+baked in like the `-bg` pair (no transparent gutter — render as a plain square,
+no crop logic needed). First and currently only use: the Reviews home card's
+`cover` slot, at `COVER_SIZE` (104px, matching the Practice card's textbook
+cover) — the Reviews card gets a real illustration now instead of a small badge.
+Every other instance in §4's table keeps the small pair.
 
 Rules:
 - Render only at 16, 24, 48, 96 px (or any multiple of 32). Other sizes blur.
@@ -140,7 +149,7 @@ for accessibility.
 | Nav | `lamp-on` at 24 px + `Lantern` at FS_NAV, top-left, home link, static |
 | Header avatar | `BRAND` tint, top-right, every page, static |
 | Home — New card | `BRAND` primary button. No left edge (dropped after review). |
-| Home — Reviews card | `lamp-on` at 48 px when due, `lamp-off` when queue is empty. No left edge. |
+| Home — Reviews card | `lamp-on-hero`/`lamp-off-hero` at COVER_SIZE (104 px, matching the Practice card's cover), on when due. No left edge. |
 | Reviews — empty queue | `lamp-off` at 96 px, "Nothing to review", secondary button |
 | Session complete | three `lamp-on` at 48 px in a row, then the existing stats |
 | 404 / offline | `lamp-off` at 96 px, flat copy |
@@ -162,6 +171,8 @@ in the nav and `FS_DISPLAY_HEADING` on the landing page.
 ```
 public/brand/lamp-on.svg
 public/brand/lamp-off.svg
+public/brand/lamp-on-hero.svg
+public/brand/lamp-off-hero.svg
 public/favicon.svg          ← replace
 public/favicon.ico          ← replace
 public/apple-touch-icon.png ← replace
