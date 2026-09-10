@@ -35,11 +35,14 @@ images only. In the UI always use the transparent versions.
 
 **`-hero` variants** (`lamp-on-hero.svg` / `lamp-off-hero.svg`) — a second pair,
 still 32×32 but drawn pixel-by-pixel rather than on the small pair's 2-px grid,
-so they hold up at illustration size instead of blurring/blocking up. Background
-baked in like the `-bg` pair (no transparent gutter — render as a plain square,
-no crop logic needed). First and currently only use: the Reviews home card's
-`cover` slot, at `COVER_SIZE` (104px, matching the Practice card's textbook
-cover) — the Reviews card gets a real illustration now instead of a small badge.
+so they hold up at illustration size instead of blurring/blocking up.
+Transparent, like the small pair (not baked-in like `-bg` — the first version
+of this pair was, and it showed up as a mismatched darker square, since it
+baked in the page background `#1E1E1E` rather than the card's own lighter
+`SURFACE`; transparent fixes that). First and currently only use: the Reviews
+home card's `cover` slot, at `COVER_SIZE` (104px, matching the Practice
+card's textbook cover) — the Reviews card gets a real illustration now
+instead of a small badge.
 Every other instance in §4's table keeps the small pair.
 
 Rules:
