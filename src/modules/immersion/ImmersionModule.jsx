@@ -17,7 +17,7 @@ import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import { useIsMobile } from '../../hooks/useIsMobile.js'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { ModuleThemeProvider } from '../../context/ModuleThemeContext.jsx'
-import { FONT, TRACKING, TEXT_MUTED, FS_BASE, SPACE_8, SPACE_12, SPACE_16, BRAND } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT_MUTED, FS_BASE, SPACE_8, SPACE_12, SPACE_16, BRAND, CONTENT_STANDARD } from '../../data/theme.js'
 import { CATEGORIES, CATEGORY_LABEL } from './categories.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
 
@@ -212,7 +212,7 @@ function ImmersionScreens() {
         <TopProgressBar loading={showLoadingMessage} color={IMMERSION_ACCENT} />
       </PageHeader>
       <div style={{ flex: 1, overflowY: 'auto', padding: '32px 24px' }}>
-        <div style={{ maxWidth: 780, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: SPACE_16 }}>
+        <div style={{ maxWidth: CONTENT_STANDARD, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: SPACE_16 }}>
           <TextInput
             value={searchInput}
             onChange={setSearchInput}

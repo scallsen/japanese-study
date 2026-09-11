@@ -27,9 +27,10 @@ import {
   FONT, TRACKING, TEXT, TEXT_MUTED, DANGER,
   FS_BASE, FS_SM, FS_CONTENT_HEADING,
   SPACE_4, SPACE_8, SPACE_12, SPACE_16, SPACE_24, SPACE_32,
+  CONTENT_STANDARD,
 } from '../data/theme.js'
 
-const COLUMN_WIDTH = 640
+const COLUMN_WIDTH = CONTENT_STANDARD
 const USAGE_BAR_WIDTH = 120
 
 // Mirrors looksLikeAnthropicKey in supabase/functions/_shared/userKey.ts. The

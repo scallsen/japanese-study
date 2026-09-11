@@ -12,7 +12,7 @@ import ChipSelector from '../../components/Chip.jsx'
 import ToggleButton from '../../components/ToggleButton.jsx'
 import Disclosure from '../../components/Disclosure.jsx'
 import NewspaperLayout from '../../components/NewspaperLayout.jsx'
-import { FONT, TRACKING, TEXT_MUTED, FS_BASE } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT_MUTED, FS_BASE, CONTENT_READING } from '../../data/theme.js'
 import { useIsMobile } from '../../hooks/useIsMobile.js'
 import { SOURCE_LABEL } from './sourceLabels.js'
 
@@ -123,7 +123,7 @@ export default function ImmersionReader({ article, defaultLevel = 'simplified', 
         rightSlot={<AuthSlot />}
       />
       <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', padding: '40px 24px' }}>
-        <div style={{ maxWidth: 640, margin: '0 auto' }}>
+        <div style={{ maxWidth: CONTENT_READING, margin: '0 auto' }}>
           {(hasSimplified || tokens) && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
               {hasSimplified && (

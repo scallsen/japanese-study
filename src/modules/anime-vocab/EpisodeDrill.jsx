@@ -11,7 +11,7 @@ import { useProgress } from '../../hooks/useProgress.js'
 import { createCard } from '../vocab-srs/srs.js'
 import {
   FONT, TEXT_MUTED, FS_BADGE, FS_CAPTION,
-  FS_DISPLAY_HEADING, FS_STAT_VALUE, FS_LIST_TITLE,
+  FS_DISPLAY_HEADING, FS_STAT_VALUE, FS_LIST_TITLE, CONTENT_NARROW,
 } from '../../data/theme.js'
 import { useAccent } from '../../context/ModuleThemeContext.jsx'
 import Button from '../../components/Button.jsx'
@@ -164,7 +164,7 @@ function DoneScreen({ pool, mistakeCounts, correct, troubled, onRestart, onBack,
   }
 
   return (
-    <div style={{ textAlign: 'center', fontFamily: FONT, width: '100%', maxWidth: 560, padding: '0 24px 48px' }}>
+    <div style={{ textAlign: 'center', fontFamily: FONT, width: '100%', maxWidth: CONTENT_NARROW, padding: '0 24px 48px' }}>
       <div style={{ color: '#fff', fontSize: FS_DISPLAY_HEADING, letterSpacing: '0.05em', marginBottom: 16 }}>Drill complete</div>
       <div style={{ display: 'flex', gap: 20, justifyContent: 'center', marginBottom: 32 }}>
         <div>

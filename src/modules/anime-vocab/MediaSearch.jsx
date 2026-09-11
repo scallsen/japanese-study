@@ -4,7 +4,7 @@ import { fetchRecommendedMedia } from './recommendedMediaCache.js'
 import { difficultyLabel } from './difficultyLabels.js'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../../utils/storage.js'
-import { FONT, TRACKING, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE, CONTENT_STANDARD } from '../../data/theme.js'
 import Select from '../../components/Select.jsx'
 import TextInput from '../../components/TextInput.jsx'
 import Button from '../../components/Button.jsx'
@@ -351,7 +351,7 @@ export default function MediaSearch({ onSelected, onLoadingChange }) {
   }
 
   return (
-    <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <div style={{ maxWidth: CONTENT_STANDARD, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
       <TextInput
         value={query}
         onChange={setQuery}

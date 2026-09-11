@@ -6,7 +6,7 @@ import TopProgressBar from '../components/TopProgressBar.jsx'
 import CenteredLoadingMessage from '../components/CenteredLoadingMessage.jsx'
 import { useDelayedLoading } from '../hooks/useDelayedLoading.js'
 import { supabase } from '../lib/supabase.js'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_ENTRY_WORD, FS_CONTENT_HEADING, KANJI_FONT, BRAND, DANGER } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_ENTRY_WORD, FS_CONTENT_HEADING, KANJI_FONT, BRAND, DANGER, CONTENT_STANDARD } from '../data/theme.js'
 import AttributionFooter from '../components/AttributionFooter.jsx'
 import Badge from '../components/Badge.jsx'
 import Card from '../components/Card.jsx'
@@ -450,7 +450,7 @@ export default function DictionaryPage() {
         <TopProgressBar loading={showLoadingMessage} color={ACCENT} />
       </PageHeader>
       <div ref={scrollRef} onScroll={handleScroll} style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 48px', display: 'flex', flexDirection: 'column' }}>
-        <div style={{ maxWidth: 600, margin: '0 auto', width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ maxWidth: CONTENT_STANDARD, margin: '0 auto', width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
         <div style={{ flex: 1 }}>
           <TextInput
             placeholder="Search Japanese or English"
@@ -526,7 +526,6 @@ export default function DictionaryPage() {
                 rowKey={entry => entry.id}
                 navigate={{ href: entry => `#/dictionary/entry/${entry.id}` }}
                 padding="12px 16px"
-                maxWidth={600}
               />
 
               {hasMore && (

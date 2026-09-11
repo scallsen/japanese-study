@@ -12,7 +12,7 @@ import FilterCard, { FilterRow } from '../../components/FilterCard.jsx'
 import ActionBar, { ACTION_BAR_HEIGHT } from '../../components/ActionBar.jsx'
 import SectionHeader from '../../components/SectionHeader.jsx'
 import { BG } from './storyUI.jsx'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_CAPTION, DANGER, BRAND } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_CAPTION, DANGER, BRAND, CONTENT_READING } from '../../data/theme.js'
 import { ModuleThemeProvider, useAccent } from '../../context/ModuleThemeContext.jsx'
 import { AI_DAILY_LIMITS } from '../../data/aiLimits.js'
 import { useAiUsage } from '../../hooks/useAiUsage.js'
@@ -281,7 +281,7 @@ function StoryGenerator() {
         <TopProgressBar loading={showGenerating} color={STORY_ACCENT} />
       </PageHeader>
       <div style={{ flex: 1, overflowY: 'auto' }}>
-        <div style={{ maxWidth: 760, margin: '0 auto', padding: isMobile ? `18px 14px ${ACTION_BAR_HEIGHT + 18}px` : `24px 20px ${ACTION_BAR_HEIGHT + 24}px` }}>
+        <div style={{ maxWidth: CONTENT_READING, margin: '0 auto', padding: isMobile ? `18px 14px ${ACTION_BAR_HEIGHT + 18}px` : `24px 20px ${ACTION_BAR_HEIGHT + 24}px` }}>
           <FilterCard>
             <FilterRow key="source" label="Vocabulary">
               <Select value={source} onChange={setSource} variant="inline" options={sourceOptions} />
@@ -313,7 +313,7 @@ function StoryGenerator() {
           )}
           {error && <div style={{ marginTop: 14, fontSize: FS_CAPTION, color: DANGER }}>{error}</div>}
           <ActionBar
-            maxWidth={760}
+            maxWidth={CONTENT_READING}
             leading={(
               <span style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, display: 'flex', flexDirection: 'column', gap: 5 }}>
                 <span>

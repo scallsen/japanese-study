@@ -1,4 +1,4 @@
-import { SPACE_12, SPACE_24 } from '../data/theme.js'
+import { SPACE_12, SPACE_24, CONTENT_STANDARD } from '../data/theme.js'
 
 const BG = '#1E1E1E'
 const HAIRLINE = 'rgba(255,255,255,0.08)'
@@ -12,7 +12,7 @@ export const ACTION_BAR_HEIGHT = 72
 // Extracted from EpisodeVocabBrowser's fixed footer. `leading` is an
 // optional left-side slot (a status line like "935 words in context");
 // children are the buttons, right-aligned, wrapping on narrow screens.
-export default function ActionBar({ leading, maxWidth = 640, children }) {
+export default function ActionBar({ leading, maxWidth = CONTENT_STANDARD, children }) {
   return (
     <div style={{
       position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 20,

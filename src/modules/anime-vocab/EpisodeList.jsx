@@ -1,7 +1,7 @@
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useTrackedAnime } from './useTrackedAnime.js'
 import { difficultyLabel } from './difficultyLabels.js'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE, CONTENT_STANDARD } from '../../data/theme.js'
 import ToggleButton from '../../components/ToggleButton.jsx'
 import DataList from '../../components/DataList.jsx'
 import Badge from '../../components/Badge.jsx'
@@ -112,7 +112,7 @@ export default function EpisodeList({ media, episodes, onSelectEpisode }) {
   const showLinksRow = !!media.externalId || links.length > 0
 
   return (
-    <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <div style={{ maxWidth: CONTENT_STANDARD, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
         {media.coverUrl && (
           <img src={media.coverUrl} alt="" style={{ width: 96, height: 135, objectFit: 'cover', borderRadius: 6, flexShrink: 0 }} />

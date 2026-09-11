@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import PageHeader from '../components/PageHeader.jsx'
 import AuthSlot from '../components/AuthSlot.jsx'
 import { supabase } from '../lib/supabase.js'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_ENTRY_HEADING, FS_ENTRY_ALT, KANJI_FONT, BRAND, DANGER } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_CAPTION, FS_ENTRY_HEADING, FS_ENTRY_ALT, KANJI_FONT, BRAND, DANGER, CONTENT_STANDARD } from '../data/theme.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useProgress } from '../hooks/useProgress.js'
 import { migrateProgress } from '../modules/vocab-srs/migrate.js'
@@ -292,7 +292,7 @@ export default function DictionaryEntryPage({ entryId }) {
         rightSlot={<AuthSlot />}
       />
       <div style={{ flex: 1, overflowY: 'auto', padding: '32px 16px 64px', display: 'flex', flexDirection: 'column' }}>
-        <div style={{ maxWidth: 600, margin: '0 auto', width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ maxWidth: CONTENT_STANDARD, margin: '0 auto', width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
         <div style={{ flex: 1 }}>
           {loading && <CenteredLoadingMessage text="Loading..." />}
 
@@ -347,7 +347,6 @@ export default function DictionaryEntryPage({ entryId }) {
                       rowKey={row => row.id}
                       navigate={{ href: row => row.href }}
                       padding="10px 14px"
-                      maxWidth={600}
                     />
                   )}
                   {user && srsMatches.length === 0 && (
