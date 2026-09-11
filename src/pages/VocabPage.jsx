@@ -22,6 +22,7 @@ import ActionBar, { ACTION_BAR_HEIGHT } from '../components/ActionBar.jsx'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_BADGE, FS_ENTRY_WORD, FS_STAT_VALUE,
   FS_DISPLAY_HEADING, FS_CONTENT_HEADING, KANJI_FONT, WARNING, BRAND, DANGER,
+  CONTENT_NARROW, CONTENT_STANDARD,
 } from '../data/theme.js'
 import { ModuleThemeProvider, useAccent } from '../context/ModuleThemeContext.jsx'
 import { WORD_SOURCES, visibleSources } from '../data/wordLists.js'
@@ -509,7 +510,7 @@ function DoneScreen({
   }
 
   return (
-    <div style={{ textAlign: 'center', fontFamily: FONT, width: '100%', maxWidth: 560, padding: '48px 24px 48px' }}>
+    <div style={{ textAlign: 'center', fontFamily: FONT, width: '100%', maxWidth: CONTENT_NARROW, padding: '48px 24px 48px' }}>
       <div style={{ color: '#fff', fontSize: FS_DISPLAY_HEADING, letterSpacing: '0.05em', marginBottom: 16 }}>Session complete</div>
       <div style={{ display: 'flex', gap: 20, justifyContent: 'center', marginBottom: 32 }}>
         <div>
@@ -700,7 +701,7 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
   const columns = [{ key: 'word', render: renderWordRow, wrap: true }]
 
   return (
-    <div style={{ width: '100%', maxWidth: 680, margin: '0 auto', padding: '32px 24px 48px' }}>
+    <div style={{ width: '100%', maxWidth: CONTENT_STANDARD, margin: '0 auto', padding: '32px 24px 48px' }}>
       {grouped.map(group => (
         <div key={group.listId} style={{ marginBottom: 40 }}>
           <SectionHeader title={group.label} />
@@ -923,7 +924,7 @@ function HomeScreen({ sourceOptions, selectedSourceId, onSelectSource, available
   return (
     <div style={{
       width: '100%',
-      maxWidth: 680,
+      maxWidth: CONTENT_STANDARD,
       margin: '0 auto',
       padding: `32px 24px ${ACTION_BAR_HEIGHT + 24}px`,
       display: 'flex',
@@ -976,7 +977,7 @@ function HomeScreen({ sourceOptions, selectedSourceId, onSelectSource, available
         })}
       </div>
 
-      <ActionBar maxWidth={680}>
+      <ActionBar maxWidth={CONTENT_STANDARD}>
         <Button variant="neutral" size="xl" disabled>Send to review deck</Button>
         <Button variant="neutral" size="xl" onClick={onGlance} disabled={!canStart}>Preview</Button>
         <Button size="xl" onClick={onStart} disabled={!canStart}>

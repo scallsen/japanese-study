@@ -14,7 +14,7 @@ import { Chip, default as ChipSelector } from '../../components/Chip.jsx'
 import FilterCard, { FilterRow } from '../../components/FilterCard.jsx'
 import CenteredLoadingMessage from '../../components/CenteredLoadingMessage.jsx'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE, KANJI_FONT } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_BADGE, FS_LIST_TITLE, KANJI_FONT, CONTENT_STANDARD } from '../../data/theme.js'
 import { useAccent } from '../../context/ModuleThemeContext.jsx'
 
 const DEFAULT_WORD_LIMIT = 20
@@ -223,7 +223,7 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
 
   if (loading) {
     return (
-      <div style={{ maxWidth: 640, margin: '0 auto' }}>
+      <div style={{ maxWidth: CONTENT_STANDARD, margin: '0 auto' }}>
         {showLoadingMessage && (
           <CenteredLoadingMessage text={syncing ? 'Syncing details from Jiten' : 'Loading episode vocabulary'} />
         )}
@@ -232,14 +232,14 @@ export default function EpisodeVocabBrowser({ media, episode, onStartDrill, onLo
   }
   if (error) {
     return (
-      <div style={{ maxWidth: 640, margin: '0 auto', fontSize: FS_BASE, color: '#f87171', fontFamily: FONT, letterSpacing: TRACKING }}>
+      <div style={{ maxWidth: CONTENT_STANDARD, margin: '0 auto', fontSize: FS_BASE, color: '#f87171', fontFamily: FONT, letterSpacing: TRACKING }}>
         {error}
       </div>
     )
   }
 
   return (
-    <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <div style={{ maxWidth: CONTENT_STANDARD, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div>
         <div style={{ fontSize: FS_LIST_TITLE + 4, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING, marginBottom: 4 }}>
           {media.title} — {episode.title || `Episode ${episode.episode_number}`}

@@ -8,7 +8,7 @@ import Japanese from '../../components/Japanese.jsx'
 import ToggleButton from '../../components/ToggleButton.jsx'
 import { BG } from './storyUI.jsx'
 import { buildVocabMap } from '../../utils/vocabMap.js'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_ARTICLE_BODY, FS_HEADING, FS_CONTENT_HEADING, BRAND } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_ARTICLE_BODY, FS_HEADING, FS_CONTENT_HEADING, BRAND, CONTENT_READING } from '../../data/theme.js'
 import { ModuleThemeProvider } from '../../context/ModuleThemeContext.jsx'
 // Cross-module write: creates cards in vocab-srs progress namespace (same pattern as ImmersionReader)
 import { createCard } from '../vocab-srs/srs.js'
@@ -135,7 +135,7 @@ function StoryReview({ storyId }) {
     return (
       <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: BG, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>
         <PageHeader crumbs={crumbs} rightSlot={<AuthSlot />} />
-        <div style={{ maxWidth: 760, margin: '0 auto', padding: '24px 20px', fontSize: FS_HEADING, color: TEXT_MUTED }}>
+        <div style={{ maxWidth: CONTENT_READING, margin: '0 auto', padding: '24px 20px', fontSize: FS_HEADING, color: TEXT_MUTED }}>
           {storyLoading ? 'Loading…' : storyError || 'Story not found.'}
         </div>
       </div>
@@ -162,7 +162,7 @@ function StoryReview({ storyId }) {
 
       <PageHeader crumbs={crumbs} rightSlot={<AuthSlot />} />
       <div style={{ flex: 1, overflowY: 'auto' }} onScroll={() => setPopup(null)}>
-        <div style={{ maxWidth: 760, margin: '0 auto', padding: isMobile ? '18px 14px 70px' : '24px 20px 80px' }}>
+        <div style={{ maxWidth: CONTENT_READING, margin: '0 auto', padding: isMobile ? '18px 14px 70px' : '24px 20px 80px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20, flexWrap: 'wrap' }}>
             {!Layout && (
               <Japanese as="h2" style={{ fontSize: FS_CONTENT_HEADING, fontWeight: 'normal', lineHeight: 1.5, margin: 0, flex: '1 1 200px' }}>{story.title}</Japanese>

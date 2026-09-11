@@ -17,7 +17,7 @@ import ToggleButton from '../../components/ToggleButton.jsx'
 import ChipSelector from '../../components/Chip.jsx'
 import SignInGate from '../../components/SignInGate.jsx'
 import { useToast } from '../../context/ToastContext.jsx'
-import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, SEGMENT_COLORS, BRAND } from '../../data/theme.js'
+import { FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, SEGMENT_COLORS, BRAND, CONTENT_STANDARD } from '../../data/theme.js'
 import { ModuleThemeProvider } from '../../context/ModuleThemeContext.jsx'
 import { STATE_LABELS, STATE_DESCRIPTIONS, SUSPENDED_DESCRIPTION } from './cardStates.js'
 import { useIsMobile } from '../../hooks/useIsMobile.js'
@@ -305,7 +305,7 @@ function BrowseCards() {
         rightSlot={<AuthSlot />}
       />
       <main style={{ flex: 1, overflowY: 'auto', padding: `24px 24px ${manageMode && someFilteredSelected ? 96 : 60}px` }}>
-        <div style={{ maxWidth: 760, margin: '0 auto' }}>
+        <div style={{ maxWidth: CONTENT_STANDARD, margin: '0 auto' }}>
           <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 20 }}>
             <div style={{ minWidth: 200, maxWidth: 320 }}>
               <Select

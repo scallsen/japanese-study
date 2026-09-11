@@ -138,6 +138,25 @@ export const SPACE_16 = 16  // standard card/section padding
 export const SPACE_24 = 24  // page-level padding, section separation
 export const SPACE_32 = 32  // large section breaks
 
+// Content column widths — the maxWidth every page/module wraps its centered
+// content in below PageHeader (which is always full-bleed). Before these
+// existed, nine near-duplicate literals (480/560/600/640/680/700/760/820/900)
+// had spread across the app with no stated reason for the differences. Three
+// buckets, each anchored on whichever real value already had the most call
+// sites agreeing on it — not invented:
+export const CONTENT_NARROW = 560    // centered stat/summary screens (done screens)
+export const CONTENT_STANDARD = 640  // row-list/browse pages (word lists, episode lists, dictionary, deck browse)
+export const CONTENT_READING = 760   // long-form Japanese prose + furigana (Story, Immersion reader)
+// Deliberately outside this system: DashboardPage's grid width (a multi-column
+// card grid, not a text column), VocabSrsModule's drill-screen wrapper (fits a
+// card+button widget, not prose/list content), GrammarMapModule's full-bleed
+// canvas, and 820 — the home-screen/dashboard width shared by VocabSrsModule's
+// Reviews home and VocabPage's TextbookHomeScreen, already consistent between
+// its real call sites (and rehearsed at the same value across the in-progress
+// TextbookFlowLabPage/HomeFlowLabPage redesign) — a legitimate 4th bucket
+// candidate, just not part of this pass. The /dev/* lab pages' own
+// preview-column widths (700 etc.) are internal tooling, not app content.
+
 // Semantic tones (Tailwind-derived light tints for dark text — see the
 // DRILL_COLORS note below for why the drill palette is NOT these). Badge and
 // Button read these; Story's grading result and error lines are the first

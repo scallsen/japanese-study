@@ -16,7 +16,7 @@ import TrackedAnimeSection from './TrackedAnimeSection.jsx'
 import { useTrackedAnime } from './useTrackedAnime.js'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import { useJaVoices } from '../../hooks/useTTS.js'
-import { FONT, TRACKING, BRAND } from '../../data/theme.js'
+import { FONT, TRACKING, BRAND, CONTENT_STANDARD } from '../../data/theme.js'
 import { ModuleThemeProvider, useAccent } from '../../context/ModuleThemeContext.jsx'
 import { useIsMobile } from '../../hooks/useIsMobile.js'
 
@@ -192,7 +192,7 @@ export default function AnimeVocabModule({ initialMediaId }) {
         <div ref={scrollRef} style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: showDrillBar ? '32px 24px 84px' : '32px 24px', display: 'flex', flexDirection: 'column' }}>
           <div style={{ flex: 1 }}>
             {resolving && (
-              <div style={{ maxWidth: 640, margin: '0 auto' }}>
+              <div style={{ maxWidth: CONTENT_STANDARD, margin: '0 auto' }}>
                 {showResolvingMessage && <CenteredLoadingMessage text="Loading series details" />}
               </div>
             )}

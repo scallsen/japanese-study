@@ -4,9 +4,9 @@ import Markdown from '../components/Markdown.jsx'
 // Inlined at build time by Vite, so the page always shows the committed file
 // rather than a copy that drifts from it.
 import PRIVACY_MD from '../../PRIVACY.md?raw'
-import { FONT, TRACKING, TEXT } from '../data/theme.js'
+import { FONT, TRACKING, TEXT, CONTENT_STANDARD } from '../data/theme.js'
 
-const COLUMN_WIDTH = 640
+const COLUMN_WIDTH = CONTENT_STANDARD
 
 export default function PrivacyPage() {
   const shell = {

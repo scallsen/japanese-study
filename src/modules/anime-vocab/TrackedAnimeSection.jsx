@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase.js'
 import { difficultyLabel } from './difficultyLabels.js'
-import { FONT, TEXT_MUTED, SUBHEADING_STYLE, FS_LIST_TITLE } from '../../data/theme.js'
+import { FONT, TEXT_MUTED, SUBHEADING_STYLE, FS_LIST_TITLE, CONTENT_STANDARD } from '../../data/theme.js'
 import DataList from '../../components/DataList.jsx'
 import Badge from '../../components/Badge.jsx'
 import Button from '../../components/Button.jsx'
@@ -64,7 +64,7 @@ export default function TrackedAnimeSection({ tracked, untrack }) {
   }))
 
   return (
-    <section style={{ maxWidth: 640, margin: '0 auto 20px' }}>
+    <section style={{ maxWidth: CONTENT_STANDARD, margin: '0 auto 20px' }}>
       <div style={{ ...SUBHEADING_STYLE, color: TEXT_MUTED, fontFamily: FONT, marginBottom: 10 }}>
         Currently studying
       </div>
