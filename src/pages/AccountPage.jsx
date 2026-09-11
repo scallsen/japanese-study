@@ -7,15 +7,9 @@ import TextInput from '../components/TextInput.jsx'
 import Select from '../components/Select.jsx'
 import DataList from '../components/DataList.jsx'
 import ConfirmDialog from '../components/ConfirmDialog.jsx'
-import Modal from '../components/Modal.jsx'
-import Markdown from '../components/Markdown.jsx'
 import TopProgressBar from '../components/TopProgressBar.jsx'
 import ProviderIcon from '../components/ProviderIcon.jsx'
 import { useAccent } from '../context/ModuleThemeContext.jsx'
-// Inlined at build time by Vite, so the modal always shows the committed file
-// rather than a copy that drifts from it.
-import PRIVACY_MD from '../../PRIVACY.md?raw'
-import { useIsMobile } from '../hooks/useIsMobile.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { supabase } from '../lib/supabase.js'
 import { setPendingToast } from '../utils/pendingToast.js'
@@ -53,11 +47,9 @@ export default function AccountPage() {
   // null until the user picks one, so the control reflects whether a key is
   // actually stored — and lets them choose "own" before entering one.
   const [providerChoice, setProviderChoice] = useState(null)
-  const [privacyOpen, setPrivacyOpen] = useState(false)
   const [confirmingKeyRemoval, setConfirmingKeyRemoval] = useState(false)
   const [keyChecking, setKeyChecking] = useState(false)
   const [keyError, setKeyError] = useState(null)
-  const isMobile = useIsMobile()
   const accent = useAccent()
 
   // Above the early returns below — hooks can't run conditionally.
@@ -483,37 +475,28 @@ export default function AccountPage() {
           {/* Matches AttributionFooter's treatment — centred, muted, and using
               the same .attribution-link class so the hover behaves identically.
               Not literally that component: it renders from the static
-              ATTRIBUTIONS registry as <a href> only, and this opens a modal. */}
+              ATTRIBUTIONS registry as <a href> only, and this is a real link
+              too now — it used to open a modal, but that page has no stable
+              URL a crawler (or anyone) can reach directly, which is what
+              Google's OAuth branding verification flagged it for. */}
           <div style={{
             textAlign: 'center', paddingTop: SPACE_8,
             fontSize: FS_SM, color: TEXT_MUTED, opacity: 0.55, lineHeight: 1.6,
           }}>
-            <button
-              onClick={() => setPrivacyOpen(true)}
+            <a
+              href="#/privacy"
               className="attribution-link"
               style={{
-                background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+                color: TEXT_MUTED,
                 fontFamily: FONT, fontSize: FS_SM, letterSpacing: TRACKING,
                 textDecoration: 'underline', textDecorationColor: 'rgba(255,255,255,0.3)',
               }}
             >
               Privacy policy
-            </button>
+            </a>
           </div>
         </div>
       </div>
-
-      <Modal
-        open={privacyOpen}
-        onClose={() => setPrivacyOpen(false)}
-        title="Privacy policy"
-        size="lg"
-        isMobile={isMobile}
-      >
-        {/* The document keeps its own H1 so it reads properly as a file on
-            GitHub; here the modal header already carries the title. */}
-        <Markdown source={PRIVACY_MD.replace(/^#\s+.*\n+/, '')} />
-      </Modal>
 
       <ConfirmDialog
         open={confirmingKeyRemoval}
