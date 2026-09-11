@@ -265,7 +265,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <Footer />
+        <Footer isMobile={isMobile} />
       </main>
 
       {/* The picker and the advance gate are both opened from the New card, so
@@ -356,21 +356,46 @@ function StatRow({ label, value }) {
 
 // ── Footer ────────────────────────────────────────────────────────────────────
 
-function Footer() {
+// Below the mobile breakpoint, all three links no longer fit one line, and a
+// naive flex-wrap would strand a lone divider dot at the start of the second
+// line. Splitting into two explicit rows keeps every dot between two links
+// that are actually sharing a line — "Developed by..." never breaks onto its
+// own line with GitHub, so it gets a row to itself; GitHub and Privacy Policy
+// share a line and keep their dot.
+function Footer({ isMobile }) {
   const linkStyle = { color: 'rgba(232,232,232,0.55)', fontSize: 13, textDecoration: 'none' }
+  const dot = <span style={{ color: 'rgba(232,232,232,0.55)', fontSize: 13 }}>·</span>
+
+  const developed = (
+    <a href="https://scallsen.ca" target="_blank" rel="noopener noreferrer" className="footer-link" style={linkStyle}>
+      Developed by Simon Callsen
+    </a>
+  )
+  const github = (
+    <a href="https://github.com/scallsen/lantern" target="_blank" rel="noopener noreferrer" className="footer-link" style={linkStyle}>
+      GitHub
+    </a>
+  )
+  const privacy = (
+    <a href="#/privacy" className="footer-link" style={linkStyle}>
+      Privacy Policy
+    </a>
+  )
+
+  if (isMobile) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: SPACE_12, paddingTop: SPACE_24 }}>
+        {developed}
+        <div style={{ display: 'flex', alignItems: 'center', gap: SPACE_16 }}>
+          {github}{dot}{privacy}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: SPACE_16, paddingTop: SPACE_24 }}>
-      <a href="https://scallsen.ca" target="_blank" rel="noopener noreferrer" className="footer-link" style={linkStyle}>
-        Developed by Simon Callsen
-      </a>
-      <span style={{ color: 'rgba(232,232,232,0.55)', fontSize: 13 }}>·</span>
-      <a href="https://github.com/scallsen/lantern" target="_blank" rel="noopener noreferrer" className="footer-link" style={linkStyle}>
-        GitHub
-      </a>
-      <span style={{ color: 'rgba(232,232,232,0.55)', fontSize: 13 }}>·</span>
-      <a href="#/privacy" className="footer-link" style={linkStyle}>
-        Privacy Policy
-      </a>
+      {developed}{dot}{github}{dot}{privacy}
     </div>
   )
 }
