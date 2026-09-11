@@ -1054,7 +1054,7 @@ function VocabPageScreens() {
     () => visibleSources(customCounts).map(source => ({ value: source.id, label: source.label })),
     [customCounts],
   )
-  const { data: vocabProgress, save: saveVocabProgress } = useProgress('vocab-flashcard')
+  const { data: vocabProgress, save: saveVocabProgress, loading: vocabProgressLoading } = useProgress('vocab-flashcard')
   const { data: srsData, save: saveSrs } = useProgress('vocab-srs')
 
   // A learner's own chapters are counted from their account rather than the
@@ -1064,7 +1064,15 @@ function VocabPageScreens() {
     id => bundledWordCountFor(id) || (customCounts[id] ?? 0),
     [customCounts],
   )
-  const textbookState = useMemo(() => resolveTextbookState(vocabProgress, wordCountFor), [vocabProgress, wordCountFor])
+  // While progress is still loading, vocabProgress is null the same way it
+  // would be for a signed-in user with no textbook chosen — without this
+  // gate (same pattern as DashboardPage's vocabLoading), a direct visit to
+  // #/vocab briefly renders the legacy free-pick HomeScreen before swapping
+  // to the real textbook screen once Supabase responds.
+  const textbookState = useMemo(
+    () => (vocabProgressLoading ? null : resolveTextbookState(vocabProgress, wordCountFor)),
+    [vocabProgressLoading, vocabProgress, wordCountFor],
+  )
   const showTextbookScreen = !!textbookState && textbookState.hasWords
   const { gate, unsentWords, requestAdvance, skipGate, sendAndAdvance, closeGate, setCurrent: setCurrentChapter } = useTextbookAdvance({
     state: textbookState,
@@ -1405,6 +1413,10 @@ function VocabPageScreens() {
                   selectedSubLists={selectedSubLists}
                 />
               </GlanceErrorBoundary>
+            ) : vocabProgressLoading ? (
+              <div style={{ width: '100%', maxWidth: 680, margin: '0 auto', padding: 32, fontSize: FS_BASE, color: TEXT_MUTED }}>
+                Loading…
+              </div>
             ) : showTextbookScreen ? (
               <TextbookHomeScreen
                 state={textbookState}
