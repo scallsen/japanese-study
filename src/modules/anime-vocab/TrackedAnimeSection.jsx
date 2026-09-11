@@ -1,34 +1,8 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase.js'
 import { difficultyLabel } from './difficultyLabels.js'
-import { FONT, TEXT_MUTED, SUBHEADING_STYLE, FS_LIST_TITLE } from '../../data/theme.js'
-import DataList from '../../components/DataList.jsx'
-import Badge from '../../components/Badge.jsx'
-import Button from '../../components/Button.jsx'
-
-const TRACKED_COLUMNS = [
-  {
-    key: 'cover', width: 40,
-    render: row => row.coverUrl && <img src={row.coverUrl} alt="" style={{ width: 40, height: 56, objectFit: 'cover', borderRadius: 4 }} />,
-  },
-  { key: 'mediaType', width: 70, render: row => <Badge tone="accent">{row.mediaType}</Badge> },
-  { key: 'title', flex: 1, fontSize: FS_LIST_TITLE },
-  {
-    key: 'difficulty', width: 110,
-    render: row => row.difficulty != null && <Badge tone="accent">{difficultyLabel(row.difficulty)} ({Number(row.difficulty).toFixed(1)})</Badge>,
-  },
-  {
-    key: 'remove', width: 30, align: 'center',
-    render: row => (
-      <Button
-        variant="ghost-muted"
-        icon="×"
-        label="Stop tracking"
-        onClick={e => { e.stopPropagation(); row.onRemove() }}
-      />
-    ),
-  },
-]
+import { FONT, TEXT_MUTED, SUBHEADING_STYLE } from '../../data/theme.js'
+import PinnedShelf from '../../components/PinnedShelf.jsx'
 
 // Presentational — tracked/untrack are lifted to AnimeVocabModule (which also
 // needs the tracked list to decide the recommended-carousel empty state) so
@@ -54,25 +28,28 @@ export default function TrackedAnimeSection({ tracked, untrack }) {
   const entries = Object.entries(tracked).sort(([, a], [, b]) => new Date(b.addedAt) - new Date(a.addedAt))
   if (entries.length === 0) return null
 
-  const rows = entries.map(([mediaId, entry]) => ({
-    id: mediaId,
-    title: entry.title,
-    mediaType: entry.mediaType,
-    coverUrl: mediaById[mediaId]?.cover_url,
-    difficulty: mediaById[mediaId]?.difficulty?.difficulty,
-    onRemove: () => untrack(mediaId),
-  }))
+  const items = entries.map(([mediaId, entry]) => {
+    const difficulty = mediaById[mediaId]?.difficulty?.difficulty
+    return {
+      id: mediaId,
+      title: entry.title,
+      coverUrl: mediaById[mediaId]?.cover_url,
+      badges: [
+        { label: entry.mediaType, tone: 'accent' },
+        ...(difficulty != null ? [{ label: `${difficultyLabel(difficulty)} (${Number(difficulty).toFixed(1)})`, tone: 'accent' }] : []),
+      ],
+    }
+  })
 
   return (
     <section style={{ maxWidth: 640, margin: '0 auto 20px' }}>
       <div style={{ ...SUBHEADING_STYLE, color: TEXT_MUTED, fontFamily: FONT, marginBottom: 10 }}>
         Currently studying
       </div>
-      <DataList
-        columns={TRACKED_COLUMNS}
-        rows={rows}
-        maxWidth="100%"
-        navigate={{ onClick: row => { window.location.hash = `/anime-vocab/${row.id}` } }}
+      <PinnedShelf
+        items={items}
+        onSelect={item => { window.location.hash = `/anime-vocab/${item.id}` }}
+        onRemove={untrack}
       />
     </section>
   )
