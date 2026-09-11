@@ -11,6 +11,7 @@ import Modal from '../components/Modal.jsx'
 import ConfirmDialog from '../components/ConfirmDialog.jsx'
 import Toast from '../components/Toast.jsx'
 import FeedCard from '../components/FeedCard.jsx'
+import PinnedShelf from '../components/PinnedShelf.jsx'
 import ToggleButton from '../components/ToggleButton.jsx'
 import DistributionBar from '../components/DistributionBar.jsx'
 import DrillButtonRow, { DrillButton } from '../components/DrillButton.jsx'
@@ -93,6 +94,7 @@ const NAV = [
     section: 'Patterns',
     items: [
       { key: 'feed-card', label: 'Feed Card', built: true },
+      { key: 'pinned-shelf', label: 'Pinned Shelf', built: true },
       { key: 'toggle-button', label: 'Toggle Button', built: true },
       { key: 'distribution-bar', label: 'Distribution Bar', built: true },
       { key: 'deck-picker', label: 'Deck Picker', built: true },
@@ -126,6 +128,7 @@ const DESCRIPTIONS = {
   modal: 'The scrim + panel shell for every overlay: centred dialog on desktop, bottom sheet on mobile. ConfirmDialog is now a thin composition of this + Button rather than its own implementation.',
   toast: 'A transient confirmation with an optional inline action. Four placement variants; the dedicated Toast lab compares them side by side.',
   'feed-card': 'One item in a browsable feed. Reconciles Immersion’s ArticleCard and Story’s RecentCard, which had drifted on padding, hover mechanism, transition timing, and title font.',
+  'pinned-shelf': 'A small, user-curated set of pinned items — Anime Vocab’s "Currently studying". A row of Feed Card tiles that scrolls sideways instead of stacking down, so pinning more never pushes the rest of the page further away. Deliberately not a general "saved items" component: a curated pinned set (explicit add/remove) and a "recently viewed" history (auto-populated, unbounded) are different interactions that only happen to share this bounded-scroll shape — see settled decision #8.',
   switch: 'The on/off control for a settings row. Not a Toggle Button (that renames itself between states and reads as an action) and not a Checkbox (which leads with its control and carries its own label). A switch trails a row whose label is on the left, and only ever reports state — so the label column stays scannable while values change. Takes the module accent.',
   'toggle-button': 'A standalone on/off control whose label changes with its state — Follow/Unfollow, deck On/Off. Not a Button variant (its hover can mean the opposite action, which no resting-state variant expresses) and not a Chip (a chip picks one of a set and keeps a fixed label). Composes Chip so both share one visual language.',
   'distribution-bar': 'How a collection divides across states. Distinct from the progress bar, which shows one value’s completion.',
@@ -761,6 +764,31 @@ function FeedCardDemo() {
   return <ComponentPage title="Feed Card" description={DESCRIPTIONS['feed-card']} built preview={preview} controls={controls} />
 }
 
+const PINNED_SHELF_ITEMS = [
+  { id: 'p1', title: "Frieren: Beyond Journey's End", coverUrl: null, badges: [{ label: 'anime', tone: 'accent' }, { label: 'Upper-Int (2.4)', tone: 'accent' }] },
+  { id: 'p2', title: 'Spy × Family', coverUrl: null, badges: [{ label: 'anime', tone: 'accent' }, { label: 'Beginner (1.6)', tone: 'accent' }] },
+  { id: 'p3', title: 'Bocchi the Rock!', coverUrl: null, badges: [{ label: 'anime', tone: 'accent' }, { label: 'Intermediate (2.0)', tone: 'accent' }] },
+  { id: 'p4', title: 'Mushoku Tensei', coverUrl: null, badges: [{ label: 'anime', tone: 'accent' }, { label: 'Upper-Int (2.6)', tone: 'accent' }] },
+]
+
+function PinnedShelfDemo() {
+  const [items, setItems] = useState(PINNED_SHELF_ITEMS)
+
+  const preview = (
+    <div style={{ width: 420 }}>
+      <PinnedShelf
+        items={items}
+        onRemove={id => setItems(prev => prev.filter(i => i.id !== id))}
+      />
+      {items.length === 0 && (
+        <div style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT }}>Untracked everything — reload the guide to reset.</div>
+      )}
+    </div>
+  )
+
+  return <ComponentPage title="Pinned Shelf" description={DESCRIPTIONS['pinned-shelf']} built preview={preview} controls={null} />
+}
+
 const TOGGLE_TONE_OPTIONS = [
   { value: 'accent', label: 'accent — module colour' },
   { value: 'success', label: 'success — followed/saved' },
@@ -1106,6 +1134,7 @@ const PAGES = {
   modal: ModalDemo,
   toast: ToastDemo,
   'feed-card': FeedCardDemo,
+  'pinned-shelf': PinnedShelfDemo,
   'toggle-button': ToggleButtonDemo,
   'distribution-bar': DistributionBarDemo,
   'deck-picker': DeckPickerDemo,
