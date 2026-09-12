@@ -858,15 +858,11 @@ function WordExplorerModal({
     { key: 'count', width: 90, align: 'right', tone: 'muted', render: l => `${l.wordCount ?? 0} words` },
   ]
 
-  const wordsTitle = selectedSubLists.length === 1
-    ? (availableSubLists.find(l => l.id === selectedSubLists[0])?.label ?? 'Words')
-    : selectedSubLists.length > 1 ? `${selectedSubLists.length} lists` : 'Words'
-
   return (
     <Modal
       open={open}
       onClose={onClose}
-      title={isWords ? wordsTitle : 'Drill any list'}
+      title={isWords ? 'View words' : 'Drill any list'}
       size={isWords ? 'xl' : 'md'}
       isMobile={isMobile}
       footer={
@@ -984,8 +980,9 @@ function VocabPageScreens() {
   // ?chapter=<listKey> but no &start=1: it means "show me where this word
   // is drilled", not "start drilling it" — opens the word explorer sheet
   // straight to its Words step, same as a chapter row's "View words".
-  const [freeDrillOpen, setFreeDrillOpen] = useState(() => !!chapterFromHash() && hashQuery().get('start') !== '1')
-  const [freeDrillStep, setFreeDrillStep] = useState(() => (chapterFromHash() && hashQuery().get('start') !== '1' ? 'words' : 'picker'))
+  const arrivedViaChapterLink = useState(() => !!chapterFromHash() && hashQuery().get('start') !== '1')[0]
+  const [freeDrillOpen, setFreeDrillOpen] = useState(arrivedViaChapterLink)
+  const [freeDrillStep, setFreeDrillStep] = useState(() => (arrivedViaChapterLink ? 'words' : 'picker'))
 
   const [showOptions,       setShowOptions]       = useState(() => window.innerWidth > 768)
   const [selectedSourceId,  setSelectedSourceId]  = useState(defaultSelectedSource)
@@ -1112,11 +1109,18 @@ function VocabPageScreens() {
   // own "View all" link from the dashboard's NewCard, and redirecting that
   // case straight back home would be a click-and-bounce loop — that state
   // gets its own small message below.
+  //
+  // arrivedViaChapterLink permanently opts a chapter-link visit out of this
+  // redirect, not just while the sheet is open: closing the sheet flips
+  // freeDrillOpen back to false, and without this, that close would itself
+  // trigger a surprise navigation to the dashboard — closing a "here's
+  // where this word is drilled" peek should never change what page you're
+  // on, whether or not you ever had a textbook chosen.
   useEffect(() => {
-    if (!vocabProgressLoading && !textbookState && !isDrilling && !freeDrillOpen) {
+    if (!vocabProgressLoading && !textbookState && !isDrilling && !freeDrillOpen && !arrivedViaChapterLink) {
       window.location.hash = '#/'
     }
-  }, [vocabProgressLoading, textbookState, isDrilling, freeDrillOpen])
+  }, [vocabProgressLoading, textbookState, isDrilling, freeDrillOpen, arrivedViaChapterLink])
 
   // Save progress when session completes. Not gated on sign-in: useProgress
   // falls back to localStorage when logged out, and the dashboard's chapter
