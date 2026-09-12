@@ -235,8 +235,8 @@ export default function DictionaryEntryPage({ entryId }) {
 
   const vocabDrillMatches = useMemo(() => {
     if (!entry) return []
-    const labels = new Set(WORD_DATA.filter(w => w.jmdictId === entry.id).map(w => labelForListKey(w.listKey)))
-    return [...labels]
+    const listKeys = new Set(WORD_DATA.filter(w => w.jmdictId === entry.id).map(w => w.listKey))
+    return [...listKeys].map(listKey => ({ listKey, label: labelForListKey(listKey) }))
   }, [entry])
 
   const srsMatches = useMemo(() => {
@@ -259,7 +259,7 @@ export default function DictionaryEntryPage({ entryId }) {
   const showDecksSection = vocabDrillMatches.length > 0 || !!user
 
   const deckRows = useMemo(() => {
-    const rows = vocabDrillMatches.map(label => ({ id: `vocab-${label}`, label, href: '#/vocab', meta: 'Vocabulary' }))
+    const rows = vocabDrillMatches.map(({ listKey, label }) => ({ id: `vocab-${listKey}`, label, href: `#/vocab?chapter=${listKey}`, meta: 'Vocabulary' }))
     if (user) {
       for (const m of srsMatches) {
         rows.push({ id: m.cardId, label: m.deckName, href: '#/vocab-srs', meta: SRS_STATE_LABELS[m.state] ?? m.state })

@@ -2,7 +2,6 @@ import { useState, useMemo, useEffect, useRef, useCallback, Component } from 're
 import VocabCard from '../components/VocabCard.jsx'
 import DrillHUD from '../components/DrillHUD.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
-import ChipSelector from '../components/Chip.jsx'
 import Checkbox from '../components/Checkbox.jsx'
 import Select from '../components/Select.jsx'
 import Button from '../components/Button.jsx'
@@ -18,7 +17,6 @@ import AuthSlot from '../components/AuthSlot.jsx'
 import SettingsSidebar, { SidebarHeaderToggle } from '../components/SettingsSidebar.jsx'
 import DrillSettingsPanel from '../components/DrillSettingsPanel.jsx'
 import { useDrillSettings, audioSourceForVoice } from '../hooks/useDrillSettings.js'
-import ActionBar, { ACTION_BAR_HEIGHT } from '../components/ActionBar.jsx'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_BADGE, FS_ENTRY_WORD, FS_STAT_VALUE,
   FS_DISPLAY_HEADING, FS_CONTENT_HEADING, KANJI_FONT, WARNING, BRAND, DANGER,
@@ -153,27 +151,6 @@ function useIsShort(breakpoint = 680) {
 
 function toggle(arr, val) {
   return arr.includes(val) ? arr.filter(v => v !== val) : [...arr, val]
-}
-
-// Sublist progress is stored per review direction: { [listId]: { [reviewMode]: { lastReviewed, correct, total } } }.
-// Entries saved before review modes existed are flat ({ lastReviewed, ... }) — treat those as 'kanji-front' progress
-// so old data isn't lost, and 'meaning-front' still reads as unstudied ("New") until reviewed in that direction.
-function getSublistModeProgress(vocabProgress, listId, mode) {
-  const entry = vocabProgress?.sublists?.[listId]
-  if (!entry) return undefined
-  if ('lastReviewed' in entry) return mode === 'kanji-front' ? entry : undefined
-  return entry[mode]
-}
-
-function relativeTime(isoStr) {
-  if (!isoStr) return null
-  const diff = Date.now() - new Date(isoStr).getTime()
-  const mins = Math.floor(diff / 60000)
-  if (mins < 60) return mins <= 1 ? 'just now' : `${mins}m ago`
-  const hrs = Math.floor(mins / 60)
-  if (hrs < 24) return `${hrs}h ago`
-  const days = Math.floor(hrs / 24)
-  return `${days}d ago`
 }
 
 // ── ActiveDrill ───────────────────────────────────────────────────────────────
@@ -915,126 +892,18 @@ function FreeDrillModal({
   )
 }
 
-// ── HomeScreen ────────────────────────────────────────────────────────────────
-
-function HomeScreen({ sourceOptions, selectedSourceId, onSelectSource, availableSubLists, selectedSubLists, onToggleSubList, wordCountByList, reviewWordCount, includeReview, onToggleIncludeReview, sentenceVocabWordCount, includeSentenceVocab, onToggleIncludeSentenceVocab, vocabProgress, reviewMode, onChangeReviewMode, onStart, onGlance }) {
-  const canStart = selectedSubLists.length > 0
-
-  return (
-    <div style={{
-      width: '100%',
-      maxWidth: 680,
-      margin: '0 auto',
-      padding: `32px 24px ${ACTION_BAR_HEIGHT + 24}px`,
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 24,
-    }}>
-
-      {/* Direction */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-        <label style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, letterSpacing: '0.08em' }}>
-          DRILL MODE
-        </label>
-        <ChipSelector mode="single" size="md" grow options={REVIEW_MODE_OPTIONS} value={reviewMode} onChange={onChangeReviewMode} />
-      </div>
-
-      {/* Source selector */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-        <label style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, letterSpacing: '0.08em' }}>
-          WORD LIST
-        </label>
-      <Select value={selectedSourceId} onChange={onSelectSource} size="md" options={sourceOptions} />
-      {reviewWordCount > 0 && (
-        <div style={{ marginTop: 4 }}>
-          <Checkbox checked={includeReview} onChange={onToggleIncludeReview} label={`Include review words (${reviewWordCount})`} />
-        </div>
-      )}
-      {sentenceVocabWordCount > 0 && (
-        <div style={{ marginTop: 4 }}>
-          <Checkbox checked={includeSentenceVocab} onChange={onToggleIncludeSentenceVocab} label={`Include sentence review words (${sentenceVocabWordCount})`} />
-        </div>
-      )}
-      </div>
-
-      {/* Sublist grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(155px, 1fr))', gap: 6 }}>
-        {availableSubLists.map(list => {
-          const count = wordCountByList[list.id] ?? 0
-          const prog = getSublistModeProgress(vocabProgress, list.id, reviewMode)
-          const isSelected = selectedSubLists.includes(list.id)
-          return (
-            <SubListTile
-              key={list.id}
-              label={list.label}
-              wordCount={count}
-              progress={prog}
-              selected={isSelected}
-              onClick={() => onToggleSubList(list.id)}
-            />
-          )
-        })}
-      </div>
-
-      <ActionBar maxWidth={680}>
-        <Button variant="neutral" size="xl" disabled>Send to review deck</Button>
-        <Button variant="neutral" size="xl" onClick={onGlance} disabled={!canStart}>Preview</Button>
-        <Button size="xl" onClick={onStart} disabled={!canStart}>
-          Start review
-          {selectedSubLists.length > 0 && (
-            <span style={{ marginLeft: 8, fontSize: FS_CAPTION, opacity: 0.8 }}>
-              ({selectedSubLists.reduce((sum, id) => sum + (wordCountByList[id] ?? 0), 0)} words)
-            </span>
-          )}
-        </Button>
-      </ActionBar>
-    </div>
-  )
-}
-
-// A two-line selectable tile (label + count/recency). Kept bespoke: it's
-// a Chip with a second line and a grid layout, which Chip doesn't express —
-// see the review log. Hover is the .sublist-tile class in global.css.
-function SubListTile({ label, wordCount, progress, selected, onClick }) {
-  const timeAgo = relativeTime(progress?.lastReviewed)
-  return (
-    <button
-      onClick={onClick}
-      className={selected ? 'sublist-tile sublist-tile--selected' : 'sublist-tile'}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        gap: 3,
-        width: '100%',
-        minHeight: 54,
-        padding: '10px 12px',
-        border: `1px solid ${selected ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.1)'}`,
-        borderRadius: 6,
-        cursor: 'pointer',
-        fontFamily: 'inherit',
-        letterSpacing: TRACKING,
-      }}
-    >
-      <span style={{ fontSize: FS_BASE, color: selected ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.7)' }}>
-        {label}
-      </span>
-      <span style={{ fontSize: FS_CAPTION, color: 'rgba(255,255,255,0.35)', display: 'flex', alignItems: 'center', gap: 6 }}>
-        {wordCount} words
-        {!progress ? (
-          <Badge tone="accent" dimmed>New</Badge>
-        ) : timeAgo ? (
-          <>
-            <span>·</span>
-            {timeAgo}
-          </>
-        ) : null}
-      </span>
-    </button>
-  )
-}
-
 // ── Main page ─────────────────────────────────────────────────────────────────
+//
+// HomeScreen/SubListTile (the source-select + sublist-grid picker that used
+// to be #/vocab's unconditional home screen) were deleted here: the only
+// live route to them left was a textbook-less visit — which nothing in the
+// app's own navigation produces any more (the dashboard's primary card
+// gates #/vocab behind picking a textbook first) except a bare Dictionary
+// "Vocab Drill match" link. VocabPageScreens now redirects home in that
+// case instead, matching docs/home-flow-concepts.md's own recommendation
+// ("Bare #/vocab … Redirect is simplest"); FreeDrillModal already covers
+// the "drill something other than the active textbook" job with the same
+// state this screen used.
 
 export default function VocabPage() {
   return (
@@ -1067,8 +936,8 @@ function VocabPageScreens() {
   // While progress is still loading, vocabProgress is null the same way it
   // would be for a signed-in user with no textbook chosen — without this
   // gate (same pattern as DashboardPage's vocabLoading), a direct visit to
-  // #/vocab briefly renders the legacy free-pick HomeScreen before swapping
-  // to the real textbook screen once Supabase responds.
+  // #/vocab would incorrectly redirect home (see the effect below) before
+  // swapping to the real textbook screen once Supabase responds.
   const textbookState = useMemo(
     () => (vocabProgressLoading ? null : resolveTextbookState(vocabProgress, wordCountFor)),
     [vocabProgressLoading, vocabProgress, wordCountFor],
@@ -1082,7 +951,13 @@ function VocabPageScreens() {
     saveSrs,
   })
   const [pickerOpen, setPickerOpen] = useState(false)
-  const [freeDrillOpen, setFreeDrillOpen] = useState(false)
+  // A dictionary-entry "Vocab Drill match" link (the one remaining bare
+  // #/vocab route — see the deleted-HomeScreen note above) deep-links with
+  // ?chapter=<listKey> but no &start=1: it means "show me where this word
+  // is drilled", not "start drilling it". Opening the free-drill sheet
+  // pre-seeded with that chapter is the modern equivalent of what the old
+  // full-page picker did for the same link.
+  const [freeDrillOpen, setFreeDrillOpen] = useState(() => !!chapterFromHash() && hashQuery().get('start') !== '1')
 
   const [showOptions,       setShowOptions]       = useState(() => window.innerWidth > 768)
   const [selectedSourceId,  setSelectedSourceId]  = useState(defaultSelectedSource)
@@ -1199,6 +1074,21 @@ function VocabPageScreens() {
   useEffect(() => {
     if (window.location.hash.includes('?')) window.history.replaceState(null, '', '#/vocab')
   }, [])
+
+  // Nothing in the app's own navigation sends a visitor to #/vocab with no
+  // textbook chosen at all (the dashboard's card gates that behind the
+  // picker) except a Dictionary "Vocab Drill match" link, which opens the
+  // free-drill sheet instead (see freeDrillOpen above) rather than needing
+  // a page here at all. Redirect home rather than show a blank page. This
+  // deliberately checks textbookState, not showTextbookScreen: a chosen
+  // textbook with no words yet still has its own "View all" link from the
+  // dashboard's NewCard, and redirecting that case straight back home would
+  // be a click-and-bounce loop — that state gets its own small message below.
+  useEffect(() => {
+    if (!vocabProgressLoading && !textbookState && !isDrilling && !isGlancing) {
+      window.location.hash = '#/'
+    }
+  }, [vocabProgressLoading, textbookState, isDrilling, isGlancing])
 
   // Save progress when session completes. Not gated on sign-in: useProgress
   // falls back to localStorage when logged out, and the dashboard's chapter
@@ -1428,28 +1318,17 @@ function VocabPageScreens() {
                 onChangeTextbook={() => setPickerOpen(true)}
                 onOpenFreeDrill={() => setFreeDrillOpen(true)}
               />
-            ) : (
-              <HomeScreen
-                sourceOptions={sourceOptions}
-                selectedSourceId={selectedSourceId}
-                onSelectSource={handleSelectSource}
-                availableSubLists={availableSubLists}
-                selectedSubLists={selectedSubLists}
-                onToggleSubList={id => setSelectedSubLists(prev => toggle(prev, id))}
-                wordCountByList={wordCountByList}
-                reviewWordCount={reviewWordCount}
-                includeReview={includeReview}
-                onToggleIncludeReview={() => setIncludeReview(v => !v)}
-                sentenceVocabWordCount={sentenceVocabWordCount}
-                includeSentenceVocab={includeSentenceVocab}
-                onToggleIncludeSentenceVocab={() => setIncludeSentenceVocab(v => !v)}
-                vocabProgress={vocabProgress}
-                reviewMode={reviewMode}
-                onChangeReviewMode={setReviewMode}
-                onStart={() => setIsDrilling(true)}
-                onGlance={() => setIsGlancing(true)}
-              />
-            )}
+            ) : textbookState ? (
+              // A textbook is chosen but this account has no words for it yet
+              // (see homeCards.jsx's matching "No words for this book yet"
+              // card) — reachable via that card's own "View all" link, so
+              // this can't just redirect home like the no-textbook-at-all
+              // case above without bouncing that click straight back.
+              <div style={{ width: '100%', maxWidth: 680, margin: '0 auto', padding: 32, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+                <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>No words for this book yet.</div>
+                <Button onClick={() => setPickerOpen(true)}>Change textbook</Button>
+              </div>
+            ) : null}
           </div>
           <AttributionFooter sources={[
             'dictionary',

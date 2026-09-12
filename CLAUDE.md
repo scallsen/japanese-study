@@ -299,7 +299,7 @@ Mirrors katsuyou-drill's UI exactly. Speed-mode only (no text input). Card front
 }
 ```
 
-**UI behavior:** the home screen is a `Select` of sources, then a grid of `SubListTile`s (label, word count, "New" badge or last-reviewed) for the chosen source's sublists — click tiles to toggle them into the drill. (An older accordion-of-`SelectButton`s UI this paragraph used to describe is gone.)
+**UI behavior:** `#/vocab`'s home screen is the textbook chapter path (`TextbookHomeScreen`) once a textbook is active; picking a different source/sublist to drill (a different book, a personal list) is the "Free drill" sheet (`FreeDrillModal`) opened from that screen, a `Select` of sources plus a `DataList` multi-select of the chosen source's sublists. There is no bare source-picker page any more — the old full-page `HomeScreen`/`SubListTile` grid (a `Select` of sources + a grid of tiles) was deleted once nothing in the app's own navigation reached `#/vocab` without a textbook already chosen (the dashboard's card gates that behind `TextbookPicker`); a visit to `#/vocab` with no textbook chosen at all now redirects home instead. The one surviving bare-`#/vocab` link — a Dictionary entry's "Vocab Drill match" row — deep-links with `?chapter=<listKey>` and opens the Free Drill sheet pre-seeded with that chapter, rather than landing on a picker page.
 
 ### Word data format
 
