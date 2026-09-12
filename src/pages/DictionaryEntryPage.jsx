@@ -11,9 +11,11 @@ import { WORD_DATA } from '../data/wordData.js'
 import { WORD_SOURCES } from '../data/wordLists.js'
 import AttributionFooter from '../components/AttributionFooter.jsx'
 import Badge from '../components/Badge.jsx'
+import Button from '../components/Button.jsx'
 import Card from '../components/Card.jsx'
 import CenteredLoadingMessage from '../components/CenteredLoadingMessage.jsx'
 import DataList from '../components/DataList.jsx'
+import WordListModal from '../components/WordListModal.jsx'
 import { ModuleThemeProvider } from '../context/ModuleThemeContext.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
 import Japanese from '../components/Japanese.jsx'
@@ -166,10 +168,11 @@ function KanjiCard({ entry }) {
 
 const SRS_STATE_LABELS = { new: 'New', learning: 'Learning', young: 'Young', mature: 'Mature', relearning: 'Relearning' }
 
-// Content-only — DataList's Cell wraps this; the row's own <a>, background,
-// border and hover treatment come from DataList itself (navigate.href
-// below), converging onto the same list surface EntryRow uses rather than
-// each deck staying its own floating card.
+// Content-only — DataList's Cell wraps this; the row's own <a>/clickable-div,
+// background, border and hover treatment come from DataList itself
+// (navigate below — href for SRS matches, onClick for Vocab Drill matches),
+// converging onto the same list surface EntryRow uses rather than each deck
+// staying its own floating card.
 function deckRowContent({ label, meta }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, width: '100%' }}>
@@ -202,6 +205,9 @@ export default function DictionaryEntryPage({ entryId }) {
   const [sentences, setSentences] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  // A Vocab Drill match row opens this in place — see the comment on
+  // deckRows below for why that's onClick rather than a real link.
+  const [wordListChapter, setWordListChapter] = useState(null)
 
   const { user } = useAuth()
   const { data: rawSrsProgress } = useProgress('vocab-srs')
@@ -235,8 +241,8 @@ export default function DictionaryEntryPage({ entryId }) {
 
   const vocabDrillMatches = useMemo(() => {
     if (!entry) return []
-    const labels = new Set(WORD_DATA.filter(w => w.jmdictId === entry.id).map(w => labelForListKey(w.listKey)))
-    return [...labels]
+    const listKeys = new Set(WORD_DATA.filter(w => w.jmdictId === entry.id).map(w => w.listKey))
+    return [...listKeys].map(listKey => ({ listKey, label: labelForListKey(listKey) }))
   }, [entry])
 
   const srsMatches = useMemo(() => {
@@ -258,8 +264,12 @@ export default function DictionaryEntryPage({ entryId }) {
 
   const showDecksSection = vocabDrillMatches.length > 0 || !!user
 
+  // Vocab Drill matches carry listKey, not href: they open WordListModal
+  // in place (see navigate.onClick below) rather than navigating to
+  // #/vocab, so looking up a word never leaves the dictionary. SRS matches
+  // stay real links — there's no in-page equivalent for those yet.
   const deckRows = useMemo(() => {
-    const rows = vocabDrillMatches.map(label => ({ id: `vocab-${label}`, label, href: '#/vocab', meta: 'Vocabulary' }))
+    const rows = vocabDrillMatches.map(({ listKey, label }) => ({ id: `vocab-${listKey}`, label, listKey, meta: 'Vocabulary' }))
     if (user) {
       for (const m of srsMatches) {
         rows.push({ id: m.cardId, label: m.deckName, href: '#/vocab-srs', meta: SRS_STATE_LABELS[m.state] ?? m.state })
@@ -267,6 +277,15 @@ export default function DictionaryEntryPage({ entryId }) {
     }
     return rows
   }, [vocabDrillMatches, user, srsMatches])
+
+  const wordListGroups = useMemo(() => {
+    if (!wordListChapter) return []
+    return [{
+      id: wordListChapter.listKey,
+      label: wordListChapter.label,
+      words: WORD_DATA.filter(w => w.listKey === wordListChapter.listKey),
+    }]
+  }, [wordListChapter])
 
   const allForms = entry
     ? [...new Set([
@@ -345,7 +364,10 @@ export default function DictionaryEntryPage({ entryId }) {
                       columns={DECK_ROW_COLUMNS}
                       rows={deckRows}
                       rowKey={row => row.id}
-                      navigate={{ href: row => row.href }}
+                      navigate={{
+                        href: row => row.href,
+                        onClick: row => { if (row.listKey) setWordListChapter({ listKey: row.listKey, label: row.label }) },
+                      }}
                       padding="10px 14px"
                       maxWidth={600}
                     />
@@ -387,6 +409,21 @@ export default function DictionaryEntryPage({ entryId }) {
         </div>
       </div>
     </div>
+    <WordListModal
+      open={!!wordListChapter}
+      onClose={() => setWordListChapter(null)}
+      groups={wordListGroups}
+      footer={
+        <>
+          <Button variant="neutral" onClick={() => setWordListChapter(null)}>Close</Button>
+          {wordListChapter && (
+            <Button onClick={() => { window.location.hash = `#/vocab?chapter=${wordListChapter.listKey}&start=1` }}>
+              Practice this list
+            </Button>
+          )}
+        </>
+      }
+    />
     </ModuleThemeProvider>
   )
 }

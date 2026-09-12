@@ -189,6 +189,7 @@ Used by multiple modules/pages:
 | `DrillSettingsPanel.jsx` | The drill settings drawer shared by Vocab Drill, Anime Vocab and SRS — see Drill settings section |
 | `AttributionFooter.jsx` | Third-party data credit line at the foot of a page — `<AttributionFooter sources={['dictionary', 'tanaka-corpus']} />`. See Attribution system section below |
 | `Japanese.jsx` | Wraps a Japanese-only text run in `lang="ja" translate="no"` (`as` prop to pick the host tag) — stops the browser's own translate feature from mistranslating it. See the "No Japanese text in the UI" convention above for when to use it |
+| `WordListModal.jsx` | `WordListContent` (kanji breakdown, sentences, dictionary link per word, grouped by list) + `WordListErrorBoundary`, extracted from VocabPage's old `GlanceScreen` — plus a `Modal`-wrapped default export for a caller (Dictionary) that doesn't already own its own Modal chrome. Used by VocabPage's `WordExplorerModal` and `DictionaryEntryPage`'s "View words" — see the Vocabulary Drill section |
 
 ### PageHeader
 
@@ -299,7 +300,9 @@ Mirrors katsuyou-drill's UI exactly. Speed-mode only (no text input). Card front
 }
 ```
 
-**UI behavior:** the home screen is a `Select` of sources, then a grid of `SubListTile`s (label, word count, "New" badge or last-reviewed) for the chosen source's sublists — click tiles to toggle them into the drill. (An older accordion-of-`SelectButton`s UI this paragraph used to describe is gone.)
+**UI behavior:** `#/vocab`'s home screen is the textbook chapter path (`TextbookHomeScreen`) once a textbook is active. Everything else on this page — picking a different list to drill, and browsing any list's actual words — lives in one modal, `WordExplorerModal`, with two internal steps: **Picker** (titled "Drill any list" — a `Select` of sources plus a `DataList` multi-select of the chosen source's sublists, reached via the "Free drill" button) and **Words** (titled "View words" — the word list itself, kanji breakdown, sentences, grouped under each list's own `SectionHeader`, rendered via the shared `WordListContent`/`WordListModal.jsx`). A Back button on Words returns to Picker rather than closing the modal, so exploring one list, going back, and picking another is one continuous flow. Both entry points into this modal — "Free drill" (Picker) and a chapter row's "View words" (straight to Words, pre-seeded) — only fire from a click on this page itself, and only reachable once a textbook is already active (`showTextbookScreen`). There is no bare source-picker page any more — the old full-page `HomeScreen`/`SubListTile` grid was deleted once nothing in the app's own navigation reached `#/vocab` without a textbook already chosen (the dashboard's card gates that behind `TextbookPicker`); a visit to `#/vocab` with no textbook chosen redirects home instead.
+
+**A Dictionary entry's "Vocab Drill match" row never navigates to `#/vocab` at all** — it opens its own copy of the word list view (`WordListModal`, same shared component `WordExplorerModal`'s Words step uses) directly inside `DictionaryEntryPage`, pre-loaded with that word's chapter, plus a "Practice this list" button that deep-links to `#/vocab?chapter=<listKey>&start=1` for whoever actually wants to drill it. This is `DataList`'s `navigate.onClick` (not `href`, per settled decision #9's own logic in reverse: this row is deliberately *not* a link to another route) so looking up a word never leaves the dictionary, and closing the sheet is just closing a sheet — no page changes underneath it.
 
 ### Word data format
 

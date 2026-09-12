@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import PageHeader from '../../components/PageHeader.jsx'
 import AuthSlot from '../../components/AuthSlot.jsx'
+import CenteredLoadingMessage from '../../components/CenteredLoadingMessage.jsx'
 import { TokenizedBody, WordPopup } from '../../components/JapaneseReader.jsx'
 import { NewspaperLayout, ChatLayout, DiaryLayout, InterviewLayout, LetterLayout, PostcardLayout } from './StoryLayouts.jsx'
 import Button from '../../components/Button.jsx'
@@ -135,9 +136,13 @@ function StoryReview({ storyId }) {
     return (
       <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: BG, color: TEXT, fontFamily: FONT, letterSpacing: TRACKING }}>
         <PageHeader crumbs={crumbs} rightSlot={<AuthSlot />} />
-        <div style={{ maxWidth: 760, margin: '0 auto', padding: '24px 20px', fontSize: FS_HEADING, color: TEXT_MUTED }}>
-          {storyLoading ? 'Loading…' : storyError || 'Story not found.'}
-        </div>
+        {storyLoading ? (
+          <CenteredLoadingMessage text="Loading" />
+        ) : (
+          <div style={{ maxWidth: 760, margin: '0 auto', padding: '24px 20px', fontSize: FS_HEADING, color: TEXT_MUTED }}>
+            {storyError || 'Story not found.'}
+          </div>
+        )}
       </div>
     )
   }

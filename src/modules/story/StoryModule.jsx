@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import PageHeader from '../../components/PageHeader.jsx'
 import AuthSlot from '../../components/AuthSlot.jsx'
 import TopProgressBar from '../../components/TopProgressBar.jsx'
+import CenteredLoadingMessage from '../../components/CenteredLoadingMessage.jsx'
 import { useDelayedLoading } from '../../hooks/useDelayedLoading.js'
 import Button from '../../components/Button.jsx'
 import Select from '../../components/Select.jsx'
@@ -342,7 +343,7 @@ function StoryGenerator() {
 
           <div style={{ marginTop: 36 }}>
             {recentLoading ? (
-              <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>Loading…</div>
+              <CenteredLoadingMessage text="Loading stories" />
             ) : recentError ? (
               <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED }}>{recentError}</div>
             ) : (
