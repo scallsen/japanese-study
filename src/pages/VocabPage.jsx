@@ -1,14 +1,14 @@
-import { useState, useMemo, useEffect, useRef, useCallback, Component } from 'react'
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import VocabCard from '../components/VocabCard.jsx'
 import DrillHUD from '../components/DrillHUD.jsx'
 import CenteredLoadingMessage from '../components/CenteredLoadingMessage.jsx'
+import { WordListContent, WordListErrorBoundary } from '../components/WordListModal.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
 import Checkbox from '../components/Checkbox.jsx'
 import Select from '../components/Select.jsx'
 import Button from '../components/Button.jsx'
 import Badge from '../components/Badge.jsx'
 import DataList from '../components/DataList.jsx'
-import Japanese from '../components/Japanese.jsx'
 import Modal from '../components/Modal.jsx'
 import TextbookPicker from '../components/TextbookPicker.jsx'
 import SrsGateDialog from '../components/SrsGateDialog.jsx'
@@ -20,7 +20,7 @@ import DrillSettingsPanel from '../components/DrillSettingsPanel.jsx'
 import { useDrillSettings, audioSourceForVoice } from '../hooks/useDrillSettings.js'
 import {
   FONT, TRACKING, TEXT, TEXT_MUTED, FS_BASE, FS_CAPTION, FS_BADGE, FS_ENTRY_WORD, FS_STAT_VALUE,
-  FS_DISPLAY_HEADING, FS_CONTENT_HEADING, KANJI_FONT, WARNING, BRAND, DANGER,
+  FS_DISPLAY_HEADING, FS_CONTENT_HEADING, KANJI_FONT, WARNING, BRAND,
 } from '../data/theme.js'
 import { ModuleThemeProvider, useAccent } from '../context/ModuleThemeContext.jsx'
 import { WORD_SOURCES, visibleSources } from '../data/wordLists.js'
@@ -34,10 +34,9 @@ import { useProgress } from '../hooks/useProgress.js'
 import { useAudioGenerationStatus } from '../hooks/useAudioGenerationStatus.js'
 import { useDictionaryEntries, useSenseGlosses } from '../hooks/useDictionaryEntries.js'
 import { cardGloss } from '../utils/dictionaryEntryLookup.js'
-import { cardFormOf, speechTextOf } from '../lib/displayForm.js'
-import { useSentencesForWords } from '../hooks/useSentenceForWord.js'
+import { speechTextOf } from '../lib/displayForm.js'
+import { resolveWordDisplay } from '../utils/wordDisplay.js'
 import { safeLocalStorageGet, safeLocalStorageSet } from '../utils/storage.js'
-import { supabase } from '../lib/supabase.js'
 import * as SimpleQueue from '../engines/simpleQueue.js'
 import { WORD_DATA, bundledWordCountFor } from '../data/wordData.js'
 import { useCustomWords, useCustomWordCounts } from '../hooks/useCustomWords.js'
@@ -70,37 +69,6 @@ function mistakeTier(count) {
   return 'many'
 }
 
-// Shared displayForm/reading resolution for word-list rows (DoneScreen,
-// GlanceScreen) — dictionary is the source of truth when jmdictId matches
-// (see CLAUDE.md's "Dictionary as source of truth" section), the word's own
-// kanji/kana are the fallback. reading is null when it'd just repeat displayForm.
-function resolveWordDisplay(word, dictEntry) {
-  const displayForm = cardFormOf(word, dictEntry).form ?? word.kana
-  const readingRaw = word.kana ?? dictEntry?.kana_forms?.[0]
-  return { displayForm, reading: readingRaw && readingRaw !== displayForm ? readingRaw : null }
-}
-
-function shortPos(raw) {
-  if (!raw) return null
-  if (raw.startsWith('Godan verb')) return 'v5'
-  if (raw.startsWith('Ichidan verb')) return 'v1'
-  if (raw.startsWith('suru verb')) return 'vs'
-  if (raw.startsWith('adjectival nouns') || raw.startsWith('quasi-adj')) return 'adj-na'
-  if (raw.startsWith('adjective')) return 'adj-i'
-  if (raw.startsWith('adverb')) return 'adv'
-  if (raw.startsWith('noun')) return 'noun'
-  if (raw.startsWith('expression')) return 'exp'
-  if (raw.startsWith('conjunction')) return 'conj'
-  if (raw.startsWith('interjection')) return 'int'
-  if (raw.startsWith('auxiliary')) return 'aux'
-  if (raw.startsWith('particle')) return 'part'
-  if (raw.startsWith('prefix')) return 'pfx'
-  if (raw.startsWith('suffix')) return 'sfx'
-  if (raw.startsWith('pronoun')) return 'pron'
-  if (raw.startsWith('counter')) return 'ctr'
-  if (raw.startsWith('numeric')) return 'num'
-  return raw.split(' ')[0].slice(0, 6).toLowerCase()
-}
 
 // The dashboard's "Start Lesson N" deep-links here as
 // `#/vocab?chapter=<listKey>&start=1`. The query is read once at mount to
@@ -545,160 +513,6 @@ function DoneScreen({
   )
 }
 
-// ── GlanceScreen ─────────────────────────────────────────────────────────────
-
-class GlanceErrorBoundary extends Component {
-  constructor(props) { super(props); this.state = { error: null } }
-  static getDerivedStateFromError(error) { return { error } }
-  render() {
-    if (this.state.error) {
-      return (
-        <div style={{ padding: 32, color: DANGER, fontFamily: FONT, fontSize: FS_BASE }}>
-          Preview error: {this.state.error.message}
-          <pre style={{ marginTop: 8, fontSize: 12, color: TEXT_MUTED, whiteSpace: 'pre-wrap' }}>{this.state.error.stack}</pre>
-        </div>
-      )
-    }
-    return this.props.children
-  }
-}
-
-function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSource = 'custom' }) {
-  const jmdictIds = useMemo(() => words.map(w => w.jmdictId).filter(Boolean), [words])
-  const { entries: dictEntries } = useDictionaryEntries(jmdictIds, true)
-  const tanakaSentences = useSentencesForWords(jmdictIds, true)
-  const ACCENT = useAccent()
-  const [expandedId, setExpandedId] = useState(null)
-  const [expandedKanji, setExpandedKanji] = useState([])
-  const kanjiCache = useRef({})
-  const expandedSet = useMemo(() => new Set(expandedId ? [expandedId] : []), [expandedId])
-
-  async function handleToggleRow(word) {
-    const next = expandedId === word.id ? null : word.id
-    setExpandedId(next)
-    setExpandedKanji([])
-    if (!next) return
-
-    const displayForm = cardFormOf(word, dictEntries[word.jmdictId]).form ?? word.kana
-    const chars = (displayForm ?? '').split('').filter(ch => /\p{Script=Han}/u.test(ch))
-    const missing = chars.filter(ch => !kanjiCache.current[ch])
-    if (missing.length > 0 && supabase) {
-      const { data } = await supabase
-        .from('kanji')
-        .select('literal, on_readings, kun_readings, meanings, jlpt, grade, stroke_count')
-        .in('literal', missing)
-      if (data) {
-        for (const k of data) kanjiCache.current[k.literal] = k
-      }
-    }
-    setExpandedKanji(chars.map(ch => kanjiCache.current[ch]).filter(Boolean))
-  }
-
-  const grouped = useMemo(() => {
-    const order = selectedSubLists.length > 0 ? selectedSubLists : availableSubLists.map(l => l.id)
-    return order
-      .map(listId => ({
-        listId,
-        label: availableSubLists.find(l => l.id === listId)?.label ?? listId,
-        words: words.filter(w => w.listKey === listId),
-      }))
-      .filter(g => g.words.length > 0)
-  }, [words, selectedSubLists, availableSubLists])
-
-  function renderWordRow(word) {
-    const dictEntry = word.jmdictId ? dictEntries[word.jmdictId] : null
-    const { displayForm, reading } = resolveWordDisplay(word, dictEntry)
-    const posLabel = shortPos(Array.isArray(dictEntry?.pos) ? dictEntry.pos[0] : null)
-    return (
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 5 }}>
-          <Japanese as="span" style={{ fontSize: FS_ENTRY_WORD, color: TEXT, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{displayForm}</Japanese>
-          {reading && <Japanese as="span" style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: KANJI_FONT, letterSpacing: 0 }}>{reading}</Japanese>}
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          {posLabel && <Badge variant="fill" tone="neutral">{posLabel}</Badge>}
-          <span style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontFamily: FONT, letterSpacing: TRACKING }}>
-            {dictEntry?.gloss_en?.split('; ').slice(0, 2).join('; ') ?? word.english}
-          </span>
-        </div>
-      </div>
-    )
-  }
-
-  function renderWordDetail(word) {
-    const dictEntry = word.jmdictId ? dictEntries[word.jmdictId] : null
-    const tanakaSentence = word.jmdictId ? tanakaSentences[word.jmdictId] : null
-    const useTanakaSentence = sentenceSource === 'tanaka' ? !!tanakaSentence : (!word.sentence && !!tanakaSentence)
-    const sentenceText = useTanakaSentence ? tanakaSentence.japanese : word.sentence
-    const { displayForm } = resolveWordDisplay(word, dictEntry)
-    const kanjiChars = (displayForm ?? '').split('').filter(ch => /\p{Script=Han}/u.test(ch))
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {kanjiChars.length > 0 && (
-          expandedKanji.length > 0 ? (
-            expandedKanji.map(k => (
-              // Inner surface inside an already-raised list — lighter than Card
-              // on purpose so it reads as nested, not as a second card.
-              <div key={k.literal} style={{
-                display: 'flex', alignItems: 'flex-start', gap: 14, padding: '10px 12px',
-                background: 'rgba(255,255,255,0.03)', borderRadius: 6, border: '1px solid rgba(255,255,255,0.07)',
-              }}>
-                <Japanese as="div" style={{ fontSize: '2rem', color: TEXT, minWidth: 44, textAlign: 'center', lineHeight: 1.1 }}>{k.literal}</Japanese>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  {k.on_readings?.length > 0 && <Japanese as="div" style={{ fontSize: FS_BASE, color: TEXT, marginBottom: 2 }}>{k.on_readings.join('　')}</Japanese>}
-                  {k.kun_readings?.length > 0 && <Japanese as="div" style={{ fontSize: FS_BASE, color: TEXT_MUTED, marginBottom: 4 }}>{k.kun_readings.join('　')}</Japanese>}
-                  <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>{(k.meanings ?? '').split('; ').slice(0, 4).join(', ')}</div>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4, flexShrink: 0 }}>
-                  {k.jlpt != null && <Badge tone="accent">N{k.jlpt}</Badge>}
-                  {k.stroke_count != null && <Badge variant="text" tone="neutral">{k.stroke_count} strokes</Badge>}
-                </div>
-              </div>
-            ))
-          ) : (
-            <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, padding: '6px 0' }}>Loading…</div>
-          )
-        )}
-        {sentenceText && (
-          <Japanese as="div" style={{ fontSize: FS_BASE, color: TEXT_MUTED, fontStyle: 'italic', padding: '2px 0' }}>{sentenceText}</Japanese>
-        )}
-        {dictEntry && (
-          <a
-            href={`#/dictionary/entry/${dictEntry.id}`}
-            className="srs-browse-link"
-            style={{ fontSize: FS_CAPTION, color: ACCENT, alignSelf: 'flex-start', marginTop: 2 }}
-          >
-            View full entry →
-          </a>
-        )}
-      </div>
-    )
-  }
-
-  const columns = [{ key: 'word', render: renderWordRow, wrap: true }]
-
-  // No outer padding/max-width of its own — this is always the Words step
-  // of WordExplorerModal now, inside a Modal body that already sizes and
-  // pads itself.
-  return (
-    <div style={{ width: '100%' }}>
-      {grouped.map(group => (
-        <div key={group.listId} style={{ marginBottom: 40 }}>
-          <SectionHeader title={group.label} />
-          <DataList
-            columns={columns}
-            rows={group.words}
-            rowKey={w => w.id}
-            expand={{ expanded: expandedSet, onToggle: id => handleToggleRow(group.words.find(w => w.id === id)), render: renderWordDetail }}
-            padding="12px 16px"
-            maxWidth="100%"
-          />
-        </div>
-      ))}
-    </div>
-  )
-}
-
 // ── Textbook chapter path ────────────────────────────────────────────────────
 //
 // The book-featured landing screen for #/vocab once a textbook is chosen —
@@ -828,16 +642,17 @@ function TextbookHomeScreen({ state, accent, onStart, onAdvance, onSetCurrent, o
 //
 // One modal, two steps: Picker (choose a source + sublists to drill —
 // anything other than the featured textbook's own chapters) and Words
-// (browse the selected sublists' actual words, kanji breakdown, sentences —
-// what GlanceScreen renders). Previously two separate UIs: this same modal
-// picker, whose own Preview button closed the modal and swapped the whole
-// page to a full-page GlanceScreen with no way back into the picker from
-// there; and a chapter row's "View words", which swapped to that same
-// full page directly. Merging them into one sheet with a Back button on
-// Words fixes both — and it's what lets "View words" and a Dictionary
-// entry's "Vocab Drill match" link (see freeDrillOpen above) open straight
-// to Words without an active textbook: this modal never depends on
-// showTextbookScreen.
+// (browse the selected sublists' actual words, kanji breakdown, sentences,
+// via the shared WordListContent — see WordListModal.jsx). Previously two
+// separate UIs: this same modal picker, whose own Preview button closed
+// the modal and swapped the whole page to a full-page GlanceScreen with no
+// way back into the picker from there; and a chapter row's "View words",
+// which swapped to that same full page directly. Merging them into one
+// sheet with a Back button on Words fixes both. Only ever opened from
+// within this page (Free drill / a chapter row's View words) — a
+// Dictionary entry's "Vocab Drill match" link opens its own copy of
+// WordListModal directly in DictionaryEntryPage instead, so looking up a
+// word never navigates here at all.
 function WordExplorerModal({
   open, step, onClose, onBack, isMobile,
   sourceOptions, selectedSourceId, onSelectSource,
@@ -852,6 +667,15 @@ function WordExplorerModal({
   const totalWords = selectedSubLists.reduce((sum, id) => sum + (wordCountByList[id] ?? 0), 0)
   const canStart = selectedSubLists.length > 0
   const isWords = step === 'words'
+
+  const groups = useMemo(() => {
+    const order = selectedSubLists.length > 0 ? selectedSubLists : availableSubLists.map(l => l.id)
+    return order.map(listId => ({
+      id: listId,
+      label: availableSubLists.find(l => l.id === listId)?.label ?? listId,
+      words: glanceWords.filter(w => w.listKey === listId),
+    }))
+  }, [glanceWords, selectedSubLists, availableSubLists])
 
   const columns = [
     { key: 'label', flex: 1, render: l => l.label },
@@ -879,13 +703,9 @@ function WordExplorerModal({
       }
     >
       {isWords ? (
-        <GlanceErrorBoundary>
-          <GlanceScreen
-            words={glanceWords}
-            availableSubLists={availableSubLists}
-            selectedSubLists={selectedSubLists}
-          />
-        </GlanceErrorBoundary>
+        <WordListErrorBoundary>
+          <WordListContent groups={groups} />
+        </WordListErrorBoundary>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 12 }}>
@@ -921,13 +741,14 @@ function WordExplorerModal({
 //
 // HomeScreen/SubListTile (the source-select + sublist-grid picker that used
 // to be #/vocab's unconditional home screen) were deleted here: the only
-// live route to them left was a textbook-less visit — which nothing in the
-// app's own navigation produces any more (the dashboard's primary card
-// gates #/vocab behind picking a textbook first) except a bare Dictionary
-// "Vocab Drill match" link, which now opens WordExplorerModal straight to
-// its Words step instead. VocabPageScreens redirects home for any other
-// textbook-less visit, matching docs/home-flow-concepts.md's own
-// recommendation ("Bare #/vocab … Redirect is simplest").
+// live route to them was a textbook-less visit, and nothing in the app's
+// own navigation produces one any more — the dashboard's primary card
+// gates #/vocab behind picking a textbook first, and a Dictionary entry's
+// "Vocab Drill match" link no longer navigates here at all (it opens its
+// own copy of the word explorer sheet in place — see WordListModal.jsx).
+// VocabPageScreens redirects home for a textbook-less visit, matching
+// docs/home-flow-concepts.md's own recommendation ("Bare #/vocab …
+// Redirect is simplest").
 
 export default function VocabPage() {
   return (
@@ -975,14 +796,13 @@ function VocabPageScreens() {
     saveSrs,
   })
   const [pickerOpen, setPickerOpen] = useState(false)
-  // A dictionary-entry "Vocab Drill match" link (the one remaining bare
-  // #/vocab route — see the deleted-HomeScreen note above) deep-links with
-  // ?chapter=<listKey> but no &start=1: it means "show me where this word
-  // is drilled", not "start drilling it" — opens the word explorer sheet
-  // straight to its Words step, same as a chapter row's "View words".
-  const arrivedViaChapterLink = useState(() => !!chapterFromHash() && hashQuery().get('start') !== '1')[0]
-  const [freeDrillOpen, setFreeDrillOpen] = useState(arrivedViaChapterLink)
-  const [freeDrillStep, setFreeDrillStep] = useState(() => (arrivedViaChapterLink ? 'words' : 'picker'))
+  // Free/View-words explorer sheet — see WordExplorerModal. Only ever
+  // opened by an explicit click on this page itself (Free drill / View
+  // words); a Dictionary entry's "Vocab Drill match" link opens its own
+  // copy of this same sheet directly in DictionaryEntryPage instead of
+  // navigating here at all (see WordListModal.jsx).
+  const [freeDrillOpen, setFreeDrillOpen] = useState(false)
+  const [freeDrillStep, setFreeDrillStep] = useState('picker')
 
   const [showOptions,       setShowOptions]       = useState(() => window.innerWidth > 768)
   const [selectedSourceId,  setSelectedSourceId]  = useState(defaultSelectedSource)
@@ -1100,27 +920,20 @@ function VocabPageScreens() {
   }, [])
 
   // Nothing in the app's own navigation sends a visitor to #/vocab with no
-  // textbook chosen at all (the dashboard's card gates that behind the
-  // picker) except a Dictionary "Vocab Drill match" link — which opens the
-  // word explorer sheet instead (see freeDrillOpen above), so it works with
-  // no active textbook. Redirect home rather than show a blank page in
-  // every other case. This deliberately checks textbookState, not
+  // textbook chosen at all — the dashboard's card gates that behind the
+  // picker, and a Dictionary entry's "Vocab Drill match" no longer
+  // navigates here at all (it opens its own copy of the word explorer
+  // sheet in place — see WordListModal.jsx). Redirect home rather than
+  // show a blank page. This deliberately checks textbookState, not
   // showTextbookScreen: a chosen textbook with no words yet still has its
   // own "View all" link from the dashboard's NewCard, and redirecting that
   // case straight back home would be a click-and-bounce loop — that state
   // gets its own small message below.
-  //
-  // arrivedViaChapterLink permanently opts a chapter-link visit out of this
-  // redirect, not just while the sheet is open: closing the sheet flips
-  // freeDrillOpen back to false, and without this, that close would itself
-  // trigger a surprise navigation to the dashboard — closing a "here's
-  // where this word is drilled" peek should never change what page you're
-  // on, whether or not you ever had a textbook chosen.
   useEffect(() => {
-    if (!vocabProgressLoading && !textbookState && !isDrilling && !freeDrillOpen && !arrivedViaChapterLink) {
+    if (!vocabProgressLoading && !textbookState && !isDrilling) {
       window.location.hash = '#/'
     }
-  }, [vocabProgressLoading, textbookState, isDrilling, freeDrillOpen, arrivedViaChapterLink])
+  }, [vocabProgressLoading, textbookState, isDrilling])
 
   // Save progress when session completes. Not gated on sign-in: useProgress
   // falls back to localStorage when logged out, and the dashboard's chapter
@@ -1354,18 +1167,7 @@ function VocabPageScreens() {
                 <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>No words for this book yet.</div>
                 <Button onClick={() => setPickerOpen(true)}>Change textbook</Button>
               </div>
-            ) : (
-              // No textbook chosen at all. Normally redirects home instead
-              // of reaching this (see the effect above) — except a chapter-
-              // link visit (arrivedViaChapterLink), which opts out of that
-              // redirect permanently so closing WordExplorerModal never
-              // itself changes what page you're on. This is what closing
-              // it actually reveals in that case, instead of a blank page.
-              <div style={{ width: '100%', maxWidth: 680, margin: '0 auto', padding: 32, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
-                <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>Choose a textbook to start drilling.</div>
-                <Button onClick={() => setPickerOpen(true)}>Choose textbook</Button>
-              </div>
-            )}
+            ) : null}
           </div>
           <AttributionFooter sources={[
             'dictionary',
