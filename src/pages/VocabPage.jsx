@@ -1354,7 +1354,18 @@ function VocabPageScreens() {
                 <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>No words for this book yet.</div>
                 <Button onClick={() => setPickerOpen(true)}>Change textbook</Button>
               </div>
-            ) : null}
+            ) : (
+              // No textbook chosen at all. Normally redirects home instead
+              // of reaching this (see the effect above) — except a chapter-
+              // link visit (arrivedViaChapterLink), which opts out of that
+              // redirect permanently so closing WordExplorerModal never
+              // itself changes what page you're on. This is what closing
+              // it actually reveals in that case, instead of a blank page.
+              <div style={{ width: '100%', maxWidth: 680, margin: '0 auto', padding: 32, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+                <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>Choose a textbook to start drilling.</div>
+                <Button onClick={() => setPickerOpen(true)}>Choose textbook</Button>
+              </div>
+            )}
           </div>
           <AttributionFooter sources={[
             'dictionary',
