@@ -677,8 +677,11 @@ function GlanceScreen({ words, availableSubLists, selectedSubLists, sentenceSour
 
   const columns = [{ key: 'word', render: renderWordRow, wrap: true }]
 
+  // No outer padding/max-width of its own — this is always the Words step
+  // of WordExplorerModal now, inside a Modal body that already sizes and
+  // pads itself.
   return (
-    <div style={{ width: '100%', maxWidth: 680, margin: '0 auto', padding: '32px 24px 48px' }}>
+    <div style={{ width: '100%' }}>
       {grouped.map(group => (
         <div key={group.listId} style={{ marginBottom: 40 }}>
           <SectionHeader title={group.label} />
@@ -821,74 +824,99 @@ function TextbookHomeScreen({ state, accent, onStart, onAdvance, onSetCurrent, o
   )
 }
 
-// ── Free drill ────────────────────────────────────────────────────────────────
+// ── Word explorer ─────────────────────────────────────────────────────────────
 //
-// A compact modal for drilling anything other than the featured textbook's
-// own chapters — a different book, a So-Matome week, a personal list —
-// without leaving the vocab training page. Reuses the page's own
-// selectedSourceId/selectedSubLists state rather than a separate picker
-// engine: Start/Preview here are the same actions the old full-page source
-// picker offered, just in a narrower modal shape.
-function FreeDrillModal({
-  open, onClose, isMobile,
+// One modal, two steps: Picker (choose a source + sublists to drill —
+// anything other than the featured textbook's own chapters) and Words
+// (browse the selected sublists' actual words, kanji breakdown, sentences —
+// what GlanceScreen renders). Previously two separate UIs: this same modal
+// picker, whose own Preview button closed the modal and swapped the whole
+// page to a full-page GlanceScreen with no way back into the picker from
+// there; and a chapter row's "View words", which swapped to that same
+// full page directly. Merging them into one sheet with a Back button on
+// Words fixes both — and it's what lets "View words" and a Dictionary
+// entry's "Vocab Drill match" link (see freeDrillOpen above) open straight
+// to Words without an active textbook: this modal never depends on
+// showTextbookScreen.
+function WordExplorerModal({
+  open, step, onClose, onBack, isMobile,
   sourceOptions, selectedSourceId, onSelectSource,
   reviewMode, onChangeReviewMode,
   availableSubLists, selectedSubLists, onToggleSubList,
   wordCountByList, reviewWordCount, includeReview, onToggleIncludeReview,
   sentenceVocabWordCount, includeSentenceVocab, onToggleIncludeSentenceVocab,
-  onStart, onGlance,
+  glanceWords, onPreview, onStart,
 }) {
   const rows = availableSubLists.map(l => ({ ...l, wordCount: wordCountByList[l.id] ?? 0 }))
   const selected = useMemo(() => new Set(selectedSubLists), [selectedSubLists])
   const totalWords = selectedSubLists.reduce((sum, id) => sum + (wordCountByList[id] ?? 0), 0)
   const canStart = selectedSubLists.length > 0
+  const isWords = step === 'words'
 
   const columns = [
     { key: 'label', flex: 1, render: l => l.label },
     { key: 'count', width: 90, align: 'right', tone: 'muted', render: l => `${l.wordCount ?? 0} words` },
   ]
 
+  const wordsTitle = selectedSubLists.length === 1
+    ? (availableSubLists.find(l => l.id === selectedSubLists[0])?.label ?? 'Words')
+    : selectedSubLists.length > 1 ? `${selectedSubLists.length} lists` : 'Words'
+
   return (
     <Modal
       open={open}
       onClose={onClose}
-      title="Drill any list"
-      size="md"
+      title={isWords ? wordsTitle : 'Drill any list'}
+      size={isWords ? 'xl' : 'md'}
       isMobile={isMobile}
       footer={
         <>
-          <Button variant="neutral" disabled={!canStart} onClick={() => { onClose(); onGlance() }}>Preview</Button>
-          <Button disabled={!canStart} onClick={() => { onClose(); onStart() }}>
+          {isWords ? (
+            <Button variant="neutral" onClick={onBack}>Back</Button>
+          ) : (
+            <Button variant="neutral" disabled={!canStart} onClick={onPreview}>Preview</Button>
+          )}
+          <Button disabled={!canStart} onClick={onStart}>
             Start{totalWords ? ` (${totalWords} words)` : ''}
           </Button>
         </>
       }
     >
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 12 }}>
-          <div>
-            <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: 4 }}>Word list</div>
-            <Select size="md" value={selectedSourceId} onChange={onSelectSource} options={sourceOptions} />
+      {isWords ? (
+        <GlanceErrorBoundary>
+          <GlanceScreen
+            words={glanceWords}
+            availableSubLists={availableSubLists}
+            selectedSubLists={selectedSubLists}
+          />
+        </GlanceErrorBoundary>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 12 }}>
+            <div>
+              <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: 4 }}>Word list</div>
+              <Select size="md" value={selectedSourceId} onChange={onSelectSource} options={sourceOptions} />
+            </div>
+            <div>
+              <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: 4 }}>Drill mode</div>
+              <Select size="md" value={reviewMode} onChange={onChangeReviewMode} options={REVIEW_MODE_OPTIONS} />
+            </div>
           </div>
-          <div>
-            <div style={{ fontSize: FS_CAPTION, color: TEXT_MUTED, marginBottom: 4 }}>Drill mode</div>
-            <Select size="md" value={reviewMode} onChange={onChangeReviewMode} options={REVIEW_MODE_OPTIONS} />
-          </div>
+          <DataList
+            columns={columns}
+            rows={rows}
+            rowKey={l => l.id}
+            selection={{ selected, onToggle: onToggleSubList, bulkHeader: true }}
+            maxWidth="100%"
+          />
+          {reviewWordCount > 0 && (
+            <Checkbox checked={includeReview} onChange={onToggleIncludeReview} label={`Include review words (${reviewWordCount})`} />
+          )}
+          {sentenceVocabWordCount > 0 && (
+            <Checkbox checked={includeSentenceVocab} onChange={onToggleIncludeSentenceVocab} label={`Include sentence review words (${sentenceVocabWordCount})`} />
+          )}
         </div>
-        <DataList
-          columns={columns}
-          rows={rows}
-          rowKey={l => l.id}
-          selection={{ selected, onToggle: onToggleSubList, bulkHeader: true }}
-          maxWidth="100%"
-        />
-        {reviewWordCount > 0 && (
-          <Checkbox checked={includeReview} onChange={onToggleIncludeReview} label={`Include review words (${reviewWordCount})`} />
-        )}
-        {sentenceVocabWordCount > 0 && (
-          <Checkbox checked={includeSentenceVocab} onChange={onToggleIncludeSentenceVocab} label={`Include sentence review words (${sentenceVocabWordCount})`} />
-        )}
-      </div>
+      )}
     </Modal>
   )
 }
@@ -900,11 +928,10 @@ function FreeDrillModal({
 // live route to them left was a textbook-less visit — which nothing in the
 // app's own navigation produces any more (the dashboard's primary card
 // gates #/vocab behind picking a textbook first) except a bare Dictionary
-// "Vocab Drill match" link. VocabPageScreens now redirects home in that
-// case instead, matching docs/home-flow-concepts.md's own recommendation
-// ("Bare #/vocab … Redirect is simplest"); FreeDrillModal already covers
-// the "drill something other than the active textbook" job with the same
-// state this screen used.
+// "Vocab Drill match" link, which now opens WordExplorerModal straight to
+// its Words step instead. VocabPageScreens redirects home for any other
+// textbook-less visit, matching docs/home-flow-concepts.md's own
+// recommendation ("Bare #/vocab … Redirect is simplest").
 
 export default function VocabPage() {
   return (
@@ -955,10 +982,10 @@ function VocabPageScreens() {
   // A dictionary-entry "Vocab Drill match" link (the one remaining bare
   // #/vocab route — see the deleted-HomeScreen note above) deep-links with
   // ?chapter=<listKey> but no &start=1: it means "show me where this word
-  // is drilled", not "start drilling it". Opening the free-drill sheet
-  // pre-seeded with that chapter is the modern equivalent of what the old
-  // full-page picker did for the same link.
+  // is drilled", not "start drilling it" — opens the word explorer sheet
+  // straight to its Words step, same as a chapter row's "View words".
   const [freeDrillOpen, setFreeDrillOpen] = useState(() => !!chapterFromHash() && hashQuery().get('start') !== '1')
+  const [freeDrillStep, setFreeDrillStep] = useState(() => (chapterFromHash() && hashQuery().get('start') !== '1' ? 'words' : 'picker'))
 
   const [showOptions,       setShowOptions]       = useState(() => window.innerWidth > 768)
   const [selectedSourceId,  setSelectedSourceId]  = useState(defaultSelectedSource)
@@ -968,7 +995,6 @@ function VocabPageScreens() {
   })
   const [reviewMode,       setReviewMode]       = useState(() => safeLocalStorageGet('vocab-review-mode') ?? 'kanji-front')
   const [isDrilling,       setIsDrilling]       = useState(() => !!chapterFromHash() && hashQuery().get('start') === '1')
-  const [isGlancing,       setIsGlancing]       = useState(false)
   const { settings, set: setSetting } = useDrillSettings('vocab')
   const anyAudio = settings.frontAudio || settings.backAudio
   const audioSource = anyAudio ? audioSourceForVoice(settings.voice) : 'none'
@@ -1078,18 +1104,19 @@ function VocabPageScreens() {
 
   // Nothing in the app's own navigation sends a visitor to #/vocab with no
   // textbook chosen at all (the dashboard's card gates that behind the
-  // picker) except a Dictionary "Vocab Drill match" link, which opens the
-  // free-drill sheet instead (see freeDrillOpen above) rather than needing
-  // a page here at all. Redirect home rather than show a blank page. This
-  // deliberately checks textbookState, not showTextbookScreen: a chosen
-  // textbook with no words yet still has its own "View all" link from the
-  // dashboard's NewCard, and redirecting that case straight back home would
-  // be a click-and-bounce loop — that state gets its own small message below.
+  // picker) except a Dictionary "Vocab Drill match" link — which opens the
+  // word explorer sheet instead (see freeDrillOpen above), so it works with
+  // no active textbook. Redirect home rather than show a blank page in
+  // every other case. This deliberately checks textbookState, not
+  // showTextbookScreen: a chosen textbook with no words yet still has its
+  // own "View all" link from the dashboard's NewCard, and redirecting that
+  // case straight back home would be a click-and-bounce loop — that state
+  // gets its own small message below.
   useEffect(() => {
-    if (!vocabProgressLoading && !textbookState && !isDrilling && !isGlancing) {
+    if (!vocabProgressLoading && !textbookState && !isDrilling && !freeDrillOpen) {
       window.location.hash = '#/'
     }
-  }, [vocabProgressLoading, textbookState, isDrilling, isGlancing])
+  }, [vocabProgressLoading, textbookState, isDrilling, freeDrillOpen])
 
   // Save progress when session completes. Not gated on sign-in: useProgress
   // falls back to localStorage when logged out, and the dashboard's chapter
@@ -1158,7 +1185,13 @@ function VocabPageScreens() {
   function viewChapterWords(chapter) {
     setSelectedSourceId(sourceIdForListKey(chapter.id))
     setSelectedSubLists([chapter.id])
-    setIsGlancing(true)
+    setFreeDrillStep('words')
+    setFreeDrillOpen(true)
+  }
+
+  function openFreeDrillPicker() {
+    setFreeDrillStep('picker')
+    setFreeDrillOpen(true)
   }
 
   function advanceCurrentChapter() {
@@ -1216,8 +1249,6 @@ function VocabPageScreens() {
             crumbs={
               isDrilling
                 ? [{ label: 'Lantern', href: '#/' }, { label: 'Vocabulary', onClick: () => setIsDrilling(false) }, { label: 'Reviewing' }]
-                : isGlancing
-                ? [{ label: 'Lantern', href: '#/' }, { label: 'Vocabulary', onClick: () => setIsGlancing(false) }, { label: 'Preview' }]
                 : [{ label: 'Lantern', href: '#/' }, { label: 'Vocabulary' }]
             }
             rightSlot={(
@@ -1296,14 +1327,6 @@ function VocabPageScreens() {
                   isShort={isShort}
                 />
               )
-            ) : isGlancing ? (
-              <GlanceErrorBoundary>
-                <GlanceScreen
-                  words={glanceWords}
-                  availableSubLists={availableSubLists}
-                  selectedSubLists={selectedSubLists}
-                />
-              </GlanceErrorBoundary>
             ) : vocabProgressLoading ? (
               <CenteredLoadingMessage text="Loading" />
             ) : showTextbookScreen ? (
@@ -1315,7 +1338,7 @@ function VocabPageScreens() {
                 onSetCurrent={setCurrentChapter}
                 onViewWords={viewChapterWords}
                 onChangeTextbook={() => setPickerOpen(true)}
-                onOpenFreeDrill={() => setFreeDrillOpen(true)}
+                onOpenFreeDrill={openFreeDrillPicker}
               />
             ) : textbookState ? (
               // A textbook is chosen but this account has no words for it yet
@@ -1365,30 +1388,31 @@ function VocabPageScreens() {
         onSend={sendAndAdvance}
         isMobile={isMobile}
       />
-      {showTextbookScreen && (
-        <FreeDrillModal
-          open={freeDrillOpen}
-          onClose={() => setFreeDrillOpen(false)}
-          isMobile={isMobile}
-          sourceOptions={sourceOptions}
-          selectedSourceId={selectedSourceId}
-          onSelectSource={handleSelectSource}
-          reviewMode={reviewMode}
-          onChangeReviewMode={setReviewMode}
-          availableSubLists={availableSubLists}
-          selectedSubLists={selectedSubLists}
-          onToggleSubList={id => setSelectedSubLists(prev => toggle(prev, id))}
-          wordCountByList={wordCountByList}
-          reviewWordCount={reviewWordCount}
-          includeReview={includeReview}
-          onToggleIncludeReview={() => setIncludeReview(v => !v)}
-          sentenceVocabWordCount={sentenceVocabWordCount}
-          includeSentenceVocab={includeSentenceVocab}
-          onToggleIncludeSentenceVocab={() => setIncludeSentenceVocab(v => !v)}
-          onStart={() => setIsDrilling(true)}
-          onGlance={() => setIsGlancing(true)}
-        />
-      )}
+      <WordExplorerModal
+        open={freeDrillOpen}
+        step={freeDrillStep}
+        onClose={() => setFreeDrillOpen(false)}
+        onBack={() => setFreeDrillStep('picker')}
+        isMobile={isMobile}
+        sourceOptions={sourceOptions}
+        selectedSourceId={selectedSourceId}
+        onSelectSource={handleSelectSource}
+        reviewMode={reviewMode}
+        onChangeReviewMode={setReviewMode}
+        availableSubLists={availableSubLists}
+        selectedSubLists={selectedSubLists}
+        onToggleSubList={id => setSelectedSubLists(prev => toggle(prev, id))}
+        wordCountByList={wordCountByList}
+        reviewWordCount={reviewWordCount}
+        includeReview={includeReview}
+        onToggleIncludeReview={() => setIncludeReview(v => !v)}
+        sentenceVocabWordCount={sentenceVocabWordCount}
+        includeSentenceVocab={includeSentenceVocab}
+        onToggleIncludeSentenceVocab={() => setIncludeSentenceVocab(v => !v)}
+        glanceWords={glanceWords}
+        onPreview={() => setFreeDrillStep('words')}
+        onStart={() => { setFreeDrillOpen(false); setIsDrilling(true) }}
+      />
 
     </div>
   )
