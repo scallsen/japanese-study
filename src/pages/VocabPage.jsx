@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef, useCallback, Component } from 'react'
 import VocabCard from '../components/VocabCard.jsx'
 import DrillHUD from '../components/DrillHUD.jsx'
+import CenteredLoadingMessage from '../components/CenteredLoadingMessage.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
 import Checkbox from '../components/Checkbox.jsx'
 import Select from '../components/Select.jsx'
@@ -1258,7 +1259,7 @@ function VocabPageScreens() {
               // drill. Without this guard the empty pool reads as `drill.done`
               // and flashes a 0-card done screen before the real cards arrive.
               personalSource && customWordsLoading ? (
-                <div style={{ fontSize: FS_BASE, color: TEXT_MUTED }}>Loading…</div>
+                <CenteredLoadingMessage text="Loading words" />
               ) : drill.done ? (
                 <DoneScreen
                   pool={pool}
@@ -1304,9 +1305,7 @@ function VocabPageScreens() {
                 />
               </GlanceErrorBoundary>
             ) : vocabProgressLoading ? (
-              <div style={{ width: '100%', maxWidth: 680, margin: '0 auto', padding: 32, fontSize: FS_BASE, color: TEXT_MUTED }}>
-                Loading…
-              </div>
+              <CenteredLoadingMessage text="Loading" />
             ) : showTextbookScreen ? (
               <TextbookHomeScreen
                 state={textbookState}
